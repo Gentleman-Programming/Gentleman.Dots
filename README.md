@@ -10,7 +10,7 @@ Este repositorio contiene configuraciones personalizadas para el entorno de desa
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
+cp -r Gentleman.Dots/GentlemanNvim/* ~/.config/nvim
 ```
 
 Reinicia Neovim para aplicar los cambios.
@@ -230,6 +230,38 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanTmux/* ~/
 ```
 
+## Carpeta `GentlemanFish`
+
+### Instalación de fish
+
+#### HomeBrew (recomendado)
+```brew install fish```
+
+#### Ubuntu/Debian
+```
+sudo apt-get update
+sudo apt-get install fish
+```
+#### Fedora
+```sudo dnf install fish```
+
+### Instalación de Oh My Fish 
+
+```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
+
+### Transpaso de Configuraciones
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanFish/* ~/.config
+```
+
+### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
+
+Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
+
+```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
+
 ### Iniciar Tmux
 
 #### Lo ponemos en marcha
@@ -244,6 +276,17 @@ tmux source-file ~/.tmux.conf
 ### Cargamos los plugins de Tmux
 ```bash
 <Ctrl-b> + I para cargar los plugins
+```
+
+### Si quieres que Tmux se ejecute de manera por defecto al abir la terminal
+
+#### Abre `~/.config/fish/config.fish` y agrega la siguiente línea al final:
+
+```bash
+if status is-interactive
+    and not set -q TMUX
+    exec tmux
+end
 ```
 
 ### Explicación de la configuración 
@@ -269,6 +312,12 @@ tmux source-file ~/.tmux.conf
    set -g @plugin 'tmux-plugins/tmux-resurrect'
    ```
    - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
+
+   - Cabe destacar tmux-resurrect el cual guarda el estado de la session para que no lo perdamos, se utiliza mediante:
+    ```bash
+    <Ctrl-b> + <Ctrl-s> para guardar el estado
+    <Ctrl-b> + <Ctrl-r> para recuperar el estado
+    ```
 
    ```bash
    set -g default-terminal "tmux-256color"
@@ -305,37 +354,5 @@ tmux source-file ~/.tmux.conf
    run '~/.tmux/plugins/tpm/tpm'
    ```
    - Inicia el Tmux Plugin Manager. Este comando debe mantenerse al final del archivo de configuración de Tmux.
-
-## Carpeta `GentlemanFish`
-
-### Instalación de fish
-
-#### HomeBrew (recomendado)
-```brew install fish```
-
-#### Ubuntu/Debian
-```
-sudo apt-get update
-sudo apt-get install fish
-```
-#### Fedora
-```sudo dnf install fish```
-
-### Instalación de Oh My Fish 
-
-```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
-
-### Transpaso de Configuraciones
-
-```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanFish/* ~/.config
-```
-
-### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
-
-Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
-
-```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
 
 ¡Disfruta de tu nuevo entorno de desarrollo en Neovim!
