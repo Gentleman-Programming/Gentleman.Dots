@@ -4,7 +4,16 @@
 
 Este repositorio contiene configuraciones personalizadas para el entorno de desarrollo en Neovim, incluyendo plugins específicos y keymaps para mejorar la productividad. Se hace uso de [LazyVim](https://github.com/LazyVim/LazyVim) como un conjunto preconfigurado de plugins y ajustes para facilitar el uso de Neovim.
 
-## Configuraciones
+## Carpeta `GentlemanNvim`
+
+### Transpaso de configuraciónes
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
+```
+
+Reinicia Neovim para aplicar los cambios.
 
 ### Carpeta `plugins`
 
@@ -197,16 +206,65 @@ vim.keymap.set("i", "<C-d>", "<C-d>zz")
 vim.keymap.set("i", "<C-u>", "<C-u>zz")
 vim.keymap.set("i", "<C-b>", "<C-o>de")
 ```
+## Carpeta `GentlemanTmux`
 
-## Uso
+Contiene configuraciones para el entorno de tmux, para instalarlo e utilizarlo se debe realizar la siguiente serie de pasos:
 
-Clona este repositorio y copia los archivos de configuración en tu directorio de configuración de Neovim (`~/.config/nvim`).
+### Instalación de Tmux
+
+#### HomeBrew (recomendado)
+```brew install tmux```
+
+#### Ubuntu/Debian
+```
+sudo apt-get update
+sudo apt-get install tmux
+```
+#### Fedora
+```sudo dnf -y install tmux```
+
+
+### Transpaso de configuraciones
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanTmux/* ~/
+```
+
+### Iniciar Tmux
+
+#### Lo ponemos en marcha
+```bash
+tmux
+```
+#### Cargamos la configuración
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+## Carpeta `GentlemanFish`
+
+### Instalación de fish
+
+#### HomeBrew (recomendado)
+```brew install fish```
+
+#### Ubuntu/Debian
+```
+sudo apt-get update
+sudo apt-get install fish
+```
+#### Fedora
+```sudo dnf install fish```
+
+### Instalación de Oh My Fish 
+
+```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
+
+### Transpaso de Configuraciones
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/* ~/.config/nvim/
+cp -r Gentleman.Dots/GentlemanFish/* ~/.config
 ```
-
-Reinicia Neovim para aplicar los cambios.
 
 ¡Disfruta de tu nuevo entorno de desarrollo en Neovim!
