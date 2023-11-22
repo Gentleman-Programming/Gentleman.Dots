@@ -10,7 +10,7 @@ Este repositorio contiene configuraciones personalizadas para el entorno de desa
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanNvim/* ~/.config/nvim
+cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 ```
 
 Reinicia Neovim para aplicar los cambios.
