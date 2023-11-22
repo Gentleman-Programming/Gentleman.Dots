@@ -241,6 +241,11 @@ tmux
 tmux source-file ~/.tmux.conf
 ```
 
+### Cargamos los plugins de Tmux
+```bash
+<Ctrl-b> + I para cargar los plugins
+```
+
 ### Explicación de la configuración 
 
 
