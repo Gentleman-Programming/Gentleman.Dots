@@ -241,6 +241,66 @@ tmux
 tmux source-file ~/.tmux.conf
 ```
 
+### Explicación de la configuración 
+
+
+1. **Configuración del Shell Predeterminado:**
+   ```bash
+   set-option -g default-shell /usr/bin/fish
+   ```
+   Establece el shell predeterminado que Tmux utilizará como `/usr/bin/fish`.
+
+2. **Configuración de Plugins:**
+   ```bash
+   set -g @plugin 'catppuccin/tmux'
+   set -g @catppuccin_flavour 'macchiato'
+   ```
+   - Se utiliza el plugin 'catppuccin/tmux'.
+   - Se configura el sabor (`flavour`) del plugin como 'macchiato'.
+
+   ```bash
+   set -g @plugin 'tmux-plugins/tpm'
+   set -g @plugin 'tmux-plugins/tmux-sensible'
+   set -g @plugin 'tmux-plugins/tmux-resurrect'
+   ```
+   - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
+
+   ```bash
+   set -g default-terminal "tmux-256color"
+   set-option -ga terminal-overrides ",xterm*:Tc"
+   ```
+   - Configuración del tipo de terminal predeterminado y algunas configuraciones adicionales para la terminación.
+
+3. **Configuración de la Apariencia de las Ventanas y Paneles:**
+   ```bash
+   set -g @catppuccin_window_left_separator "█"
+   set -g @catppuccin_window_right_separator "█ "
+   set -g @catppuccin_window_number_position "right"
+   set -g @catppuccin_window_middle_separator "  █"
+   set -g @catppuccin_window_default_fill "number"
+   set -g @catppuccin_window_current_fill "number"
+   set -g @catppuccin_window_current_text "#{pane_current_path}"
+   ```
+   - Configuración de la apariencia de las ventanas y paneles, incluidos separadores, posición de números y texto de la ventana actual.
+
+4. **Configuración de la Barra de Estado (Status Bar):**
+   ```bash
+   set -g @catppuccin_status_modules "application session date_time"
+   set -g @catppuccin_status_left_separator  ""
+   set -g @catppuccin_status_right_separator " "
+   set -g @catppuccin_status_right_separator_inverse "yes"
+   set -g @catppuccin_status_fill "all"
+   set -g @catppuccin_status_connect_separator "no"
+   set -g @catppuccin_directory_text "#{pane_current_path}"
+   ```
+   - Configuración de módulos y apariencia de la barra de estado, incluidos separadores y texto del directorio actual.
+
+5. **Inicialización del Tmux Plugin Manager (TPM):**
+   ```bash
+   run '~/.tmux/plugins/tpm/tpm'
+   ```
+   - Inicia el Tmux Plugin Manager. Este comando debe mantenerse al final del archivo de configuración de Tmux.
+
 ## Carpeta `GentlemanFish`
 
 ### Instalación de fish
@@ -266,5 +326,11 @@ sudo apt-get install fish
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanFish/* ~/.config
 ```
+
+### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
+
+Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
+
+```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
 
 ¡Disfruta de tu nuevo entorno de desarrollo en Neovim!
