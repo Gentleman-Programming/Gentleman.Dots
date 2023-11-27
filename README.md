@@ -206,6 +206,39 @@ vim.keymap.set("i", "<C-d>", "<C-d>zz")
 vim.keymap.set("i", "<C-u>", "<C-u>zz")
 vim.keymap.set("i", "<C-b>", "<C-o>de")
 ```
+
+## Carpeta `GentlemanFish`
+
+### Instalación de fish
+
+#### HomeBrew (recomendado)
+```brew install fish```
+
+#### Ubuntu/Debian
+```
+sudo apt-get update
+sudo apt-get install fish
+```
+#### Fedora
+```sudo dnf install fish```
+
+### Instalación de Oh My Fish 
+
+```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
+
+### Transpaso de Configuraciones
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanFish/* ~/.config
+```
+
+### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
+
+Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
+
+```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
+
 ## Carpeta `GentlemanTmux`
 
 Contiene configuraciones para el entorno de tmux, para instalarlo e utilizarlo se debe realizar la siguiente serie de pasos:
@@ -229,38 +262,6 @@ sudo apt-get install tmux
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanTmux/* ~/
 ```
-
-## Carpeta `GentlemanFish`
-
-### Instalación de fish
-
-#### HomeBrew (recomendado)
-```brew install fish```
-
-#### Ubuntu/Debian
-```
-sudo apt-get update
-sudo apt-get install fish
-```
-#### Fedora
-```sudo dnf install fish```
-
-### Instalación de Oh My Fish 
-
-```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
-
-### Transpaso de Configuraciones
-
-```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanFish/* ~/.config
-```
-
-### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
-
-Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
-
-```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
 
 ### Iniciar Tmux
 
