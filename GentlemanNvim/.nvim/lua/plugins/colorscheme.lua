@@ -21,9 +21,25 @@ return {
     },
   },
   {
+    "miikanissi/modus-themes.nvim",
+    name = "modus",
+    priority = 1000,
+  },
+  {
+    "rebelot/kanagawa.nvim",
+    name = "kanagawa",
+    opts = {
+      transparent_background = true,
+    },
+    priority = 1000,
+  },
+  {
+    "xiyaowong/transparent.nvim",
+  },
+  {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      colorscheme = "kanagawa",
     },
   },
 }
