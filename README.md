@@ -46,7 +46,7 @@ return {
 
 #### Archivo `colorscheme.lua`
 
-Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "catppuccin" con opciones específicas.
+Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "kanagawa" con opciones específicas, también puedes elegir catppucin o modus. Para elegir un theme, solo cambiar la property ```colorscheme = "kanagawa"``` por el nombre del theme que quieras.
 
 ```lua
 return {
@@ -68,16 +68,33 @@ return {
         enabled = true,
         indentscope_color = "",
       },
-      -- Otras integraciones de plugins pueden encontrarse en el enlace proporcionado
+      -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
     },
+  },
+  {
+    "miikanissi/modus-themes.nvim",
+    name = "modus",
+    priority = 1000,
+  },
+  {
+    "rebelot/kanagawa.nvim",
+    name = "kanagawa",
+    opts = {
+      transparent_background = true,
+    },
+    priority = 1000,
+  },
+  {
+    "xiyaowong/transparent.nvim",
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      colorscheme = "kanagawa",
     },
   },
 }
+
 ```
 
 #### Archivo `editor.lua`
