@@ -28,9 +28,6 @@ return {
   {
     "rebelot/kanagawa.nvim",
     name = "kanagawa",
-    opts = {
-      transparent_background = true,
-    },
     priority = 1000,
   },
   {

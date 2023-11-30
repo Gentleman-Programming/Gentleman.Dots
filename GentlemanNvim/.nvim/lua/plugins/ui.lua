@@ -90,18 +90,6 @@ return {
     },
   },
 
-  -- statusline
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    opts = {
-      options = {
-        -- globalstatus = false,
-        theme = "catppuccin",
-      },
-    },
-  },
-
   -- filename
   {
     "b0o/incline.nvim",
