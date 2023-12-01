@@ -34,9 +34,19 @@ return {
     "xiyaowong/transparent.nvim",
   },
   {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "kanagawa",
+    {
+      "LazyVim/LazyVim",
+      opts = {
+        colorscheme = "kanagawa-dragon",
+      },
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      opts = {
+        options = {
+          theme = "kanagawa",
+        },
+      },
     },
   },
 }
