@@ -46,7 +46,7 @@ return {
 
 #### Archivo `colorscheme.lua`
 
-Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "kanagawa" con opciones específicas, también puedes elegir catppucin o modus. Para elegir un theme, solo cambiar la property ```colorscheme = "kanagawa"``` por el nombre del theme que quieras.
+Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "kanagawa-dragon" con opciones específicas, también puedes elegir catppucin o modus. Para elegir un theme, solo cambiar la property ```colorscheme = "kanagawa-dragon"``` por el nombre del theme que quieras.
 Si deseas tener un background transparente, haz ```:TransparentEnable``` y te quedará NVIM con una opacidad extra de acuerdo a la que pongas en tu terminal.
 
 ```lua
@@ -91,7 +91,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "kanagawa",
+      colorscheme = "kanagawa-dragon",
     },
   },
 }
