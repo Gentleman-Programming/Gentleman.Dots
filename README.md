@@ -225,6 +225,97 @@ vim.keymap.set("i", "<C-u>", "<C-u>zz")
 vim.keymap.set("i", "<C-b>", "<C-o>de")
 ```
 
+## Carpeta `GentlemanKitty`
+
+### Archivo `kanagawa.nvim`
+
+Este archivo configura el tema Kanagawa en la terminal Kitty, proporcionando ajustes visuales y atajos de teclado para la navegación entre pestañas.
+
+```vim
+# vim:fileencoding=utf-8:foldmethod=marker
+
+#: Fuentes {{{
+
+font_family      IosevkaTerm Nerd Font
+font_size 14.0
+
+#: Los colores de primer plano y fondo.
+
+background_opacity 0.95
+# background_blur 0
+
+## nombre: Kanagawa
+## licencia: MIT
+## autor: Tommaso Laurenzi
+## upstream: https://github.com/rebelot/kanagawa.nvim/
+
+background #0d0c0c
+foreground #DCD7BA
+selection_background #2D4F67
+selection_foreground #C8C093
+url_color #72A7BC
+cursor #C8C093
+
+# Pestañas
+active_tab_background #1F1F28
+active_tab_foreground #C8C093
+inactive_tab_background  #1F1F28
+inactive_tab_foreground #727169
+#tab_bar_background #15161E
+
+# normal
+color0 #16161D
+color1 #C34043
+color2 #76946A
+color3 #C0A36E
+color4 #7E9CD8
+color5 #957FB8
+color6 #6A9589
+color7 #C8C093
+
+# brillante
+color8  #727169
+color9  #E82424
+color10 #98BB6C
+color11 #E6C384
+color12 #7FB4CA
+color13 #938AA9
+color14 #7AA89F
+color15 #DCD7BA
+
+
+# colores extendidos
+color16 #FFA066
+color17 #FF5D62
+  
+
+map cmd+1 goto_tab 1
+map cmd+2 goto_tab 2
+map cmd+3 goto_tab 3
+map cmd+4 goto_tab 4
+map cmd+5 goto_tab 5
+map cmd+6 goto_tab 6
+map cmd+7 goto_tab 7
+map cmd+8 goto_tab 8
+map cmd+9 goto_tab 9
+```
+
+Este archivo proporciona la configuración del tema Kanagawa en Neovim, utilizando la fuente IosevkaTerm Nerd Font con un tamaño de fuente de 14.0. Además, define una paleta de colores cuidadosamente seleccionada para mejorar la experiencia de codificación. Los ajustes incluyen el estilo de pestañas para pestañas activas e inactivas, junto con asignaciones de teclas para la navegación rápida entre pestañas.
+
+### Transpaso de configuraciones
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanKitty/* ~/.config/kitty
+```
+
+**Detalles del Tema:**
+- **Nombre:** Kanagawa
+- **Autor:** Tommaso Laurenzi
+- **Licencia:** MIT
+- **Repositorio Upstream:** [Kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim/)
+
+**Nota:** Las asignaciones de teclas proporcionadas para la navegación entre pestañas están configuradas como `cmd+1` hasta `cmd+9`.
+
 ## Carpeta `GentlemanFish`
 
 ### Instalación de fish
