@@ -187,7 +187,7 @@ return {
     event = "VeryLazy",
     opts = function()
       return {
-        --[[add your custom lualine config here]]
+        theme = "auto",
       }
     end,
   },
