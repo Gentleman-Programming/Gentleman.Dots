@@ -257,6 +257,12 @@ Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por
 
 ```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
 
+### Elegir theme Kanagawa para Fish
+
+Ejecuta: ```fish_config theme save Kanagawa```
+
+Y cuando pregunte si deseas sobre escribir: ```Y``` y luego darle enter
+
 ## Carpeta `GentlemanTmux`
 
 Contiene configuraciones para el entorno de tmux, para instalarlo e utilizarlo se debe realizar la siguiente serie de pasos:
