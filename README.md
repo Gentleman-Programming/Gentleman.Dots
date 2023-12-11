@@ -426,6 +426,7 @@ end
    set -g @plugin 'tmux-plugins/tpm'
    set -g @plugin 'tmux-plugins/tmux-sensible'
    set -g @plugin 'tmux-plugins/tmux-resurrect'
+   set -g @plugin 'christoomey/vim-tmux-navigator'
    ```
    - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
 
@@ -434,6 +435,11 @@ end
     <Ctrl-b> + <Ctrl-s> para guardar el estado
     <Ctrl-b> + <Ctrl-r> para recuperar el estado
     ```
+
+   - Cabe destacar vim-tmux-navigator el cual permite cambiar entre splits de vim y tmux indistintivamente mediante la utilización de `<Ctrl-h/j/k/l>`:
+    ```bash
+    <Ctrl-b> + <Ctrl-s> para guardar el estado
+    <Ctrl-b> 
 
    ```bash
    set -g default-terminal "tmux-256color"
