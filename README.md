@@ -415,28 +415,21 @@ end
    Establece el shell predeterminado que Tmux utilizará como `/usr/bin/fish`.
 
 2. **Configuración de Plugins:**
-   ```bash
-   set -g @plugin 'catppuccin/tmux'
-   set -g @catppuccin_flavour 'macchiato'
-   ```
-   - Se utiliza el plugin 'catppuccin/tmux'.
-   - Se configura el sabor (`flavour`) del plugin como 'macchiato'.
-
+ - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
    ```bash
    set -g @plugin 'tmux-plugins/tpm'
    set -g @plugin 'tmux-plugins/tmux-sensible'
    set -g @plugin 'tmux-plugins/tmux-resurrect'
    set -g @plugin 'christoomey/vim-tmux-navigator'
    ```
-   - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
 
-   - Cabe destacar tmux-resurrect el cual guarda el estado de la session para que no lo perdamos, se utiliza mediante:
+ - Cabe destacar tmux-resurrect el cual guarda el estado de la session para que no lo perdamos, se utiliza mediante:
     ```bash
     <Ctrl-b> + <Ctrl-s> para guardar el estado
     <Ctrl-b> + <Ctrl-r> para recuperar el estado
     ```
 
-   - Cabe destacar vim-tmux-navigator el cual permite cambiar entre splits de vim y tmux indistintivamente mediante la utilización de `<Ctrl-h/j/k/l>`:
+ - Cabe destacar vim-tmux-navigator el cual permite cambiar entre splits de vim y tmux indistintivamente mediante la utilización de `<Ctrl-h/j/k/l>`:
     ```bash
     set -g @plugin 'christoomey/vim-tmux-navigator'
     # Smart pane switching with awareness of vim splits
@@ -450,7 +443,7 @@ end
     bind C-l send-keys 'C-l'
 
     ```
-   - Configuración del tipo de terminal predeterminado y algunas configuraciones adicionales para la terminación.
+ - Configuración del tipo de terminal predeterminado y algunas configuraciones adicionales para la terminación.
    ```bash
    set -g default-terminal "tmux-256color"
    set-option -ga terminal-overrides ",xterm*:Tc"
