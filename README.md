@@ -44,6 +44,16 @@ return {
 }
 ```
 
+#### Archivo `vim-tmux-navigation.lua`
+
+Este archivo configura el plugin [nvim-tmux-navigation.vim]([https://github.com/Exafunction/codeium.vim](https://github.com/alexghergh/nvim-tmux-navigation)), proporcionando atajos de teclado para navegar entre tmux y nvim de una forma idónea.
+
+```lua
+return {
+  "alexghergh/nvim-tmux-navigation",
+}
+```
+
 #### Archivo `colorscheme.lua`
 
 Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "kanagawa-dragon" con opciones específicas, también puedes elegir catppucin o modus. Para elegir un theme, solo cambiar la property ```colorscheme = "kanagawa-dragon"``` por el nombre del theme que quieras.
@@ -223,6 +233,12 @@ Este archivo define algunas keymaps personalizadas para mejorar la navegación y
 vim.keymap.set("i", "<C-d>", "<C-d>zz")
 vim.keymap.set("i", "<C-u>", "<C-u>zz")
 vim.keymap.set("i", "<C-b>", "<C-o>de")
+vim.keymap.set("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
+vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
+vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
+vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
+vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
+vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 ```
 
 ## Carpeta `GentlemanKitty`
