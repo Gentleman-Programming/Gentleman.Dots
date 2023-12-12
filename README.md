@@ -314,6 +314,10 @@ map cmd+6 goto_tab 6
 map cmd+7 goto_tab 7
 map cmd+8 goto_tab 8
 map cmd+9 goto_tab 9
+
+
+# make option key work for alt-f / alt-b
+macos_option_as_alt yes
 ```
 
 Este archivo proporciona la configuración del tema Kanagawa en Neovim, utilizando la fuente IosevkaTerm Nerd Font con un tamaño de fuente de 14.0. Además, define una paleta de colores cuidadosamente seleccionada para mejorar la experiencia de codificación. Los ajustes incluyen el estilo de pestañas para pestañas activas e inactivas, junto con asignaciones de teclas para la navegación rápida entre pestañas.
