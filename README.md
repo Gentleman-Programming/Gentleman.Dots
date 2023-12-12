@@ -448,17 +448,8 @@ end
  - Cabe destacar vim-tmux-navigator el cual permite cambiar entre splits de vim y tmux indistintivamente mediante la utilización de `<Ctrl-h/j/k/l>`:
     ```bash
     set -g @plugin 'christoomey/vim-tmux-navigator'
-    # Smart pane switching with awareness of vim splits
-    bind -n C-k run-shell 'tmux-vim-select-pane -U'
-    bind -n C-j run-shell 'tmux-vim-select-pane -D'
-    bind -n C-h run-shell 'tmux-vim-select-pane -L'
-    bind -n C-l run-shell 'tmux-vim-select-pane -R'
-    bind -n "C-\\" run-shell 'tmux-vim-select-pane -l'
-    
-    # Bring back clear screen under tmux prefix
-    bind C-l send-keys 'C-l'
-
     ```
+
  - Configuración del tipo de terminal predeterminado y algunas configuraciones adicionales para la terminación.
    ```bash
    set -g default-terminal "tmux-256color"
