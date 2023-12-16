@@ -1,25 +1,25 @@
 # Gentleman.Dots
 
-## Descripción
+## Description
 
-Este repositorio contiene configuraciones personalizadas para el entorno de desarrollo en Neovim, incluyendo plugins específicos y keymaps para mejorar la productividad. Se hace uso de [LazyVim](https://github.com/LazyVim/LazyVim) como un conjunto preconfigurado de plugins y ajustes para facilitar el uso de Neovim.
+This repository contains customized configurations for the Neovim development environment, including specific plugins and keymaps to enhance productivity. It makes use of [LazyVim](https://github.com/LazyVim/LazyVim) as a preconfigured set of plugins and settings to simplify the use of Neovim.
 
-## Carpeta `GentlemanNvim`
+## Folder `GentlemanNvim`
 
-### Transpaso de configuraciónes
+### Configuration Transfer
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 ```
 
-Reinicia Neovim para aplicar los cambios.
+Restart Neovim to apply the changes.
 
-### Carpeta `plugins`
+### Folder `plugins`
 
-#### Archivo `codeium.lua`
+#### File `codeium.lua`
 
-Este archivo configura el plugin [codeium.vim](https://github.com/Exafunction/codeium.vim), proporcionando atajos de teclado para aceptar, completar y limpiar sugerencias.
+This file configures the [codeium.vim](https://github.com/Exafunction/codeium.vim) plugin, providing keyboard shortcuts for accepting, completing, and clearing suggestions.
 
 ```lua
 return {
@@ -44,9 +44,9 @@ return {
 }
 ```
 
-#### Archivo `vim-tmux-navigation.lua`
+#### File `vim-tmux-navigation.lua`
 
-Este archivo configura el plugin [nvim-tmux-navigation.vim]([https://github.com/Exafunction/codeium.vim](https://github.com/alexghergh/nvim-tmux-navigation)), proporcionando atajos de teclado para navegar entre tmux y nvim de una forma idónea.
+This file configures the [nvim-tmux-navigation.vim](https://github.com/alexghergh/nvim-tmux-navigation) plugin, providing keyboard shortcuts for navigating between tmux and nvim in an optimal way.
 
 ```lua
 return {
@@ -54,10 +54,9 @@ return {
 }
 ```
 
-#### Archivo `colorscheme.lua`
+#### File `colorscheme.lua`
 
-Este archivo configura el esquema de colores utilizando el plugin [nvim](https://github.com/catppuccin/nvim). Se elige el tema "kanagawa-dragon" con opciones específicas, también puedes elegir catppucin o modus. Para elegir un theme, solo cambiar la property ```colorscheme = "kanagawa-dragon"``` por el nombre del theme que quieras.
-Si deseas tener un background transparente, haz ```:TransparentEnable``` y te quedará NVIM con una opacidad extra de acuerdo a la que pongas en tu terminal.
+This file configures the color scheme using the [nvim](https://github.com/catppuccin/nvim) plugin. The "kanagawa-dragon" theme with specific options is chosen. You can also choose catppucin or modus by changing the property `colorscheme = "kanagawa-dragon"`. If you want a transparent background, use `:TransparentEnable`, and NVIM will have extra opacity according to your terminal settings.
 
 ```lua
 return {
@@ -105,41 +104,40 @@ return {
     },
   },
 }
-
 ```
 
-#### Archivo `editor.lua`
+#### File `editor.lua`
 
-Este archivo configura varios plugins para mejorar la experiencia de edición, como resaltar patrones en archivos Markdown y herramientas de búsqueda avanzada con Telescope.
+This file configures various plugins to enhance the editing experience, such as highlighting patterns in Markdown files and advanced search tools with Telescope.
 
 ```lua
 1. **mini.hipatterns**:
    - Plugin: `echasnovski/mini.hipatterns`
-   - Evento: `BufReadPre`
-   - Configuración:
-     - Se configura un resaltador para los colores HSL. Los colores HSL en el código se resaltarán con un color de fondo que corresponda al color HSL.
+   - Event: `BufReadPre`
+   - Configuration:
+     - Configures a highlighter for HSL colors. HSL colors in the code will be highlighted with a background color corresponding to the HSL color.
 
 2. **git.nvim**:
    - Plugin: `dinhhuy258/git.nvim`
-   - Evento: `BufReadPre`
-   - Configuración:
-     - Se configuran los atajos de teclado para abrir una ventana de blame (`<Leader>gb`) y para abrir un archivo o carpeta en el repositorio de Git (`<Leader>go`).
+   - Event: `BufReadPre`
+   - Configuration:
+     - Configures keyboard shortcuts to open a blame window (`<Leader>gb`) and to open a file or folder in the Git repository (`<Leader>go`).
 
 3. **telescope.nvim**:
    - Plugin: `telescope.nvim`
-   - Dependencias: `nvim-telescope/telescope-fzf-native.nvim` y `nvim-telescope/telescope-file-browser.nvim`
-   - Configuración:
-     - Se configuran una serie de atajos de teclado para varias funcionalidades, como buscar archivos, buscar una cadena en el directorio actual, listar búferes abiertos, listar etiquetas de ayuda y reanudar el selector de telescope anterior.
-     - También se configura para abrir un navegador de archivos con el camino del búfer actual con `<Leader>sf`.
-   - Configuración adicional:
-     - Se configura para que los resultados se envuelvan, la estrategia de diseño sea horizontal, la posición del prompt sea en la parte superior y la estrategia de clasificación sea ascendente.
-     - Se configura para que el selector de diagnósticos tenga el tema "ivy", el modo inicial sea "normal" y el corte de vista previa sea 9999.
-     - Se configura para que el navegador de archivos tenga el tema "dropdown", secuestre netrw y se utilice en su lugar, y tenga sus propios mapeos.
+   - Dependencies: `nvim-telescope/telescope-fzf-native.nvim` and `nvim-telescope/telescope-file-browser.nvim`
+   - Configuration:
+     - Configures a series of keyboard shortcuts for various functionalities, such as searching for files, searching for a string in the current directory, listing open buffers, listing help tags, and resuming the previous telescope picker.
+     - Also configured to open a file browser with the path of the current buffer with `<Leader>sf`.
+   - Additional Configuration:
+     - Configures results to wrap, layout strategy to be horizontal, prompt position at the top, and sorting strategy to be ascending.
+     - Configures the diagnostics selector to have the "ivy" theme, initial mode to be "normal", and preview cutoff to be 9999.
+     - Configures the file browser to have the "dropdown" theme, hijack netrw and use it instead, and have its own mappings.
 ```
 
-#### Archivo `harpoon.lua`
+#### File `harpoon.lua`
 
-Este archivo configura el plugin [harpoon](https://github.com/ThePrimeagen/harpoon) para facilitar la navegación entre archivos marcados.
+This file configures the [harpoon](https://github.com/ThePrimeagen/harpoon) plugin to facilitate navigation between marked files.
 
 ```lua
 return {
@@ -150,17 +148,17 @@ return {
   },
   config = true,
   keys = {
-    { "<leader>hm", "<cmd>lua require('harpoon.mark').add_file()<cr>", desc = "Marcar archivo con harpoon" },
-    { "<leader>hn", "<cmd>lua require('harpoon.ui').nav_next()<cr>", desc = "Ir al siguiente marcador de harpoon" },
-    { "<leader>hp", "<cmd>lua require('harpoon.ui').nav_prev()<cr>", desc = "Ir al marcador de harpoon anterior" },
-    { "<leader>ha", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", desc = "Mostrar marcadores de harpoon" },
+    { "<leader>hm", "<cmd>lua require('harpoon.mark').add_file()<cr>", desc = "Mark file with harpoon" },
+    { "<leader>hn", "<cmd>lua require('harpoon.ui').nav_next()<cr>", desc = "Go to the next harpoon marker" },
+    { "<leader>hp", "<cmd>lua require('harpoon.ui').nav_prev()<cr>", desc = "Go to the previous harpoon marker" },
+    { "<leader>ha", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", desc = "Show harpoon markers" },
   },
 }
 ```
 
-#### Archivo `telescope.lua`
+#### File `telescope.lua`
 
-Este archivo configura el plugin [Telescope](https://github.com/nvim-telescope/telescope.nvim) para realizar búsquedas avanzadas en archivos y otros recursos.
+This file configures the [Telescope](https://github.com/nvim-telescope/telescope.nvim) plugin for advanced searches in files and other resources.
 
 ```lua
 return {
@@ -174,60 +172,60 @@ return {
 }
 ```
 
-#### Archivo `ui.lua`
+#### File `ui.lua`
 
-Este archivo configura varios plugins para mejorar la interfaz de usuario, incluyendo notificaciones, animaciones, líneas de buffers y líneas de estado.
+This file configures various plugins to enhance the user interface, including notifications, animations, buffer lines, and status lines.
 
 ```lua
-
 1. **Noice.nvim**:
    - Plugin: `folke/noice.nvim`
-   - Configuración:
-     - Se añade una ruta a la configuración de noice para filtrar mensajes de notificación con el texto "No information available". Estos mensajes se omitirán.
-     - Se establecen autocmds para detectar cuando la ventana de Neovim gana o pierde foco. Esto se utiliza para determinar si la interfaz está enfocada o no.
-     - Se añade una ruta adicional para mostrar notificaciones en el sistema cuando Neovim pierde el foco.
+   - Configuration:
+
+
+     - Adds a path to the noice configuration to filter notification messages with the text "No information available". These messages will be skipped.
+     - Sets autocmds to detect when the Neovim window gains or loses focus. This is used to determine if the interface is focused or not.
+     - Adds an additional path to display system notifications when Neovim loses focus.
 
 2. **Nvim-notify**:
    - Plugin: `rcarriga/nvim-notify`
-   - Configuración:
-     - Se establece el color de fondo y el tiempo de espera para las notificaciones.
+   - Configuration:
+     - Sets the background color and timeout for notifications.
 
 3. **Mini.animate**:
    - Plugin: `echasnovski/mini.animate`
-   - Configuración:
-     - Se deshabilita la animación de desplazamiento (`scroll`).
+   - Configuration:
+     - Disables the scroll animation (`scroll`).
 
 4. **Bufferline.nvim**:
    - Plugin: `akinsho/bufferline.nvim`
-   - Configuración:
-     - Se definen atajos de teclado para cambiar entre pestañas.
-     - Se configuran opciones para mostrar iconos y pestañas de cierre.
+   - Configuration:
+     - Defines keyboard shortcuts to switch between tabs.
+     - Configures options to show icons and close tabs.
 
 5. **Lualine.nvim**:
    - Plugin: `nvim-lualine/lualine.nvim`
-   - Configuración:
-     - Se configura el tema "catppuccin" para la línea de estado (statusline).
+   - Configuration:
+     - Configures the "catppuccin" theme for the status line.
 
 6. **Incline.nvim**:
    - Plugin: `b0o/incline.nvim`
-   - Configuración:
-     - Se configuran colores y opciones visuales para el resaltado de nombres de archivo en la línea de estado.
+   - Configuration:
+     - Configures colors and visual options for highlighting file names in the status line.
 
 7. **Zen-mode.nvim**:
    - Plugin: `folke/zen-mode.nvim`
-   - Configuración:
-     - Se configuran atajos de teclado para activar el "Modo Zen", que oculta elementos de la interfaz de usuario para centrarse en la edición de texto.
+   - Configuration:
+     - Configures keyboard shortcuts to activate "Zen Mode," which hides UI elements to focus on text editing.
 
 8. **Dashboard-nvim**:
    - Plugin: `nvimdev/dashboard-nvim`
-   - Configuración:
-     - Se establece un logo personalizado para el tablero de inicio de Neovim.
-
+   - Configuration:
+     - Sets a custom logo for the Neovim startup dashboard.
 ```
 
-### Archivo `keymaps.lua`
+#### File `keymaps.lua`
 
-Este archivo define algunas keymaps personalizadas para mejorar la navegación y manipulación del texto en modo insertar.
+This file defines some custom keymaps to improve navigation and text manipulation in insert mode.
 
 ```lua
 vim.keymap.set("i", "<C-d>", "<C-d>zz")
@@ -241,28 +239,28 @@ vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
 vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 ```
 
-## Carpeta `GentlemanKitty`
+## Folder `GentlemanKitty`
 
-### Archivo `kanagawa.nvim`
+### File `kanagawa.nvim`
 
-Este archivo configura el tema Kanagawa en la terminal Kitty, proporcionando ajustes visuales y atajos de teclado para la navegación entre pestañas.
+This file configures the Kanagawa theme in the Kitty terminal, providing visual adjustments and keyboard shortcuts for tab navigation.
 
 ```vim
 # vim:fileencoding=utf-8:foldmethod=marker
 
-#: Fuentes {{{
+#: Fonts {{{
 
 font_family      IosevkaTerm Nerd Font
 font_size 14.0
 
-#: Los colores de primer plano y fondo.
+#: Foreground and background colors.
 
 background_opacity 0.95
 # background_blur 0
 
-## nombre: Kanagawa
-## licencia: MIT
-## autor: Tommaso Laurenzi
+## name: Kanagawa
+## license: MIT
+## author: Tommaso Laurenzi
 ## upstream: https://github.com/rebelot/kanagawa.nvim/
 
 background #0d0c0c
@@ -272,7 +270,7 @@ selection_foreground #C8C093
 url_color #72A7BC
 cursor #C8C093
 
-# Pestañas
+# Tabs
 active_tab_background #1F1F28
 active_tab_foreground #C8C093
 inactive_tab_background  #1F1F28
@@ -289,7 +287,7 @@ color5 #957FB8
 color6 #6A9589
 color7 #C8C093
 
-# brillante
+# bright
 color8  #727169
 color9  #E82424
 color10 #98BB6C
@@ -300,10 +298,10 @@ color14 #7AA89F
 color15 #DCD7BA
 
 
-# colores extendidos
+# extended colors
 color16 #FFA066
 color17 #FF5D62
-  
+
 
 map cmd+1 goto_tab 1
 map cmd+2 goto_tab 2
@@ -320,103 +318,117 @@ map cmd+9 goto_tab 9
 macos_option_as_alt yes
 ```
 
-Este archivo proporciona la configuración del tema Kanagawa en Neovim, utilizando la fuente IosevkaTerm Nerd Font con un tamaño de fuente de 14.0. Además, define una paleta de colores cuidadosamente seleccionada para mejorar la experiencia de codificación. Los ajustes incluyen el estilo de pestañas para pestañas activas e inactivas, junto con asignaciones de teclas para la navegación rápida entre pestañas.
+This file provides the configuration for the Kanagawa theme in Neovim, using the IosevkaTerm Nerd Font with a font size of 14.0. It defines a carefully selected color palette to enhance the coding experience. The settings include tab styles for active and inactive tabs, along with key mappings for quick navigation between tabs.
 
-### Transpaso de configuraciones
+### Configuration Transfer
+
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanKitty/* ~/.config/kitty
 ```
 
-**Detalles del Tema:**
-- **Nombre:** Kanagawa
-- **Autor:** Tommaso Laurenzi
-- **Licencia:** MIT
-- **Repositorio Upstream:** [Kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim/)
+**Theme Details:**
 
-**Nota:** Las asignaciones de teclas proporcionadas para la navegación entre pestañas están configuradas como `cmd+1` hasta `cmd+9`.
+- **Name:** Kanagawa
+- **Author:** Tommaso Laurenzi
+- **License:** MIT
+- **Upstream Repository:** [Kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim/)
 
-## Carpeta `GentlemanFish`
+**Note:** The provided key mappings for navigating between tabs are configured as `cmd+1` to `cmd+9`.
 
-### Instalación de fish
+## Folder `GentlemanFish`
 
-#### HomeBrew (recomendado)
-```brew install fish```
+### Fish Installation
+
+#### HomeBrew (Recommended)
+
+`brew install fish`
 
 #### Ubuntu/Debian
+
 ```
 sudo apt-get update
 sudo apt-get install fish
 ```
+
 #### Fedora
-```sudo dnf install fish```
 
-### Instalación de Oh My Fish 
+`sudo dnf install fish`
 
-```curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish```
+### Oh My Fish Installation
 
-### Transpaso de Configuraciones
+`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish`
+
+### Configuration Transfer
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanFish/* ~/.config
 ```
 
-### Configura path para carpetas de trabajo del plugin PJ de Oh My Fish
+### Configure path for PJ plugin working folders in Oh My Fish
 
-Ve al archivo `~/.config/fish/fish_variables` y cambia la siguiente variable por la ruta a tu carpeta de trabajo con tus projectos:
+Go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
 
-```SETUVAR --export PROJECT_PATHS: /TuRutaDeTrabajo```
+`SETUVAR --export PROJECT_PATHS: /YourWorkingPath`
 
-### Elegir theme Kanagawa para Fish
+### Choose Kanagawa theme for Fish
 
-Ejecuta: ```fish_config theme save Kanagawa```
+Run: `fish_config theme save Kanagawa`
 
-Y cuando pregunte si deseas sobre escribir: ```Y``` y luego darle enter
+When asked if you want to overwrite: `Y` and then press enter
 
-## Carpeta `GentlemanTmux`
+## Folder `GentlemanTmux`
 
-Contiene configuraciones para el entorno de tmux, para instalarlo e utilizarlo se debe realizar la siguiente serie de pasos:
+Contains configurations for the tmux environment. To install and use it, follow these steps:
 
-### Instalación de Tmux
+### Tmux Installation
 
-#### HomeBrew (recomendado)
-```brew install tmux```
+#### HomeBrew (Recommended)
+
+`brew install tmux`
 
 #### Ubuntu/Debian
+
 ```
 sudo apt-get update
 sudo apt-get install tmux
 ```
+
 #### Fedora
-```sudo dnf -y install tmux```
 
+`sudo dnf -y install tmux`
 
-### Transpaso de configuraciones
+### Configuration Transfer
+
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanTmux/* ~/
 ```
 
-### Iniciar Tmux
+### Start Tmux
 
-#### Lo ponemos en marcha
+#### Launch it
+
 ```bash
 tmux
 ```
-#### Cargamos la configuración
+
+#### Load the configuration
+
 ```bash
 tmux source-file ~/.tmux.conf
 ```
 
-### Cargamos los plugins de Tmux
+### Load Tmux plugins
+
 ```bash
-<Ctrl-b> + I para cargar los plugins
+<Ctrl-b> + I to load the plugins
 ```
 
-### Si quieres que Tmux se ejecute de manera por defecto al abir la terminal
+### If you want Tmux to run by default when opening the terminal
 
-#### Abre `~/.config/fish/config.fish` y agrega la siguiente línea al final:
+#### Open `~/.config/fish/config.fish` and add the following line at the end:
 
 ```bash
 if status is-interactive
@@ -425,54 +437,65 @@ if status is-interactive
 end
 ```
 
-### Explicación de la configuración 
+### Configuration Explanation
 
+1. **Default Shell Configuration:**
 
-1. **Configuración del Shell Predeterminado:**
    ```bash
    set-option -g default-shell /usr/bin/fish
    ```
-   Establece el shell predeterminado que Tmux utilizará como `/usr/bin/fish`.
 
-2. **Configuración de Plugins:**
- - Otros plugins utilizados, como el Plugin Manager de Tmux (`tpm`) y plugins sensibles por defecto.
-   ```bash
-   set -g @plugin 'tmux-plugins/tpm'
-   set -g @plugin 'tmux-plugins/tmux-sensible'
-   set -g @plugin 'tmux-plugins/tmux-resurrect'
-   set -g @plugin 'christoomey/vim-tmux-navigator'
-   ```
+   Sets the default shell that Tmux will use as `/usr/bin/fish`.
 
- - Cabe destacar tmux-resurrect el cual guarda el estado de la session para que no lo perdamos, se utiliza mediante:
-    ```bash
-    <Ctrl-b> + <Ctrl-s> para guardar el estado
-    <Ctrl-b> + <Ctrl-r> para recuperar el estado
-    ```
+2. **Plugin Configuration:**
 
- - Cabe destacar vim-tmux-navigator el cual permite cambiar entre splits de vim y tmux indistintivamente mediante la utilización de `<Ctrl-h/j/k/l>`:
-    ```bash
-    set -g @plugin 'christoomey/vim-tmux-navigator'
-    ```
+- Other plugins used, such as the Tmux Plugin Manager (`tpm`) and default sensible plugins.
 
- - Configuración del tipo de terminal predeterminado y algunas configuraciones adicionales para la terminación.
-   ```bash
-   set -g default-terminal "tmux-256color"
-   set-option -ga terminal-overrides ",xterm*:Tc"
-  ``` 
+  ```bash
+  set -g @plugin 'tmux-plugins/tpm'
+  set -g @plugin 'tmux-plugins/tmux-sensible'
+  set -g @plugin 'tmux-plugins/tmux-resurrect'
+  set -g @plugin 'christoomey/vim-tmux-navigator'
+  ```
 
-3. **Configuración de la Apariencia de las Ventanas y Paneles:**
-   ```bash
-   set -g @catppuccin_window_left_separator "█"
-   set -g @catppuccin_window_right_separator "█ "
-   set -g @catppuccin_window_number_position "right"
-   set -g @catppuccin_window_middle_separator "  █"
-   set -g @catppuccin_window_default_fill "number"
-   set -g @catppuccin_window_current_fill "number"
-   set -g @catppuccin_window_current_text "#{pane_current_path}"
-   ```
-   - Configuración de la apariencia de las ventanas y paneles, incluidos separadores, posición de números y texto de la ventana actual.
+- Note tmux-resurrect, which saves the session state so that it's not lost, is used by:
 
-4. **Configuración de la Barra de Estado (Status Bar):**
+  ```bash
+  <Ctrl-b> + <Ctrl-s> to save the state
+  <Ctrl-b> + <Ctrl-r> to restore the state
+  ```
+
+- Note vim-tmux-navigator, which allows switching between splits in Vim and Tmux interchangeably using `<Ctrl-h/j/k/l>`:
+
+  ```bash
+  set -g @plugin 'christoomey/vim-tmux-navigator'
+  ```
+
+- Configuration of the default terminal type and additional settings for scrolling.
+  ```bash
+  set -g default-terminal "tmux-256color"
+  set-option -ga terminal-overrides ",xterm*:Tc"
+  ```
+
+````
+
+3. **Appearance Configuration for Windows and Panes:**
+ ```bash
+ set -g @catppuccin_window_left_separator "█"
+ set -g @catppuccin_window_right_separator "█
+
+ "
+ set -g @catppuccin_window_number_position "right"
+ set -g @catppuccin_window_middle_separator "  █"
+ set -g @catppuccin_window_default_fill "number"
+ set -g @catppuccin_window_current_fill "number"
+ set -g @catppuccin_window_current_text "#{pane_current_path}"
+````
+
+- Configuration of the appearance of windows and panes, including separators, number position, and text of the current window.
+
+4. **Status Bar Configuration:**
+
    ```bash
    set -g @catppuccin_status_modules "application session date_time"
    set -g @catppuccin_status_left_separator  ""
@@ -482,12 +505,13 @@ end
    set -g @catppuccin_status_connect_separator "no"
    set -g @catppuccin_directory_text "#{pane_current_path}"
    ```
-   - Configuración de módulos y apariencia de la barra de estado, incluidos separadores y texto del directorio actual.
 
-5. **Inicialización del Tmux Plugin Manager (TPM):**
+   - Configuration of modules and appearance of the status bar, including separators and text of the current directory.
+
+5. **Initialization of Tmux Plugin Manager (TPM):**
    ```bash
    run '~/.tmux/plugins/tpm/tpm'
    ```
-   - Inicia el Tmux Plugin Manager. Este comando debe mantenerse al final del archivo de configuración de Tmux.
+   - Initiates the Tmux Plugin Manager. This command should be kept at the end of the Tmux configuration file.
 
-¡Disfruta de tu nuevo entorno de desarrollo en Neovim!
+Enjoy your new Neovim development environment!
