@@ -448,9 +448,8 @@ sudo apt-get install tmux
 
 ### Configuration Transfer
 ```bash
-git clone https://github.com/Gentleman-
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 
-Programming/Gentleman.Dots
 Uncompress and remove after the "Plugins.zip" inside the folder
 
 cp -r Gentleman.Dots/GentlemanTmux/* ~/
