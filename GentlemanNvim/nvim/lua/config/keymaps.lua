@@ -17,10 +17,16 @@ vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 
 ----- Harpoon 2 -----
 local harpoon = require("harpoon")
+local oil = require("oil")
 
 -- REQUIRED
 harpoon:setup()
+oil.setup()
 -- REQUIRED
+
+-----  OIL -----
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+-----  OIL -----
 
 vim.keymap.set("n", "<leader>a", function()
   harpoon:list():append()

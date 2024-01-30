@@ -49,10 +49,23 @@ return {
         end,
       })
 
+      opts.lsp.hover = {
+        enabled = true,
+        silent = true,
+        view = nil,
+      }
       opts.presets.lsp_doc_border = true
     end,
   },
-
+  {
+    "amrbashir/nvim-docs-view",
+    lazy = true,
+    cmd = "DocsViewToggle",
+    opts = {
+      position = "right",
+      width = 60,
+    },
+  },
   {
     "rcarriga/nvim-notify",
     opts = {
@@ -86,6 +99,18 @@ return {
         -- separator_style = "slant",
         show_buffer_close_icons = false,
         show_close_icon = false,
+      },
+    },
+  },
+
+  -- statusline
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    opts = {
+      options = {
+        -- globalstatus = false,
+        theme = "kanagawa",
       },
     },
   },

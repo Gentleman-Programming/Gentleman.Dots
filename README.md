@@ -151,9 +151,25 @@ return {
 }
 ```
 
+#### File `oil.lua`
+
+A vim-vinegar like file explorer that lets you edit your filesystem like a normal Neovim buffer.
+
+```lua
+return {
+  "stevearc/oil.nvim",
+  opts = {},
+  -- Optional dependencies
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+}
+
+-- to use press "-"
+```
+
 #### File `telescope.lua`
 
 This file configures the [Telescope](https://github.com/nvim-telescope/telescope.nvim) plugin for advanced searches in files and other resources.
+It also includes the "telescope-life-grep-args" plugin which adds the possibility of adding arguments to live grep ";r"
 
 ```lua
 return {
@@ -164,6 +180,17 @@ return {
       layout_config = { preview_cutoff = 6 },
     },
   },
+  dependencies = {
+    {
+      "nvim-telescope/telescope-live-grep-args.nvim",
+      -- This will not install any breaking changes.
+      -- For major updates, this must be adjusted manually.
+      version = "^1.0.0",
+    },
+  },
+  config = function()
+    require("telescope").load_extension("live_grep_args")
+  end,
 }
 ```
 
@@ -242,10 +269,16 @@ vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 
 ----- Harpoon 2 -----
 local harpoon = require("harpoon")
+local oil = require("oil")
 
 -- REQUIRED
 harpoon:setup()
+oil.setup()
 -- REQUIRED
+
+-----  OIL -----
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+-----  OIL -----
 
 vim.keymap.set("n", "<leader>a", function()
   harpoon:list():append()
