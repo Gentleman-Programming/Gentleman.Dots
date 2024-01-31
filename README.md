@@ -267,19 +267,20 @@ vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
 vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
 vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 
------ Harpoon 2 -----
+-- REQUIRED
 local harpoon = require("harpoon")
 local oil = require("oil")
-
--- REQUIRED
 harpoon:setup()
 oil.setup()
 -- REQUIRED
 
 -----  OIL -----
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
------  OIL -----
 
+-- Delete all buffers but the current one --
+vim.keymap.set("i", "<C-q>", ':%bdelete|edit #|normal`"', { desc = "Delete other buffers" })
+
+----- HARPOON 2 -----
 vim.keymap.set("n", "<leader>a", function()
   harpoon:list():append()
 end, { desc = "Add harpoon mark" })
@@ -480,6 +481,7 @@ sudo apt-get install tmux
 `sudo dnf -y install tmux`
 
 ### Configuration Transfer
+
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 
