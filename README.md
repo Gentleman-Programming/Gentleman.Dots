@@ -278,7 +278,12 @@ oil.setup()
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 -- Delete all buffers but the current one --
-vim.keymap.set("i", "<C-q>", ':%bdelete|edit #|normal`"', { desc = "Delete other buffers" })
+vim.keymap.set(
+  "n",
+  "<leader>bq",
+  '<Esc>:%bdelete|edit #|normal`"<Return>',
+  { desc = "Delete other buffers but the current one" }
+)
 
 ----- HARPOON 2 -----
 vim.keymap.set("n", "<leader>a", function()
