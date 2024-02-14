@@ -54,6 +54,18 @@ return {
 }
 ```
 
+#### File `typescript-tools.lua`
+
+This file configures the [typescript-tools.nvim](https://github.com/pmizio/typescript-tools.nvim) plugin, providing native Tsserver communication protocol with pure lua.
+
+```lua
+return {
+  "pmizio/typescript-tools.nvim",
+  dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  opts = {},
+}
+```
+
 #### File `colorscheme.lua`
 
 This file configures the color scheme using the [nvim](https://github.com/catppuccin/nvim) plugin. The "kanagawa-dragon" theme with specific options is chosen. You can also choose catppucin or modus by changing the property `colorscheme = "kanagawa-dragon"`. If you want a transparent background, use `:TransparentEnable`, and NVIM will have extra opacity according to your terminal settings.
