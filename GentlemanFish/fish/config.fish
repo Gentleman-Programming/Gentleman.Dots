@@ -4,12 +4,15 @@ end
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-#
+
+# Uncommment to activate Tmux as default
+
 # if status is-interactive
 #     and not set -q TMUX
 #     exec tmux
 # end
 
+# Comment if you want to use Tmux
 if set -q ZELLIJ
 else
     zellij
