@@ -645,4 +645,14 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanZellij/* ~/.config
 ```
 
+### Plugin Explanation
+
+#### zellij_forgot.wasm
+
+Do you forget your keybindings ? no worries just press `Alt + y` and you can search the one you are missing !
+
+#### zjstatus.wasm
+
+Custom status bar which has been used for this configuration, you can see its use over the `zellij/layouts/work.kdl` file.
+
 Enjoy your new Neovim development environment!
