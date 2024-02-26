@@ -478,7 +478,7 @@ When asked if you want to overwrite: `Y` and then press enter
 
 ## Folder `GentlemanTmux`
 
-Contains configurations for the tmux environment. To install and use it, follow these steps:
+Contains configurations for the Tmux environment. To install and use it, follow these steps:
 
 ### Tmux Installation
 
@@ -614,5 +614,35 @@ end
    run '~/.tmux/plugins/tpm/tpm'
    ```
    - Initiates the Tmux Plugin Manager. This command should be kept at the end of the Tmux configuration file.
+
+## Folder `GentlemanZellij`
+
+Contains configurations for the Zellij environment made in Rust. To install and use it, follow these steps:
+
+### Zellij Installation
+
+#### HomeBrew (Recommended)
+
+`brew install zellij`
+
+#### Cargo
+
+```
+Windows:
+https://win.rustup.rs/
+
+Linux / OsX:
+curl https://sh.rustup.rs -sSf | sh -- install cargo
+
+Then do:
+cargo install --locked zellij -- install zellij
+```
+
+### Configuration Transfer
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanZellij/* ~/.config
+```
 
 Enjoy your new Neovim development environment!
