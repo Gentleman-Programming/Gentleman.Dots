@@ -15,23 +15,6 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
-## File `.wezterm.lua`
-Configuration with fixes and colors to use Wezterm as your default terminal !
-
-### Configuration Transfer
-
-```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-
-Mac / Linux
-cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
-
-Windows
-cp -r Gentleman.Dots/.wezterm.lua %userprofile%
-```
-
-
-
 ### Folder `plugins`
 
 #### File `codeium.lua`
@@ -671,5 +654,20 @@ Do you forget your keybindings ? no worries just press `Alt + y` and you can sea
 #### zjstatus.wasm
 
 Custom status bar which has been used for this configuration, you can see its use over the `zellij/layouts/work.kdl` file.
+
+## File `.wezterm.lua`
+Configuration with fixes and colors to use Wezterm as your default terminal !
+
+### Configuration Transfer
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+
+Mac / Linux
+cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
+
+Windows
+cp -r Gentleman.Dots/.wezterm.lua %userprofile%
+```
 
 Enjoy your new Neovim development environment!
