@@ -658,6 +658,12 @@ Custom status bar which has been used for this configuration, you can see its us
 ## File `.wezterm.lua`
 Configuration with fixes and colors to use Wezterm as your default terminal !
 
+### Install WezTerm
+
+```bash
+https://wezfurlong.org/wezterm/installation.html
+```
+
 ### Configuration Transfer
 
 ```bash
