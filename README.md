@@ -15,6 +15,23 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
+## File `.wezterm.lua`
+Configuration with fixes and colors to use Wezterm as your default terminal !
+
+### Configuration Transfer
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+
+Mac / Linux
+cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
+
+Windows
+cp -r Gentleman.Dots/.wezterm.lua %userprofile%
+```
+
+
+
 ### Folder `plugins`
 
 #### File `codeium.lua`
