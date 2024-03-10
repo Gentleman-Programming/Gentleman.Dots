@@ -20,17 +20,21 @@ config.window_background_gradient = {
 config.window_background_opacity = 0.95
 config.font = wezterm.font 'IosevkaTerm NFM'
 
--- For windows -- 
+-- Only show one tab if needed --
+
+config.hide_tab_bar_if_only_one_tab = true
+
+-- For Linux / OSX (uncomment if needed)
+
+-- config.default_prog = { '/home/linuxbrew/.linuxbrew/bin/fish', '-l' }
+
+-- For windows -- (comment if you want to use Linux / OSX)
 
 -- Start directly in WSL
 config.default_domain = 'WSL:Ubuntu'
 
 -- Full usage of GPU for rendering
 config.front_end = "WebGpu"
-
--- Only show one tab if needed --
-
-config.hide_tab_bar_if_only_one_tab = true
 
 -- Change fps to your monitor ones --
 config.max_fps = 120
