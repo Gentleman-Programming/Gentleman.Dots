@@ -10,7 +10,7 @@ This repository contains customized configurations for the Neovim development en
 
 ```bash
 wsl --install
-wsl --set-default-version
+wsl --set-default-version 2
 ```
 
 ### Install HomeBrew
