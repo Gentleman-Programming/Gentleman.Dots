@@ -11,7 +11,7 @@ This repository contains customized configurations for the Neovim development en
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### Install build-essencials
+### Install build-essencials for LINUX
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
