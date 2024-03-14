@@ -6,10 +6,11 @@ This repository contains customized configurations for the Neovim development en
 
 ## Previous Steps
 
-### Install WSL
+### Install WSL (`https://learn.microsoft.com/en-us/windows/wsl/install`)
 
 ```bash
-https://learn.microsoft.com/en-us/windows/wsl/install
+wsl --install
+wsl --set-default-version
 ```
 
 ### Install HomeBrew
