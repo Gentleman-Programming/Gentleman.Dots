@@ -6,6 +6,12 @@ This repository contains customized configurations for the Neovim development en
 
 ## Previous Steps
 
+### Install WSL
+
+```bash
+https://learn.microsoft.com/en-us/windows/wsl/install
+```
+
 ### Install HomeBrew
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
