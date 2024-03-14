@@ -4,6 +4,85 @@
 
 This repository contains customized configurations for the Neovim development environment, including specific plugins and keymaps to enhance productivity. It makes use of [LazyVim](https://github.com/LazyVim/LazyVim) as a preconfigured set of plugins and settings to simplify the use of Neovim.
 
+## Previous Steps
+
+### Install HomeBrew
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### Install build-essencials
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+```
+
+### Include HomeBrew Path
+```bash
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/deck/.bashrc
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+```
+
+### Install NODE & NPM
+
+```bash
+brew install node
+brew install npm
+```
+
+### Install GIT
+
+```bash
+brew install git
+```
+
+### Install FISH
+
+```bash
+brew install fish
+```
+
+### Install OhMyFish
+
+```bash
+curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+```
+
+
+### Install the following dependencies
+
+```bash
+brew install gcc
+brew install fzf
+brew install fd
+brew install ripgrep
+```
+
+### Install Zellij
+
+```bash
+brew install zellij
+```
+
+### Install WezTerm
+
+```bash
+https://wezfurlong.org/wezterm/index.html
+```
+
+#### Create WezTerm config folder
+
+```bash
+cd ~/.config
+mkdir wezterm
+cd wezterm
+mkdir wezterm.lua
+```
+
+### Install Iosevka Term Nerd Font
+`https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip`
+
 ## Folder `GentlemanNvim`
 
 ### Configuration Transfer
@@ -440,6 +519,8 @@ cp -r Gentleman.Dots/GentlemanKitty/* ~/.config/kitty
 
 #### HomeBrew (Recommended)
 
+Install HomeBrew: `https://brew.sh/`
+
 `brew install fish`
 
 #### Ubuntu/Debian
@@ -466,9 +547,13 @@ cp -r Gentleman.Dots/GentlemanFish/* ~/.config
 
 ### Configure path for PJ plugin working folders in Oh My Fish
 
+Run `omf install pj`
+
 Go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
 
 `SETUVAR --export PROJECT_PATHS: /YourWorkingPath`
+
+More information: `https://github.com/oh-my-fish/plugin-pj`
 
 ### Choose Kanagawa theme for Fish
 
