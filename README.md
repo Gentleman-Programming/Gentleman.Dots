@@ -25,6 +25,11 @@ sudo apt-get upgrade
 sudo apt-get install build-essential
 ```
 
+### Install NVIM
+```bash
+brew install nvim
+```
+
 ### Include HomeBrew Path
 ```bash
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/deck/.bashrc
