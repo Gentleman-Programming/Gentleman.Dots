@@ -83,18 +83,6 @@ brew install zellij
 https://wezfurlong.org/wezterm/index.html
 ```
 
-#### Create WezTerm config folder
-
-```bash
-cd ~/.config
-mkdir wezterm
-cd wezterm
-mkdir wezterm.lua
-
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/.wezterm ~/.config/wezterm/wezterm.lua
-```
-
 ### Install Iosevka Term Nerd Font
 `https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip`
 
@@ -765,6 +753,17 @@ https://wezfurlong.org/wezterm/installation.html
 ```
 
 ### Configuration Transfer
+
+## Create WezTerm config folder for LINUX
+
+```bash
+cd ~/.config
+mkdir wezterm
+cd wezterm
+mkdir wezterm.lua
+```
+
+## Transfer
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
