@@ -90,6 +90,9 @@ cd ~/.config
 mkdir wezterm
 cd wezterm
 mkdir wezterm.lua
+
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/.wezterm ~/.config/wezterm/wezterm.lua
 ```
 
 ### Install Iosevka Term Nerd Font
