@@ -772,6 +772,7 @@ Mac / Linux
 cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
 
 Windows
+RUN ON POWESHELL
 cp -r Gentleman.Dots/.wezterm.lua %userprofile%
 ```
 
