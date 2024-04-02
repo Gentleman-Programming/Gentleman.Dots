@@ -18,6 +18,12 @@ wsl --set-default-version 2
 set install_script (curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)
 ```
 
+#### Include HomeBrew Path
+```bash
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/deck/.bashrc
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+```
+
 ### Install build-essencials for LINUX
 ```bash
 sudo apt-get update
@@ -28,12 +34,6 @@ sudo apt-get install build-essential
 ### Install NVIM
 ```bash
 brew install nvim
-```
-
-### Include HomeBrew Path
-```bash
-(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/deck/.bashrc
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 
 ### Install NODE & NPM
