@@ -99,6 +99,16 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
+```bash
+If you see an error like:
+ES108: Error executing lua ....... :BufLea.....
+
+do inside NVIM:
+
+:TSInstall c help lua vim
+:TSUpdate
+```
+
 ### Folder `plugins`
 
 #### File `codeium.lua`
