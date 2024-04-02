@@ -20,7 +20,9 @@ set install_script (curl -fsSL https://raw.githubusercontent.com/Homebrew/instal
 
 #### Include HomeBrew Path
 ```bash
-(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/deck/.bashrc
+Change 'YourUserName' with the device username
+
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/YourUserName/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 
