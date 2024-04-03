@@ -55,6 +55,13 @@ brew install git
 
 ```bash
 brew install fish
+
+// set as default:
+
+which fish
+// this will return a path
+
+sudo chsh -s wichFishResultingPath
 ```
 
 ### Install OhMyFish
