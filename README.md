@@ -59,8 +59,12 @@ brew install fish
 // set as default:
 
 which fish
-// this will return a path
+// this will return a path, let‘s call it whichFishResultingPath
 
+// add it as an available shell
+echo whichFishResultingPath | sudo tee -a /etc/shells
+
+// set it as default
 sudo chsh -s wichFishResultingPath
 ```
 
