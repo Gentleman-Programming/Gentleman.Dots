@@ -166,7 +166,7 @@ return {
 
 #### File `markdown-preview.lua`
 
-This file configures the plugin. To preview a mkd file, do `:MarkdownPreview`.
+This file configures the plugin [markdown-preview](https://github.com/iamcco/markdown-preview.nvim). To preview a mkd file, do `:MarkdownPreview`.
 
 ```lua
 return {
@@ -176,6 +176,16 @@ return {
   build = function()
     vim.fn["mkdp#util#install"]()
   end,
+}
+```
+
+#### File `fugitive.lua`
+
+This file configures the plugin [vim-fugitive](https://github.com/tpope/vim-fugitive) for git management without leaving NVIM.
+
+```lua
+return {
+  "https://github.com/tpope/vim-fugitive",
 }
 ```
 
