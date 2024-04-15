@@ -125,8 +125,8 @@ return {
       require("incline").setup({
         highlight = {
           groups = {
-            InclineNormal = { guibg = colors.palette.sumiInk0, guifg = colors.palette.surimiOrange },
-            InclineNormalNC = { guifg = colors.palette.sumiInk0, guibg = colors.palette.surimiOrange },
+            InclineNormal = { guibg = colors.palette.sumiInk0, guifg = colors.palette.dragonRed },
+            InclineNormalNC = { guifg = colors.palette.sumiInk0, guibg = colors.palette.dragonRed },
           },
         },
         window = { margin = { vertical = 0, horizontal = 1 } },
