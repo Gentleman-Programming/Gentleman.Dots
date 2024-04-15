@@ -164,6 +164,21 @@ return {
 }
 ```
 
+#### File `markdown-preview.lua`
+
+This file configures the plugin. To preview a mkd file, do `:MarkdownPreview`.
+
+```lua
+return {
+  "iamcco/markdown-preview.nvim",
+  cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+  ft = { "markdown" },
+  build = function()
+    vim.fn["mkdp#util#install"]()
+  end,
+}
+```
+
 #### File `colorscheme.lua`
 
 This file configures the color scheme using the [nvim](https://github.com/catppuccin/nvim) plugin. The "kanagawa-dragon" theme with specific options is chosen. You can also choose catppucin or modus by changing the property `colorscheme = "kanagawa-dragon"`. If you want a transparent background, use `:TransparentEnable`, and NVIM will have extra opacity according to your terminal settings.
