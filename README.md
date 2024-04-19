@@ -89,6 +89,19 @@ brew install ripgrep
 ```bash
 brew install zellij
 ```
+If you find any issues with this method, use "Cargo" to install Zellij
+
+```bash
+// if installed with brew:
+brew uninstall zellij 
+
+// Install Rust (needed for Cargo)
+curl https://sh.rustup.rs -sSf | sh
+
+// Install Zellij using cargo
+cargo install --locked zelli
+
+```
 
 ### Install WezTerm
 
