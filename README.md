@@ -15,6 +15,9 @@ wsl --set-default-version 2
 
 ### Install HomeBrew
 ```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+// if it doesn't work try using
 set install_script (curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)
 ```
 
