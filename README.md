@@ -831,6 +831,10 @@ cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
 Windows
 RUN ON POWESHELL
 cp -r Gentleman.Dots/.wezterm.lua %userprofile%
+
+Mac
+cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
+Then you need to change the file name to "wezterm.lua" without the dot at the start
 ```
 
 Enjoy your new Neovim development environment!
