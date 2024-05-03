@@ -832,6 +832,19 @@ Windows
 RUN ON POWESHELL
 cp -r Gentleman.Dots/.wezterm.lua %userprofile%
 
+
+Uncomment the lines under -- activate ONLY if windows --
+
+-- config.default_domain = 'WSL:Ubuntu'
+-- config.front_end = "WebGpu"
+-- config.max_fps = 120
+-- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
+--	if gpu.backend == "Vulkan" then
+-- 		config.webgpu_preferred_adapter = gpu
+-- 		break
+-- 	end
+-- end
+
 Mac
 cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
 Then you need to change the file name to "wezterm.lua" without the dot at the start
