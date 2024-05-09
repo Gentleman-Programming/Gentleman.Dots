@@ -102,7 +102,7 @@ brew uninstall zellij
 curl https://sh.rustup.rs -sSf | sh
 
 // Install Zellij using cargo
-cargo install --locked zelli
+cargo install --locked zellij
 
 ```
 
