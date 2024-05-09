@@ -811,7 +811,7 @@ https://wezfurlong.org/wezterm/installation.html
 
 ### Configuration Transfer
 
-## Create WezTerm config folder for LINUX
+#### Create WezTerm config folder for LINUX
 
 ```bash
 cd ~/.config
@@ -820,7 +820,7 @@ cd wezterm
 mkdir wezterm.lua
 ```
 
-## Transfer
+#### Transfer
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
