@@ -811,7 +811,7 @@ https://wezfurlong.org/wezterm/installation.html
 
 ### Configuration Transfer
 
-#### Create WezTerm config folder for LINUX
+#### Create WezTerm config folder if MAC / LINUX
 
 ```bash
 cd ~/.config
