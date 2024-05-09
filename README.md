@@ -770,7 +770,7 @@ Contains configurations for the Zellij environment made in Rust. To install and 
 
 `brew install zellij`
 
-#### Cargo
+#### Cargo - if you find any issues with Zellij after installing with HomeBrew
 
 ```
 Windows:
