@@ -1,9 +1,9 @@
 {
   "extras": [
-
+    "lazyvim.plugins.extras.coding.mini-ai"
   ],
   "news": {
-    "NEWS.md": "2123"
+    "NEWS.md": "4828"
   },
-  "version": 2
+  "version": 3
 }
