@@ -89,6 +89,7 @@ return {
   {
     "akinsho/bufferline.nvim",
     event = "VeryLazy",
+    enabled = false,
     keys = {
       { "<Tab>", "<Cmd>BufferLineCycleNext<CR>", desc = "Next tab" },
       { "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", desc = "Prev tab" },
@@ -154,6 +155,7 @@ return {
         gitsigns = true,
         tmux = true,
         kitty = { enabled = false, font = "+2" },
+        twilight = { enabled = true },
       },
     },
     keys = { { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" } },

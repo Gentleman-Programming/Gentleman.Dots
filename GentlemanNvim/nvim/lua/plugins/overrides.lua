@@ -30,6 +30,16 @@ return {
   -- disable trouble
   { "folke/trouble.nvim", enabled = false },
 
+  -- which key
+  {
+    "folke/which-key.nvim",
+    opts = {
+      defaults = {
+        ["<leader>o"] = { name = "Obsidian" },
+      },
+    },
+  },
+
   -- add symbols-outline
   {
     "simrat39/symbols-outline.nvim",

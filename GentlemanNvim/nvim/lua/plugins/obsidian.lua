@@ -15,6 +15,14 @@ return {
       nvim_cmp = true,
       min_chars = 2,
     },
+    notes_subdir = "limbo",
+    new_notes_location = "limbo",
+    attachments = {
+      img_folder = "files",
+    },
+    daily_notes = {
+      template = "note",
+    },
     mappings = {
       -- "Obsidian follow"
       ["<leader>of"] = {
@@ -46,7 +54,7 @@ return {
     },
     note_frontmatter_func = function(note)
       -- This is equivalent to the default frontmatter function.
-      local out = { id = note.id, aliases = note.aliases, tags = note.tags, area = "", project = "" }
+      local out = { id = note.id, aliases = note.aliases, tags = note.tags }
 
       -- `note.metadata` contains any manually added fields in the frontmatter.
       -- So here we just make sure those fields are kept in the frontmatter.
@@ -78,7 +86,7 @@ return {
     templates = {
       subdir = "Templates",
       date_format = "%Y-%m-%d-%a",
-      time_format = "%H:%M",
+      gtime_format = "%H:%M",
       tags = "",
     },
   },

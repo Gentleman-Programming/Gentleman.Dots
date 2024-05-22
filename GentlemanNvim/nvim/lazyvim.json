@@ -1,9 +1,15 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.coding.mini-ai"
+    "lazyvim.plugins.extras.dap.core",
+    "lazyvim.plugins.extras.coding.mini-surround",
+    "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.lang.go",
+    "lazyvim.plugins.extras.lang.markdown",
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.util.mini-hipatterns"
   ],
   "news": {
-    "NEWS.md": "4828"
+    "NEWS.md": "4964"
   },
-  "version": 3
+  "version": 4
 }
