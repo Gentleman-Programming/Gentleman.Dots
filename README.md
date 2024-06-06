@@ -14,6 +14,7 @@ wsl --set-default-version 2
 ```
 
 ### Install HomeBrew
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -22,6 +23,7 @@ set install_script (curl -fsSL https://raw.githubusercontent.com/Homebrew/instal
 ```
 
 #### Include HomeBrew Path
+
 ```bash
 Change 'YourUserName' with the device username
 
@@ -30,6 +32,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 
 ### Install build-essencials for LINUX
+
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
@@ -37,6 +40,7 @@ sudo apt-get install build-essential
 ```
 
 ### Install NVIM
+
 ```bash
 brew install nvim
 ```
@@ -77,7 +81,6 @@ sudo chsh -s wichFishResultingPath
 curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
 ```
 
-
 ### Install the following dependencies
 
 ```bash
@@ -92,6 +95,7 @@ brew install ripgrep
 ```bash
 brew install zellij
 ```
+
 If you find any issues with this method, use "Cargo" to install Zellij
 
 ```bash
@@ -113,6 +117,7 @@ https://wezfurlong.org/wezterm/index.html
 ```
 
 ### Install Iosevka Term Nerd Font
+
 `https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip`
 
 ## Folder `GentlemanNvim`
@@ -126,7 +131,8 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
-### IMPORTANT!
+### IMPORTANT
+
 Some people is having issues when running NVIM after doing the transfer script, the way to fix them is to remove ```harpoon.lua```, open NVIM, and then add the plugin again.
 
 ### Folder `plugins`
@@ -207,7 +213,7 @@ return {
 
 #### File `colorscheme.lua`
 
-This file configures the color scheme using the [nvim](https://github.com/catppuccin/nvim) plugin. The "kanagawa-dragon" theme with specific options is chosen. You can also choose catppucin or modus by changing the property `colorscheme = "kanagawa-dragon"`. If you want a transparent background, use `:TransparentEnable`, and NVIM will have extra opacity according to your terminal settings.
+This file configures the color scheme using the [nvim](https://github.com/catppuccin/nvim) plugin. The "everforest" theme with specific options is chosen. You can also choose catppucin or modus by changing the property `colorscheme = "everforest"`. If you want a transparent background, use `:TransparentEnable`, and NVIM will have extra opacity according to your terminal settings.
 
 ```lua
 return {
@@ -240,18 +246,65 @@ return {
   {
     "rebelot/kanagawa.nvim",
     name = "kanagawa",
+    priority = 1000,
     opts = {
-      transparent_background = true,
+      overrides = function(colors)
+        local theme = colors.theme
+        return {
+          NormalFloat = { bg = "none" },
+          FloatBorder = { bg = "none" },
+          FloatTitle = { bg = "none" },
+
+          NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+
+          LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+          MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+
+          TelescopeTitle = { fg = theme.ui.special, bold = true },
+          TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+          TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+          TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+          TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+          TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+          TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+
+          Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
+          PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 },
+          PmenuSbar = { bg = theme.ui.bg_m1 },
+          PmenuThumb = { bg = theme.ui.bg_p2 },
+        }
+      end,
     },
+  },
+  { "rose-pine/neovim", name = "rose-pine" },
+  { "nyoom-engineering/oxocarbon.nvim", name = "oxocarbon" },
+  { "rktjmp/lush.nvim", dependencies = { "mcchrish/zenbones.nvim" } },
+  {
+    "scottmckendry/cyberdream.nvim",
+    lazy = false,
     priority = 1000,
   },
+  { "NTBBloodbath/doom-one.nvim", name = "doom-one" },
+  { "AhmedAbdulrahman/aylin.vim", name = "aylin" },
   {
     "xiyaowong/transparent.nvim",
   },
   {
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    priority = 1000, -- make sure to load this before all the other start plugins
+    -- Optional; default configuration will be used if setup isn't called.
+    config = function()
+      require("everforest").setup({
+        -- Your config here
+      })
+    end,
+  },
+  {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "kanagawa-dragon",
+      colorscheme = "everforest",
     },
   },
 }
@@ -478,7 +531,7 @@ vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
 
 ## Folder `GentlemanKitty`
 
-### File `kanagawa.nvim`
+### File `kitty.conf`
 
 This file configures the Kanagawa theme in the Kitty terminal, providing visual adjustments and keyboard shortcuts for tab navigation.
 
@@ -621,6 +674,12 @@ Run: `fish_config theme save Kanagawa`
 
 When asked if you want to overwrite: `Y` and then press enter
 
+### Choose Everforest theme for Fish
+
+Run: `fish_config theme save Everforest`
+
+When asked if you want to overwrite: `Y` and then press enter
+
 ## Folder `GentlemanTmux`
 
 Contains configurations for the Tmux environment. To install and use it, follow these steps:
@@ -674,7 +733,7 @@ tmux source-file ~/.tmux.conf
 
 ### If you want Tmux to run by default when opening the terminal
 
-#### Open `~/.config/fish/config.fish` and add the following line at the end:
+#### Open `~/.config/fish/config.fish` and add the following line at the end
 
 ```bash
 if status is-interactive
@@ -718,6 +777,7 @@ end
   ```
 
 - Configuration of the default terminal type and additional settings for scrolling.
+
   ```bash
   set -g default-terminal "tmux-256color"
   set-option -ga terminal-overrides ",xterm*:Tc"
@@ -755,9 +815,11 @@ end
    - Configuration of modules and appearance of the status bar, including separators and text of the current directory.
 
 5. **Initialization of Tmux Plugin Manager (TPM):**
+
    ```bash
    run '~/.tmux/plugins/tpm/tpm'
    ```
+
    - Initiates the Tmux Plugin Manager. This command should be kept at the end of the Tmux configuration file.
 
 ## Folder `GentlemanZellij`
@@ -801,6 +863,7 @@ Do you forget your keybindings ? no worries just press `Alt + y` and you can sea
 Custom status bar which has been used for this configuration, you can see its use over the `zellij/layouts/work.kdl` file.
 
 ## File `.wezterm.lua`
+
 Configuration with fixes and colors to use Wezterm as your default terminal !
 
 ### Install WezTerm
@@ -839,10 +902,10 @@ Uncomment the lines under -- activate ONLY if windows --
 -- config.front_end = "WebGpu"
 -- config.max_fps = 120
 -- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
---	if gpu.backend == "Vulkan" then
--- 		config.webgpu_preferred_adapter = gpu
--- 		break
--- 	end
+-- if gpu.backend == "Vulkan" then
+--   config.webgpu_preferred_adapter = gpu
+--   break
+--  end
 -- end
 
 Mac
