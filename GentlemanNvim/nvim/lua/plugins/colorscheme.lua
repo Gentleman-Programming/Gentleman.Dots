@@ -58,13 +58,35 @@ return {
       end,
     },
   },
+  { "rose-pine/neovim", name = "rose-pine" },
+  { "nyoom-engineering/oxocarbon.nvim", name = "oxocarbon" },
+  { "rktjmp/lush.nvim", dependencies = { "mcchrish/zenbones.nvim" } },
+  {
+    "scottmckendry/cyberdream.nvim",
+    lazy = false,
+    priority = 1000,
+  },
+  { "NTBBloodbath/doom-one.nvim", name = "doom-one" },
+  { "AhmedAbdulrahman/aylin.vim", name = "aylin" },
   {
     "xiyaowong/transparent.nvim",
   },
   {
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    priority = 1000, -- make sure to load this before all the other start plugins
+    -- Optional; default configuration will be used if setup isn't called.
+    config = function()
+      require("everforest").setup({
+        -- Your config here
+      })
+    end,
+  },
+  {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "kanagawa-dragon",
+      colorscheme = "everforest",
     },
   },
 }

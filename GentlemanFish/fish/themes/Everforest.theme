@@ -1,0 +1,22 @@
+# name: Everforest Fish shell theme
+
+fish_color_normal d3c6aa
+fish_color_command 7fbbb3
+fish_color_keyword d699b6
+fish_color_quote dbbc7f
+fish_color_redirection d3c6aa
+fish_color_end e67e80
+fish_color_error e67e80
+fish_color_param 7fbbb3
+fish_color_comment 859289
+fish_color_selection --background=2d4f67
+fish_color_search_match --background=2d4f67
+fish_color_operator a7c080
+fish_color_escape d699b6
+fish_color_autosuggestion 859289
+
+# Completion Pager Colors
+fish_pager_color_progress 859289
+fish_pager_color_prefix 7fbbb3
+fish_pager_color_completion d3c6aa
+fish_pager_color_description 859289

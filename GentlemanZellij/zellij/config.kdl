@@ -505,19 +505,33 @@ themes {
         orange "#ffb86c"
         black "#282828"
         white "#8D908D"
+    } 
+
+    everforest {
+        fg "#d3c6aa"
+        bg "#282828"
+        red "#e67e80"
+        green "#a7c080"
+        yellow "#dbbc7f"
+        blue "#7fbbb3"
+        magenta "#d699b6"
+        cyan "#83c092"
+        orange "#e69875"
+        black "#1a1a1a"
+        white "#8D908D"
     }
 }
 
 // Choose the theme that is specified in the themes section.
 // Default: 
 //
-theme "kanagawa_dragon"
+theme "everforest"
 
 // The name of the default layout to load on startup
 // Default: "work"
 //
 
-default_layout "work"
+default_layout "work_everforest"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
