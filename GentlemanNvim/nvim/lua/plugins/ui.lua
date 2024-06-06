@@ -111,7 +111,7 @@ return {
     opts = {
       options = {
         -- globalstatus = false,
-        theme = "kanagawa",
+        theme = "everforest",
       },
     },
   },
@@ -122,14 +122,7 @@ return {
     event = "BufReadPre",
     priority = 1200,
     config = function()
-      -- local colors = require("kanagawa.colors").setup({ theme = "dragon" })
       require("incline").setup({
-        -- highlight = {
-        --   groups = {
-        --     InclineNormal = { guibg = colors.palette.sumiInk0, guifg = colors.palette.dragonRed },
-        --     InclineNormalNC = { guifg = colors.palette.sumiInk0, guibg = colors.palette.dragonRed },
-        --   },
-        -- },
         window = { margin = { vertical = 0, horizontal = 1 } },
         hide = {
           cursorline = true,
