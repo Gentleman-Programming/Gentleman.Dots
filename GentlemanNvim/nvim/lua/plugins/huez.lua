@@ -4,7 +4,7 @@ return {
   import = "huez-manager.import",
   config = function()
     require("huez").setup({
-      fallback = "everforest",
+      fallback = "default",
     })
   end,
 }

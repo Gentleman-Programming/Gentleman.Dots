@@ -20,7 +20,6 @@ vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 
 -- REQUIRED
 local harpoon = require("harpoon")
-local oil = require("oil")
 local which_key = require("which-key")
 which_key.register({
   ["<leader>"] = {
@@ -30,7 +29,6 @@ which_key.register({
   },
 })
 harpoon:setup()
-oil.setup()
 -- REQUIRED
 
 ----- OBSIDIAN -----
