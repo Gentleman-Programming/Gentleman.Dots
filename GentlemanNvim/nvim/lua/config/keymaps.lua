@@ -8,6 +8,9 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 -- Map Ctrl+b in insert mode to delete to the end of the word without leaving insert mode
 vim.keymap.set("i", "<C-b>", "<C-o>de")
 
+-- Map jk to escape from insert mode
+vim.keymap.set("i", "jk", [[<C-\><C-n>]])
+
 ----- Tmux Navigation ------
 local nvim_tmux_nav = require("nvim-tmux-navigation")
 
