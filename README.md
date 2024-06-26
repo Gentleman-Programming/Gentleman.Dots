@@ -72,7 +72,7 @@ which fish
 echo whichFishResultingPath | sudo tee -a /etc/shells
 
 // set it as default
-sudo chsh -s wichFishResultingPath
+sudo chsh -s whichFishResultingPath
 ```
 
 ### Install OhMyFish
