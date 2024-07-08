@@ -72,11 +72,18 @@ return {
     "xiyaowong/transparent.nvim",
   },
   {
-    "sainnhe/everforest",
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    priority = 1000,
     config = function()
-      vim.g.everforest_background = "hard"
-      vim.g.everforest_enable_italic = 1
-      vim.g.everforest_float_style = "dim"
+      require("everforest").setup({
+        background = "hard",
+        italis = true,
+        transparent_background_level = 1,
+        diagnostic_text_highlight = true,
+        diagnostic_virtual_text = "coloured",
+      })
     end,
   },
   {
