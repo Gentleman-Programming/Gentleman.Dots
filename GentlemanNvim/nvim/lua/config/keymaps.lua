@@ -23,14 +23,6 @@ vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 
 -- REQUIRED
 local harpoon = require("harpoon")
-local which_key = require("which-key")
-which_key.register({
-  ["<leader>"] = {
-    o = {
-      name = "Obsidian",
-    },
-  },
-})
 harpoon:setup()
 -- REQUIRED
 
