@@ -6,6 +6,12 @@ return {
     vim.o.timeoutlen = 300
   end,
   keys = {
+    {
+      "<leader>?",
+      function()
+        require("which-key").show({ global = false })
+      end,
+    },
     { "<leader>o", group = "Obsidian" },
   },
 }
