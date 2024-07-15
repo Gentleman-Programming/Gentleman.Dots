@@ -48,7 +48,9 @@ return {
           end)
         end,
       })
-
+      opts.lsp.signature = {
+        auto_open = false,
+      }
       opts.lsp.hover = {
         enabled = true,
         silent = true,
