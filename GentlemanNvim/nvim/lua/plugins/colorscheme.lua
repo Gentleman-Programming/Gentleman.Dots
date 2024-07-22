@@ -81,6 +81,7 @@ return {
         background = "hard",
         italis = true,
         transparent_background_level = 1,
+        diagnostic_text_highlight = true,
         diagnostic_virtual_text = "coloured",
       })
     end,

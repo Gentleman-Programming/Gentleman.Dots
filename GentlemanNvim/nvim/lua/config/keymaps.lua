@@ -24,6 +24,7 @@ vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 -- REQUIRED
 local harpoon = require("harpoon")
 harpoon:setup()
+
 -- REQUIRED
 
 ----- OBSIDIAN -----
@@ -53,14 +54,6 @@ vim.keymap.set(
 )
 
 ----- HARPOON 2 -----
-vim.keymap.set("n", "<leader>a", function()
-  harpoon:list():append()
-end, { desc = "Add harpoon mark" })
-
-vim.keymap.set("n", "<C-e>", function()
-  harpoon.ui:toggle_quick_menu(harpoon:list())
-end)
-
 vim.keymap.set("n", "<C-M-h>", function()
   harpoon:list():select(1)
 end)
