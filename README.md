@@ -131,10 +131,6 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
-### IMPORTANT
-
-Some people is having issues when running NVIM after doing the transfer script, the way to fix them is to remove ```harpoon.lua```, open NVIM, and then add the plugin again.
-
 ### Folder `plugins`
 
 #### File `codeium.lua`
