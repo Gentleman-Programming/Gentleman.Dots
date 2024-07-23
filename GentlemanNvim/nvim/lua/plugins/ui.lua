@@ -115,6 +115,14 @@ return {
         -- globalstatus = false,
         theme = "everforest",
       },
+      sections = {
+        lualine_a = {
+          {
+            "mode",
+            icon = " ",
+          },
+        },
+      },
     },
   },
 
