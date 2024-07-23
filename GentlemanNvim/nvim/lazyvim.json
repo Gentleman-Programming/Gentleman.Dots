@@ -2,6 +2,7 @@
   "extras": [
     "lazyvim.plugins.extras.coding.mini-surround",
     "lazyvim.plugins.extras.lang.angular",
+    "lazyvim.plugins.extras.lang.markdown",
     "lazyvim.plugins.extras.util.mini-hipatterns"
   ],
   "news": {
