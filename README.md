@@ -915,4 +915,19 @@ cp -r Gentleman.Dots/.wezterm.lua ~/.config/wezterm
 Then you need to change the file name to "wezterm.lua" without the dot at the start
 ```
 
+### Install Starship
+
+```bash
+https://starship.rs/
+```
+
+#### Transfer
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+
+Mac / Linux
+cp -r Gentleman.Dots/starship.toml ~/.config
+```
+
 Enjoy your new Neovim development environment!
