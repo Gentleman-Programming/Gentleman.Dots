@@ -39,6 +39,12 @@ sudo apt-get upgrade
 sudo apt-get install build-essential
 ```
 
+### Install Starship
+
+```bash
+brew install starship
+```
+
 ### Install NVIM
 
 ```bash
