@@ -8,6 +8,8 @@ eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 #     exec tmux
 # end
 
+starship init fish | source
+
 if set -q ZELLIJ
 else
     zellij
