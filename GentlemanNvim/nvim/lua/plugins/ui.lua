@@ -76,17 +76,6 @@ return {
     },
   },
 
-  -- animations
-  {
-    "echasnovski/mini.animate",
-    event = "VeryLazy",
-    opts = function(_, opts)
-      opts.scroll = {
-        enable = false,
-      }
-    end,
-  },
-
   -- buffer line
   {
     "akinsho/bufferline.nvim",
