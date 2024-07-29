@@ -68,24 +68,17 @@ return {
       width = 60,
     },
   },
+
+  -- Notifications
   {
     "rcarriga/nvim-notify",
     opts = {
+      render = "compact",
       background_colour = "#1a1b26",
       timeout = 5000,
     },
   },
 
-  -- animations
-  {
-    "echasnovski/mini.animate",
-    event = "VeryLazy",
-    opts = function(_, opts)
-      opts.scroll = {
-        enable = false,
-      }
-    end,
-  },
 
   -- buffer line
   {
