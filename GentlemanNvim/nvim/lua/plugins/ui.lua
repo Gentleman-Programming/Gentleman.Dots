@@ -68,13 +68,17 @@ return {
       width = 60,
     },
   },
+
+  -- Notifications
   {
     "rcarriga/nvim-notify",
     opts = {
+      render = "compact",
       background_colour = "#1a1b26",
       timeout = 5000,
     },
   },
+
 
   -- buffer line
   {
