@@ -1,0 +1,54 @@
+[[colors.indexed_colors]]
+color = "#ffa066"
+index = 16
+
+[[colors.indexed_colors]]
+color = "#ff5d62"
+index = 17
+
+[colors.bright]
+black = "#727169"
+blue = "#7fb4ca"
+cyan = "#7aa89f"
+green = "#98bb6c"
+magenta = "#938aa9"
+red = "#e82424"
+white = "#dcd7ba"
+yellow = "#e6c384"
+
+[colors.cursor]
+cursor = "#c8c093"
+text = "#c8c093"
+
+[colors.normal]
+black = "#090618"
+blue = "#7e9cd8"
+cyan = "#6a9589"
+green = "#76946a"
+magenta = "#957fb8"
+red = "#c34043"
+white = "#c8c093"
+yellow = "#c0a36e"
+
+[colors.primary]
+background = "#181616"
+foreground = "#dcd7ba"
+
+[colors.selection]
+background = "#2d4f67"
+text = "#c8c093"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[font]
+size = 16
+
+[font.normal]
+family = "IosevkaTerm NFM"
+
+[shell]
+program = "wsl.exe"
+args = ["--cd","~"]
+
