@@ -72,7 +72,7 @@ This repository contains customized configurations for the Neovim development en
    **Install Alacritty**
 
    ```bash
-   Download and install Alacritty from [this link](https://alacritty.org/).
+   brew install --cask alacritty --no-quarantine
    ```
 
    **Install WezTerm**
