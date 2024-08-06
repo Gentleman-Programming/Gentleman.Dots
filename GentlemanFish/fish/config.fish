@@ -1,8 +1,14 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
+
+## for mac
+#eval "$(/opt/homebrew/bin/brew shellenv)"
+
+## for linux
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-#
+
+
 # if status is-interactive
 #     and not set -q TMUX
 #     exec tmux
