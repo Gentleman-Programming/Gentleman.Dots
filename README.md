@@ -27,8 +27,7 @@ This repository contains customized configurations for the Neovim development en
 
    **Install Alacritty**
 
-   1. Download the latest Alacritty release from the [Alacritty GitHub Releases page](https://github.com/alacritty/alacritty/releases).
-   2. Extract the downloaded file and move the `alacritty.exe` to a folder in your PATH.
+   Download and install Alacritty from [this link](https://alacritty.org/).
 
    **Install WezTerm**
 
@@ -73,7 +72,7 @@ This repository contains customized configurations for the Neovim development en
    **Install Alacritty**
 
    ```bash
-   brew install --cask alacritty
+   Download and install Alacritty from [this link](https://alacritty.org/).
    ```
 
    **Install WezTerm**
