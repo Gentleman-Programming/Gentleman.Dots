@@ -238,6 +238,14 @@ Restart Neovim to apply the changes.
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanFish/* ~/.config
+
+enter config.fish and choose which Operative System you are using:
+
+## for mac
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+## for linux
+eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 ```
 
 **FZF for fish**
