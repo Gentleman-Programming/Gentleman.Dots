@@ -178,7 +178,7 @@ This repository contains customized configurations for the Neovim development en
 11. **Install Fisher**
 
 ```bash
-    curl -sL <https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish> | source && fisher install jorgebucaran/fisher
+   curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 ```
 
 12. **Install the following dependencies**
