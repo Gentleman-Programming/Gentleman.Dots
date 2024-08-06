@@ -232,6 +232,21 @@ cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
 
 Restart Neovim to apply the changes.
 
+#### Tmux Configuration
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanTmux/.tmux ~/
+cp Gentleman.Dots/GentlemanTmux/.tmux.conf ~/
+```
+
+Start Tmux and load the configuration:
+
+```bash
+tmux
+tmux source-file ~/.tmux.conf
+```
+
 ### Additional Configurations
 
 #### Fish Configuration
@@ -247,6 +262,20 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ## for linux
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
+Also choose if you want to use Zellij or Tmux uncommenting the proper lines:
+
+# Zellij
+if set -q ZELLIJ
+else
+    zellij
+end
+
+# Tmux
+if set -q TMUX
+else
+   tmux
+end
 ```
 
 **FZF for fish**
