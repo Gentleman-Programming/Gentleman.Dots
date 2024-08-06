@@ -195,6 +195,7 @@ This repository contains customized configurations for the Neovim development en
     brew install fzf
     brew install fd
     brew install ripgrep
+    brew install bat
     ```
 
 13. **Install Zellij**
