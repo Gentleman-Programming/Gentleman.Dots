@@ -128,8 +128,7 @@ This repository contains customized configurations for the Neovim development en
    ```bash
    Change 'YourUserName' with the device username
 
-   (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/YourUserName/.bashrc
-   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+   echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish; eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
    ```
 
 5. **Install build-essentials for LINUX**
@@ -168,7 +167,9 @@ This repository contains customized configurations for the Neovim development en
 10. **Install FISH**
 
     ```bash
-    brew install fish
+    sudo apt-add-repository ppa:fish-shell/release-3
+    sudo apt update
+    sudo apt install fish
 
     // set as default:
 
