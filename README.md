@@ -92,6 +92,13 @@ This repository contains customized configurations for the Neovim development en
    ```bash
    git clone https://github.com/Gentleman-Programming/Gentleman.Dots
    cp Gentleman.Dots/alacritty.toml ~/.config/alacritty/alacritty.toml
+
+   comment lines
+   [shell]
+   program = "wsl.exe"
+   args = ["--cd","~"]
+
+   as they are for windows
    ```
 
    **WezTerm Configuration**
