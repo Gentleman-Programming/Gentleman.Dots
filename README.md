@@ -27,11 +27,16 @@ This repository contains customized configurations for the Neovim development en
 
    **Install Alacritty**
 
-   Download and install Alacritty from [this link](https://alacritty.org/).
+   1. Download the latest Alacritty release from the [Alacritty GitHub Releases page](https://github.com/alacritty/alacritty/releases).
+   2. Extract the downloaded file and move the `alacritty.exe` to a folder in your PATH.
 
    **Install WezTerm**
 
    Download and install WezTerm from [this link](https://wezfurlong.org/wezterm/installation.html).
+
+   **Install Kitty**
+
+   Download and install Kitty from [this link](https://sw.kovidgoyal.net/kitty/#get-the-app).
 
    After installing and configuring your terminal to run WSL, you can execute the rest of the commands from the WSL terminal.
 
@@ -63,6 +68,13 @@ This repository contains customized configurations for the Neovim development en
    -- end
    ```
 
+   **Kitty Configuration**
+
+   ```powershell
+   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+   cp -r Gentleman.Dots/GentlemanKitty/* %userprofile%\.config\kitty
+   ```
+
 ### For macOS/Linux
 
 1. **Install a Terminal Emulator**
@@ -72,7 +84,7 @@ This repository contains customized configurations for the Neovim development en
    **Install Alacritty**
 
    ```bash
-   brew install --cask alacritty --no-quarantine
+   brew install --cask alacritty
    ```
 
    **Install WezTerm**
@@ -92,13 +104,6 @@ This repository contains customized configurations for the Neovim development en
    ```bash
    git clone https://github.com/Gentleman-Programming/Gentleman.Dots
    cp Gentleman.Dots/alacritty.toml ~/.config/alacritty/alacritty.toml
-
-   comment lines
-   [shell]
-   program = "wsl.exe"
-   args = ["--cd","~"]
-
-   as they are for windows
    ```
 
    **WezTerm Configuration**
@@ -128,7 +133,8 @@ This repository contains customized configurations for the Neovim development en
    ```bash
    Change 'YourUserName' with the device username
 
-   echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish; eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+   (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/YourUserName/.bashrc
+   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
    ```
 
 5. **Install build-essentials for LINUX**
@@ -141,9 +147,23 @@ This repository contains customized configurations for the Neovim development en
 
 6. **Install Starship**
 
+   Starship is a cross-shell prompt that is fast, customizable, and easy to set up.
+
+   **Install Starship**
+
    ```bash
    brew install starship
    ```
+
+   **Configure Starship**
+
+   Add the following line to your `~/.config/fish/config.fish` for Fish shell:
+
+   ```bash
+   starship init fish | source
+   ```
+
+   For other shells, refer to the [Starship installation guide](https://starship.rs/guide/#%F0%9F%9A%80-installation).
 
 7. **Install NVIM**
 
@@ -167,9 +187,7 @@ This repository contains customized configurations for the Neovim development en
 10. **Install FISH**
 
     ```bash
-    sudo apt-add-repository ppa:fish-shell/release-3
-    sudo apt update
-    sudo apt install fish
+    brew install fish
 
     // set as default:
 
@@ -185,9 +203,9 @@ This repository contains customized configurations for the Neovim development en
 
 11. **Install Fisher**
 
-```bash
-   curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
-```
+    ```bash
+    curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+    ```
 
 12. **Install the following dependencies**
 
@@ -196,7 +214,6 @@ This repository contains customized configurations for the Neovim development en
     brew install fzf
     brew install fd
     brew install ripgrep
-    brew install bat
     ```
 
 13. **Install Zellij**
@@ -228,7 +245,7 @@ This repository contains customized configurations for the Neovim development en
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanNvim/* ~/.config
+cp -r Gentleman.Dots/GentlemanNvim/nvim ~/.config
 ```
 
 Restart Neovim to apply the changes.
@@ -248,6 +265,20 @@ tmux
 tmux source-file ~/.tmux.conf
 ```
 
+#### Zellij Configuration
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp -r Gentleman.Dots/GentlemanZellij/zellij ~/.config
+```
+
+#### Starship Configuration
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots
+cp Gentleman.Dots/starship.toml ~/.config
+```
+
 ### Additional Configurations
 
 #### Fish Configuration
@@ -255,37 +286,9 @@ tmux source-file ~/.tmux.conf
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanFish/* ~/.config
-
-enter config.fish and choose which Operative System you are using:
-
-## for mac
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-## for linux
-eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-
-Also choose if you want to use Zellij or Tmux uncommenting the proper lines:
-
-# Zellij
-if set -q ZELLIJ
-else
-    zellij
-end
-
-# Tmux
-if set -q TMUX
-else
-   tmux
-end
 ```
 
-**FZF for fish**
-
-```bash
-fisher install PatrickF1/fzf.fish
-```
-
-Run `fisher install oh-my-fish/plugin-pj`, then go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
+Run `fisher install jorgebucaran/fish-pj` to install the PJ plugin. Then go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
 
 ```bash
 SETUVAR --export PROJECT_PATHS: /YourWorkingPath
