@@ -7,7 +7,7 @@ SETUVAR FZF_PREVIEW_DIR_CMD:ls
 SETUVAR FZF_PREVIEW_FILE_CMD:head\x20\x2dn\x2010
 SETUVAR FZF_TMUX_HEIGHT:40\x25
 SETUVAR --export OPENAI_API_KEY:sk\x2dZS2jyRUKqFEvo1HEBuotT3BlbkFJsAqiBsrRFFOydM7VPXiP
-SETUVAR --export PROJECT_PATHS:/home/alanbuscaglia/work\x1e/mnt/c/Users/alanb/Documents/Work/gentleman-notes
+SETUVAR --export PROJECT_PATHS:/Your/Path/Here
 SETUVAR __fish_initialized:3100
 SETUVAR _fisher_jorgebucaran_2F_fisher_files:\x7e/\x2econfig/fish/functions/fisher\x2efish\x1e\x7e/\x2econfig/fish/completions/fisher\x2efish
 SETUVAR _fisher_jorgebucaran_2F_nvm_2E_fish_files:\x7e/\x2econfig/fish/functions/_nvm_index_update\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_list\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_version_activate\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_version_deactivate\x2efish\x1e\x7e/\x2econfig/fish/functions/nvm\x2efish\x1e\x7e/\x2econfig/fish/conf\x2ed/nvm\x2efish\x1e\x7e/\x2econfig/fish/completions/nvm\x2efish
@@ -42,4 +42,3 @@ SETUVAR fish_pager_color_description:B3A06D\x1eyellow
 SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
 SETUVAR fish_pager_color_selected_background:\x2dr
-SETUVAR fish_user_paths:/home/alanbuscaglia/\x2elocal/share/bob/nvim-bin\x1e/home/alanbuscaglia/\x2eyarn/bin\x1e/home/alanbuscaglia/\x2enix\x2dprofile/bin\x1e/nix/var/nix/profiles/default/bin\x1e/home/alanbuscaglia/go/bin\x1e/home/alanbuscaglia/go\x1e/home/alanbuscaglia/\x2ecargo/bin\x1e/usr/local/bin\x1e/opt/homebrew/bin
