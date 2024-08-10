@@ -289,7 +289,7 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots
 cp -r Gentleman.Dots/GentlemanFish/* ~/.config
 ```
 
-Run `fisher install jorgebucaran/fish-pj` to install the PJ plugin. Then go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
+Run `fisher install oh-my-fish/plugin-pj` to install the PJ plugin. Then go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
 
 ```bash
 SETUVAR --export PROJECT_PATHS: /YourWorkingPath
