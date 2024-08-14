@@ -12,6 +12,7 @@
       - [Fish Configuration](#fish-configuration)
       - [Zsh Configuration](#zsh-configuration)
     - [Step 4: Additional Configurations](#step-4-additional-configurations)
+      - [Dependencies Install](#dependencies-install)
       - [Neovim Configuration](#neovim-configuration)
       - [Tmux Configuration](#tmux-configuration)
       - [Zellij Configuration](#zellij-configuration)
@@ -277,6 +278,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    sudo apt-get upgrade
    sudo apt-get install build-essential
    ```
+
 2. **Install Starship**
 
    Starship is a cross-shell prompt that is fast, customizable, and easy to set up.
@@ -286,22 +288,26 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    ```bash
    brew install starship
    ```
+
 3. **Install NVIM**
 
    ```bash
    brew install nvim
    ```
+
 4. **Install NODE & NPM**
 
    ```bash
    brew install node
    brew install npm
    ```
+
 5. **Install GIT**
 
    ```bash
    brew install git
    ```
+
 6. **Install the following dependencies**
 
     ```bash
@@ -311,6 +317,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     brew install ripgrep
     brew install coreutils
     ```
+
 7. **Install Iosevka Term Nerd Font**
 
     Download and install the Iosevka Term Nerd Font from [this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).
@@ -385,6 +392,7 @@ Restart Neovim to apply the changes.
     // Install Zellij using cargo
     cargo install --locked zellij
     ```
+
 2. **Copy Zellij Configuration**
 
 While in the `Gentleman.Dots` directory, copy the Zellij configuration files:
@@ -401,7 +409,7 @@ Go to ~/.config/zellij/config.kdl:
 // uncomment the shell you want to use
 default_shell "fish"
 // default_shell "zsh"
-``` 
+```
 
 #### Starship Configuration
 
