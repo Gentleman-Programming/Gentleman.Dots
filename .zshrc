@@ -23,12 +23,15 @@ source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlightin
 
 export PROJECT_PATHS="/your/work/path/"
 
-# Iniciar tmux si la sesión es interactiva y no estamos ya en tmux
+# Run Tmux
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-
     exec tmux
-
 fi
+
+# Run Zellij
+#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
+#    exec zellij
+#fi
 
 
 # bun
