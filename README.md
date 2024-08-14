@@ -250,7 +250,14 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
     Replace `/your/work/path/` with the path to your preferred projects directory.
 
-7. **Apply Zsh Configuration**
+7. **Set Zsh as the Default Shell**
+
+    ```bash
+    sudo sh -c "echo $(which zsh) >> /etc/shells"
+    sudo chsh -s $(which zsh)
+    ```
+
+8. **Apply Zsh Configuration**
 
     To apply the configuration, reload your `.zshrc` file:
 
@@ -258,7 +265,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     source ~/.zshrc
     ```
 
-8. **Additional Plugin Configuration**
+9. **Additional Plugin Configuration**
 
     Ensure the following lines are in your `.zshrc`:
 
