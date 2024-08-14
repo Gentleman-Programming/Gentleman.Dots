@@ -268,6 +268,53 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 ### Step 4: Additional Configurations
 
+#### Dependencies Install
+
+1. **Install build-essentials for LINUX** (for Linux and WSL)
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get upgrade
+   sudo apt-get install build-essential
+   ```
+2. **Install Starship**
+
+   Starship is a cross-shell prompt that is fast, customizable, and easy to set up.
+
+   **Install Starship**
+
+   ```bash
+   brew install starship
+   ```
+3. **Install NVIM**
+
+   ```bash
+   brew install nvim
+   ```
+4. **Install NODE & NPM**
+
+   ```bash
+   brew install node
+   brew install npm
+   ```
+5. **Install GIT**
+
+   ```bash
+   brew install git
+   ```
+6. **Install the following dependencies**
+
+    ```bash
+    brew install gcc
+    brew install fzf
+    brew install fd
+    brew install ripgrep
+    brew install coreutils
+    ```
+7. **Install Iosevka Term Nerd Font**
+
+    Download and install the Iosevka Term Nerd Font from [this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).
+
 #### Neovim Configuration
 
 ```bash
@@ -320,11 +367,45 @@ Restart Neovim to apply the changes.
 
 #### Zellij Configuration
 
+1. **Install Zellij**
+
+    ```bash
+    brew install zellij
+    ```
+
+    If you find any issues with this method, use "Cargo" to install Zellij:
+
+    ```bash
+    // if installed with brew:
+    brew uninstall zellij
+
+    // Install Rust (needed for Cargo)
+    curl https://sh.rustup.rs -sSf | sh
+
+    // Install Zellij using cargo
+    cargo install --locked zellij
+    ```
+2. **Copy Zellij Configuration**
+
+While in the `Gentleman.Dots` directory, copy the Zellij configuration files:
+
 ```bash
 cp -r GentlemanZellij/zellij ~/.config
 ```
 
+3. **Choose the default Shell**
+
+Go to ~/.config/zellij/config.kdl:
+
+```bash
+// uncomment the shell you want to use
+default_shell "fish"
+// default_shell "zsh"
+``` 
+
 #### Starship Configuration
+
+While in the `Gentleman.Dots` directory, copy the starship configuration files:
 
 ```bash
 cp starship.toml ~/.config
