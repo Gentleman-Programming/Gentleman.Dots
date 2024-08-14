@@ -265,15 +265,6 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     source ~/.zshrc
     ```
 
-9. **Additional Plugin Configuration**
-
-    Ensure the following lines are in your `.zshrc`:
-
-    ```bash
-    source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-    ```
-
 ### Step 4: Additional Configurations
 
 #### Dependencies Install
