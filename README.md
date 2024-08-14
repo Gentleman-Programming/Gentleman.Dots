@@ -16,6 +16,7 @@
       - [Tmux Configuration](#tmux-configuration)
       - [Zellij Configuration](#zellij-configuration)
       - [Starship Configuration](#starship-configuration)
+    - [Note on Terminal Emulators](#note-on-terminal-emulators)
 <!--toc:end-->
 
 ## Description
@@ -265,7 +266,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
     ```
 
-### Step 4: Nvim and Tools Configuration
+### Step 4: Additional Configurations
 
 #### Neovim Configuration
 
@@ -287,7 +288,17 @@ Restart Neovim to apply the changes.
    brew install tmux
    ```
 
-2. **Copy Tmux Configuration**
+2. **Install TPM (Tmux Plugin Manager)**
+
+   TPM is a plugin manager for Tmux that allows you to easily manage and install Tmux plugins.
+
+   **Install TPM**
+
+   ```bash
+   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+   ```
+
+3. **Copy Tmux Configuration**
 
    While in the `Gentleman.Dots` directory, copy the Tmux configuration files:
 
@@ -296,12 +307,16 @@ Restart Neovim to apply the changes.
    cp GentlemanTmux/.tmux.conf ~/
    ```
 
-3. **Start Tmux and Load Configuration**
+4. **Start Tmux and Load Configuration**
 
    ```bash
    tmux
    tmux source-file ~/.tmux.conf
    ```
+
+5. **Install Tmux Plugins**
+
+   Inside a Tmux session, press `Ctrl + a and then I` (capital I, as in Install) to fetch the plugins defined in your `.tmux.conf` file.
 
 #### Zellij Configuration
 
@@ -314,3 +329,9 @@ cp -r GentlemanZellij/zellij ~/.config
 ```bash
 cp starship.toml ~/.config
 ```
+
+### Note on Terminal Emulators
+
+You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three
+
+, but it is recommended to use Alacritty as it is preferred here.
