@@ -7,18 +7,29 @@ if [[ $- == *i* ]]; then
     # Commands to run in interactive sessions can go here
 fi
 
-## Para macOS
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS
+    BREW_BIN="/opt/homebrew/bin/brew"
+else
+    # Linux
+    BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
+fi
 
-## Para Linux
-#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Usar la variable BREW_BIN donde se necesite
+eval "$($BREW_BIN shellenv)"
+
+source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export PROJECT_PATHS="/your/work/path/"
 
 # Iniciar tmux si la sesión es interactiva y no estamos ya en tmux
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
+
     exec tmux
+
 fi
+
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -31,10 +42,11 @@ plugins=(
   command-not-found     
   zsh-autosuggestions
 )
-source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source $ZSH/oh-my-zsh.sh
 
+
 # Inicializar Starship para zsh
+
 eval "$(starship init zsh)"
+
