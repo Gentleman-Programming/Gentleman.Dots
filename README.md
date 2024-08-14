@@ -229,7 +229,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     Install the necessary plugins using Homebrew:
 
     ```bash
-    brew install zsh-autosuggestions zsh-syntax-highlighting
+    brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
     ```
 
 5. **Copy Zsh Configuration**
