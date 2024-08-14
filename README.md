@@ -265,7 +265,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
     source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
     ```
 
-### Step 4: Additional Configurations
+### Step 4: Nvim and Tools Configuration
 
 #### Neovim Configuration
 
