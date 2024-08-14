@@ -1,10 +1,39 @@
 # Gentleman.Dots
 
+<!--toc:start-->
+- [Gentleman.Dots](#gentlemandots)
+  - [Description](#description)
+  - [Installation Steps](#installation-steps)
+    - [Step 1: Clone the Repository](#step-1-clone-the-repository)
+    - [For Windows](#for-windows)
+    - [For macOS/Linux](#for-macoslinux)
+    - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl)
+    - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh)
+      - [Fish Configuration](#fish-configuration)
+      - [Zsh Configuration](#zsh-configuration)
+    - [Step 4: Additional Configurations](#step-4-additional-configurations)
+      - [Neovim Configuration](#neovim-configuration)
+      - [Tmux Configuration](#tmux-configuration)
+      - [Zellij Configuration](#zellij-configuration)
+      - [Starship Configuration](#starship-configuration)
+<!--toc:end-->
+
 ## Description
 
-This repository contains customized configurations for the Neovim development environment, including specific plugins and keymaps to enhance productivity. It makes use of [LazyVim](https://github.com/LazyVim/LazyVim) as a preconfigured set of plugins and settings to simplify the use of Neovim.
+This repository contains customized configurations for the Neovim development environment, including specific plugins and keymaps to enhance productivity. It also includes configurations for both `fish` and `zsh` shells, allowing you to choose according to your preference. We utilize [LazyVim](https://github.com/LazyVim/LazyVim) as a preconfigured set of plugins and settings to simplify the use of Neovim.
 
 ## Installation Steps
+
+### Step 1: Clone the Repository
+
+Before proceeding with the configuration transfers, clone this repository and navigate into the cloned directory:
+
+```bash
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+cd Gentleman.Dots
+```
+
+All subsequent commands assume you are in the `Gentleman.Dots` directory.
 
 ### For Windows
 
@@ -38,22 +67,18 @@ This repository contains customized configurations for the Neovim development en
 
    Download and install Kitty from [this link](https://sw.kovidgoyal.net/kitty/#get-the-app).
 
-   After installing and configuring your terminal to run WSL, you can execute the rest of the commands from the WSL terminal.
-
 3. **Configuration Transfer for Terminal Emulators**
 
    **Alacritty Configuration**
 
    ```powershell
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp Gentleman.Dots/alacritty.toml %userprofile%\.config\alacritty\alacritty.toml
+   cp alacritty.toml %userprofile%\.config\alacritty\alacritty.toml
    ```
 
    **WezTerm Configuration**
 
    ```powershell
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp Gentleman.Dots/.wezterm.lua %userprofile%
+   cp .wezterm.lua %userprofile%
 
    Uncomment the lines under -- activate ONLY if windows --
 
@@ -71,15 +96,14 @@ This repository contains customized configurations for the Neovim development en
    **Kitty Configuration**
 
    ```powershell
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp -r Gentleman.Dots/GentlemanKitty/* %userprofile%\.config\kitty
+   cp -r GentlemanKitty/* %userprofile%\.config\kitty
    ```
 
 ### For macOS/Linux
 
 1. **Install a Terminal Emulator**
 
-   You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it's recommended to use Alacritty.
+   You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it is recommended to use Alacritty.
 
    **Install Alacritty**
 
@@ -102,199 +126,191 @@ This repository contains customized configurations for the Neovim development en
    **Alacritty Configuration**
 
    ```bash
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp Gentleman.Dots/alacritty.toml ~/.config/alacritty/alacritty.toml
+   cp alacritty.toml ~/.config/alacritty/alacritty.toml
    ```
 
    **WezTerm Configuration**
 
    ```bash
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp Gentleman.Dots/.wezterm.lua ~/.config/wezterm/wezterm.lua
+   cp .wezterm.lua ~/.config/wezterm/wezterm.lua
    ```
 
    **Kitty Configuration**
 
    ```bash
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-   cp -r Gentleman.Dots/GentlemanKitty/* ~/.config/kitty
+   cp -r GentlemanKitty/* ~/.config/kitty
    ```
 
 ### Shared Steps (for macOS, Linux, or WSL)
 
-3. **Install HomeBrew**
+### Step 3: Shell Configuration (Fish and Zsh)
+
+Depending on your preference, you can configure either `fish` or `zsh` as your default shell.
+
+#### Fish Configuration
+
+1. **Install Homebrew (if not installed)**
+
+   Install Homebrew by running the following command:
 
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-4. **Include HomeBrew Path**
-
-   ```bash
-   Change 'YourUserName' with the device username
-
-   (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/YourUserName/.bashrc
-   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-   ```
-
-5. **Install build-essentials for LINUX**
-
-   ```bash
-   sudo apt-get update
-   sudo apt-get upgrade
-   sudo apt-get install build-essential
-   ```
-
-6. **Install Starship**
-
-   Starship is a cross-shell prompt that is fast, customizable, and easy to set up.
-
-   **Install Starship**
-
-   ```bash
-   brew install starship
-   ```
-
-   **Configure Starship**
-
-   Add the following line to your `~/.config/fish/config.fish` for Fish shell:
-
-   ```bash
-   starship init fish | source
-   ```
-
-   For other shells, refer to the [Starship installation guide](https://starship.rs/guide/#%F0%9F%9A%80-installation).
-
-7. **Install NVIM**
-
-   ```bash
-   brew install nvim
-   ```
-
-8. **Install NODE & NPM**
-
-   ```bash
-   brew install node
-   brew install npm
-   ```
-
-9. **Install GIT**
-
-   ```bash
-   brew install git
-   ```
-
-10. **Install FISH**
+2. **Install Fish**
 
     ```bash
     brew install fish
-
-    // set as default:
-
-    which fish
-    // this will return a path, let‘s call it whichFishResultingPath
-
-    // add it as an available shell
-    echo whichFishResultingPath | sudo tee -a /etc/shells
-
-    // set it as default
-    sudo chsh -s whichFishResultingPath
     ```
 
-11. **Install Fisher**
+3. **Set Fish as the Default Shell**
+
+    ```bash
+    sudo sh -c "echo $(which fish) >> /etc/shells"
+    sudo chsh -s $(which fish)
+    ```
+
+4. **Install Fisher**
 
     ```bash
     curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
     ```
 
-12. **Install the following dependencies**
+5. **Install PJ Plugin**
 
     ```bash
-    brew install gcc
-    brew install fzf
-    brew install fd
-    brew install ripgrep
-    brew install coreutils
+    fisher install oh-my-fish/plugin-pj
     ```
 
-13. **Install Zellij**
+6. **Copy Fish Configuration**
+
+    While in the `Gentleman.Dots` directory, copy the Fish configuration files:
 
     ```bash
-    brew install zellij
+    cp -r GentlemanFish/* ~/.config
     ```
 
-    If you find any issues with this method, use "Cargo" to install Zellij:
+7. **Set Project Paths**
+
+    Modify the `PROJECT_PATHS` variable in `~/.config/fish/config.fish` to point to the directory where you store your projects. The default is:
+
+    ```fish
+    set PROJECT_PATHS /your/work/path/
+    ```
+
+    Replace `/your/work/path/` with the path to your preferred projects directory.
+
+#### Zsh Configuration
+
+1. **Install Homebrew (if not installed)**
+
+   Install Homebrew by running the following command:
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Install Zsh**
 
     ```bash
-    // if installed with brew:
-    brew uninstall zellij
-
-    // Install Rust (needed for Cargo)
-    curl https://sh.rustup.rs -sSf | sh
-
-    // Install Zellij using cargo
-    cargo install --locked zellij
+    brew install zsh
     ```
 
-14. **Install Iosevka Term Nerd Font**
+3. **Install Oh My Zsh**
 
-    Download and install the Iosevka Term Nerd Font from [this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).
+    ```bash
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    ```
 
-### Configuration Transfer
+4. **Install Required Plugins with Brew**
+
+    Install the necessary plugins using Homebrew:
+
+    ```bash
+    brew install zsh-autosuggestions zsh-syntax-highlighting
+    ```
+
+5. **Copy Zsh Configuration**
+
+    While in the `Gentleman.Dots` directory, copy the Zsh configuration file:
+
+    ```bash
+    cp .zshrc ~/
+    ```
+
+6. **Set Project Paths**
+
+    Modify the `PROJECT_PATHS` variable in `~/.zshrc` to point to the directory where you store your projects. The default is:
+
+    ```bash
+    export PROJECT_PATHS="/your/work/path/"
+    ```
+
+    Replace `/your/work/path/` with the path to your preferred projects directory.
+
+7. **Apply Zsh Configuration**
+
+    To apply the configuration, reload your `.zshrc` file:
+
+    ```bash
+    source ~/.zshrc
+    ```
+
+8. **Additional Plugin Configuration**
+
+    Ensure the following lines are in your `.zshrc`:
+
+    ```bash
+    source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    ```
+
+### Step 4: Additional Configurations
 
 #### Neovim Configuration
 
 ```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanNvim/nvim ~/.config
+cp -r GentlemanNvim/nvim ~/.config
 ```
 
 Restart Neovim to apply the changes.
 
 #### Tmux Configuration
 
-```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanTmux/.tmux ~/
-cp Gentleman.Dots/GentlemanTmux/.tmux.conf ~/
-```
+1. **Install Tmux**
 
-Start Tmux and load the configuration:
+   Tmux is a terminal multiplexer that allows you to run multiple terminal sessions within a single window.
 
-```bash
-tmux
-tmux source-file ~/.tmux.conf
-```
+   **Install Tmux**
+
+   ```bash
+   brew install tmux
+   ```
+
+2. **Copy Tmux Configuration**
+
+   While in the `Gentleman.Dots` directory, copy the Tmux configuration files:
+
+   ```bash
+   cp -r GentlemanTmux/.tmux ~/
+   cp GentlemanTmux/.tmux.conf ~/
+   ```
+
+3. **Start Tmux and Load Configuration**
+
+   ```bash
+   tmux
+   tmux source-file ~/.tmux.conf
+   ```
 
 #### Zellij Configuration
 
 ```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanZellij/zellij ~/.config
+cp -r GentlemanZellij/zellij ~/.config
 ```
 
 #### Starship Configuration
 
 ```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp Gentleman.Dots/starship.toml ~/.config
+cp starship.toml ~/.config
 ```
-
-### Additional Configurations
-
-#### Fish Configuration
-
-```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots
-cp -r Gentleman.Dots/GentlemanFish/* ~/.config
-```
-
-Run `fisher install oh-my-fish/plugin-pj` to install the PJ plugin. Then go to the file `~/.config/fish/fish_variables` and change the following variable to the path to your working folder with your projects:
-
-```bash
-SETUVAR --export PROJECT_PATHS: /YourWorkingPath
-```
-
-### Note on Terminal Emulators
-
-You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it's recommended to use Alacritty as it is preferred here.
