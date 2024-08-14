@@ -20,6 +20,7 @@ eval "$($BREW_BIN shellenv)"
 
 source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 export PROJECT_PATHS="/your/work/path/"
 
@@ -43,7 +44,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 plugins=(
   pj 
   command-not-found     
-  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
