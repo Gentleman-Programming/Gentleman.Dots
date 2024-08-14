@@ -1,5 +1,8 @@
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
+
+// uncomment the shell you want to use
 default_shell "fish"
+// default_shell "zsh"
 
 keybinds clear-defaults=true {
     normal {
