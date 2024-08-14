@@ -370,6 +370,40 @@ Restart Neovim to apply the changes.
 
    Inside a Tmux session, press `Ctrl + a and then I` (capital I, as in Install) to fetch the plugins defined in your `.tmux.conf` file.
 
+6. **Start Tmux by default**
+   
+For fish, go to ~/.config/fish/config.fish:
+```bash
+Uncomment Tmux Code
+# Run TMUX
+ if status is-interactive
+     and not set -q TMUX
+     exec tmux
+ end
+
+Comment Zellij Code
+# Run Zellij
+#if set -q ZELLIJ
+#else
+#   zellij
+#end
+```
+For zsh, go to ~/.zshrc:
+```bash
+Uncomment Tmux Code
+# Run Tmux
+if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
+    exec tmux
+fi
+
+Comment Zellij Code
+# Run Zellij
+#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
+#    exec zellij
+#fi
+```
+
+
 #### Zellij Configuration
 
 1. **Install Zellij**
@@ -407,6 +441,39 @@ Go to ~/.config/zellij/config.kdl:
 // uncomment the shell you want to use
 default_shell "fish"
 // default_shell "zsh"
+```
+
+4. **Start Zellij by default**
+
+For fish, go to ~/.config/fish/config.fish:
+```bash
+Comment Tmux Code
+# Run TMUX
+# if status is-interactive
+#     and not set -q TMUX
+#     exec tmux
+# end
+
+Uncomment Zellij Code
+# Run Zellij
+if set -q ZELLIJ
+else
+    zellij
+end
+```
+For zsh, go to ~/.zshrc:
+```bash
+Comment Tmux Code
+# Run Tmux
+#if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
+#    exec tmux
+#fi
+
+Uncomment Zellij Code
+# Run Zellij
+if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
+    exec zellij
+fi
 ```
 
 #### Starship Configuration
