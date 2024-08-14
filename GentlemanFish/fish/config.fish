@@ -2,6 +2,8 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 end
 
+set PROJECT_PATHS /your/work/path/
+
 ## for mac
 #eval "$(/opt/homebrew/bin/brew shellenv)"
 
