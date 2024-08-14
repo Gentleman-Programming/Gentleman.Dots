@@ -4,12 +4,15 @@ end
 
 set PROJECT_PATHS /your/work/path/
 
-## for mac
-#eval "$(/opt/homebrew/bin/brew shellenv)"
+if test (uname) = "Darwin"
+    # macOS
+    set BREW_BIN /opt/homebrew/bin/brew
+else
+    # Linux
+    set BREW_BIN /home/linuxbrew/.linuxbrew/bin/brew
+end
 
-## for linux
-eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-
+eval ($BREW_BIN shellenv)
 
 # if status is-interactive
 #     and not set -q TMUX
