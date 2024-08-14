@@ -15,9 +15,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export PROJECT_PATHS="/your/work/path/"
 
-# Alias para tmux
-alias tmux='tmux -f /Users/anua/Library/Developer/tmux/tmux.conf'
-
 # Iniciar tmux si la sesión es interactiva y no estamos ya en tmux
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
     exec tmux
