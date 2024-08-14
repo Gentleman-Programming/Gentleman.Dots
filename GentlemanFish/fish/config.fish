@@ -14,11 +14,13 @@ end
 
 eval ($BREW_BIN shellenv)
 
+# Run TMUX
 # if status is-interactive
 #     and not set -q TMUX
 #     exec tmux
 # end
 
+# Run Zellij
 if set -q ZELLIJ
 else
     zellij
