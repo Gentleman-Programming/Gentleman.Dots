@@ -426,32 +426,20 @@ Restart Neovim to apply the changes.
 For fish, go to ~/.config/fish/config.fish:
 ```bash
 Uncomment Tmux Code
-# Run TMUX
- if status is-interactive
-     and not set -q TMUX
-     exec tmux
- end
+  exec tmux
 
 Comment Zellij Code
-# Run Zellij
-#if set -q ZELLIJ
-#else
-#   zellij
-#end
+  exec zellij
 ```
 For zsh, go to ~/.zshrc:
 ```bash
 Uncomment Tmux Code
 # Run Tmux
-if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-    exec tmux
-fi
+  exec tmux
+
 
 Comment Zellij Code
-# Run Zellij
-#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
-#    exec zellij
-#fi
+  #exec zellij
 ```
 
 
@@ -499,32 +487,18 @@ default_shell "fish"
 For fish, go to ~/.config/fish/config.fish:
 ```bash
 Comment Tmux Code
-# Run TMUX
-# if status is-interactive
-#     and not set -q TMUX
-#     exec tmux
-# end
+ #exec tmux
 
 Uncomment Zellij Code
-# Run Zellij
-if set -q ZELLIJ
-else
-    zellij
-end
+  exec zellij
 ```
 For zsh, go to ~/.zshrc:
 ```bash
 Comment Tmux Code
-# Run Tmux
-#if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-#    exec tmux
-#fi
+  #exec tmux
 
 Uncomment Zellij Code
-# Run Zellij
-if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
-    exec zellij
-fi
+  exec zellij
 ```
 
 #### Starship Configuration
