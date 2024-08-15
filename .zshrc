@@ -5,7 +5,7 @@ ZSH_THEME="robbyrussell"
 # Si la sesión es interactiva
 if [[ $- == *i* ]]; then
   exec tmux
-  exec zellij
+  #exec zellij
     # Commands to run in interactive sessions can go here
 fi
 
