@@ -1,4 +1,6 @@
 if status is-interactive
+ exec tmux
+ #exec zellij
     # Commands to run in interactive sessions can go here
 end
 
@@ -13,18 +15,6 @@ else
 end
 
 eval ($BREW_BIN shellenv)
-
-# Run TMUX
-# if status is-interactive
-#     and not set -q TMUX
-#     exec tmux
-# end
-
-# Run Zellij
-if set -q ZELLIJ
-else
-    zellij
-end
 
 starship init fish | source
 
