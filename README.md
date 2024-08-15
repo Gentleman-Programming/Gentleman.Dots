@@ -40,7 +40,6 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
 ### For Windows
 
 1. **Install WSL**
-
    Windows Subsystem for Linux (WSL) is a compatibility layer for running Linux binary executables natively on Windows 10 and Windows Server 2019. This allows you to use a Linux environment on your Windows machine without the overhead of a virtual machine.
 
    To install WSL, follow these steps:
@@ -49,6 +48,63 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
    wsl --install
    wsl --set-default-version 2
    ```
+
+   This command will install WSL and set version 2 as the default.
+
+1.2. **Install a Linux Distribution**
+
+   Once WSL is installed, you need to install a Linux distribution. Common distributions include Ubuntu, Debian, and Kali Linux, among others.
+
+   To install a Linux distribution (like Ubuntu), follow these steps:
+
+   ```bash
+   wsl --install -d Ubuntu
+   ```
+
+   This will install the latest version of Ubuntu on your system. You can replace "Ubuntu" with another available distribution if you prefer a different one (e.g., Debian, Kali-Linux, etc.).
+
+   To see the list of available distributions, run:
+
+   ```bash
+   wsl --list --online
+   ```
+
+   Then, install the distribution of your choice with:
+
+   ```bash
+   wsl --install -d <distribution-name>
+   ```
+
+1.3. **Launch and Configure the Distribution**
+
+   After the distribution is installed, you need to open it to complete the initial setup. To open the newly installed distribution, you can click on the shortcut created in the Start menu or run:
+
+   ```bash
+   wsl
+   ```
+
+   This will open your Linux distribution in a terminal window. The first time you open it, you'll be asked to set up a UNIX username and password for your Linux environment.
+
+1.4. **Update the Distribution**
+
+   After configuring the distribution, it's recommended to update the packages to the latest version:
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get upgrade
+   ```
+
+   This ensures your environment is up to date and ready to use.
+
+1.5. **Set WSL Default Distribution**
+
+   If you have installed multiple distributions, you can set which one will run by default when you start WSL without specifying a distribution:
+
+   ```bash
+   wsl --set-default Ubuntu
+   ```
+
+   This command sets Ubuntu as the default distribution. Replace "Ubuntu" with the name of your preferred distribution.
 
    For more detailed instructions, visit the [WSL installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
 
