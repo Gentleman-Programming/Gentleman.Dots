@@ -17,8 +17,8 @@ eval ($BREW_BIN shellenv)
 if status is-interactive and not set -q TMUX exec tmux
 end
 
-if set -q ZELLIJ else zellij
-end
+#if set -q ZELLIJ else zellij
+#end
 
 starship init fish | source
 
