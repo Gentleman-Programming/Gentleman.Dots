@@ -1,12 +1,10 @@
 if status is-interactive
- exec tmux
- #exec zellij
     # Commands to run in interactive sessions can go here
 end
 
 set PROJECT_PATHS /your/work/path/
 
-if test (uname) = "Darwin"
+if test (uname) = Darwin
     # macOS
     set BREW_BIN /opt/homebrew/bin/brew
 else
@@ -15,6 +13,12 @@ else
 end
 
 eval ($BREW_BIN shellenv)
+
+if status is-interactive and not set -q TMUX exec tmux
+end
+
+if set -q ZELLIJ else zellij
+end
 
 starship init fish | source
 
@@ -69,4 +73,4 @@ set -g fish_pager_color_description $comment
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
+set --export PATH $BUN_INSTAL
