@@ -95,12 +95,6 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
    -- end
    ```
 
-   **Kitty Configuration**
-
-   ```powershell
-   cp -r GentlemanKitty/* %userprofile%\.config\kitty
-   ```
-
 ### For macOS/Linux
 
 1. **Install a Terminal Emulator**
