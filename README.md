@@ -130,7 +130,8 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
    **Alacritty Configuration**
 
    ```powershell
-   cp alacritty.toml %userprofile%\.config\alacritty\alacritty.toml
+   mkdir %userprofile%\AppData\Roaming\alacritty
+   cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
    ```
 
    **WezTerm Configuration**
