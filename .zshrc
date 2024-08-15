@@ -4,6 +4,8 @@ ZSH_THEME="robbyrussell"
 
 # Si la sesión es interactiva
 if [[ $- == *i* ]]; then
+  exec tmux
+  exec zellij
     # Commands to run in interactive sessions can go here
 fi
 
@@ -13,7 +15,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
 else
     # Linux
     BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
-fi
+#fi
 
 # Usar la variable BREW_BIN donde se necesite
 eval "$($BREW_BIN/brew shellenv)"
@@ -22,18 +24,7 @@ source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-export PROJECT_PATHS="/your/work/path/"
-
-# Run Tmux
-if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-    exec tmux
-fi
-
-# Run Zellij
-#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
-#    exec zellij
-#fi
-
+export PROJECT_PATHS="/home/alanbuscaglia/work"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
