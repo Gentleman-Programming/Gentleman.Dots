@@ -1,24 +1,11 @@
 # Gentleman.Dots
 
 <!--toc:start-->
+
 - [Gentleman.Dots](#gentlemandots)
   - [Description](#description)
-  - [Installation Steps](#installation-steps)
-    - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-    - [For Windows](#for-windows)
-    - [For macOS/Linux](#for-macoslinux)
-    - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl)
-    - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh)
-      - [Fish Configuration](#fish-configuration)
-      - [Zsh Configuration](#zsh-configuration)
-    - [Step 4: Additional Configurations](#step-4-additional-configurations)
-      - [Dependencies Install](#dependencies-install)
-      - [Neovim Configuration](#neovim-configuration)
-      - [Tmux Configuration](#tmux-configuration)
-      - [Zellij Configuration](#zellij-configuration)
-      - [Starship Configuration](#starship-configuration)
-    - [Note on Terminal Emulators](#note-on-terminal-emulators)
-<!--toc:end-->
+  - [Installation Steps](#installation-steps) - [Step 1: Clone the Repository](#step-1-clone-the-repository) - [For Windows](#for-windows) - [For macOS/Linux](#for-macoslinux) - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl) - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh) - [Fish Configuration](#fish-configuration) - [Zsh Configuration](#zsh-configuration) - [Step 4: Additional Configurations](#step-4-additional-configurations) - [Dependencies Install](#dependencies-install) - [Neovim Configuration](#neovim-configuration) - [Tmux Configuration](#tmux-configuration) - [Zellij Configuration](#zellij-configuration) - [Starship Configuration](#starship-configuration) - [Note on Terminal Emulators](#note-on-terminal-emulators)
+  <!--toc:end-->
 
 ## Description
 
@@ -53,60 +40,60 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
 
 1.2. **Install a Linux Distribution**
 
-   Once WSL is installed, you need to install a Linux distribution. Common distributions include Ubuntu, Debian, and Kali Linux, among others.
+Once WSL is installed, you need to install a Linux distribution. Common distributions include Ubuntu, Debian, and Kali Linux, among others.
 
-   To install a Linux distribution (like Ubuntu), follow these steps:
+To install a Linux distribution (like Ubuntu), follow these steps:
 
-   ```bash
-   wsl --install -d Ubuntu
-   ```
+```bash
+wsl --install -d Ubuntu
+```
 
-   This will install the latest version of Ubuntu on your system. You can replace "Ubuntu" with another available distribution if you prefer a different one (e.g., Debian, Kali-Linux, etc.).
+This will install the latest version of Ubuntu on your system. You can replace "Ubuntu" with another available distribution if you prefer a different one (e.g., Debian, Kali-Linux, etc.).
 
-   To see the list of available distributions, run:
+To see the list of available distributions, run:
 
-   ```bash
-   wsl --list --online
-   ```
+```bash
+wsl --list --online
+```
 
-   Then, install the distribution of your choice with:
+Then, install the distribution of your choice with:
 
-   ```bash
-   wsl --install -d <distribution-name>
-   ```
+```bash
+wsl --install -d <distribution-name>
+```
 
 1.3. **Launch and Configure the Distribution**
 
-   After the distribution is installed, you need to open it to complete the initial setup. To open the newly installed distribution, you can click on the shortcut created in the Start menu or run:
+After the distribution is installed, you need to open it to complete the initial setup. To open the newly installed distribution, you can click on the shortcut created in the Start menu or run:
 
-   ```bash
-   wsl
-   ```
+```bash
+wsl
+```
 
-   This will open your Linux distribution in a terminal window. The first time you open it, you'll be asked to set up a UNIX username and password for your Linux environment.
+This will open your Linux distribution in a terminal window. The first time you open it, you'll be asked to set up a UNIX username and password for your Linux environment.
 
 1.4. **Update the Distribution**
 
-   After configuring the distribution, it's recommended to update the packages to the latest version:
+After configuring the distribution, it's recommended to update the packages to the latest version:
 
-   ```bash
-   sudo apt-get update
-   sudo apt-get upgrade
-   ```
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+```
 
-   This ensures your environment is up to date and ready to use.
+This ensures your environment is up to date and ready to use.
 
 1.5. **Set WSL Default Distribution**
 
-   If you have installed multiple distributions, you can set which one will run by default when you start WSL without specifying a distribution:
+If you have installed multiple distributions, you can set which one will run by default when you start WSL without specifying a distribution:
 
-   ```bash
-   wsl --set-default Ubuntu
-   ```
+```bash
+wsl --set-default Ubuntu
+```
 
-   This command sets Ubuntu as the default distribution. Replace "Ubuntu" with the name of your preferred distribution.
+This command sets Ubuntu as the default distribution. Replace "Ubuntu" with the name of your preferred distribution.
 
-   For more detailed instructions, visit the [WSL installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
+For more detailed instructions, visit the [WSL installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 2. **Install a Terminal Emulator**
 
@@ -153,6 +140,8 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
    ```
 
 ### For macOS/Linux
+
+# IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘
 
 1. **Install a Terminal Emulator**
 
@@ -212,46 +201,46 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 2. **Install Fish**
 
-    ```bash
-    brew install fish
-    ```
+   ```bash
+   brew install fish
+   ```
 
 3. **Set Fish as the Default Shell**
 
-    ```bash
-    sudo sh -c "echo $(which fish) >> /etc/shells"
-    sudo chsh -s $(which fish)
-    ```
+   ```bash
+   sudo sh -c "echo $(which fish) >> /etc/shells"
+   sudo chsh -s $(which fish)
+   ```
 
 4. **Install Fisher**
 
-    ```bash
-    curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
-    ```
+   ```bash
+   curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+   ```
 
 5. **Install PJ Plugin**
 
-    ```bash
-    fisher install oh-my-fish/plugin-pj
-    ```
+   ```bash
+   fisher install oh-my-fish/plugin-pj
+   ```
 
 6. **Copy Fish Configuration**
 
-    While in the `Gentleman.Dots` directory, copy the Fish configuration files:
+   While in the `Gentleman.Dots` directory, copy the Fish configuration files:
 
-    ```bash
-    cp -r GentlemanFish/* ~/.config
-    ```
+   ```bash
+   cp -r GentlemanFish/* ~/.config
+   ```
 
 7. **Set Project Paths**
 
-    Modify the `PROJECT_PATHS` variable in `~/.config/fish/config.fish` to point to the directory where you store your projects. The default is:
+   Modify the `PROJECT_PATHS` variable in `~/.config/fish/config.fish` to point to the directory where you store your projects. The default is:
 
-    ```fish
-    set PROJECT_PATHS /your/work/path/
-    ```
+   ```fish
+   set PROJECT_PATHS /your/work/path/
+   ```
 
-    Replace `/your/work/path/` with the path to your preferred projects directory.
+   Replace `/your/work/path/` with the path to your preferred projects directory.
 
 #### Zsh Configuration
 
@@ -265,56 +254,56 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 2. **Install Zsh**
 
-    ```bash
-    brew install zsh
-    ```
+   ```bash
+   brew install zsh
+   ```
 
 3. **Install Oh My Zsh**
 
-    ```bash
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    ```
+   ```bash
+   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+   ```
 
 4. **Install Required Plugins with Brew**
 
-    Install the necessary plugins using Homebrew:
+   Install the necessary plugins using Homebrew:
 
-    ```bash
-    brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
-    ```
+   ```bash
+   brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
+   ```
 
 5. **Copy Zsh Configuration**
 
-    While in the `Gentleman.Dots` directory, copy the Zsh configuration file:
+   While in the `Gentleman.Dots` directory, copy the Zsh configuration file:
 
-    ```bash
-    cp .zshrc ~/
-    ```
+   ```bash
+   cp .zshrc ~/
+   ```
 
 6. **Set Project Paths**
 
-    Modify the `PROJECT_PATHS` variable in `~/.zshrc` to point to the directory where you store your projects. The default is:
+   Modify the `PROJECT_PATHS` variable in `~/.zshrc` to point to the directory where you store your projects. The default is:
 
-    ```bash
-    export PROJECT_PATHS="/your/work/path/"
-    ```
+   ```bash
+   export PROJECT_PATHS="/your/work/path/"
+   ```
 
-    Replace `/your/work/path/` with the path to your preferred projects directory.
+   Replace `/your/work/path/` with the path to your preferred projects directory.
 
 7. **Set Zsh as the Default Shell**
 
-    ```bash
-    sudo sh -c "echo $(which zsh) >> /etc/shells"
-    sudo chsh -s $(which zsh)
-    ```
+   ```bash
+   sudo sh -c "echo $(which zsh) >> /etc/shells"
+   sudo chsh -s $(which zsh)
+   ```
 
 8. **Apply Zsh Configuration**
 
-    To apply the configuration, reload your `.zshrc` file:
+   To apply the configuration, reload your `.zshrc` file:
 
-    ```bash
-    source ~/.zshrc
-    ```
+   ```bash
+   source ~/.zshrc
+   ```
 
 ### Step 4: Additional Configurations
 
@@ -359,17 +348,17 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 6. **Install the following dependencies**
 
-    ```bash
-    brew install gcc
-    brew install fzf
-    brew install fd
-    brew install ripgrep
-    brew install coreutils
-    ```
+   ```bash
+   brew install gcc
+   brew install fzf
+   brew install fd
+   brew install ripgrep
+   brew install coreutils
+   ```
 
 7. **Install Iosevka Term Nerd Font**
 
-    Download and install the Iosevka Term Nerd Font from [this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).
+   Download and install the Iosevka Term Nerd Font from [this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).
 
 #### Neovim Configuration
 
@@ -422,8 +411,9 @@ Restart Neovim to apply the changes.
    Inside a Tmux session, press `Ctrl + a and then I` (capital I, as in Install) to fetch the plugins defined in your `.tmux.conf` file.
 
 6. **Start Tmux by default**
-   
+
 For fish, go to ~/.config/fish/config.fish:
+
 ```bash
 Uncomment Tmux Code
   exec tmux
@@ -431,7 +421,9 @@ Uncomment Tmux Code
 Comment Zellij Code
   exec zellij
 ```
+
 For zsh, go to ~/.zshrc:
+
 ```bash
 Uncomment Tmux Code
 # Run Tmux
@@ -442,27 +434,26 @@ Comment Zellij Code
   #exec zellij
 ```
 
-
 #### Zellij Configuration
 
 1. **Install Zellij**
 
-    ```bash
-    brew install zellij
-    ```
+   ```bash
+   brew install zellij
+   ```
 
-    If you find any issues with this method, use "Cargo" to install Zellij:
+   If you find any issues with this method, use "Cargo" to install Zellij:
 
-    ```bash
-    // if installed with brew:
-    brew uninstall zellij
+   ```bash
+   // if installed with brew:
+   brew uninstall zellij
 
-    // Install Rust (needed for Cargo)
-    curl https://sh.rustup.rs -sSf | sh
+   // Install Rust (needed for Cargo)
+   curl https://sh.rustup.rs -sSf | sh
 
-    // Install Zellij using cargo
-    cargo install --locked zellij
-    ```
+   // Install Zellij using cargo
+   cargo install --locked zellij
+   ```
 
 2. **Copy Zellij Configuration**
 
@@ -485,6 +476,7 @@ default_shell "fish"
 4. **Start Zellij by default**
 
 For fish, go to ~/.config/fish/config.fish:
+
 ```bash
 Comment Tmux Code
  #exec tmux
@@ -492,7 +484,9 @@ Comment Tmux Code
 Uncomment Zellij Code
   exec zellij
 ```
+
 For zsh, go to ~/.zshrc:
+
 ```bash
 Comment Tmux Code
   #exec tmux
