@@ -1,11 +1,25 @@
-# Gentleman.Dots
-
 <!--toc:start-->
-
 - [Gentleman.Dots](#gentlemandots)
   - [Description](#description)
-  - [Installation Steps](#installation-steps) - [Step 1: Clone the Repository](#step-1-clone-the-repository) - [For Windows](#for-windows) - [For macOS/Linux](#for-macoslinux) - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl) - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh) - [Fish Configuration](#fish-configuration) - [Zsh Configuration](#zsh-configuration) - [Step 4: Additional Configurations](#step-4-additional-configurations) - [Dependencies Install](#dependencies-install) - [Neovim Configuration](#neovim-configuration) - [Tmux Configuration](#tmux-configuration) - [Zellij Configuration](#zellij-configuration) - [Starship Configuration](#starship-configuration) - [Note on Terminal Emulators](#note-on-terminal-emulators)
-  <!--toc:end-->
+  - [Installation Steps](#installation-steps)
+    - [Step 1: Clone the Repository](#step-1-clone-the-repository)
+    - [For Windows](#for-windows)
+    - [For macOS/Linux](#for-macoslinux)
+- [IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘](#if-you-feel-luckytest-the-new-automated-process-just-execute-install-linux-macsh-it-will-do-everything-for-you-😘)
+    - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl)
+    - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh)
+      - [Fish Configuration](#fish-configuration)
+      - [Zsh Configuration](#zsh-configuration)
+    - [Step 4: Additional Configurations](#step-4-additional-configurations)
+      - [Dependencies Install](#dependencies-install)
+      - [Neovim Configuration](#neovim-configuration)
+      - [Tmux Configuration](#tmux-configuration)
+      - [Zellij Configuration](#zellij-configuration)
+      - [Starship Configuration](#starship-configuration)
+    - [Note on Terminal Emulators](#note-on-terminal-emulators)
+<!--toc:end-->
+
+# Gentleman.Dots
 
 ## Description
 
