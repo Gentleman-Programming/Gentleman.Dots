@@ -2,16 +2,29 @@
 
 - [Gentleman.Dots](#gentlemandots)
   - [Description](#description)
+
   - [Installation Steps](#installation-steps)
     - [Step 1: Clone the Repository](#step-1-clone-the-repository)
     - [For Windows](#for-windows)
     - [For macOS/Linux](#for-macoslinux)
-- [IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘](#if-you-feel-luckytest-the-new-automated-process-just-execute-install-linux-macsh-it-will-do-everything-for-you-😘) - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl) - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh) - [Fish Configuration](#fish-configuration) - [Zsh Configuration](#zsh-configuration) - [Step 4: Additional Configurations](#step-4-additional-configurations) - [Dependencies Install](#dependencies-install) - [Neovim Configuration](#neovim-configuration) - [Tmux Configuration](#tmux-configuration) - [Zellij Configuration](#zellij-configuration) - [Starship Configuration](#starship-configuration) - [Note on Terminal Emulators](#note-on-terminal-emulators)
+- [IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘](#if-you-feel-luckytest-the-new-automated-process-just-execute-install-linux-macsh-it-will-do-everything-for-you-😘)
+    - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl)
+    - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh)
+      - [Fish Configuration](#fish-configuration)
+      - [Zsh Configuration](#zsh-configuration)
+    - [Step 4: Additional Configurations](#step-4-additional-configurations)
+      - [Dependencies Install](#dependencies-install)
+      - [Neovim Configuration](#neovim-configuration)
+      - [Tmux Configuration](#tmux-configuration)
+      - [Zellij Configuration](#zellij-configuration)
+      - [Starship Configuration](#starship-configuration)
+    - [Note on Terminal Emulators](#note-on-terminal-emulators)
 <!--toc:end-->
 
 # Gentleman.Dots
 
 ## Description
+
 
 This repository contains customized configurations for a comprehensive development environment, including Neovim, Fish, Zsh, Tmux, Zellij, and terminal emulators like Alacritty, WezTerm, and Kitty. You can choose between automatic and manual installation methods, depending on your preference and operating system. **Important:** Windows users must follow the manual installation instructions before running the script.
 
@@ -21,10 +34,13 @@ This repository contains customized configurations for a comprehensive developme
 
 Before proceeding with the configuration transfers, clone this repository and navigate into the cloned directory:
 
+
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
+
 ```
+
 
 All subsequent commands assume you are in the `Gentleman.Dots` directory.
 
@@ -95,6 +111,7 @@ cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
 # Uncomment in alacritty.toml
 [shell]
 program = "wsl.exe"
+
 args = ["--cd","~"]
 ```
 
@@ -127,13 +144,16 @@ Choose and install one of the following terminal emulators:
 
 - **Alacritty**
 
+
   ```bash
   brew install --cask alacritty
   ```
 
 - **WezTerm**
 
+
   [Download and Install](https://wezfurlong.org/wezterm/installation.html).
+
 
 - **Kitty**
 
@@ -141,9 +161,11 @@ Choose and install one of the following terminal emulators:
   brew install --cask kitty
   ```
 
+
 ### 2. Configuration Transfer for Terminal Emulators
 
 **Alacritty Configuration**
+
 
 ```bash
 cp alacritty.toml ~/.config/alacritty/alacritty.toml
@@ -153,17 +175,22 @@ cp alacritty.toml ~/.config/alacritty/alacritty.toml
 
 ```bash
 cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+
 ```
 
+
 **Kitty Configuration**
+
 
 ```bash
 cp -r GentlemanKitty/* ~/.config/kitty
 ```
 
+
 ---
 
 ## Shared Steps (for macOS, Linux, or WSL)
+
 
 ### IF you feel lucky...test the new automated process!!! just execute `install-linux-mac.sh` | it will do EVERYTHING for you 😘
 
@@ -173,7 +200,9 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 #### Fish Configuration
 
+
 1. **Install Homebrew (if not installed)**
+
 
    Install Homebrew by running:
 
@@ -232,6 +261,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 2. **Install Zsh**
 
+
    ```bash
    brew install zsh
    ```
@@ -242,6 +272,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
    ```
 
+
 4. **Install Required Plugins**
 
    ```bash
@@ -250,16 +281,20 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 5. **Copy Zsh Configuration**
 
+
    ```bash
    cp .zshrc ~/
+
    ```
 
 6. **Set Project Paths**
 
    Modify `PROJECT_PATHS` in `~/.zshrc`:
 
+
    ```bash
    export PROJECT_PATHS="/your/work/path/"
+
    ```
 
 7. **Set Zsh as the Default Shell**
@@ -273,13 +308,15 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
    ```bash
    source ~/.zshrc
+
    ```
 
 ### Step 4: Additional Configurations
 
 #### Dependencies Install
 
-1. **Install build-essentials for LINUX** (for Linux and WSL)
+
+1**Install build-essentials for LINUX** (for Linux and WSL)
 
    ```bash
    sudo apt-get update
@@ -289,9 +326,12 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 2. **Install Starship**
 
+
    ```bash
    brew install starship
+
    ```
+
 
 3. **Install NVIM**
 
@@ -306,7 +346,9 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    brew install npm
    ```
 
+
 5. **Install GIT**
+
 
    ```bash
    brew install git
@@ -314,7 +356,9 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 6. **Install the following dependencies**
 
+
    ```bash
+
    brew install gcc fzf fd ripgrep coreutils
    ```
 
@@ -322,13 +366,15 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
    [Download
 
-and install the Iosevka Term Nerd Font](<https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip>)
+ and install the Iosevka Term Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)
 
 #### Neovim Configuration
+
 
 ```bash
 cp -r GentlemanNvim/nvim ~/.config
 ```
+
 
 Restart Neovim to apply the changes.
 
@@ -336,17 +382,22 @@ Restart Neovim to apply the changes.
 
 1. **Install Tmux**
 
+
    ```bash
    brew install tmux
    ```
 
+
 2. **Install TPM (Tmux Plugin Manager)**
 
+
    ```bash
+
    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
    ```
 
 3. **Copy Tmux Configuration**
+
 
    ```bash
    cp -r GentlemanTmux/.tmux ~/
@@ -355,7 +406,9 @@ Restart Neovim to apply the changes.
 
 4. **Start Tmux and Load Configuration**
 
+
    ```bash
+
    tmux
    tmux source-file ~/.tmux.conf
    ```
@@ -368,6 +421,7 @@ Restart Neovim to apply the changes.
 
 For Fish, go to `~/.config/fish/config.fish`:
 
+
 ```bash
 # Uncomment Tmux Code
 exec tmux
@@ -375,6 +429,7 @@ exec tmux
 # Comment Zellij Code
 # exec zellij
 ```
+
 
 For Zsh, go to `~/.zshrc`:
 
@@ -392,8 +447,11 @@ fi
 
 1. **Install Zellij**
 
+
    ```bash
+
    brew install zellij
+
    ```
 
 2. **Copy Zellij Configuration**
@@ -409,6 +467,7 @@ Go to `~/.config/zellij/config.kdl`:
 ```bash
 # Uncomment the shell you want to use
 default_shell "fish"
+
 # default_shell "zsh"
 ```
 
@@ -417,22 +476,30 @@ default_shell "fish"
 For Fish, go to `~/.config/fish/config.fish`:
 
 ```bash
+
 # Comment Tmux Code
 # exec tmux
 
+
 # Uncomment Zellij Code
 exec zellij
+
 ```
+
 
 For Zsh, go to `~/.zshrc`:
 
 ```bash
 # Comment Tmux Code
+
 # exec tmux
 
+
 # Uncomment Zellij Code
+
 if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
   exec zellij
+
 fi
 ```
 
@@ -444,4 +511,6 @@ cp starship.toml ~/.config
 
 ### Note on Terminal Emulators
 
+
 You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it is recommended to use Alacritty.
+. 
