@@ -91,68 +91,64 @@ install_homebrew
 
 # Terminal Emulators Installation
 echo -e "${YELLOW}Step 2: Choose and Install Terminal Emulator${NC}"
-if [ "$os_choice" = "linux" ]; then
-  echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
-  term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm)" "none")
+if is_wsl; then
+  echo -e "${YELLOW}You are running WSL. Terminal emulators should be installed on Windows.${NC}"
 else
-  term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm, kitty)" "none")
-fi
+  if [ "$os_choice" = "linux" ]; then
+    echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
+    term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm)" "none")
+  else
+    term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm, kitty)" "none")
+  fi
 
-case "$term_choice" in
-"alacritty")
-  if ! command -v alacritty &>/dev/null; then
-    if [ "$os_choice" = "mac" ]; then
-      brew install --cask alacritty
-    elif [ "$os_choice" = "linux" ]; then
-      if is_wsl; then
-        echo -e "${YELLOW}You are running WSL. Please install Alacritty from Windows.${NC}"
-      else
+  case "$term_choice" in
+  "alacritty")
+    if ! command -v alacritty &>/dev/null; then
+      if [ "$os_choice" = "mac" ]; then
+        brew install --cask alacritty
+      elif [ "$os_choice" = "linux" ]; then
         sudo apt-get install -y alacritty
       fi
+    else
+      echo -e "${GREEN}Alacritty is already installed.${NC}"
     fi
-  else
-    echo -e "${GREEN}Alacritty is already installed.${NC}"
-  fi
-  echo -e "${YELLOW}Configuring Alacritty...${NC}"
-  mkdir -p ~/.config/alacritty
-  cp -r alacritty.toml ~/.config/alacritty/alacritty.toml
-  ;;
-"wezterm")
-  if ! command -v wezterm &>/dev/null; then
-    if [ "$os_choice" = "mac" ]; then
-      brew install --cask wezterm
-    elif [ "$os_choice" = "linux" ]; then
-      if is_wsl; then
-        echo -e "${YELLOW}You are running WSL. Please install WezTerm from Windows.${NC}"
-      else
+    echo -e "${YELLOW}Configuring Alacritty...${NC}"
+    mkdir -p ~/.config/alacritty
+    cp alacritty.toml ~/.config/alacritty/alacritty.toml
+    ;;
+  "wezterm")
+    if ! command -v wezterm &>/dev/null; then
+      if [ "$os_choice" = "mac" ]; then
+        brew install --cask wezterm
+      elif [ "$os_choice" = "linux" ]; then
         sudo apt-get install -y wezterm
       fi
-    fi
-  else
-    echo -e "${GREEN}WezTerm is already installed.${NC}"
-  fi
-  echo -e "${YELLOW}Configuring WezTerm...${NC}"
-  mkdir -p ~/.config/wezterm
-  cp -r .wezterm.lua ~/.config/wezterm/wezterm.lua
-  ;;
-"kitty")
-  if [ "$os_choice" = "mac" ]; then
-    if ! command -v kitty &>/dev/null; then
-      brew install --cask kitty
     else
-      echo -e "${GREEN}Kitty is already installed.${NC}"
+      echo -e "${GREEN}WezTerm is already installed.${NC}"
     fi
-    echo -e "${YELLOW}Configuring Kitty...${NC}"
-    mkdir -p ~/.config/kitty
-    cp -r GentlemanKitty/* ~/.config/kitty
-  else
-    echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
-  fi
-  ;;
-*)
-  echo -e "${YELLOW}No terminal emulator will be installed or configured.${NC}"
-  ;;
-esac
+    echo -e "${YELLOW}Configuring WezTerm...${NC}"
+    mkdir -p ~/.config/wezterm
+    cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+    ;;
+  "kitty")
+    if [ "$os_choice" = "mac" ]; then
+      if ! command -v kitty &>/dev/null; then
+        brew install --cask kitty
+      else
+        echo -e "${GREEN}Kitty is already installed.${NC}"
+      fi
+      echo -e "${YELLOW}Configuring Kitty...${NC}"
+      mkdir -p ~/.config/kitty
+      cp -r GentlemanKitty/* ~/.config/kitty
+    else
+      echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
+    fi
+    ;;
+  *)
+    echo -e "${YELLOW}No terminal emulator will be installed or configured.${NC}"
+    ;;
+  esac
+fi
 
 # Shared Steps (macOS, Linux, or WSL)
 
@@ -173,6 +169,16 @@ update_or_append() {
   fi
 }
 
+set_default_shell() {
+  local shell_path="$1"
+
+  if ! grep -Fxq "$shell_path" /etc/shells; then
+    echo "$shell_path" | sudo tee -a /etc/shells
+  fi
+
+  sudo chsh -s "$shell_path" "$USER"
+}
+
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
@@ -185,10 +191,13 @@ case "$shell_choice" in
   cp -r GentlemanFish/* ~/.config/fish
   # Update or append the PROJECT_PATHS line
   update_or_append ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
-  sudo sh -c "echo $(which fish) >> /etc/shells"
-  chsh -s $(which fish)
-  curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
-  fisher install oh-my-fish/plugin-pj
+
+  # Set fish as the default shell
+  set_default_shell "$(which fish)"
+
+  # Install Fisher and plugins
+  fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
+  fish -c "fisher install oh-my-fish/plugin-pj"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
@@ -200,18 +209,19 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    prompt_user "After it's done, write 'exit' to continue... press enter now"
+    prompt_user "After it's done, write 'exit' and press enter to continue... press enter now"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
-  cp -r .zshrc ~/
+  cp .zshrc ~/
   # Update or append the PROJECT_PATHS line
   update_or_append ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
-  sudo sh -c "echo $(which zsh) >> /etc/shells"
-  chsh -s $(which zsh)
+
+  # Set zsh as the default shell
+  set_default_shell "$(which zsh)"
   ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
@@ -239,7 +249,7 @@ cp -r GentlemanNvim/nvim/* ~/.config/nvim/
 # Starship Configuration
 echo -e "${YELLOW}Configuring Starship...${NC}"
 mkdir -p ~/.config
-cp -r starship.toml ~/.config
+cp starship.toml ~/.config
 
 # Obsidian Configuration
 echo -e "${YELLOW}Configuring Obsidian...${NC}"
@@ -268,9 +278,9 @@ case "$wm_choice" in
   fi
   mkdir -p ~/.tmux
   cp -r GentlemanTmux/.tmux/* ~/.tmux/
-  cp -r GentlemanTmux/.tmux.conf ~/
+  cp GentlemanTmux/.tmux.conf ~/
 
-  prompt_user "After the whole installation is done, execute C+b and then shift + i to install plugins, press enter to continue"
+  prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after the script completes and after restarting the terminal, press enter to continue"
   # Do not update anything since Tmux was selected
   ;;
 "zellij")
@@ -303,4 +313,4 @@ cd ..
 rm -rf Gentleman.Dots
 
 prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after restarting the terminal, press enter to continue"
-echo -e "${GREEN}Installation and configuration complete! Please restart your terminal to see the changes.${NC}"
+echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
