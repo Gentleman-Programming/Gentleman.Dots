@@ -305,8 +305,6 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
-
-  zellij
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
