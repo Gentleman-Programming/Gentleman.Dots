@@ -156,16 +156,17 @@ fi
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
 shell_choice=$(prompt_user "Which shell do you want to install? (Options: fish, zsh)" "none")
 
-# Function to update or append a line in a file
-update_or_append() {
+# Function to update or replace a line in a file
+update_or_replace() {
   local file="$1"
-  local key="$2"
-  local value="$3"
+  local search="$2"
+  local replace="$3"
 
-  if grep -q "$key" "$file"; then
-    awk -v key="$key" -v value="$value" '{sub(key".*",$0 value)}1' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
+  if grep -q "$search" "$file"; then
+    # Use awk to replace the line
+    awk -v search="$search" -v replace="$replace" '{gsub(search, replace)}1' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
   else
-    echo "$value" >>"$file"
+    echo "$replace" >>"$file"
   fi
 }
 
@@ -190,7 +191,7 @@ case "$shell_choice" in
   mkdir -p ~/.config/fish
   cp -r GentlemanFish/* ~/.config/fish
   # Update or append the PROJECT_PATHS line
-  update_or_append ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
+  update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
 
   # Set fish as the default shell
   set_default_shell "$(which fish)"
@@ -209,7 +210,6 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    prompt_user "After it's done, write 'exit' and press enter to continue... press enter now"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
@@ -218,7 +218,7 @@ case "$shell_choice" in
   echo -e "${YELLOW}Configuring Zsh...${NC}"
   cp .zshrc ~/
   # Update or append the PROJECT_PATHS line
-  update_or_append ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
+  update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
 
   # Set zsh as the default shell
   set_default_shell "$(which zsh)"
@@ -253,11 +253,12 @@ cp starship.toml ~/.config
 
 # Obsidian Configuration
 echo -e "${YELLOW}Configuring Obsidian...${NC}"
-if [ -f ~/.config/nvim/lua/plugins/obsidian.lua ]; then
-  # Update or append the vault_path line
-  update_or_append ~/.config/nvim/lua/plugins/obsidian.lua "vault_path" "vault_path = \"$OBSIDIAN_PATH\""
+obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
+if [ -f "$obsidian_config_file" ]; then
+  # Replace the vault path in the existing configuration
+  update_or_replace "$obsidian_config_file" "/your/notes/path" "$OBSIDIAN_PATH"
 else
-  echo -e "${RED}Obsidian configuration file not found. Please check your setup.${NC}"
+  echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
 fi
 
 # Ask if they want to use Tmux or Zellij
@@ -280,8 +281,9 @@ case "$wm_choice" in
   cp -r GentlemanTmux/.tmux/* ~/.tmux/
   cp GentlemanTmux/.tmux.conf ~/
 
-  prompt_user "Remember, if you installed Tmux, execute C+a and then shift + i to install plugins after the script completes and after restarting the computer, press enter to continue"
-  # Do not update anything since Tmux was selected
+  echo -e "${YELLOW}Please restart your computer to complete the Tmux installation.${NC}"
+  echo -e "${YELLOW}After restarting, open Tmux and press Ctrl + a followed by Shift + i to install the plugins.${NC}"
+  prompt_user "press enter to continue"
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
@@ -295,10 +297,14 @@ case "$wm_choice" in
 
   # Replace TMUX with ZELLIJ and tmux with zellij only in the selected shell configuration
   if [[ "$shell_choice" == "zsh" ]]; then
-    awk '{gsub(/TMUX/, "ZELLIJ"); gsub(/tmux/, "zellij"); print}' ~/.zshrc >~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
+    update_or_replace ~/.zshrc "TMUX" "ZELLIJ"
+    update_or_replace ~/.zshrc "tmux" "zellij"
   elif [[ "$shell_choice" == "fish" ]]; then
-    awk '{gsub(/TMUX/, "ZELLIJ"); gsub(/tmux/, "zellij"); print}' ~/.config/fish/config.fish >~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
+    update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
+    update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
+
+  zellij
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
@@ -310,5 +316,4 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 rm -rf Gentleman.Dots
 
-prompt_user "Remember, if you installed Tmux, execute C+a and then shift + i to install plugins after restarting the computer, press enter to continue"
-echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
+echo -e "${GREEN}Installation and configuration complete! Please restart your terminal to see the changes.${NC}"
