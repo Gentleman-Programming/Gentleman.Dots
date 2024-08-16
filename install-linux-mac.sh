@@ -107,8 +107,7 @@ else
       if [ "$os_choice" = "mac" ]; then
         brew install --cask alacritty
       elif [ "$os_choice" = "linux" ]; then
-        sudo apt-get install -y alacritty
-      fi
+        sudo add-apt-repository ppa:aslatter/ppa
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
     fi
@@ -121,7 +120,7 @@ else
       if [ "$os_choice" = "mac" ]; then
         brew install --cask wezterm
       elif [ "$os_choice" = "linux" ]; then
-        sudo apt-get install -y wezterm
+        bash <(curl -sSL https://wezfurlong.org/wezterm/install.sh)
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
