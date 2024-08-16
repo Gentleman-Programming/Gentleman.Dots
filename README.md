@@ -155,6 +155,8 @@ For more detailed instructions, visit the [WSL installation guide](https://learn
 
 ### For macOS/Linux
 
+# IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘
+
 1. **Install a Terminal Emulator**
 
    You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it is recommended to use Alacritty.
