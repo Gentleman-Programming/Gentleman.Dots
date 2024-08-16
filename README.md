@@ -32,7 +32,8 @@ All subsequent commands assume you are in the `Gentleman.Dots` directory.
 This script will handle all the heavy lifting, but remember that you **must install the font** mentioned above before running it. The script is designed for macOS, Linux, and WSL systems. If you’re on Windows, you’ll need to follow the manual steps first before attempting to run this script.
 
 ```bash
-bash install-linux-mac.sh
+chmod +x install-linux-mac.sh
+bash ./install-linux-mac.sh
 ```
 
 ---
