@@ -284,8 +284,9 @@ case "$wm_choice" in
   cp -r GentlemanTmux/.tmux/* ~/.tmux/
   cp GentlemanTmux/.tmux.conf ~/
 
-  echo -e "${YELLOW}Please restart your computer to complete the Tmux installation.${NC}"
-  echo -e "${YELLOW}After restarting, open Tmux and press Ctrl + A followed by Shift + I to install the plugins.${NC}"
+  echo -e "${YELLOW}Please restart your computer to complete the Tmux installation after the script is done.${NC}"
+  echo -e "${YELLOW}After restarting, press Ctrl + a followed by Shift + i to install TMUX plugins.${NC}"
+  prompt_user "Press enter to continue"
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
@@ -316,4 +317,5 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 rm -rf Gentleman.Dots
 
-echo -e "${GREEN}Installation and configuration complete! Please restart your terminal to see the changes.${NC}"
+echo -e "${YELLOW}After restarting, if you installed TMUX, remember to press Ctrl + a followed by Shift + i to install the plugins.${NC}"
+echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
