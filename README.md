@@ -38,6 +38,10 @@ cd Gentleman.Dots
 
 All subsequent commands assume you are in the `Gentleman.Dots` directory.
 
+**Install Iosevka Term Font for the terminal** -- IMPORTANT
+
+https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip
+
 ### For Windows
 
 1. **Install WSL**
