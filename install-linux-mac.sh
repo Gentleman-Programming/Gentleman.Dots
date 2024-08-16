@@ -280,7 +280,7 @@ case "$wm_choice" in
   cp -r GentlemanTmux/.tmux/* ~/.tmux/
   cp GentlemanTmux/.tmux.conf ~/
 
-  prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after the script completes and after restarting the terminal, press enter to continue"
+  prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after the script completes and after restarting the computer, press enter to continue"
   # Do not update anything since Tmux was selected
   ;;
 "zellij")
@@ -299,8 +299,6 @@ case "$wm_choice" in
   elif [[ "$shell_choice" == "fish" ]]; then
     awk '{gsub(/TMUX/, "ZELLIJ"); gsub(/tmux/, "zellij"); print}' ~/.config/fish/config.fish >~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
   fi
-
-  zellij
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
@@ -312,5 +310,5 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 rm -rf Gentleman.Dots
 
-prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after restarting the terminal, press enter to continue"
+prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after restarting the computer, press enter to continue"
 echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
