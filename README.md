@@ -383,7 +383,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 7. **Install Iosevka Term Nerd Font**
 
-   Download and install the Iosevka Term Nerd Font from [[this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip).](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)
+   Download and install the Iosevka Term Nerd Font from [[this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)]
 
 #### Neovim Configuration
 
