@@ -163,8 +163,11 @@ update_or_replace() {
   local replace="$3"
 
   if grep -q "$search" "$file"; then
-    # Use awk to replace the line
-    awk -v search="$search" -v replace="$replace" '{gsub(search, replace)}1' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
+    # Use awk to replace the line containing the search string
+    awk -v search="$search" -v replace="$replace" '
+    $0 ~ search {print replace; next}
+    {print}
+    ' "$file" >"${file}.tmp" && mv "${file}.tmp" "$file"
   else
     echo "$replace" >>"$file"
   fi
@@ -210,7 +213,6 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    echo -e "${YELLOW}After finishing, write exit and press enter, press enter now to continue${NC}"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
@@ -257,7 +259,7 @@ echo -e "${YELLOW}Configuring Obsidian...${NC}"
 obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
 if [ -f "$obsidian_config_file" ]; then
   # Replace the vault path in the existing configuration
-  update_or_replace "$obsidian_config_file" "/your/notes/path" "$OBSIDIAN_PATH"
+  update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
 else
   echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
 fi
@@ -283,8 +285,7 @@ case "$wm_choice" in
   cp GentlemanTmux/.tmux.conf ~/
 
   echo -e "${YELLOW}Please restart your computer to complete the Tmux installation.${NC}"
-  echo -e "${YELLOW}After restarting, open Tmux and press Ctrl + a followed by Shift + i to install the plugins.${NC}"
-  prompt_user "press enter to continue"
+  echo -e "${YELLOW}After restarting, open Tmux and press Ctrl + A followed by Shift + I to install the plugins.${NC}"
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
@@ -304,6 +305,8 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
+
+  zellij
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
