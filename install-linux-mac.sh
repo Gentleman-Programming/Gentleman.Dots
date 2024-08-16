@@ -210,6 +210,7 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
+    echo -e "${YELLOW}After finishing, write exit and press enter, press enter now to continue${NC}"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
@@ -303,8 +304,6 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
-
-  zellij
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
