@@ -108,6 +108,7 @@ else
         brew install --cask alacritty
       elif [ "$os_choice" = "linux" ]; then
         sudo add-apt-repository ppa:aslatter/ppa
+      fi
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
     fi
@@ -120,7 +121,9 @@ else
       if [ "$os_choice" = "mac" ]; then
         brew install --cask wezterm
       elif [ "$os_choice" = "linux" ]; then
-        bash <(curl -sSL https://wezfurlong.org/wezterm/install.sh)
+        $ curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+        sudo apt update
+        sudo apt install wezterm
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
