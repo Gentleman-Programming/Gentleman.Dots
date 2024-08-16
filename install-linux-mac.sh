@@ -213,6 +213,8 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
+    echo -e "${YELLOW}After its done installing, just write exit and press enter to continue with the process${NC}"
+    prompt_user "Press enter to continue"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
