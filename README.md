@@ -133,6 +133,11 @@ For more detailed instructions, visit the [WSL installation guide](https://learn
    ```powershell
    mkdir %userprofile%\AppData\Roaming\alacritty
    cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
+
+   # Uncomment at alacritty.toml
+    [shell]
+    program = "wsl.exe"
+    args = ["--cd","~"]
    ```
 
    **WezTerm Configuration**
