@@ -115,7 +115,7 @@ case "$term_choice" in
   fi
   echo -e "${YELLOW}Configuring Alacritty...${NC}"
   mkdir -p ~/.config/alacritty
-  cp alacritty.toml ~/.config/alacritty/alacritty.toml
+  cp -r alacritty.toml ~/.config/alacritty/alacritty.toml
   ;;
 "wezterm")
   if ! command -v wezterm &>/dev/null; then
@@ -133,7 +133,7 @@ case "$term_choice" in
   fi
   echo -e "${YELLOW}Configuring WezTerm...${NC}"
   mkdir -p ~/.config/wezterm
-  cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+  cp -r .wezterm.lua ~/.config/wezterm/wezterm.lua
   ;;
 "kitty")
   if [ "$os_choice" = "mac" ]; then
@@ -160,6 +160,19 @@ esac
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
 shell_choice=$(prompt_user "Which shell do you want to install? (Options: fish, zsh)" "none")
 
+# Function to update or append a line in a file
+update_or_append() {
+  local file="$1"
+  local key="$2"
+  local value="$3"
+
+  if grep -q "$key" "$file"; then
+    awk -v key="$key" -v value="$value" '{sub(key".*",$0 value)}1' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
+  else
+    echo "$value" >>"$file"
+  fi
+}
+
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
@@ -170,7 +183,8 @@ case "$shell_choice" in
   echo -e "${YELLOW}Configuring Fish shell...${NC}"
   mkdir -p ~/.config/fish
   cp -r GentlemanFish/* ~/.config/fish
-  sed -i "s|/your/work/path/|$PROJECT_PATHS|g" ~/.config/fish/config.fish
+  # Update or append the PROJECT_PATHS line
+  update_or_append ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
   sudo sh -c "echo $(which fish) >> /etc/shells"
   chsh -s $(which fish)
   curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
@@ -193,8 +207,9 @@ case "$shell_choice" in
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
-  cp .zshrc ~/
-  sed -i "s|/your/work/path/|$PROJECT_PATHS|g" ~/.zshrc
+  cp -r .zshrc ~/
+  # Update or append the PROJECT_PATHS line
+  update_or_append ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
   sudo sh -c "echo $(which zsh) >> /etc/shells"
   chsh -s $(which zsh)
   ;;
@@ -218,16 +233,19 @@ brew install starship nvim node npm git gcc fzf fd ripgrep coreutils
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
-cp -r GentlemanNvim/nvim ~/.config
+mkdir -p ~/.config/nvim
+cp -r GentlemanNvim/nvim/* ~/.config/nvim/
 
 # Starship Configuration
 echo -e "${YELLOW}Configuring Starship...${NC}"
-cp starship.toml ~/.config
+mkdir -p ~/.config
+cp -r starship.toml ~/.config
 
 # Obsidian Configuration
 echo -e "${YELLOW}Configuring Obsidian...${NC}"
 if [ -f ~/.config/nvim/lua/plugins/obsidian.lua ]; then
-  sed -i "s|/your/notes/path|$OBSIDIAN_PATH|g" ~/.config/nvim/lua/plugins/obsidian.lua
+  # Update or append the vault_path line
+  update_or_append ~/.config/nvim/lua/plugins/obsidian.lua "vault_path" "vault_path = \"$OBSIDIAN_PATH\""
 else
   echo -e "${RED}Obsidian configuration file not found. Please check your setup.${NC}"
 fi
@@ -248,22 +266,11 @@ case "$wm_choice" in
   else
     echo -e "${GREEN}Tmux Plugin Manager is already installed.${NC}"
   fi
-  cp -r GentlemanTmux/.tmux ~/
-  cp GentlemanTmux/.tmux.conf ~/
+  mkdir -p ~/.tmux
+  cp -r GentlemanTmux/.tmux/* ~/.tmux/
+  cp -r GentlemanTmux/.tmux.conf ~/
 
-  # Update .zshrc and config.fish to use Tmux
-  if [ "$shell_choice" = "zsh" ]; then
-    sed -i "s/exec tmux/exec tmux/g" ~/.zshrc
-    sed -i "s/\$TMUX/\$TMUX/g" ~/.zshrc
-  elif [ "$shell_choice" = "fish" ]; then
-    sed -i "s/TMUX/TMUX/g" ~/.config/fish/config.fish
-    sed -i "s/tmux/tmux/g" ~/.config/fish/config.fish
-
-  fi
-
-  echo -e "${YELLOW}Starting Tmux and Loading Configuration...${NC}"
-  tmux new-session -d -s mysession "tmux source-file ~/.tmux.conf"
-  tmux kill-session -t mysession
+  # Do not update anything since Tmux was selected
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
@@ -273,18 +280,15 @@ case "$wm_choice" in
   fi
   echo -e "${YELLOW}Configuring Zellij...${NC}"
   mkdir -p ~/.config/zellij
-  cp -r GentlemanZellij/zellij ~/.config
+  cp -r GentlemanZellij/zellij/* ~/.config/zellij/
 
-  # Update the default shell in Zellij config and .zshrc or config.fish
-  if [ "$shell_choice" = "fish" ]; then
-    sed -i "s|default_shell \"fish\"|default_shell \"fish\"|g" ~/.config/zellij/config.kdl
-    sed -i "s/TMUX/ZELLIJ/g" ~/.config/fish/config.fish
-    sed -i "s/tmux/zellij/g" ~/.config/fish/config.fish
-  elif [ "$shell_choice" = "zsh" ]; then
-    sed -i "s|default_shell \"fish\"|default_shell \"zsh\"|g" ~/.config/zellij/config.kdl
-    sed -i "s/exec tmux/exec zellij/g" ~/.zshrc
-    sed -i "s/\$TMUX/\$ZELLIJ/g" ~/.zshrc
+  # Replace TMUX with ZELLIJ and tmux with zellij only in the selected shell configuration
+  if [[ "$shell_choice" == "zsh" ]]; then
+    awk '{gsub(/TMUX/, "ZELLIJ"); gsub(/tmux/, "zellij"); print}' ~/.zshrc >~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
+  elif [[ "$shell_choice" == "fish" ]]; then
+    awk '{gsub(/TMUX/, "ZELLIJ"); gsub(/tmux/, "zellij"); print}' ~/.config/fish/config.fish >~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
   fi
+
   zellij
   ;;
 *)
