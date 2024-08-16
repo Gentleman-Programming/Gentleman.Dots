@@ -280,7 +280,7 @@ case "$wm_choice" in
   cp -r GentlemanTmux/.tmux/* ~/.tmux/
   cp GentlemanTmux/.tmux.conf ~/
 
-  prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after the script completes and after restarting the computer, press enter to continue"
+  prompt_user "Remember, if you installed Tmux, execute C+a and then shift + i to install plugins after the script completes and after restarting the computer, press enter to continue"
   # Do not update anything since Tmux was selected
   ;;
 "zellij")
@@ -310,5 +310,5 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 rm -rf Gentleman.Dots
 
-prompt_user "Remember, if you installed Tmux, execute C+b and then shift + i to install plugins after restarting the computer, press enter to continue"
+prompt_user "Remember, if you installed Tmux, execute C+a and then shift + i to install plugins after restarting the computer, press enter to continue"
 echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
