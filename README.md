@@ -1,29 +1,19 @@
 <!--toc:start-->
+
 - [Gentleman.Dots](#gentlemandots)
   - [Description](#description)
   - [Installation Steps](#installation-steps)
     - [Step 1: Clone the Repository](#step-1-clone-the-repository)
     - [For Windows](#for-windows)
     - [For macOS/Linux](#for-macoslinux)
-- [IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘](#if-you-feel-luckytest-the-new-automated-process-just-execute-install-linux-macsh-it-will-do-everything-for-you-😘)
-    - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl)
-    - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh)
-      - [Fish Configuration](#fish-configuration)
-      - [Zsh Configuration](#zsh-configuration)
-    - [Step 4: Additional Configurations](#step-4-additional-configurations)
-      - [Dependencies Install](#dependencies-install)
-      - [Neovim Configuration](#neovim-configuration)
-      - [Tmux Configuration](#tmux-configuration)
-      - [Zellij Configuration](#zellij-configuration)
-      - [Starship Configuration](#starship-configuration)
-    - [Note on Terminal Emulators](#note-on-terminal-emulators)
+- [IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘](#if-you-feel-luckytest-the-new-automated-process-just-execute-install-linux-macsh-it-will-do-everything-for-you-😘) - [Shared Steps (for macOS, Linux, or WSL)](#shared-steps-for-macos-linux-or-wsl) - [Step 3: Shell Configuration (Fish and Zsh)](#step-3-shell-configuration-fish-and-zsh) - [Fish Configuration](#fish-configuration) - [Zsh Configuration](#zsh-configuration) - [Step 4: Additional Configurations](#step-4-additional-configurations) - [Dependencies Install](#dependencies-install) - [Neovim Configuration](#neovim-configuration) - [Tmux Configuration](#tmux-configuration) - [Zellij Configuration](#zellij-configuration) - [Starship Configuration](#starship-configuration) - [Note on Terminal Emulators](#note-on-terminal-emulators)
 <!--toc:end-->
 
 # Gentleman.Dots
 
 ## Description
 
-This repository contains customized configurations for the Neovim development environment, including specific plugins and keymaps to enhance productivity. It also includes configurations for both `fish` and `zsh` shells, allowing you to choose according to your preference. We utilize [LazyVim](https://github.com/LazyVim/LazyVim) as a preconfigured set of plugins and settings to simplify the use of Neovim.
+This repository contains customized configurations for a comprehensive development environment, including Neovim, Fish, Zsh, Tmux, Zellij, and terminal emulators like Alacritty, WezTerm, and Kitty. You can choose between automatic and manual installation methods, depending on your preference and operating system. **Important:** Windows users must follow the manual installation instructions before running the script.
 
 ## Installation Steps
 
@@ -38,177 +28,144 @@ cd Gentleman.Dots
 
 All subsequent commands assume you are in the `Gentleman.Dots` directory.
 
-**Install Iosevka Term Font for the terminal** -- IMPORTANT
+**Important:** You must install the Iosevka Term Nerd Font for proper terminal display:
 
-[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/IosevkaTerm.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)
+[Download Iosevka Term Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)
 
-### For Windows
+---
 
-1. **Install WSL**
-   Windows Subsystem for Linux (WSL) is a compatibility layer for running Linux binary executables natively on Windows 10 and Windows Server 2019. This allows you to use a Linux environment on your Windows machine without the overhead of a virtual machine.
+## For Windows
 
-   To install WSL, follow these steps:
+**Important:** Windows users must follow these manual installation steps before running the automated script.
 
-   ```bash
-   wsl --install
-   wsl --set-default-version 2
-   ```
+### 1. Install WSL
 
-   This command will install WSL and set version 2 as the default.
+Windows Subsystem for Linux (WSL) allows you to run Linux on Windows. Install WSL and set it to version 2:
 
-1.2. **Install a Linux Distribution**
+```bash
+wsl --install
+wsl --set-default-version 2
+```
 
-Once WSL is installed, you need to install a Linux distribution. Common distributions include Ubuntu, Debian, and Kali Linux, among others.
+### 2. Install a Linux Distribution
 
-To install a Linux distribution (like Ubuntu), follow these steps:
+Install a Linux distribution (e.g., Ubuntu) in WSL:
 
 ```bash
 wsl --install -d Ubuntu
 ```
 
-This will install the latest version of Ubuntu on your system. You can replace "Ubuntu" with another available distribution if you prefer a different one (e.g., Debian, Kali-Linux, etc.).
-
-To see the list of available distributions, run:
+List available distributions:
 
 ```bash
 wsl --list --online
 ```
 
-Then, install the distribution of your choice with:
+Install your preferred distribution:
 
 ```bash
 wsl --install -d <distribution-name>
 ```
 
-1.3. **Launch and Configure the Distribution**
+### 3. Launch and Configure the Distribution
 
-After the distribution is installed, you need to open it to complete the initial setup. To open the newly installed distribution, you can click on the shortcut created in the Start menu or run:
-
-```bash
-wsl
-```
-
-This will open your Linux distribution in a terminal window. The first time you open it, you'll be asked to set up a UNIX username and password for your Linux environment.
-
-1.4. **Update the Distribution**
-
-After configuring the distribution, it's recommended to update the packages to the latest version:
+Open the installed distribution to complete setup. Update it with:
 
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
-This ensures your environment is up to date and ready to use.
+### 4. Install a Terminal Emulator
 
-1.5. **Set WSL Default Distribution**
+Choose and install one of the following terminal emulators:
 
-If you have installed multiple distributions, you can set which one will run by default when you start WSL without specifying a distribution:
+- **Alacritty**: [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases) and place `alacritty.exe` in your `PATH`.
+- **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html).
+- **Kitty**: [Download and Install](https://sw.kovidgoyal.net/kitty/#get-the-app).
 
-```bash
-wsl --set-default Ubuntu
+### 5. Configuration Transfer for Terminal Emulators
+
+**Alacritty Configuration**
+
+```powershell
+mkdir %userprofile%\AppData\Roaming\alacritty
+cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
+
+# Uncomment in alacritty.toml
+[shell]
+program = "wsl.exe"
+args = ["--cd","~"]
 ```
 
-This command sets Ubuntu as the default distribution. Replace "Ubuntu" with the name of your preferred distribution.
+**WezTerm Configuration**
 
-For more detailed instructions, visit the [WSL installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
+```powershell
+cp .wezterm.lua %userprofile%
 
-2. **Install a Terminal Emulator**
+# Uncomment for Windows settings
+# config.default_domain = 'WSL:Ubuntu'
+# config.front_end = "WebGpu"
+# config.max_fps = 120
+```
 
-   You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it's recommended to use Alacritty.
+**Kitty Configuration**
 
-   **Install Alacritty**
+```powershell
+cp -r GentlemanKitty/* %userprofile%\.config\kitty
+```
 
-   1. Download the latest Alacritty release from the [Alacritty GitHub Releases page](https://github.com/alacritty/alacritty/releases).
-   2. Extract the downloaded file and move the `alacritty.exe` to a folder in your PATH.
+---
 
-   **Install WezTerm**
+## For macOS/Linux
 
-   Download and install WezTerm from [this link](https://wezfurlong.org/wezterm/installation.html).
+### IF you feel lucky...test the new automated process!!! just execute `install-linux-mac.sh` | it will do EVERYTHING for you 😘
 
-   **Install Kitty**
+### 1. Install a Terminal Emulator
 
-   Download and install Kitty from [this link](https://sw.kovidgoyal.net/kitty/#get-the-app).
+Choose and install one of the following terminal emulators:
 
-3. **Configuration Transfer for Terminal Emulators**
+- **Alacritty**
 
-   **Alacritty Configuration**
+  ```bash
+  brew install --cask alacritty
+  ```
 
-   ```powershell
-   mkdir %userprofile%\AppData\Roaming\alacritty
-   cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
+- **WezTerm**
 
-   # Uncomment at alacritty.toml
-    [shell]
-    program = "wsl.exe"
-    args = ["--cd","~"]
-   ```
+  [Download and Install](https://wezfurlong.org/wezterm/installation.html).
 
-   **WezTerm Configuration**
+- **Kitty**
 
-   ```powershell
-   cp .wezterm.lua %userprofile%
+  ```bash
+  brew install --cask kitty
+  ```
 
-   Uncomment the lines under -- activate ONLY if windows --
+### 2. Configuration Transfer for Terminal Emulators
 
-   -- config.default_domain = 'WSL:Ubuntu'
-   -- config.front_end = "WebGpu"
-   -- config.max_fps = 120
-   -- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
-   -- if gpu.backend == "Vulkan" then
-   --   config.webgpu_preferred_adapter = gpu
-   --   break
-   --  end
-   -- end
-   ```
+**Alacritty Configuration**
 
-### For macOS/Linux
+```bash
+cp alacritty.toml ~/.config/alacritty/alacritty.toml
+```
 
-# IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘
+**WezTerm Configuration**
 
-1. **Install a Terminal Emulator**
+```bash
+cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+```
 
-   You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it is recommended to use Alacritty.
+**Kitty Configuration**
 
-   **Install Alacritty**
+```bash
+cp -r GentlemanKitty/* ~/.config/kitty
+```
 
-   ```bash
-   brew install --cask alacritty
-   ```
+---
 
-   **Install WezTerm**
+## Shared Steps (for macOS, Linux, or WSL)
 
-   Download and install WezTerm from [this link](https://wezfurlong.org/wezterm/installation.html).
-
-   **Install Kitty**
-
-   ```bash
-   brew install --cask kitty
-   ```
-
-2. **Configuration Transfer for Terminal Emulators**
-
-   **Alacritty Configuration**
-
-   ```bash
-   cp alacritty.toml ~/.config/alacritty/alacritty.toml
-   ```
-
-   **WezTerm Configuration**
-
-   ```bash
-   cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-   ```
-
-   **Kitty Configuration**
-
-   ```bash
-   cp -r GentlemanKitty/* ~/.config/kitty
-   ```
-
-### Shared Steps (for macOS, Linux, or WSL)
-
-# IF you feel lucky...test the new automated process !!! just execute install-linux-mac.sh | it will do EVERYTHING for you 😘
+### IF you feel lucky...test the new automated process!!! just execute `install-linux-mac.sh` | it will do EVERYTHING for you 😘
 
 ### Step 3: Shell Configuration (Fish and Zsh)
 
@@ -218,7 +175,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 1. **Install Homebrew (if not installed)**
 
-   Install Homebrew by running the following command:
+   Install Homebrew by running:
 
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -251,27 +208,23 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 6. **Copy Fish Configuration**
 
-   While in the `Gentleman.Dots` directory, copy the Fish configuration files:
-
    ```bash
    cp -r GentlemanFish/* ~/.config
    ```
 
 7. **Set Project Paths**
 
-   Modify the `PROJECT_PATHS` variable in `~/.config/fish/config.fish` to point to the directory where you store your projects. The default is:
+   Modify `PROJECT_PATHS` in `~/.config/fish/config.fish`:
 
    ```fish
    set PROJECT_PATHS /your/work/path/
    ```
 
-   Replace `/your/work/path/` with the path to your preferred projects directory.
-
 #### Zsh Configuration
 
 1. **Install Homebrew (if not installed)**
 
-   Install Homebrew by running the following command:
+   Install Homebrew by running:
 
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -289,9 +242,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
    ```
 
-4. **Install Required Plugins with Brew**
-
-   Install the necessary plugins using Homebrew:
+4. **Install Required Plugins**
 
    ```bash
    brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
@@ -299,21 +250,17 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
 5. **Copy Zsh Configuration**
 
-   While in the `Gentleman.Dots` directory, copy the Zsh configuration file:
-
    ```bash
    cp .zshrc ~/
    ```
 
 6. **Set Project Paths**
 
-   Modify the `PROJECT_PATHS` variable in `~/.zshrc` to point to the directory where you store your projects. The default is:
+   Modify `PROJECT_PATHS` in `~/.zshrc`:
 
    ```bash
    export PROJECT_PATHS="/your/work/path/"
    ```
-
-   Replace `/your/work/path/` with the path to your preferred projects directory.
 
 7. **Set Zsh as the Default Shell**
 
@@ -323,8 +270,6 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    ```
 
 8. **Apply Zsh Configuration**
-
-   To apply the configuration, reload your `.zshrc` file:
 
    ```bash
    source ~/.zshrc
@@ -343,10 +288,6 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
    ```
 
 2. **Install Starship**
-
-   Starship is a cross-shell prompt that is fast, customizable, and easy to set up.
-
-   **Install Starship**
 
    ```bash
    brew install starship
@@ -374,16 +315,14 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 6. **Install the following dependencies**
 
    ```bash
-   brew install gcc
-   brew install fzf
-   brew install fd
-   brew install ripgrep
-   brew install coreutils
+   brew install gcc fzf fd ripgrep coreutils
    ```
 
 7. **Install Iosevka Term Nerd Font**
 
-   Download and install the Iosevka Term Nerd Font from [[this link](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)]
+   [Download
+
+and install the Iosevka Term Nerd Font](<https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip>)
 
 #### Neovim Configuration
 
@@ -397,27 +336,17 @@ Restart Neovim to apply the changes.
 
 1. **Install Tmux**
 
-   Tmux is a terminal multiplexer that allows you to run multiple terminal sessions within a single window.
-
-   **Install Tmux**
-
    ```bash
    brew install tmux
    ```
 
 2. **Install TPM (Tmux Plugin Manager)**
 
-   TPM is a plugin manager for Tmux that allows you to easily manage and install Tmux plugins.
-
-   **Install TPM**
-
    ```bash
    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
    ```
 
 3. **Copy Tmux Configuration**
-
-   While in the `Gentleman.Dots` directory, copy the Tmux configuration files:
 
    ```bash
    cp -r GentlemanTmux/.tmux ~/
@@ -433,30 +362,30 @@ Restart Neovim to apply the changes.
 
 5. **Install Tmux Plugins**
 
-   Inside a Tmux session, press `Ctrl + a and then I` (capital I, as in Install) to fetch the plugins defined in your `.tmux.conf` file.
+   Inside a Tmux session, press `Ctrl + a and then I` (capital I) to install the plugins.
 
 6. **Start Tmux by default**
 
-For fish, go to ~/.config/fish/config.fish:
+For Fish, go to `~/.config/fish/config.fish`:
 
 ```bash
-Uncomment Tmux Code
-  exec tmux
+# Uncomment Tmux Code
+exec tmux
 
-Comment Zellij Code
-  exec zellij
+# Comment Zellij Code
+# exec zellij
 ```
 
-For zsh, go to ~/.zshrc:
+For Zsh, go to `~/.zshrc`:
 
 ```bash
-Uncomment Tmux Code
-# Run Tmux
+# Uncomment Tmux Code
+if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
   exec tmux
+fi
 
-
-Comment Zellij Code
-  #exec zellij
+# Comment Zellij Code
+# exec zellij
 ```
 
 #### Zellij Configuration
@@ -467,62 +396,47 @@ Comment Zellij Code
    brew install zellij
    ```
 
-   If you find any issues with this method, use "Cargo" to install Zellij:
-
-   ```bash
-   // if installed with brew:
-   brew uninstall zellij
-
-   // Install Rust (needed for Cargo)
-   curl https://sh.rustup.rs -sSf | sh
-
-   // Install Zellij using cargo
-   cargo install --locked zellij
-   ```
-
 2. **Copy Zellij Configuration**
 
-While in the `Gentleman.Dots` directory, copy the Zellij configuration files:
-
-```bash
-cp -r GentlemanZellij/zellij ~/.config
-```
+   ```bash
+   cp -r GentlemanZellij/zellij ~/.config
+   ```
 
 3. **Choose the default Shell**
 
-Go to ~/.config/zellij/config.kdl:
+Go to `~/.config/zellij/config.kdl`:
 
 ```bash
-// uncomment the shell you want to use
+# Uncomment the shell you want to use
 default_shell "fish"
-// default_shell "zsh"
+# default_shell "zsh"
 ```
 
 4. **Start Zellij by default**
 
-For fish, go to ~/.config/fish/config.fish:
+For Fish, go to `~/.config/fish/config.fish`:
 
 ```bash
-Comment Tmux Code
- #exec tmux
+# Comment Tmux Code
+# exec tmux
 
-Uncomment Zellij Code
-  exec zellij
+# Uncomment Zellij Code
+exec zellij
 ```
 
-For zsh, go to ~/.zshrc:
+For Zsh, go to `~/.zshrc`:
 
 ```bash
-Comment Tmux Code
-  #exec tmux
+# Comment Tmux Code
+# exec tmux
 
-Uncomment Zellij Code
+# Uncomment Zellij Code
+if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
   exec zellij
+fi
 ```
 
 #### Starship Configuration
-
-While in the `Gentleman.Dots` directory, copy the starship configuration files:
 
 ```bash
 cp starship.toml ~/.config
@@ -530,6 +444,4 @@ cp starship.toml ~/.config
 
 ### Note on Terminal Emulators
 
-You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three
-
-, but it is recommended to use Alacritty as it is preferred here.
+You can choose between Kitty, WezTerm, or Alacritty as your terminal emulator. This repository provides configurations for all three, but it is recommended to use Alacritty.
