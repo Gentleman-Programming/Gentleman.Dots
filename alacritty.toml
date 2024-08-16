@@ -51,8 +51,8 @@ family = "IosevkaTerm NFM"
 [window]
 option_as_alt = "Both"
 
-# comment if Mac or Linux
-[shell]
-program = "wsl.exe"
-args = ["--cd","~"]
+# Uncomment for Windows
+#[shell]
+#program = "wsl.exe"
+#args = ["--cd","~"]
 
