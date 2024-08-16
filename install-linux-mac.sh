@@ -114,7 +114,6 @@ else
     echo -e "${YELLOW}Configuring Alacritty...${NC}"
     mkdir -p ~/.config/alacritty
     cp alacritty.toml ~/.config/alacritty/alacritty.toml
-    ;;
   "wezterm")
     if ! command -v wezterm &>/dev/null; then
       if [ "$os_choice" = "mac" ]; then
@@ -128,7 +127,6 @@ else
     echo -e "${YELLOW}Configuring WezTerm...${NC}"
     mkdir -p ~/.config/wezterm
     cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-    ;;
   "kitty")
     if [ "$os_choice" = "mac" ]; then
       if ! command -v kitty &>/dev/null; then
@@ -142,10 +140,8 @@ else
     else
       echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
     fi
-    ;;
   *)
     echo -e "${YELLOW}No terminal emulator will be installed or configured.${NC}"
-    ;;
   esac
 fi
 
@@ -201,7 +197,6 @@ case "$shell_choice" in
   # Install Fisher and plugins
   fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
   fish -c "fisher install oh-my-fish/plugin-pj"
-  ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
     brew install zsh
@@ -226,10 +221,8 @@ case "$shell_choice" in
 
   # Set zsh as the default shell
   set_default_shell "$(which zsh)"
-  ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
-  ;;
 esac
 
 # Step 4: Additional Configurations
@@ -288,7 +281,6 @@ case "$wm_choice" in
   echo -e "${YELLOW}Please restart your computer to complete the Tmux installation after the script is done.${NC}"
   echo -e "${YELLOW}After restarting, press Ctrl + a followed by Shift + i to install TMUX plugins.${NC}"
   prompt_user "Press enter to continue"
-  ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
     brew install zellij
@@ -307,10 +299,8 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
-  ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
-  ;;
 esac
 
 # Clean up: Remove the cloned repository
