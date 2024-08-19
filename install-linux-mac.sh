@@ -78,6 +78,34 @@ install_homebrew() {
   fi
 }
 
+# Function to update or replace a line in a file
+update_or_replace() {
+  local file="$1"
+  local search="$2"
+  local replace="$3"
+
+  if grep -q "$search" "$file"; then
+    # Use awk to replace the line containing the search string
+    awk -v search="$search" -v replace="$replace" '
+    $0 ~ search {print replace; next}
+    {print}
+    ' "$file" >"${file}.tmp" && mv "${file}.tmp" "$file"
+  else
+    echo "$replace" >>"$file"
+  fi
+}
+
+# Function to set the default shell
+set_default_shell() {
+  local shell_path="$1"
+
+  if ! grep -Fxq "$shell_path" /etc/shells; then
+    echo "$shell_path" | sudo tee -a /etc/shells
+  fi
+
+  sudo chsh -s "$shell_path" "$USER"
+}
+
 # Ask for the operating system
 os_choice=$(prompt_user "Which operating system are you using? (Options: mac, linux)" "none")
 
@@ -172,33 +200,6 @@ fi
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
 shell_choice=$(prompt_user "Which shell do you want to install? (Options: fish, zsh)" "none")
 
-# Function to update or replace a line in a file
-update_or_replace() {
-  local file="$1"
-  local search="$2"
-  local replace="$3"
-
-  if grep -q "$search" "$file"; then
-    # Use awk to replace the line containing the search string
-    awk -v search="$search" -v replace="$replace" '
-    $0 ~ search {print replace; next}
-    {print}
-    ' "$file" >"${file}.tmp" && mv "${file}.tmp" "$file"
-  else
-    echo "$replace" >>"$file"
-  fi
-}
-
-set_default_shell() {
-  local shell_path="$1"
-
-  if ! grep -Fxq "$shell_path" /etc/shells; then
-    echo "$shell_path" | sudo tee -a /etc/shells
-  fi
-
-  sudo chsh -s "$shell_path" "$USER"
-}
-
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
@@ -208,17 +209,12 @@ case "$shell_choice" in
   fi
   echo -e "${YELLOW}Configuring Fish shell...${NC}"
   mkdir -p ~/.config/fish
-  cp -r GentlemanFish/* ~/.config/fish
+  cp -r GentlemanFish/* ~/.config
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
 
   # Set fish as the default shell
   set_default_shell "$(which fish)"
-
-  # Install Fisher and plugins
-  fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
-  fish -c "fisher install oh-my-fish/plugin-pj"
-  fish -c "fisher install PatrickF1/fzf.fish"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
@@ -318,15 +314,20 @@ case "$wm_choice" in
 
   # Replace TMUX with ZELLIJ and tmux with zellij only in the selected shell configuration
   if [[ "$shell_choice" == "zsh" ]]; then
-    update_or_replace ~/.zshrc "TMUX" "ZELLIJ"
-    update_or_replace ~/.zshrc "tmux" "zellij"
+    update_or_replace ~/.zshrc "TMUX" 'if [[ $- == *i* ]] && [[ -z "\$ZELLIJ" ]]; then'
+    update_or_replace ~/.zshrc "exec tmux" "exec zellij"
   elif [[ "$shell_choice" == "fish" ]]; then
-    update_or_replace ~/.config/fish/config.fish "TMUX" "ZELLIJ"
+    update_or_replace ~/.config/fish/config.fish "TMUX" "if not set -q ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
   ;;
 *)
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
+  # If no window manager is chosen, remove the line that executes tmux or zellij
+  sed -i '/exec tmux/d' ~/.config/fish/config.fish
+  sed -i '/exec zellij/d' ~/.config/fish/config.fish
+  sed -i '/exec tmux/d' ~/.zshrc
+  sed -i '/exec zellij/d' ~/.zshrc
   ;;
 esac
 
