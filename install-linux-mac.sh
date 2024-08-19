@@ -218,6 +218,7 @@ case "$shell_choice" in
   # Install Fisher and plugins
   fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
   fish -c "fisher install oh-my-fish/plugin-pj"
+  fish -c "fisher install PatrickF1/fzf.fish"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
