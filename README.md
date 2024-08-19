@@ -370,27 +370,13 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 
    ```
 
-4. **Install NODE & NPM**
-
-
-   ```bash
-   brew install node
-   brew install npm
-   ```
-
-5. **Install GIT**
+4. **Install the following dependencies**
 
    ```bash
-   brew install git
+   brew install node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
    ```
 
-6. **Install the following dependencies**
-
-   ```bash
-   brew install gcc fzf fd ripgrep coreutils
-   ```
-
-7. **Install Iosevka Term Nerd Font**
+5. **Install Iosevka Term Nerd Font**
 
    [Download and install the Iosevka Term Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.zip)
 
