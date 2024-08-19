@@ -48,8 +48,8 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+eval "$(fzf --zsh)"
 
 # Inicializar Starship para zsh
-
 eval "$(starship init zsh)"
 
