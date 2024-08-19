@@ -23,6 +23,9 @@ source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlightin
 source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 export PROJECT_PATHS="/home/alanbuscaglia/work"
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
 # Run Tmux
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
