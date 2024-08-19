@@ -23,7 +23,11 @@ end
 starship init fish | source
 
 set -x LS_COLORS "di=38;5;73:ow=48;5;22:ex=38;5;131:ln=38;5;179:*.tar=38;5;209:*.zip=38;5;209:*.jpg=38;5;176:*.png=38;5;176:*.mp3=38;5;176:*.wav=38;5;176:*.txt=38;5;223:*.sh=38;5;131"
+
+## alias
 alias ls='gls --color=auto'
+alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
+alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
 
 ## kanagawa
 #set -l foreground DCD7BA
