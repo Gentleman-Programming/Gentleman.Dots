@@ -27,6 +27,14 @@ is_wsl() {
   return $?
 }
 
+# Function to install basic dependencies
+install_dependencies() {
+  if [ "$os_choice" = "linux" ]; then
+    sudo apt-get update
+    sudo apt-get install -y build-essential curl file git
+  fi
+}
+
 # Function to install Homebrew if not installed
 install_homebrew() {
   if ! command -v brew &>/dev/null; then
@@ -73,6 +81,9 @@ install_homebrew() {
 # Ask for the operating system
 os_choice=$(prompt_user "Which operating system are you using? (Options: mac, linux)" "none")
 
+# Install basic dependencies
+install_dependencies
+
 # Prompt for project path and Obsidian path
 PROJECT_PATHS=$(prompt_user "Enter the path for your projects" "/your/work/path/")
 OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault" "/your/notes/path")
@@ -108,6 +119,8 @@ else
         brew install --cask alacritty
       elif [ "$os_choice" = "linux" ]; then
         sudo add-apt-repository ppa:aslatter/ppa
+        sudo apt-get update
+        sudo apt-get install alacritty
       fi
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
@@ -121,7 +134,7 @@ else
       if [ "$os_choice" = "mac" ]; then
         brew install --cask wezterm
       elif [ "$os_choice" = "linux" ]; then
-        $ curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+        curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
         echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
         sudo apt update
         sudo apt install wezterm
@@ -244,7 +257,6 @@ echo -e "${YELLOW}Step 4: Installing Additional Dependencies...${NC}"
 if [ "$os_choice" = "linux" ]; then
   sudo apt-get update
   sudo apt-get upgrade
-  sudo apt-get install build-essential
 fi
 
 brew install node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
