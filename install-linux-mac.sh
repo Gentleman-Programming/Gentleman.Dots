@@ -256,7 +256,7 @@ if [ "$os_choice" = "linux" ]; then
   sudo apt-get upgrade
 fi
 
-brew install node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+brew install starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
