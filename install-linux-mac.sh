@@ -247,7 +247,7 @@ if [ "$os_choice" = "linux" ]; then
   sudo apt-get install build-essential
 fi
 
-brew install starship nvim node npm git gcc fzf fd ripgrep coreutils
+brew install node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
