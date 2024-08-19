@@ -252,7 +252,7 @@ Depending on your preference, you can configure either `fish` or `zsh` as your d
 5. **Install PJ Plugin**
 
    ```bash
-
+   fisher install PatrickF1/fzf.fish
    fisher install oh-my-fish/plugin-pj
    ```
 
