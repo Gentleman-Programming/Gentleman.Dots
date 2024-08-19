@@ -51,6 +51,9 @@ family = "IosevkaTerm NFM"
 [window]
 option_as_alt = "Both"
 
+[env]
+TERM = "xterm-256color"
+
 # Uncomment for Windows
 #[shell]
 #program = "wsl.exe"
