@@ -14,9 +14,8 @@ end
 
 eval ($BREW_BIN shellenv)
 
-
-if not set -q TMUX 
-  tmux
+if not set -q TMUX
+    tmux
 end
 
 #if not set -q ZELLIJ 
