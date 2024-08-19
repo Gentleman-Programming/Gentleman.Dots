@@ -14,13 +14,15 @@ end
 
 eval ($BREW_BIN shellenv)
 
-if status is-interactive
-    and not set -q TMUX
-    exec tmux
+
+if not set -q TMUX 
+  tmux
 end
 
-#if set -q ZELLIJ else zellij
+#if not set -q ZELLIJ 
+#  zellij
 #end
+
 
 starship init fish | source
 
@@ -76,7 +78,3 @@ set -g fish_pager_color_progress $comment
 set -g fish_pager_color_prefix $cyan
 set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
-
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTAL
