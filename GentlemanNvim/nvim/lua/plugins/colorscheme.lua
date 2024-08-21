@@ -80,11 +80,19 @@ return {
       require("everforest").setup({
         background = "hard",
         italis = true,
-        transparent_background_level = 1,
+        -- transparent_background_level = 1,
         diagnostic_text_highlight = true,
         diagnostic_virtual_text = "coloured",
+        colours_override = function(palette)
+          palette.bg0 = "#1A1A22"
+        end,
       })
     end,
+  },
+  {
+    "dgox16/oldworld.nvim",
+    lazy = false,
+    priority = 1000,
   },
   {
     "LazyVim/LazyVim",
