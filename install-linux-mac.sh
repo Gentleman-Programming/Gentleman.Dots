@@ -74,9 +74,6 @@ progress_bar() {
   printf "\n"
 }
 
-# Ask if the user wants to see detailed output
-show_details=$(select_option "Do you want to see detailed output? " "Yes" "No")
-
 # Function to check and create directories if they do not exist
 ensure_directory_exists() {
   local dir_path="$1"
@@ -114,14 +111,25 @@ install_dependencies() {
   if [ "$os_choice" = "linux" ]; then
     run_command "sudo apt-get update"
     run_command "sudo apt-get install -y build-essential curl file git"
+  else
+    echo -e "${YELLOW}No dependencies needed for the next step${NC}"
   fi
+
 }
 
 # Function to install Homebrew if not installed
 install_homebrew() {
   if ! command -v brew &>/dev/null; then
     echo -e "${YELLOW}Homebrew is not installed. Installing Homebrew...${NC}"
-    run_command "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+
+    if [ "$show_details" = "No" ]; then
+      # Show progress bar while installing Homebrew
+      install_homebrew_progress &
+      progress_bar 10
+    else
+      # Install Homebrew normally
+      run_command "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+    fi
 
     # Add Homebrew to PATH based on OS
     if [ "$os_choice" = "mac" ]; then
@@ -169,34 +177,79 @@ set_default_shell() {
   sudo chsh -s "$shell_path" "$USER"
 }
 
+# Ask if the user wants to see detailed output
+show_details=$(select_option "Do you want to see detailed output? " "No" "Yes")
+
 # Ask for the operating system
 os_choice=$(select_option "Which operating system are you using? " "mac" "linux")
 
 # Install basic dependencies with progress bar
 echo -e "${YELLOW}Installing basic dependencies...${NC}"
-install_dependencies &
-progress_bar 10
+if [ "$show_details" = "No" ]; then
+  install_dependencies &
+  progress_bar 10
+else
+  install_dependencies
+fi
 
 # Prompt for project path and Obsidian path
-PROJECT_PATHS=$(prompt_user "Enter the path for your projects" "/your/work/path/")
+PROJECT_PATHS=$(prompt_user "Enter the path for your projects, it will create the folders for you if they don't exist" "/your/work/path/")
 ensure_directory_exists "$PROJECT_PATHS" "false"
 
-OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault" "/your/notes/path")
+OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault, it will create the folders for you if they don't exist" "/your/notes/path")
 ensure_directory_exists "$OBSIDIAN_PATH" "true"
+
+# Function to clone repository with progress bar
+clone_repository_with_progress() {
+  local repo_url="$1"
+  local clone_dir="$2"
+  local progress_duration=$3
+
+  echo -e "${YELLOW}Cloning repository...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run clone command in the background and show progress
+    (git clone "$repo_url" "$clone_dir" &>/dev/null) &
+    progress_bar "$progress_duration"
+  else
+    # Run clone command normally
+    git clone "$repo_url" "$clone_dir"
+  fi
+}
 
 # Step 1: Clone the Repository
 echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
 if [ -d "Gentleman.Dots" ]; then
   echo -e "${GREEN}Repository already cloned. Skipping...${NC}"
 else
-  run_command "git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git"
+  clone_repository_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots.git" "Gentleman.Dots" 20
 fi
 cd Gentleman.Dots || exit
 
 # Install Homebrew if not installed
 install_homebrew
 
-# Terminal Emulators Installation
+# Function to install a terminal emulator with progress
+install_terminal_with_progress() {
+  local term_name="$1"
+  local install_command="$2"
+  local config_command="$3"
+
+  echo -e "${YELLOW}Installing $term_name...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run installation in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    progress_bar 10
+  else
+    # Run installation normally
+    eval "$install_command"
+  fi
+
+  echo -e "${YELLOW}Configuring $term_name...${NC}"
+  eval "$config_command"
+}
+
 echo -e "${YELLOW}Step 2: Choose and Install Terminal Emulator${NC}"
 if is_wsl; then
   echo -e "${YELLOW}You are running WSL. Terminal emulators should be installed on Windows.${NC}"
@@ -212,46 +265,32 @@ else
   "alacritty")
     if ! command -v alacritty &>/dev/null; then
       if [ "$os_choice" = "mac" ]; then
-        run_command "brew install --cask alacritty"
+        install_terminal_with_progress "Alacritty" "brew install --cask alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       elif [ "$os_choice" = "linux" ]; then
-        run_command "sudo add-apt-repository ppa:aslatter/ppa"
-        run_command "sudo apt-get update"
-        run_command "sudo apt-get install alacritty"
+        install_terminal_with_progress "Alacritty" "sudo add-apt-repository ppa:aslatter/ppa && sudo apt-get update && sudo apt-get install alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       fi
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
     fi
-    echo -e "${YELLOW}Configuring Alacritty...${NC}"
-    run_command "mkdir -p ~/.config/alacritty"
-    run_command "cp alacritty.toml ~/.config/alacritty/alacritty.toml"
     ;;
   "wezterm")
     if ! command -v wezterm &>/dev/null; then
       if [ "$os_choice" = "mac" ]; then
-        run_command "brew install --cask wezterm"
+        install_terminal_with_progress "WezTerm" "brew install --cask wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       elif [ "$os_choice" = "linux" ]; then
-        run_command "curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg"
-        run_command "echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list"
-        run_command "sudo apt update"
-        run_command "sudo apt install wezterm"
+        install_terminal_with_progress "WezTerm" "curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg && echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list && sudo apt update && sudo apt install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
     fi
-    echo -e "${YELLOW}Configuring WezTerm...${NC}"
-    run_command "mkdir -p ~/.config/wezterm"
-    run_command "cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
     ;;
   "kitty")
     if [ "$os_choice" = "mac" ]; then
       if ! command -v kitty &>/dev/null; then
-        run_command "brew install --cask kitty"
+        install_terminal_with_progress "Kitty" "brew install --cask kitty" "mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty"
       else
         echo -e "${GREEN}Kitty is already installed.${NC}"
       fi
-      echo -e "${YELLOW}Configuring Kitty...${NC}"
-      run_command "mkdir -p ~/.config/kitty"
-      run_command "cp -r GentlemanKitty/* ~/.config/kitty"
     else
       echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
     fi
@@ -264,55 +303,97 @@ fi
 
 # Shared Steps (macOS, Linux, or WSL)
 
-# Step 3: Shell Configuration (Fish and Zsh)
+# Function to install shell or plugins with progress bar
+install_shell_with_progress() {
+  local name="$1"
+  local install_command="$2"
+  local post_install_command="$3"
+  local set_default_command="$4"
+
+  echo -e "${YELLOW}Installing $name...${NC}"
+  if [ "$show_details" = "No" ]; then
+    # Run install command in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    progress_bar 20
+  else
+    # Run install command normally
+    eval "$install_command"
+  fi
+
+  if [ -n "$post_install_command" ]; then
+    echo -e "${YELLOW}Post-install configuration for $name...${NC}"
+    eval "$post_install_command"
+  fi
+
+  if [ -n "$set_default_command" ]; then
+    echo -e "${YELLOW}Setting default shell to $name...${NC}"
+    eval "$set_default_command"
+  fi
+}
+
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
 shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh")
 
+# Case for shell choice
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
-    run_command "brew install fish"
+    install_shell_with_progress "Fish shell" "brew install fish" "mkdir -p ~/.config/fish && cp -r GentlemanFish/* ~/.config" "set_default_shell \"$(which fish)\""
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
-  echo -e "${YELLOW}Configuring Fish shell...${NC}"
-  run_command "mkdir -p ~/.config/fish"
-  run_command "cp -r GentlemanFish/* ~/.config"
-  # Update or append the PROJECT_PATHS line
-  update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
-
-  # Set fish as the default shell
-  set_default_shell "$(which fish)"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
-    run_command "brew install zsh"
+    install_shell_with_progress "Zsh" "brew install zsh" "" "set_default_shell \"$(which zsh)\""
   else
     echo -e "${GREEN}Zsh is already installed.${NC}"
   fi
-  run_command "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete"
+
+  if ! command -v zsh-autosuggestions &>/dev/null || ! command -v zsh-syntax-highlighting &>/dev/null || ! command -v zsh-autocomplete &>/dev/null; then
+    install_shell_with_progress "Zsh plugins" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" "" ""
+  fi
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    echo -e "${YELLOW}After it's done installing, just write exit and press enter to continue with the process${NC}"
-    prompt_user "Press enter to continue"
-    run_command "sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
+    if [ "$show_details" = "No" ]; then
+      (
+        NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)" &>/dev/null
+      ) &
+      progress_bar 30
+    else
+      NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
+    fi
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
   run_command "cp .zshrc ~/"
+
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
-
-  # Set zsh as the default shell
-  set_default_shell "$(which zsh)"
   ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
   ;;
 esac
+
+# Function to install dependencies with progress bar
+install_dependencies_with_progress() {
+  local install_command="$1"
+
+  echo -e "${YELLOW}Installing dependencies...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run installation in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    progress_bar 10
+  else
+    # Run installation normally
+    eval "$install_command"
+  fi
+}
 
 # Step 4: Additional Configurations
 
@@ -320,11 +401,12 @@ esac
 echo -e "${YELLOW}Step 4: Installing Additional Dependencies...${NC}"
 
 if [ "$os_choice" = "linux" ]; then
-  run_command "sudo apt-get update"
-  run_command "sudo apt-get upgrade"
+  # Combine the update and upgrade commands for progress
+  install_dependencies_with_progress "sudo apt-get update && sudo apt-get upgrade -y"
 fi
 
-run_command "brew install nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
+# Install additional packages with progress
+install_dependencies_with_progress "brew install nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
@@ -346,33 +428,90 @@ else
   echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
 fi
 
+# Function to install window manager with progress bar
+install_window_manager_with_progress() {
+  local install_command="$1"
+  local progress_duration=$2
+
+  echo -e "${YELLOW}Installing window manager...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run installation in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    progress_bar "$progress_duration"
+  else
+    # Run installation normally
+    eval "$install_command"
+  fi
+}
+
 # Ask if they want to use Tmux or Zellij, or none
 wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij" "none")
 
 case "$wm_choice" in
 "tmux")
   if ! command -v tmux &>/dev/null; then
-    run_command "brew install tmux"
+    if [ "$show_details" = "Yes" ]; then
+      install_window_manager_with_progress "brew install tmux" 10
+    else
+      run_command "brew install tmux"
+    fi
   else
     echo -e "${GREEN}Tmux is already installed.${NC}"
   fi
+
   echo -e "${YELLOW}Configuring Tmux...${NC}"
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    run_command "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    if [ "$show_details" = "Yes" ]; then
+      install_window_manager_with_progress "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm" 10
+    else
+      run_command "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    fi
   else
     echo -e "${GREEN}Tmux Plugin Manager is already installed.${NC}"
   fi
+
   run_command "mkdir -p ~/.tmux"
   run_command "cp -r GentlemanTmux/.tmux/* ~/.tmux/"
   run_command "cp GentlemanTmux/.tmux.conf ~/"
 
-  echo -e "${YELLOW}Please restart your computer to complete the Tmux installation after the script is done.${NC}"
-  echo -e "${YELLOW}After restarting, press Ctrl + a followed by Shift + i to install TMUX plugins.${NC}"
-  prompt_user "Press enter to continue"
+  echo -e "${YELLOW}Installing Tmux plugins...${NC}"
+  SESSION_NAME="plugin-installation"
+
+  # Check if session already exists and kill it if necessary
+  if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+    echo -e "${YELLOW}Session $SESSION_NAME already exists. Killing it...${NC}"
+    tmux kill-session -t $SESSION_NAME
+  fi
+
+  # Create a new session in detached mode with the specified name
+  tmux new-session -d -s $SESSION_NAME 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
+
+  # Check if the user wants to see details
+  if [ "$show_details" = "Yes" ]; then
+    # Use a loop to show progress (adjust as needed)
+    while tmux has-session -t $SESSION_NAME 2>/dev/null; do
+      echo -n "."
+      sleep 1
+    done
+    echo -e "\n${GREEN}Tmux plugins installation complete!${NC}"
+  else
+    # Wait for a few seconds to ensure the installation completes
+    while tmux has-session -t $SESSION_NAME 2>/dev/null; do
+      sleep 1
+    done
+
+    echo -e "${GREEN}Tmux plugins installation complete!${NC}"
+  fi
+
+  # Ensure the tmux session is killed
+  if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+    tmux kill-session -t $SESSION_NAME
+  fi
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
-    run_command "brew install zellij"
+    install_window_manager_with_progress "brew install zellij" 10
   else
     echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
@@ -392,13 +531,10 @@ case "$wm_choice" in
 "none")
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
   # If no window manager is chosen, remove the line that executes tmux or zellij
-  if [[ "$shell_choice" == "zsh" ]]; then
-    sed -i '' '/exec tmux/d' ~/.zshrc
-    sed -i '' '/exec zellij/d' ~/.zshrc
-  elif [[ "$shell_choice" == "fish" ]]; then
-    sed -i '' '/tmux/d' ~/.config/fish/config.fish
-    sed -i '' '/zellij/d' ~/.config/fish/config.fish
-  fi
+  sed -i '' '/exec tmux/d' ~/.zshrc
+  sed -i '' '/exec zellij/d' ~/.zshrc
+  sed -i '' '/tmux/d' ~/.config/fish/config.fish
+  sed -i '' '/zellij/d' ~/.config/fish/config.fish
   ;;
 *)
   echo -e "${YELLOW}Invalid option. No window manager will be installed or configured.${NC}"
@@ -410,5 +546,7 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 run_command "rm -rf Gentleman.Dots"
 
-echo -e "${YELLOW}After restarting, if you installed TMUX, remember to press Ctrl + a followed by Shift + i to install the plugins.${NC}"
-echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
+echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
+
+# Para Bash o Zsh
+exec $SHELL
