@@ -264,8 +264,12 @@ if is_wsl; then
   echo -e "${YELLOW}You are running WSL. Terminal emulators should be installed on Windows.${NC}"
 else
   if [ "$os_choice" = "linux" ]; then
-    echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
-    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
+    if is_arch; then
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
+    else
+      echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
+    fi
   else
     term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty")
   fi
@@ -273,9 +277,9 @@ else
   case "$term_choice" in
   "alacritty")
     if ! command -v alacritty &>/dev/null; then
-      if [ "$os_choice" = "mac" ]; then
-        install_terminal_with_progress "Alacritty" "brew install --cask alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
-      elif [ "$os_choice" = "linux" ]; then
+      if is_arch; then
+        install_terminal_with_progress "Alacritty" "sudo pacman -S --noconfirm alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
+      else
         install_terminal_with_progress "Alacritty" "sudo add-apt-repository ppa:aslatter/ppa && sudo apt-get update && sudo apt-get install alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       fi
     else
@@ -284,9 +288,9 @@ else
     ;;
   "wezterm")
     if ! command -v wezterm &>/dev/null; then
-      if [ "$os_choice" = "mac" ]; then
-        install_terminal_with_progress "WezTerm" "brew install --cask wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
-      elif [ "$os_choice" = "linux" ]; then
+      if is_arch; then
+        install_terminal_with_progress "WezTerm" "sudo pacman -S --noconfirm wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+      else
         install_terminal_with_progress "WezTerm" "curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg && echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list && sudo apt update && sudo apt install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
@@ -409,8 +413,10 @@ install_dependencies_with_progress() {
 echo -e "${YELLOW}Step 4: Installing Additional Dependencies...${NC}"
 
 if [ "$os_choice" = "linux" ]; then
-  # Combine the update and upgrade commands for progress
-  install_dependencies_with_progress "sudo apt-get update && sudo apt-get upgrade -y"
+  if ! is_arch; then
+    # Combine the update and upgrade commands for progress (only if not Arch Linux)
+    install_dependencies_with_progress "sudo apt-get update && sudo apt-get upgrade -y"
+  fi
 fi
 
 # Install additional packages with progress
