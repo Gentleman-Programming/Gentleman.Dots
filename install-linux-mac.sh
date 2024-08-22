@@ -321,11 +321,9 @@ install_shell_with_progress() {
 
   echo -e "${YELLOW}Installing $name...${NC}"
   if [ "$show_details" = "No" ]; then
-    # Run install command in the background and show progress
     (eval "$install_command" &>/dev/null) &
     progress_bar 20
   else
-    # Run install command normally
     eval "$install_command"
   fi
 
@@ -336,7 +334,8 @@ install_shell_with_progress() {
 
   if [ -n "$set_default_command" ]; then
     echo -e "${YELLOW}Setting default shell to $name...${NC}"
-    eval "$set_default_command"
+    local shell_path=$(which $name)  # Obtener el camino completo del shell
+    set_default_shell "$shell_path"
   fi
 }
 
