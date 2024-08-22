@@ -106,15 +106,24 @@ run_command() {
   fi
 }
 
+# Function to detect if the system is Arch Linux
+is_arch() {
+  if [ -f /etc/arch-release ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # Function to install basic dependencies
 install_dependencies() {
-  if [ "$os_choice" = "linux" ]; then
+  if is_arch; then
+    run_command "sudo pacman -Syu --noconfirm"
+    run_command "sudo pacman -S --needed --noconfirm base-devel curl file git"
+  else
     run_command "sudo apt-get update"
     run_command "sudo apt-get install -y build-essential curl file git"
-  else
-    echo -e "${YELLOW}No dependencies needed for the next step${NC}"
   fi
-
 }
 
 # Function to install Homebrew if not installed
