@@ -2,13 +2,17 @@
 
 set -e
 
-# Define colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
+# Define colors for output using the Kanagawa color palette and #EA1889
+PINK='\033[38;5;204m'
+PURPLE='\033[38;5;141m'
+GREEN='\033[38;5;114m'
+ORANGE='\033[38;5;208m'
+BLUE='\033[38;5;75m'
+YELLOW='\033[38;5;221m'
+RED='\033[38;5;196m'
 NC='\033[0m' # No Color
 
-# Gentleman.Dots logo
+# Gentleman.Dots logo with pink color
 logo='
                       ░░░░░░      ░░░░░░                      
                     ░░░░░░░░░░  ░░░░░░░░░░                    
@@ -26,15 +30,15 @@ logo='
 '
 
 # Display logo and title
-echo -e "${GREEN}${logo}${NC}"
-echo -e "${GREEN}Welcome to the Gentleman.Dots Auto Config!${NC}"
+echo -e "${PINK}${logo}${NC}"
+echo -e "${PURPLE}Welcome to the Gentleman.Dots Auto Config!${NC}"
 
 # Function to prompt user for input with a select menu
 select_option() {
   local prompt_message="$1"
   shift
   local options=("$@")
-  PS3="$prompt_message "
+  PS3="${ORANGE}$prompt_message${NC} "
   select opt in "${options[@]}"; do
     if [ -n "$opt" ]; then
       echo "$opt"
@@ -49,7 +53,7 @@ select_option() {
 prompt_user() {
   local prompt_message="$1"
   local default_answer="$2"
-  read -p "$prompt_message [$default_answer] " user_input
+  read -p "$(echo -e ${BLUE}$prompt_message [$default_answer]${NC}) " user_input
   user_input="${user_input:-$default_answer}"
   echo "$user_input"
 }
@@ -277,7 +281,7 @@ case "$shell_choice" in
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    echo -e "${YELLOW}After its done installing, just write exit and press enter to continue with the process${NC}"
+    echo -e "${YELLOW}After it's done installing, just write exit and press enter to continue with the process${NC}"
     prompt_user "Press enter to continue"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
