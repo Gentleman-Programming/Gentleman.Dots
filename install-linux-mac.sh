@@ -406,7 +406,7 @@ if [ "$os_choice" = "linux" ]; then
 fi
 
 # Install additional packages with progress
-install_dependencies_with_progress "brew install bun nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
+install_dependencies_with_progress "brew install oven-sh/bun/bun nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
