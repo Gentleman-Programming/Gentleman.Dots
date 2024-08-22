@@ -111,7 +111,7 @@ return {
         borderchars = {
           prompt = { "─", " ", " ", " ", " ", " ", " ", " " }, -- Top border for the prompt only
           results = { " ", " ", " ", " ", " ", " ", " ", " " }, -- No borders for results
-          preview = { "─", "│", " ", "│", "╭", "╮", "╯", "╰" }, -- Borders for the preview (top and sides)
+          preview = { "─", "│", " ", "│", "╭", "╮", "", "" }, -- Borders for the preview (top and sides)
         },
         mappings = {
           i = {
