@@ -561,6 +561,6 @@ cd ..
 run_command "rm -rf Gentleman.Dots"
 
 echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
-
+echo -e "${GREEN}If it doesn't work, restart your computer or WSL instance😘${NC}"
 # Para Bash o Zsh
 exec $SHELL
