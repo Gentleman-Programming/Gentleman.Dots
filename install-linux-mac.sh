@@ -2,15 +2,15 @@
 
 set -e
 
-# Define colors for output using the Kanagawa color palette and #EA1889
-PINK='\033[38;5;204m'
-PURPLE='\033[38;5;141m'
-GREEN='\033[38;5;114m'
-ORANGE='\033[38;5;208m'
-BLUE='\033[38;5;75m'
-YELLOW='\033[38;5;221m'
-RED='\033[38;5;196m'
-NC='\033[0m' # No Color
+# Define colors for output using tput for better compatibility
+PINK=$(tput setaf 204)
+PURPLE=$(tput setaf 141)
+GREEN=$(tput setaf 114)
+ORANGE=$(tput setaf 208)
+BLUE=$(tput setaf 75)
+YELLOW=$(tput setaf 221)
+RED=$(tput setaf 196)
+NC=$(tput sgr0) # No Color
 
 # Gentleman.Dots logo with pink color
 logo='
