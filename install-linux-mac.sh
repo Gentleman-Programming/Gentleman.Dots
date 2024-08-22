@@ -58,6 +58,25 @@ prompt_user() {
   echo "$user_input"
 }
 
+# Function to display a progress bar
+progress_bar() {
+  local duration=$1
+  already_done() { for ((done = 0; done < $elapsed; done++)); do printf "▇"; done; }
+  remaining() { for ((remain = $elapsed; remain < $duration; remain++)); do printf " "; done; }
+  percentage() { printf "| %s%%" $(((($elapsed) * 100) / ($duration) * 100 / 100)); }
+  for ((elapsed = 1; elapsed <= $duration; elapsed += 1)); do
+    already_done
+    remaining
+    percentage
+    printf "\r"
+    sleep 0.1
+  done
+  printf "\n"
+}
+
+# Ask if the user wants to see detailed output
+show_details=$(select_option "Do you want to see detailed output? " "Yes" "No")
+
 # Function to check and create directories if they do not exist
 ensure_directory_exists() {
   local dir_path="$1"
@@ -80,11 +99,21 @@ is_wsl() {
   return $?
 }
 
+# Function to run commands with optional suppression of output
+run_command() {
+  local command=$1
+  if [ "$show_details" = "Yes" ]; then
+    eval $command
+  else
+    eval $command &>/dev/null
+  fi
+}
+
 # Function to install basic dependencies
 install_dependencies() {
   if [ "$os_choice" = "linux" ]; then
-    sudo apt-get update
-    sudo apt-get install -y build-essential curl file git
+    run_command "sudo apt-get update"
+    run_command "sudo apt-get install -y build-essential curl file git"
   fi
 }
 
@@ -92,39 +121,21 @@ install_dependencies() {
 install_homebrew() {
   if ! command -v brew &>/dev/null; then
     echo -e "${YELLOW}Homebrew is not installed. Installing Homebrew...${NC}"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    run_command "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
 
     # Add Homebrew to PATH based on OS
     if [ "$os_choice" = "mac" ]; then
-      (
-        echo
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.zshrc
-      (
-        echo
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.bashrc
-      mkdir -p $USER_HOME/.config/fish
-      (
-        echo
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.config/fish/config.fish
-      eval "$(/opt/homebrew/bin/brew shellenv)"
+      run_command "(echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> $USER_HOME/.zshrc)"
+      run_command "(echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> $USER_HOME/.bashrc)"
+      run_command "mkdir -p $USER_HOME/.config/fish"
+      run_command "(echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> $USER_HOME/.config/fish/config.fish)"
+      run_command "eval \"\$(/opt/homebrew/bin/brew shellenv)\""
     elif [ "$os_choice" = "linux" ]; then
-      (
-        echo
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.zshrc
-      (
-        echo
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.bashrc
-      mkdir -p $USER_HOME/.config/fish
-      (
-        echo
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-      ) >>$USER_HOME/.config/fish/config.fish
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.zshrc)"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.bashrc)"
+      run_command "mkdir -p $USER_HOME/.config/fish"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.config/fish/config.fish)"
+      run_command "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
     fi
   else
     echo -e "${GREEN}Homebrew is already installed.${NC}"
@@ -161,8 +172,10 @@ set_default_shell() {
 # Ask for the operating system
 os_choice=$(select_option "Which operating system are you using? " "mac" "linux")
 
-# Install basic dependencies
-install_dependencies
+# Install basic dependencies with progress bar
+echo -e "${YELLOW}Installing basic dependencies...${NC}"
+install_dependencies &
+progress_bar 10
 
 # Prompt for project path and Obsidian path
 PROJECT_PATHS=$(prompt_user "Enter the path for your projects" "/your/work/path/")
@@ -176,7 +189,7 @@ echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
 if [ -d "Gentleman.Dots" ]; then
   echo -e "${GREEN}Repository already cloned. Skipping...${NC}"
 else
-  git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+  run_command "git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git"
 fi
 cd Gentleman.Dots || exit
 
@@ -199,46 +212,46 @@ else
   "alacritty")
     if ! command -v alacritty &>/dev/null; then
       if [ "$os_choice" = "mac" ]; then
-        brew install --cask alacritty
+        run_command "brew install --cask alacritty"
       elif [ "$os_choice" = "linux" ]; then
-        sudo add-apt-repository ppa:aslatter/ppa
-        sudo apt-get update
-        sudo apt-get install alacritty
+        run_command "sudo add-apt-repository ppa:aslatter/ppa"
+        run_command "sudo apt-get update"
+        run_command "sudo apt-get install alacritty"
       fi
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
     fi
     echo -e "${YELLOW}Configuring Alacritty...${NC}"
-    mkdir -p ~/.config/alacritty
-    cp alacritty.toml ~/.config/alacritty/alacritty.toml
+    run_command "mkdir -p ~/.config/alacritty"
+    run_command "cp alacritty.toml ~/.config/alacritty/alacritty.toml"
     ;;
   "wezterm")
     if ! command -v wezterm &>/dev/null; then
       if [ "$os_choice" = "mac" ]; then
-        brew install --cask wezterm
+        run_command "brew install --cask wezterm"
       elif [ "$os_choice" = "linux" ]; then
-        curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
-        echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
-        sudo apt update
-        sudo apt install wezterm
+        run_command "curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg"
+        run_command "echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list"
+        run_command "sudo apt update"
+        run_command "sudo apt install wezterm"
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
     fi
     echo -e "${YELLOW}Configuring WezTerm...${NC}"
-    mkdir -p ~/.config/wezterm
-    cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+    run_command "mkdir -p ~/.config/wezterm"
+    run_command "cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
     ;;
   "kitty")
     if [ "$os_choice" = "mac" ]; then
       if ! command -v kitty &>/dev/null; then
-        brew install --cask kitty
+        run_command "brew install --cask kitty"
       else
         echo -e "${GREEN}Kitty is already installed.${NC}"
       fi
       echo -e "${YELLOW}Configuring Kitty...${NC}"
-      mkdir -p ~/.config/kitty
-      cp -r GentlemanKitty/* ~/.config/kitty
+      run_command "mkdir -p ~/.config/kitty"
+      run_command "cp -r GentlemanKitty/* ~/.config/kitty"
     else
       echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
     fi
@@ -258,13 +271,13 @@ shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh"
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
-    brew install fish
+    run_command "brew install fish"
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
   echo -e "${YELLOW}Configuring Fish shell...${NC}"
-  mkdir -p ~/.config/fish
-  cp -r GentlemanFish/* ~/.config
+  run_command "mkdir -p ~/.config/fish"
+  run_command "cp -r GentlemanFish/* ~/.config"
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS $PROJECT_PATHS"
 
@@ -273,23 +286,23 @@ case "$shell_choice" in
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
-    brew install zsh
+    run_command "brew install zsh"
   else
     echo -e "${GREEN}Zsh is already installed.${NC}"
   fi
-  brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
+  run_command "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete"
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
     echo -e "${YELLOW}After it's done installing, just write exit and press enter to continue with the process${NC}"
     prompt_user "Press enter to continue"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    run_command "sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
   else
     echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
-  cp .zshrc ~/
+  run_command "cp .zshrc ~/"
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
 
@@ -307,21 +320,21 @@ esac
 echo -e "${YELLOW}Step 4: Installing Additional Dependencies...${NC}"
 
 if [ "$os_choice" = "linux" ]; then
-  sudo apt-get update
-  sudo apt-get upgrade
+  run_command "sudo apt-get update"
+  run_command "sudo apt-get upgrade"
 fi
 
-brew install nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+run_command "brew install nvim starship node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
 # Neovim Configuration
 echo -e "${YELLOW}Configuring Neovim...${NC}"
-mkdir -p ~/.config/nvim
-cp -r GentlemanNvim/nvim/* ~/.config/nvim/
+run_command "mkdir -p ~/.config/nvim"
+run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
 
 # Starship Configuration
 echo -e "${YELLOW}Configuring Starship...${NC}"
-mkdir -p ~/.config
-cp starship.toml ~/.config
+run_command "mkdir -p ~/.config"
+run_command "cp starship.toml ~/.config"
 
 # Obsidian Configuration
 echo -e "${YELLOW}Configuring Obsidian...${NC}"
@@ -333,25 +346,25 @@ else
   echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
 fi
 
-# Ask if they want to use Tmux or Zellij
-wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij")
+# Ask if they want to use Tmux or Zellij, or none
+wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij" "none")
 
 case "$wm_choice" in
 "tmux")
   if ! command -v tmux &>/dev/null; then
-    brew install tmux
+    run_command "brew install tmux"
   else
     echo -e "${GREEN}Tmux is already installed.${NC}"
   fi
   echo -e "${YELLOW}Configuring Tmux...${NC}"
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    run_command "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
   else
     echo -e "${GREEN}Tmux Plugin Manager is already installed.${NC}"
   fi
-  mkdir -p ~/.tmux
-  cp -r GentlemanTmux/.tmux/* ~/.tmux/
-  cp GentlemanTmux/.tmux.conf ~/
+  run_command "mkdir -p ~/.tmux"
+  run_command "cp -r GentlemanTmux/.tmux/* ~/.tmux/"
+  run_command "cp GentlemanTmux/.tmux.conf ~/"
 
   echo -e "${YELLOW}Please restart your computer to complete the Tmux installation after the script is done.${NC}"
   echo -e "${YELLOW}After restarting, press Ctrl + a followed by Shift + i to install TMUX plugins.${NC}"
@@ -359,13 +372,13 @@ case "$wm_choice" in
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
-    brew install zellij
+    run_command "brew install zellij"
   else
     echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
   echo -e "${YELLOW}Configuring Zellij...${NC}"
-  mkdir -p ~/.config/zellij
-  cp -r GentlemanZellij/zellij/* ~/.config/zellij/
+  run_command "mkdir -p ~/.config/zellij"
+  run_command "cp -r GentlemanZellij/zellij/* ~/.config/zellij/"
 
   # Replace TMUX with ZELLIJ and tmux with zellij only in the selected shell configuration
   if [[ "$shell_choice" == "zsh" ]]; then
@@ -376,20 +389,26 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   fi
   ;;
-*)
+"none")
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
   # If no window manager is chosen, remove the line that executes tmux or zellij
-  sed -i '/exec tmux/d' ~/.config/fish/config.fish
-  sed -i '/exec zellij/d' ~/.config/fish/config.fish
-  sed -i '/exec tmux/d' ~/.zshrc
-  sed -i '/exec zellij/d' ~/.zshrc
+  if [[ "$shell_choice" == "zsh" ]]; then
+    sed -i '' '/exec tmux/d' ~/.zshrc
+    sed -i '' '/exec zellij/d' ~/.zshrc
+  elif [[ "$shell_choice" == "fish" ]]; then
+    sed -i '' '/tmux/d' ~/.config/fish/config.fish
+    sed -i '' '/zellij/d' ~/.config/fish/config.fish
+  fi
+  ;;
+*)
+  echo -e "${YELLOW}Invalid option. No window manager will be installed or configured.${NC}"
   ;;
 esac
 
 # Clean up: Remove the cloned repository
 echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
-rm -rf Gentleman.Dots
+run_command "rm -rf Gentleman.Dots"
 
 echo -e "${YELLOW}After restarting, if you installed TMUX, remember to press Ctrl + a followed by Shift + i to install the plugins.${NC}"
 echo -e "${GREEN}Installation and configuration complete! Please restart your computer to see the changes.${NC}"
