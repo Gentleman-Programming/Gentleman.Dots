@@ -8,17 +8,66 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
-USER_HOME=$(eval echo ~${SUDO_USER})
+# Gentleman.Dots logo
+logo='
+                      ░░░░░░      ░░░░░░                      
+                    ░░░░░░░░░░  ░░░░░░░░░░                    
+                  ░░░░░░░░░░░░░░░░░░░░░░░░░░                  
+                ░░░░░░░░░░▒▒▒▒░░▒▒▒▒░░░░░░░░░░                
+              ░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░              
+  ▒▒        ░░░░░░▒▒▒▒▒▒▒▒▒▒██▒▒██▒▒▒▒▒▒▒▒▒▒░░░░░░        ▒▒  
+▒▒░░    ░░░░░░░░▒▒▒▒▒▒▒▒▒▒████▒▒████▒▒▒▒▒▒▒▒▒▒░░░░░░░░    ░░▒▒
+▒▒▒▒░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒██████▒▒██████▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒
+██▒▒▒▒▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██████▓▓██▒▒██████▒▒▓▓██▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+  ████▒▒▒▒▒▒████▒▒▒▒██████████  ██████████▒▒▒▒████▒▒▒▒▒▒▒▒██  
+    ████████████████████████      ████████████████████████    
+      ██████████████████              ██████████████████      
+          ██████████                      ██████████          
+'
 
-echo -e "${GREEN}Welcome to the Gentleman.Dots installation and configuration guide!${NC}"
+# Display logo and title
+echo -e "${GREEN}${logo}${NC}"
+echo -e "${GREEN}Welcome to the Gentleman.Dots Auto Config!${NC}"
 
-# Function to prompt user for input
+# Function to prompt user for input with a select menu
+select_option() {
+  local prompt_message="$1"
+  shift
+  local options=("$@")
+  PS3="$prompt_message "
+  select opt in "${options[@]}"; do
+    if [ -n "$opt" ]; then
+      echo "$opt"
+      break
+    else
+      echo -e "${RED}Invalid option. Please try again.${NC}"
+    fi
+  done
+}
+
+# Function to prompt user for input with a default option
 prompt_user() {
   local prompt_message="$1"
   local default_answer="$2"
   read -p "$prompt_message [$default_answer] " user_input
   user_input="${user_input:-$default_answer}"
   echo "$user_input"
+}
+
+# Function to check and create directories if they do not exist
+ensure_directory_exists() {
+  local dir_path="$1"
+  local create_templates="$2"
+  if [ ! -d "$dir_path" ]; then
+    echo -e "${YELLOW}Directory $dir_path does not exist. Creating...${NC}"
+    mkdir -p "$dir_path"
+    if [ "$create_templates" == "true" ]; then
+      mkdir -p "$dir_path/templates"
+      echo -e "${GREEN}Templates directory created at $dir_path/templates${NC}"
+    fi
+  else
+    echo -e "${GREEN}Directory $dir_path already exists.${NC}"
+  fi
 }
 
 # Function to check if running on WSL
@@ -85,7 +134,6 @@ update_or_replace() {
   local replace="$3"
 
   if grep -q "$search" "$file"; then
-    # Use awk to replace the line containing the search string
     awk -v search="$search" -v replace="$replace" '
     $0 ~ search {print replace; next}
     {print}
@@ -107,14 +155,17 @@ set_default_shell() {
 }
 
 # Ask for the operating system
-os_choice=$(prompt_user "Which operating system are you using? (Options: mac, linux)" "none")
+os_choice=$(select_option "Which operating system are you using? " "mac" "linux")
 
 # Install basic dependencies
 install_dependencies
 
 # Prompt for project path and Obsidian path
 PROJECT_PATHS=$(prompt_user "Enter the path for your projects" "/your/work/path/")
+ensure_directory_exists "$PROJECT_PATHS" "false"
+
 OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault" "/your/notes/path")
+ensure_directory_exists "$OBSIDIAN_PATH" "true"
 
 # Step 1: Clone the Repository
 echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
@@ -135,9 +186,9 @@ if is_wsl; then
 else
   if [ "$os_choice" = "linux" ]; then
     echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
-    term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm)" "none")
+    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
   else
-    term_choice=$(prompt_user "Which terminal emulator do you want to install? (Options: alacritty, wezterm, kitty)" "none")
+    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty")
   fi
 
   case "$term_choice" in
@@ -198,7 +249,7 @@ fi
 
 # Step 3: Shell Configuration (Fish and Zsh)
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
-shell_choice=$(prompt_user "Which shell do you want to install? (Options: fish, zsh)" "none")
+shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh")
 
 case "$shell_choice" in
 "fish")
@@ -279,7 +330,7 @@ else
 fi
 
 # Ask if they want to use Tmux or Zellij
-wm_choice=$(prompt_user "Which window manager do you want to install? (Options: tmux, zellij)" "none")
+wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij")
 
 case "$wm_choice" in
 "tmux")
