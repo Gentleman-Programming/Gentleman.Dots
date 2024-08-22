@@ -77,163 +77,84 @@ return {
   },
 
   {
-    "telescope.nvim",
+    "nvim-telescope/telescope.nvim",
+    opts = function(_, opts)
+      local actions = require("telescope.actions")
+
+      -- Function to calculate the appropriate height
+      local function calculate_height()
+        if vim.o.lines <= 40 then
+          return vim.o.lines -- 100% height for small terminals
+        else
+          return math.floor(vim.o.lines * 0.3) -- 30% height for larger terminals
+        end
+      end
+
+      -- Set initial height based on the current terminal size
+      local initial_height = calculate_height()
+
+      -- Update layout_config with the initial height calculation
+      opts.defaults = {
+        prompt_prefix = "> ", -- Set the prompt to just ">"
+        layout_strategy = "horizontal", -- Use horizontal layout
+        layout_config = {
+          prompt_position = "top", -- Position the prompt at the top
+          height = initial_height, -- Set the initial height
+          width = vim.o.columns, -- Occupy the full width of the window
+          preview_cutoff = 0, -- Always show the preview
+          mirror = false, -- Place the preview on the right
+          anchor = "S", -- Anchor the layout to the bottom
+        },
+        sorting_strategy = "ascending",
+        winblend = 0, -- No transparency
+        results_title = false, -- Remove the "Results" title
+        borderchars = {
+          prompt = { "─", " ", " ", " ", " ", " ", " ", " " }, -- Top border for the prompt only
+          results = { " ", " ", " ", " ", " ", " ", " ", " " }, -- No borders for results
+          preview = { "─", "│", " ", "│", "╭", "╮", "╯", "╰" }, -- Borders for the preview (top and sides)
+        },
+        mappings = {
+          i = {
+            ["<C-Down>"] = actions.cycle_history_next,
+            ["<C-Up>"] = actions.cycle_history_prev,
+            ["<C-f>"] = actions.preview_scrolling_down,
+            ["<C-b>"] = actions.preview_scrolling_up,
+          },
+          n = {
+            ["q"] = actions.close,
+          },
+        },
+      }
+
+      -- Set up an autocmd to recalculate the height on window resize
+      vim.api.nvim_create_autocmd("VimResized", {
+        callback = function()
+          opts.defaults.layout_config.height = calculate_height()
+          opts.defaults.layout_config.width = vim.o.columns
+        end,
+      })
+
+      -- Load the fzf extension for fast searches
+      require("telescope").load_extension("fzf")
+
+      return opts
+    end,
+
     dependencies = {
+      {
+        "nvim-telescope/telescope-live-grep-args.nvim",
+        version = "^1.0.0",
+        config = function()
+          require("telescope").load_extension("live_grep_args")
+        end,
+      },
       {
         "nvim-telescope/telescope-fzf-native.nvim",
         build = "make",
-      },
-      "nvim-telescope/telescope-file-browser.nvim",
-    },
-    keys = {
-      {
-        "<leader>fP",
-        function()
-          require("telescope.builtin").find_files({
-            cwd = require("lazy.core.config").options.root,
-          })
+        config = function()
+          require("telescope").load_extension("fzf")
         end,
-        desc = "Find Plugin File",
-      },
-      {
-        ";f",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.find_files({
-            no_ignore = false,
-            hidden = true,
-          })
-        end,
-        desc = "Lists files in your current working directory, respects .gitignore",
-      },
-      {
-        ";r",
-        function()
-          local builtin = require("telescope").extensions.live_grep_args
-          builtin.live_grep_args()
-        end,
-        desc = "Search for a string in your current working directory and get results live as you type, respects .gitignore",
-      },
-      {
-        "\\\\",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.buffers()
-        end,
-        desc = "Lists open buffers",
-      },
-      {
-        ";t",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.help_tags()
-        end,
-        desc = "Lists available help tags and opens a new window with the relevant help info on <cr>",
-      },
-      {
-        ";;",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.resume()
-        end,
-        desc = "Resume the previous telescope picker",
-      },
-      {
-        ";e",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.diagnostics()
-        end,
-        desc = "Lists Diagnostics for all open buffers or a specific buffer",
-      },
-      {
-        ";s",
-        function()
-          local builtin = require("telescope.builtin")
-          builtin.treesitter()
-        end,
-        desc = "Lists Function names, variables, from Treesitter",
-      },
-      {
-        "<Leader>sf",
-        function()
-          local telescope = require("telescope")
-
-          local function telescope_buffer_dir()
-            return vim.fn.expand("%:p:h")
-          end
-
-          telescope.extensions.file_browser.file_browser({
-            path = "%:p:h",
-            cwd = telescope_buffer_dir(),
-            respect_gitignore = false,
-            hidden = true,
-            grouped = true,
-            previewer = false,
-            initial_mode = "normal",
-            layout_config = { height = 40 },
-          })
-        end,
-        desc = "Open File Browser with the path of the current buffer",
       },
     },
-    config = function(_, opts)
-      local telescope = require("telescope")
-      local actions = require("telescope.actions")
-      local fb_actions = require("telescope").extensions.file_browser.actions
-
-      opts.defaults = vim.tbl_deep_extend("force", opts.defaults, {
-        wrap_results = true,
-        layout_strategy = "horizontal",
-        layout_config = { prompt_position = "top" },
-        sorting_strategy = "ascending",
-        winblend = 0,
-        mappings = {
-          n = {},
-        },
-      })
-      opts.pickers = {
-        diagnostics = {
-          theme = "ivy",
-          initial_mode = "normal",
-          layout_config = {
-            preview_cutoff = 9999,
-          },
-        },
-      }
-      opts.extensions = {
-        file_browser = {
-          theme = "dropdown",
-          -- disables netrw and use telescope-file-browser in its place
-          hijack_netrw = true,
-          mappings = {
-            -- your custom insert mode mappings
-            ["n"] = {
-              -- your custom normal mode mappings
-              ["N"] = fb_actions.create,
-              ["h"] = fb_actions.goto_parent_dir,
-              ["/"] = function()
-                vim.cmd("startinsert")
-              end,
-              ["<C-u>"] = function(prompt_bufnr)
-                for i = 1, 10 do
-                  actions.move_selection_previous(prompt_bufnr)
-                end
-              end,
-              ["<C-d>"] = function(prompt_bufnr)
-                for i = 1, 10 do
-                  actions.move_selection_next(prompt_bufnr)
-                end
-              end,
-              ["<PageUp>"] = actions.preview_scrolling_up,
-              ["<PageDown>"] = actions.preview_scrolling_down,
-            },
-          },
-        },
-      }
-      telescope.setup(opts)
-      require("telescope").load_extension("fzf")
-      require("telescope").load_extension("file_browser")
-    end,
   },
 }
