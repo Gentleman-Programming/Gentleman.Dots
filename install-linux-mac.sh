@@ -171,10 +171,7 @@ update_or_replace() {
   local search="$2"
   local replace="$3"
 
-  # Escape any special characters in the search string
-  escaped_search=$(echo "$search" | sed 's/[]\/$*.^[]/\\&/g')
-
-  if grep -q "$escaped_search" "$file"; then
+  if grep -q "$search" "$file"; then
     awk -v search="$search" -v replace="$replace" '
     $0 ~ search {print replace; next}
     {print}
@@ -539,8 +536,8 @@ case "$wm_choice" in
 
   # Replace TMUX with ZELLIJ and tmux with zellij only in the selected shell configuration
   if [[ "$shell_choice" == "zsh" ]]; then
-    update_or_replace ~/.zshrc "TMUX" 'if [[ $- == *i* ]] && [[ -z "\$ZELLIJ" ]]; then'
-    update_or_replace ~/.zshrc "exec tmux" "exec zellij"
+    update_or_replace ~/.zshrc "TMUX" 'WM_VAR="/$ZELLIJ"'
+    update_or_replace ~/.zshrc "tmux" 'WM_CMD="zellij"'
   elif [[ "$shell_choice" == "fish" ]]; then
     update_or_replace ~/.config/fish/config.fish "TMUX" "if not set -q ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
@@ -560,6 +557,7 @@ case "$wm_choice" in
 esac
 
 # Clean up: Remove the cloned repository
+sudo chown -R $(whoami) $(brew --prefix)/*
 echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 run_command "rm -rf Gentleman.Dots"
