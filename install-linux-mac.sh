@@ -194,13 +194,15 @@ show_details=$(select_option "Do you want to see detailed output? " "No" "Yes")
 # Ask for the operating system
 os_choice=$(select_option "Which operating system are you using? " "mac" "linux")
 
-# Install basic dependencies with progress bar
-echo -e "${YELLOW}Installing basic dependencies...${NC}"
-if [ "$show_details" = "No" ]; then
-  install_dependencies &
-  spinner
-else
-  install_dependencies
+if [ "$os_choice" != "mac" ]; then
+  # Install basic dependencies with progress bar
+  echo -e "${YELLOW}Installing basic dependencies...${NC}"
+  if [ "$show_details" = "No" ]; then
+    install_dependencies &
+    spinner
+  else
+    install_dependencies
+  fi
 fi
 
 # Prompt for project path and Obsidian path
