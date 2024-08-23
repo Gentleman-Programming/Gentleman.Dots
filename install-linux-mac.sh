@@ -76,15 +76,23 @@ spinner() {
 ensure_directory_exists() {
   local dir_path="$1"
   local create_templates="$2"
+
   if [ ! -d "$dir_path" ]; then
     echo -e "${YELLOW}Directory $dir_path does not exist. Creating...${NC}"
     mkdir -p "$dir_path"
-    if [ "$create_templates" == "true" ]; then
-      mkdir -p "$dir_path/templates"
-      echo -e "${GREEN}Templates directory created at $dir_path/templates${NC}"
-    fi
   else
     echo -e "${GREEN}Directory $dir_path already exists.${NC}"
+  fi
+
+  # Check for the "templates" directory only if create_templates is true
+  if [ "$create_templates" == "true" ]; then
+    if [ ! -d "$dir_path/templates" ]; then
+      echo -e "${YELLOW}Templates directory does not exist. Creating...${NC}"
+      mkdir -p "$dir_path/templates"
+      echo -e "${GREEN}Templates directory created at $dir_path/templates${NC}"
+    else
+      echo -e "${GREEN}Templates directory already exists at $dir_path/templates${NC}"
+    fi
   fi
 }
 
