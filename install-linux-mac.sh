@@ -178,11 +178,7 @@ update_or_replace() {
 # Function to set the default shell
 set_default_shell() {
   local shell_path="$1"
-
-  if ! grep -Fxq "$shell_path" /etc/shells; then
-    echo "$shell_path" | sudo tee -a /etc/shells
-  fi
-
+  sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
   sudo chsh -s "$shell_path" "$USER"
 }
 
@@ -338,7 +334,7 @@ install_shell_with_progress() {
 
   if [ -n "$set_default_command" ]; then
     echo -e "${YELLOW}Setting default shell to $name...${NC}"
-    local shell_path=$(which $name)  # Obtener el camino completo del shell
+    local shell_path=$(which $name) # Obtener el camino completo del shell
     set_default_shell "$shell_path"
   fi
 }
@@ -562,5 +558,5 @@ run_command "rm -rf Gentleman.Dots"
 
 echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
 echo -e "${GREEN}If it doesn't work, restart your computer or WSL instance😘${NC}"
-# Para Bash o Zsh
-exec $SHELL
+
+exec $(which $SHELL)
