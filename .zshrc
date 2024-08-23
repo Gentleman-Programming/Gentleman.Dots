@@ -27,15 +27,12 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
-# Run Tmux
-if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-    exec tmux
-fi
+WM_VAR="\$TMUX" // change with ZELLIJ
+WM_CMD="tmux" // change with zellij
 
-# Run Zellij
-#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
-#    exec zellij
-#fi
+if [[ $- == *i* ]] && [[ -z "$WM_VAR" ]]; then
+    exec $WM_CMD
+fi
 
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
