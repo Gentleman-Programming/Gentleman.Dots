@@ -33,14 +33,6 @@ logo='
 echo -e "${PINK}${logo}${NC}"
 echo -e "${PURPLE}Welcome to the Gentleman.Dots Auto Config!${NC}"
 
-sudo -v
-
-while true; do
-  sudo -n true
-  sleep 60
-  kill -0 "$$" || exit
-done 2>/dev/null &
-
 # Function to prompt user for input with a select menu
 select_option() {
   local prompt_message="$1"
@@ -563,6 +555,6 @@ cd ..
 run_command "rm -rf Gentleman.Dots"
 
 echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
-echo -e "${GREEN}If it doesn't work, restart your computer or WSL instance😘${NC}"
+echo -e "${GREEN}If it doesn't restart, restart your computer or WSL instance😘${NC}"
 
 exec $(which $SHELL)
