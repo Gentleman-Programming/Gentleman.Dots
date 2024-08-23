@@ -33,6 +33,14 @@ logo='
 echo -e "${PINK}${logo}${NC}"
 echo -e "${PURPLE}Welcome to the Gentleman.Dots Auto Config!${NC}"
 
+sudo -v
+
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
 # Function to prompt user for input with a select menu
 select_option() {
   local prompt_message="$1"
@@ -58,22 +66,20 @@ prompt_user() {
   echo "$user_input"
 }
 
-# Function to display a progress bar
-progress_bar() {
-  local duration=$1
-  already_done() { for ((done = 0; done < $elapsed; done++)); do printf "▇"; done; }
-  remaining() { for ((remain = $elapsed; remain < $duration; remain++)); do printf " "; done; }
-  percentage() { printf "| %s%%" $(((($elapsed) * 100) / ($duration) * 100 / 100)); }
-  for ((elapsed = 1; elapsed <= $duration; elapsed += 1)); do
-    already_done
-    remaining
-    percentage
-    printf "\r"
-    sleep 0.1
+# Function to display a spinner
+spinner() {
+  local pid=$!
+  local delay=0.1
+  local spinstr='|/-\'
+  while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+    local temp=${spinstr#?}
+    printf " [%c]  " "$spinstr"
+    spinstr=$temp${spinstr%"$temp"}
+    sleep $delay
+    printf "\b\b\b\b\b\b"
   done
-  printf "\n"
+  printf "    \b\b\b\b"
 }
-
 # Function to check and create directories if they do not exist
 ensure_directory_exists() {
   local dir_path="$1"
@@ -134,7 +140,7 @@ install_homebrew() {
     if [ "$show_details" = "No" ]; then
       # Show progress bar while installing Homebrew
       install_homebrew_progress &
-      progress_bar 10
+      spinner
     else
       # Install Homebrew normally
       run_command "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
@@ -192,7 +198,7 @@ os_choice=$(select_option "Which operating system are you using? " "mac" "linux"
 echo -e "${YELLOW}Installing basic dependencies...${NC}"
 if [ "$show_details" = "No" ]; then
   install_dependencies &
-  progress_bar 10
+  spinner
 else
   install_dependencies
 fi
@@ -215,7 +221,7 @@ clone_repository_with_progress() {
   if [ "$show_details" = "No" ]; then
     # Run clone command in the background and show progress
     (git clone "$repo_url" "$clone_dir" &>/dev/null) &
-    progress_bar "$progress_duration"
+    spinner "$progress_duration"
   else
     # Run clone command normally
     git clone "$repo_url" "$clone_dir"
@@ -245,7 +251,7 @@ install_terminal_with_progress() {
   if [ "$show_details" = "No" ]; then
     # Run installation in the background and show progress
     (eval "$install_command" &>/dev/null) &
-    progress_bar 10
+    spinner
   else
     # Run installation normally
     eval "$install_command"
@@ -322,7 +328,7 @@ install_shell_with_progress() {
   echo -e "${YELLOW}Installing $name...${NC}"
   if [ "$show_details" = "No" ]; then
     (eval "$install_command" &>/dev/null) &
-    progress_bar 20
+    spinner
   else
     eval "$install_command"
   fi
@@ -368,7 +374,7 @@ case "$shell_choice" in
       (
         NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)" &>/dev/null
       ) &
-      progress_bar 30
+      spinner
     else
       NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
     fi
@@ -396,7 +402,7 @@ install_dependencies_with_progress() {
   if [ "$show_details" = "No" ]; then
     # Run installation in the background and show progress
     (eval "$install_command" &>/dev/null) &
-    progress_bar 10
+    spinner
   else
     # Run installation normally
     eval "$install_command"
@@ -441,14 +447,13 @@ fi
 # Function to install window manager with progress bar
 install_window_manager_with_progress() {
   local install_command="$1"
-  local progress_duration=$2
 
   echo -e "${YELLOW}Installing window manager...${NC}"
 
   if [ "$show_details" = "No" ]; then
     # Run installation in the background and show progress
     (eval "$install_command" &>/dev/null) &
-    progress_bar "$progress_duration"
+    spinner
   else
     # Run installation normally
     eval "$install_command"
@@ -462,7 +467,7 @@ case "$wm_choice" in
 "tmux")
   if ! command -v tmux &>/dev/null; then
     if [ "$show_details" = "Yes" ]; then
-      install_window_manager_with_progress "brew install tmux" 10
+      install_window_manager_with_progress "brew install tmux"
     else
       run_command "brew install tmux"
     fi
@@ -473,7 +478,7 @@ case "$wm_choice" in
   echo -e "${YELLOW}Configuring Tmux...${NC}"
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     if [ "$show_details" = "Yes" ]; then
-      install_window_manager_with_progress "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm" 10
+      install_window_manager_with_progress "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
     else
       run_command "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
     fi
@@ -521,7 +526,7 @@ case "$wm_choice" in
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
-    install_window_manager_with_progress "brew install zellij" 10
+    install_window_manager_with_progress "brew install zellij"
   else
     echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
