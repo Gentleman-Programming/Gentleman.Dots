@@ -171,7 +171,10 @@ update_or_replace() {
   local search="$2"
   local replace="$3"
 
-  if grep -q "$search" "$file"; then
+  # Escape any special characters in the search string
+  escaped_search=$(echo "$search" | sed 's/[]\/$*.^[]/\\&/g')
+
+  if grep -q "$escaped_search" "$file"; then
     awk -v search="$search" -v replace="$replace" '
     $0 ~ search {print replace; next}
     {print}
