@@ -98,7 +98,7 @@ return {
         file_ignore_patterns = {
           "node_modules",
           "package-lock.json",
-          "yarn.lock.json",
+          "yarn.lock",
           "bun.lockb",
         },
         prompt_prefix = "> ", -- Set the prompt to just ">"
