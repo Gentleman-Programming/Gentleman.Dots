@@ -33,6 +33,14 @@ logo='
 echo -e "${PINK}${logo}${NC}"
 echo -e "${PURPLE}Welcome to the Gentleman.Dots Auto Config!${NC}"
 
+sudo -v
+
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
 # Function to prompt user for input with a select menu
 select_option() {
   local prompt_message="$1"
