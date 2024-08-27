@@ -95,6 +95,12 @@ return {
 
       -- Update layout_config with the initial height calculation
       opts.defaults = {
+        file_ignore_patterns = {
+          "node_modules",
+          "package-lock.json",
+          "yarn.lock.json",
+          "bun.lockb",
+        },
         prompt_prefix = "> ", -- Set the prompt to just ">"
         layout_strategy = "horizontal", -- Use horizontal layout
         layout_config = {
