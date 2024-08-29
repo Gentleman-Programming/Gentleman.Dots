@@ -50,7 +50,6 @@ family = "IosevkaTerm NFM"
 
 [window]
 option_as_alt = "Both"
-padding = { x = 5, y = 5 }
 
 [env]
 TERM = "xterm-256color"
