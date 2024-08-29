@@ -39,6 +39,30 @@ display_logo() {
 
 display_logo
 
+# Clone a repository with a progress bar
+clone_repository_with_progress() {
+  local repo_url="$1"
+  local clone_dir="$2"
+  local progress_duration=$3
+
+  # Check if the directory already exists and remove it
+  if [ -d "$clone_dir" ]; then
+    echo -e "${YELLOW}Directory $clone_dir already exists. Removing...${NC}"
+    rm -rf "$clone_dir"
+  fi
+
+  echo -e "${YELLOW}Cloning repository...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run clone command in the background and show progress
+    (git clone "$repo_url" "$clone_dir" &>/dev/null) &
+    spinner "$progress_duration"
+  else
+    # Run clone command normally
+    git clone "$repo_url" "$clone_dir"
+  fi
+}
+
 # Keep sudo session alive
 keep_sudo_alive() {
   sudo -v
@@ -126,6 +150,23 @@ run_command() {
 # Function to detect if the system is Arch Linux
 is_arch() {
   [ -f /etc/arch-release ]
+}
+
+
+# Function to install dependencies with a progress bar
+install_dependencies_with_progress() {
+  local install_command="$1"
+
+  echo -e "${YELLOW}Installing dependencies...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run installation in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    spinner
+  else
+    # Run installation normally
+    eval "$install_command"
+  fi
 }
 
 # Function to install dependencies
@@ -300,12 +341,36 @@ wm_choice=$(select_option "Which window manager do you want to install? " "tmux"
 case "$wm_choice" in
   "tmux")
     install_window_manager "Tmux" "brew install tmux" "mkdir -p ~/.tmux && cp -r GentlemanTmux/.tmux/* ~/.tmux/ && cp GentlemanTmux/.tmux.conf ~/"
+    # Configuraci¢n adicional para zsh o fish
+    if [[ "$shell_choice" == "zsh" ]]; then
+      update_or_replace ~/.zshrc "TMUX" 'WM_VAR="/$TMUX"'
+      update_or_replace ~/.zshrc "tmux" 'WM_CMD="tmux"'
+    elif [[ "$shell_choice" == "fish" ]]; then
+      update_or_replace ~/.config/fish/config.fish "TMUX" 'set -gx WM_VAR "/$TMUX"'
+      update_or_replace ~/.config/fish/config.fish "tmux" 'set -gx WM_CMD "tmux"'
+    fi
     ;;
   "zellij")
     install_window_manager "Zellij" "brew install zellij" "mkdir -p ~/.config/zellij && cp -r GentlemanZellij/zellij/* ~/.config/zellij/"
+    # Configuraci¢n adicional para zsh o fish
+    if [[ "$shell_choice" == "zsh" ]]; then
+      update_or_replace ~/.zshrc "TMUX" 'WM_VAR="/$ZELLIJ"'
+      update_or_replace ~/.zshrc "tmux" 'WM_CMD="zellij"'
+    elif [[ "$shell_choice" == "fish" ]]; then
+      update_or_replace ~/.config/fish/config.fish "TMUX" 'set -gx WM_VAR "/$ZELLIJ"'
+      update_or_replace ~/.config/fish/config.fish "tmux" 'set -gx WM_CMD "zellij"'
+    fi
+    ;;
+  "none")
+    echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
+    # Si no se elige un gestor de ventanas, eliminamos las l¡neas que ejecutan tmux o zellij
+    sed -i '' '/exec tmux/d' ~/.zshrc
+    sed -i '' '/exec zellij/d' ~/.zshrc
+    sed -i '' '/tmux/d' ~/.config/fish/config.fish
+    sed -i '' '/zellij/d' ~/.config/fish/config.fish
     ;;
   *)
-    echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
+    echo -e "${YELLOW}Invalid option. No window manager will be installed or configured.${NC}"
     ;;
 esac
 
