@@ -7,7 +7,6 @@ fi
 
 export ZSH="$HOME/.oh-my-zsh"
 
-# Si la sesión es interactiva
 if [[ $- == *i* ]]; then
     # Commands to run in interactive sessions can go here
 fi
@@ -38,9 +37,11 @@ WM_VAR="/$TMUX"
 WM_CMD="tmux"
 # change with zellij
 
-if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]]; then
-    exec $WM_CMD
-fi
+function start_if_needed() {
+    if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]]; then
+        exec $WM_CMD
+    fi
+}
 
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
@@ -59,3 +60,4 @@ eval "$(fzf --zsh)"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+start_if_needed
