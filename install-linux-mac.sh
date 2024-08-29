@@ -139,6 +139,21 @@ install_dependencies() {
   fi
 }
 
+install_homebrew_with_progress() {
+  local install_command="$1"
+
+  echo -e "${YELLOW}Installing Homebrew...${NC}"
+
+  if [ "$show_details" = "No" ]; then
+    # Run installation in the background and show progress
+    (eval "$install_command" &>/dev/null) &
+    spinner
+  else
+    # Run installation normally
+    eval "$install_command"
+  fi
+}
+
 # Function to install Homebrew if not installed
 install_homebrew() {
   if ! command -v brew &>/dev/null; then
@@ -146,7 +161,7 @@ install_homebrew() {
 
     if [ "$show_details" = "No" ]; then
       # Show progress bar while installing Homebrew
-      install_homebrew_progress &
+      install_homebrew_with_progress "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
       spinner
     else
       # Install Homebrew normally
