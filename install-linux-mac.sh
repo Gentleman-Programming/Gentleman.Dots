@@ -393,12 +393,12 @@ case "$shell_choice" in
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
-  run_command "cp GentlemanZsh/.zshrc ~/"
+  run_command "cp -r GentlemanZsh/.zshrc ~/"
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
   run_command "brew install powerlevel10k"
-  run_command "cp GentlemanZsh/.p10k.zsh ~/"
+  run_command "cp -r GentlemanZsh/.p10k.zsh ~/"
 
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
