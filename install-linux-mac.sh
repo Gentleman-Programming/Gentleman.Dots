@@ -367,6 +367,9 @@ case "$shell_choice" in
   fi
   echo -e "${YELLOW}Configuring Fish...${NC}"
   run_command "cp -r GentlemanFish/fish ~/.config"
+
+  # Update or append the PROJECT_PATHS line
+  update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS \"$PROJECT_PATHS\""
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
