@@ -7,8 +7,6 @@ fi
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
 # Si la sesión es interactiva
 if [[ $- == *i* ]]; then
     # Commands to run in interactive sessions can go here
@@ -28,21 +26,19 @@ eval "$($BREW_BIN/brew shellenv)"
 source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(dirname $BREW_BIN)/share/powerlevel10k/powerlevel10k.zsh-theme
 
 export PROJECT_PATHS="/home/alanbuscaglia/work"
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
-# Run Tmux
-if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then
-    exec tmux
-fi
+WM_VAR="/$TMUX" // change with ZELLIJ
+WM_CMD="tmux" // change with zellij
 
-# Run Zellij
-#if [[ $- == *i* ]] && [[ -z "$ZELLIJ" ]]; then
-#    exec zellij
-#fi
+if [[ $- == *i* ]] && [[ -z "$WM_VAR" ]]; then
+    exec $WM_CMD
+fi
 
 export PATH="$BUN_INSTALL/bin:$PATH"
 
