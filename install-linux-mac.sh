@@ -604,8 +604,9 @@ echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 run_command "rm -rf Gentleman.Dots"
 
+set_as_default_shell "$shell_choice"
+
 echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
 echo -e "${GREEN}If it doesn't restart, restart your computer or WSL instance??${NC}"
 
-set_as_default_shell "$shell_choice"
 exec $shell_choice
