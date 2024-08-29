@@ -33,8 +33,8 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
-WM_VAR="/$TMUX" // change with ZELLIJ
-WM_CMD="tmux" // change with zellij
+WM_VAR="/$TMUX"
+WM_CMD="tmux"
 
 if [[ $- == *i* ]] && [[ -z "$WM_VAR" ]]; then
     exec $WM_CMD
