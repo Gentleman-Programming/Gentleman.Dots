@@ -356,7 +356,7 @@ install_shell_with_progress() {
 }
 
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
-shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh")
+shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh" "none")
 
 # Case for shell choice
 case "$shell_choice" in
@@ -403,6 +403,9 @@ case "$shell_choice" in
   # Update or append the PROJECT_PATHS line
   update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
   ;;
+  "none")
+  echo -e "${YELLOW}No shell will be installed or configured.${NC}"
+  ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
   ;;
@@ -436,22 +439,26 @@ if [ "$os_choice" = "linux" ]; then
   fi
 fi
 
-# Install additional packages with progress
-install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
-
 # Neovim Configuration
-echo -e "${YELLOW}Configuring Neovim...${NC}"
-run_command "mkdir -p ~/.config/nvim"
-run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
+install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
 
-# Obsidian Configuration
-echo -e "${YELLOW}Configuring Obsidian...${NC}"
-obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
-if [ -f "$obsidian_config_file" ]; then
-  # Replace the vault path in the existing configuration
-  update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
-else
-  echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
+if [ "$install_nvim" = "Yes" ]; then
+  # Install additional packages with Neovim
+  install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
+
+  # Neovim Configuration
+  echo -e "${YELLOW}Configuring Neovim...${NC}"
+  run_command "mkdir -p ~/.config/nvim"
+  run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
+  # Obsidian Configuration
+  echo -e "${YELLOW}Configuring Obsidian...${NC}"
+  obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
+  if [ -f "$obsidian_config_file" ]; then
+    # Replace the vault path in the existing configuration
+    update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
+  else
+    echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
+  fi
 fi
 
 # Function to install window manager with progress bar
