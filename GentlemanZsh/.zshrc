@@ -40,8 +40,6 @@ if [[ $- == *i* ]] && [[ -z "$WM_VAR" ]]; then
     exec $WM_CMD
 fi
 
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
