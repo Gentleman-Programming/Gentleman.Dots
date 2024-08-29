@@ -31,7 +31,7 @@ white = "#c8c093"
 yellow = "#c0a36e"
 
 [colors.primary]
-background = "#181616"
+background = "#1A1A22"
 foreground = "#dcd7ba"
 
 [colors.selection]
@@ -50,6 +50,7 @@ family = "IosevkaTerm NFM"
 
 [window]
 option_as_alt = "Both"
+padding = { x = 5, y = 5 }
 
 [env]
 TERM = "xterm-256color"
