@@ -363,11 +363,11 @@ case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
     install_shell_with_progress "Fish shell" "brew install fish" "set_default_shell \"$(which fish)\""
+    echo -e "${YELLOW}Configuring Fish...${NC}"
+    run_command "cp -r GentlemanFish/fish ~/.config/"
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
-  echo -e "${YELLOW}Configuring Fish...${NC}"
-  run_command "cp -r GentlemanFish/fish ~/.config"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then

@@ -366,8 +366,6 @@ case "$shell_choice" in
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
-  echo -e "${YELLOW}Configuring Fish...${NC}"
-  run_command "cp -r GentlemanFish/fish ~/.config"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
