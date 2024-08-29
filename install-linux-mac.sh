@@ -519,10 +519,15 @@ case "$wm_choice" in
   ;;
 "zellij")
   if ! command -v zellij &>/dev/null; then
-    install_window_manager_with_progress "brew install zellij"
+    if [ "$show_details" = "Yes" ]; then
+      install_window_manager_with_progress "brew install zellij"
+    else
+      run_command "brew install zellij"
+    fi
   else
     echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
+
   echo -e "${YELLOW}Configuring Zellij...${NC}"
   run_command "mkdir -p ~/.config/zellij"
   run_command "cp -r GentlemanZellij/zellij/* ~/.config/zellij/"
@@ -563,6 +568,7 @@ if [ "$install_nvim" = "Yes" ]; then
   # Obsidian Configuration
   echo -e "${YELLOW}Configuring Obsidian...${NC}"
   obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
+
   if [ -f "$obsidian_config_file" ]; then
     # Replace the vault path in the existing configuration
     update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
