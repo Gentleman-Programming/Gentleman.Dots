@@ -437,28 +437,6 @@ if [ "$os_choice" = "linux" ]; then
   fi
 fi
 
-# Neovim Configuration
-install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
-
-if [ "$install_nvim" = "Yes" ]; then
-  # Install additional packages with Neovim
-  install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
-
-  # Neovim Configuration
-  echo -e "${YELLOW}Configuring Neovim...${NC}"
-  run_command "mkdir -p ~/.config/nvim"
-  run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
-  # Obsidian Configuration
-  echo -e "${YELLOW}Configuring Obsidian...${NC}"
-  obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
-  if [ -f "$obsidian_config_file" ]; then
-    # Replace the vault path in the existing configuration
-    update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
-  else
-    echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
-  fi
-fi
-
 # Function to install window manager with progress bar
 install_window_manager_with_progress() {
   local install_command="$1"
@@ -570,6 +548,28 @@ case "$wm_choice" in
   echo -e "${YELLOW}Invalid option. No window manager will be installed or configured.${NC}"
   ;;
 esac
+
+# Neovim Configuration
+install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
+
+if [ "$install_nvim" = "Yes" ]; then
+  # Install additional packages with Neovim
+  install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
+
+  # Neovim Configuration
+  echo -e "${YELLOW}Configuring Neovim...${NC}"
+  run_command "mkdir -p ~/.config/nvim"
+  run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
+  # Obsidian Configuration
+  echo -e "${YELLOW}Configuring Obsidian...${NC}"
+  obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
+  if [ -f "$obsidian_config_file" ]; then
+    # Replace the vault path in the existing configuration
+    update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
+  else
+    echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
+  fi
+fi
 
 # Clean up: Remove the cloned repository
 sudo chown -R $(whoami) $(brew --prefix)/*
