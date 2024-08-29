@@ -203,13 +203,6 @@ update_or_replace() {
   fi
 }
 
-# Function to set the default shell
-set_default_shell() {
-  local shell_path="$1"
-  sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
-  sudo chsh -s "$shell_path" "$USER"
-}
-
 # Ask if the user wants to see detailed output
 show_details=$(select_option "Do you want to see detailed output? " "No" "Yes")
 
@@ -343,8 +336,6 @@ fi
 install_shell_with_progress() {
   local name="$1"
   local install_command="$2"
-  local post_install_command="$3"
-  local set_default_command="$4"
 
   echo -e "${YELLOW}Installing $name...${NC}"
   if [ "$show_details" = "No" ]; then
@@ -353,16 +344,28 @@ install_shell_with_progress() {
   else
     eval "$install_command"
   fi
+}
 
-  if [ -n "$post_install_command" ]; then
-    echo -e "${YELLOW}Post-install configuration for $name...${NC}"
-    eval "$post_install_command"
-  fi
+set_as_default_shell() {
+  local name="$1"
 
-  if [ -n "$set_default_command" ]; then
-    echo -e "${YELLOW}Setting default shell to $name...${NC}"
-    local shell_path=$(which $name) # Obtener el camino completo del shell
-    set_default_shell "$shell_path"
+  echo -e "${YELLOW}Setting default shell to $name...${NC}"
+  local shell_path
+  shell_path=$(which "$name") # Obtener el camino completo del shell
+
+  if [ -n "$shell_path" ]; then
+    sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
+
+    sudo chsh -s "$shell_path" "$USER"
+
+    if [ "$SHELL" != "$shell_path" ]; then
+      echo -e "${RED}Error: Shell did not change. Please check manually.${NC}"
+      echo -e "${GREEN}Command: sudo chsh -s $shell_path \$USER ${NC}"
+    else
+      echo -e "${GREEN}Shell changed to $shell_path successfully.${NC}"
+    fi
+  else
+    echo -e "${RED}Shell $name not found.${NC}"
   fi
 }
 
@@ -373,7 +376,7 @@ shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh"
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
-    install_shell_with_progress "Fish shell" "brew install fish" "set_default_shell \"$(which fish)\""
+    install_shell_with_progress "fish" "brew install fish"
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
@@ -385,13 +388,13 @@ case "$shell_choice" in
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
-    install_shell_with_progress "Zsh" "brew install zsh" "" "set_default_shell \"$(which zsh)\""
+    install_shell_with_progress "zsh" "brew install zsh"
   else
-    echo -e "${GREEN}Zsh is already installed.${NC}"
+    echo -e "${GREEN}zsh is already installed.${NC}"
   fi
 
   if ! command -v zsh-autosuggestions &>/dev/null || ! command -v zsh-syntax-highlighting &>/dev/null || ! command -v zsh-autocomplete &>/dev/null; then
-    install_shell_with_progress "Zsh plugins" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" "" ""
+    install_shell_with_progress "zsh" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" ""
   fi
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -604,4 +607,5 @@ run_command "rm -rf Gentleman.Dots"
 echo -e "${GREEN}Configuration complete. Restarting shell...${NC}"
 echo -e "${GREEN}If it doesn't restart, restart your computer or WSL instance??${NC}"
 
-exec $(which $SHELL)
+set_as_default_shell "$shell_choice"
+exec $shell_choice
