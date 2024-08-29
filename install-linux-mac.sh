@@ -216,9 +216,6 @@ fi
 PROJECT_PATHS=$(prompt_user "Enter the path for your projects, it will create the folders for you if they don't exist" "/your/work/path/")
 ensure_directory_exists "$PROJECT_PATHS" "false"
 
-OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault, it will create the folders for you if they don't exist" "/your/notes/path")
-ensure_directory_exists "$OBSIDIAN_PATH" "true"
-
 # Function to clone repository with progress bar
 clone_repository_with_progress() {
   local repo_url="$1"
@@ -561,6 +558,9 @@ esac
 install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
 
 if [ "$install_nvim" = "Yes" ]; then
+  OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault, it will create the folders for you if they don't exist" "/your/notes/path")
+  ensure_directory_exists "$OBSIDIAN_PATH" "true"
+
   # Install additional packages with Neovim
   install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
