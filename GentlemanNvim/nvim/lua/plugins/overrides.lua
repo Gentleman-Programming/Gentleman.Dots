@@ -21,6 +21,13 @@ return {
     events = "VeryLazy",
     opts = {
       inlay_hints = { enabled = false },
+      servers = {
+        angularls = {
+          root_dir = function(fname)
+            return require("lspconfig.util").root_pattern(".git", "angular.json", "project.json")(fname)
+          end,
+        },
+      },
     },
   },
 }
