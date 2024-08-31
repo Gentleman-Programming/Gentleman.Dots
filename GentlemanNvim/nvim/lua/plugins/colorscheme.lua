@@ -30,6 +30,8 @@ return {
     name = "kanagawa",
     priority = 1000,
     opts = {
+      transparent = true,
+      theme = "dragon",
       overrides = function(colors)
         local theme = colors.theme
         return {
@@ -72,10 +74,13 @@ return {
     "xiyaowong/transparent.nvim",
   },
   {
+    "ribru17/bamboo.nvim",
+    lazy = false,
+  },
+  {
     "neanias/everforest-nvim",
     version = false,
     lazy = false,
-    priority = 1000,
     config = function()
       require("everforest").setup({
         background = "hard",
@@ -97,7 +102,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "everforest",
+      colorscheme = "kanagawa-dragon",
     },
   },
 }
