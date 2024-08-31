@@ -1,42 +1,44 @@
+# Adaptación del tema "Everforest" al tema "Kanagawa Dragon"
+
 [[colors.indexed_colors]]
-color = "#ffa066"
+color = "#b98d7b"  # dragonOrange2
 index = 16
 
 [[colors.indexed_colors]]
-color = "#ff5d62"
+color = "#c4746e"  # dragonRed
 index = 17
 
 [colors.bright]
-black = "#727169"
-blue = "#7fb4ca"
-cyan = "#7aa89f"
-green = "#98bb6c"
-magenta = "#938aa9"
-red = "#e82424"
-white = "#dcd7ba"
-yellow = "#e6c384"
+black = "#625e5a"   # dragonBlack6
+blue = "#8ba4b0"    # dragonBlue2
+cyan = "#8ea4a2"    # dragonAqua
+green = "#87a987"   # dragonGreen
+magenta = "#8992a7" # dragonViolet
+red = "#c4746e"     # dragonRed
+white = "#c5c9c5"   # dragonWhite
+yellow = "#c4b28a"  # dragonYellow
 
 [colors.cursor]
-cursor = "#c8c093"
-text = "#c8c093"
+cursor = "#c5c9c5"  # dragonWhite
+text = "#c5c9c5"    # dragonWhite
 
 [colors.normal]
-black = "#090618"
-blue = "#7e9cd8"
-cyan = "#6a9589"
-green = "#76946a"
-magenta = "#957fb8"
-red = "#c34043"
-white = "#c8c093"
-yellow = "#c0a36e"
+black = "#12120f"   # dragonBlack1
+blue = "#658594"    # dragonBlue
+cyan = "#8ea4a2"    # dragonAqua
+green = "#87a987"   # dragonGreen
+magenta = "#a292a3" # dragonPink
+red = "#c4746e"     # dragonRed
+white = "#c5c9c5"   # dragonWhite
+yellow = "#c4b28a"  # dragonYellow
 
 [colors.primary]
-background = "#1A1A22"
-foreground = "#dcd7ba"
+background = "#181616"  # dragonBlack3 con 98% de opacidad
+foreground = "#c5c9c5"    # dragonWhite
 
 [colors.selection]
-background = "#2d4f67"
-text = "#c8c093"
+background = "#282727"    # dragonBlack4
+text = "#c5c9c5"          # dragonWhite
 
 [cursor]
 style = "Block"
@@ -50,6 +52,7 @@ family = "IosevkaTerm NFM"
 
 [window]
 option_as_alt = "Both"
+opacity = 0.9
 
 [env]
 TERM = "xterm-256color"
