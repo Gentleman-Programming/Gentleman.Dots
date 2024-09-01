@@ -102,6 +102,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
+      -- change this line to change the color scheme
       colorscheme = "kanagawa-dragon",
     },
   },
