@@ -105,7 +105,7 @@
     taskwarrior             # taskwarrior task count (https://taskwarrior.org/)
     per_directory_history   # Oh My Zsh per-directory-history local/global indicator
     # cpu_arch              # CPU architecture
-    time                    # current time
+    # time                    # current time
     # =========================[ Line #2 ]=========================
     newline
     # ip                    # ip address and bandwidth usage for a specified network interface
@@ -1702,6 +1702,37 @@
 
   # If p10k is already loaded, reload configuration.
   # This works even with POWERLEVEL9K_DISABLE_HOT_RELOAD=true.
+  typeset -g COLOR_BACKGROUND="#181616"
+  typeset -g COLOR_FOREGROUND="#dcd7ba"
+  typeset -g COLOR_BLACK="#090618"
+  typeset -g COLOR_RED="#c34043"
+  typeset -g COLOR_GREEN="#76946a"
+  typeset -g COLOR_YELLOW="#c0a36e"
+  typeset -g COLOR_BLUE="#7e9cd8"
+  typeset -g COLOR_MAGENTA="#957fb8"
+  typeset -g COLOR_CYAN="#6a9589"
+  typeset -g COLOR_WHITE="#c8c093"
+  typeset -g COLOR_BRIGHT_BLACK="#727169"
+  typeset -g COLOR_BRIGHT_RED="#e82424"
+  typeset -g COLOR_BRIGHT_GREEN="#98bb6c"
+  typeset -g COLOR_BRIGHT_YELLOW="#e6c384"
+  typeset -g COLOR_BRIGHT_BLUE="#7fb4ca"
+  typeset -g COLOR_BRIGHT_MAGENTA="#938aa9"
+  typeset -g COLOR_BRIGHT_CYAN="#7aa89f"
+  typeset -g COLOR_BRIGHT_WHITE="#dcd7ba"
+
+  typeset -g POWERLEVEL9K_BACKGROUND=$COLOR_BACKGROUND
+  typeset -g POWERLEVEL9K_FOREGROUND=$COLOR_FOREGROUND
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$COLOR_BLUE
+  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=$COLOR_CYAN
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$COLOR_YELLOW
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=$COLOR_GREEN
+  typeset -g POWERLEVEL9K_VCS_CONFLICTED_FOREGROUND=$COLOR_RED
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$COLOR_MAGENTA
+  typeset -g POWERLEVEL9K_STATUS_OK_FOREGROUND=$COLOR_GREEN
+  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=$COLOR_RED
+  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$COLOR_CYAN
+
   (( ! $+functions[p10k] )) || p10k reload
 }
 
