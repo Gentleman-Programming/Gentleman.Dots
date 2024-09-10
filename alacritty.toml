@@ -51,7 +51,6 @@ size = 16
 family = "IosevkaTerm NFM"
 
 [window]
-option_as_alt = "Both"
 opacity = 0.96
 
 [env]
