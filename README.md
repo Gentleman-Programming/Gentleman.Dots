@@ -19,6 +19,8 @@ bash ./install-linux-mac.sh
 
 ## Manual Installation
 
+Welcome to the Gentleman.Dots manual configuration guide! This document will walk you through the steps required to set up your development environment.
+
 ### For Windows
 
 **Important:** Windows users must follow these manual installation steps before running the automated script.
@@ -107,36 +109,32 @@ cp -r GentlemanKitty/* %userprofile%\.config\kitty
 
 ---
 
-# Gentleman.Dots - Manual Configuration
+### For Linux, Archlinux and WSL
 
-Welcome to the Gentleman.Dots manual configuration guide! This document will walk you through the steps required to set up your development environment by following the `install-linux-mac.txt` script.
-
-## Prerequisites
+#### Prerequisites
 
 * **macOS or Linux:** Ensure you have one of these operating systems.
 * **Administrator privileges (sudo):** You'll need administrator access to install some tools.
 
-## Initial Dependencies Installation
+#### Initial Dependencies Installation
 
 Before starting the configuration, you need to install some basic dependencies. Run the commands corresponding to your operating system:
 
-### Arch Linux
+##### Arch Linux
 
 ```bash
 sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm base-devel curl file git
 ```
 
-### Other Linux Systems
+##### Other Linux Systems
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y build-essential curl file git
 ```
 
-## Configuration Steps
-
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 * **If the repository is already cloned, you can skip this step.**
 * Open your terminal and run the following command to clone the repository:
@@ -151,7 +149,7 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
 ```
 
-### 2. Install Homebrew (if not installed)
+#### 2. Install Homebrew (if not installed)
 
 * Homebrew is a package manager for macOS and Linux that makes it easy to install many tools.
 * **If you already have Homebrew installed, you can skip this step.**
@@ -163,7 +161,7 @@ cd Gentleman.Dots
 
 * Follow the on-screen instructions to complete the installation.
 
-### 3. Choose and Install a Terminal Emulator (Optional)
+#### 3. Choose and Install a Terminal Emulator (Optional)
 
 * **If you are using WSL, terminal emulators must be installed on Windows.**
 * Choose one of the following terminal emulators and install it by following the instructions:
@@ -213,7 +211,7 @@ cd Gentleman.Dots
 
    * **None:** If you do not want to install a terminal emulator, you can skip this step.
 
-### 4. Choose and Install a Shell
+#### 4. Choose and Install a Shell
 
 * Choose one of the following shells and install it by following the instructions:
 
@@ -250,7 +248,7 @@ cd Gentleman.Dots
 
    * **None:** If you do not want to install a shell, you can skip this step.
 
-### 5. Install Additional Dependencies
+#### 5. Install Additional Dependencies
 
 * **On Linux (not Arch):**
 
@@ -258,7 +256,7 @@ cd Gentleman.Dots
   sudo apt-get update && sudo apt-get upgrade -y
   ```
 
-### 6. Choose and Install a Window Manager (Optional)
+#### 6. Choose and Install a Window Manager (Optional)
 
 * Choose one of the following window managers and install it by following the instructions:
 
@@ -309,7 +307,7 @@ cd Gentleman.Dots
      sed -i '' '/zellij/d' ~/.config/fish/config.fish # If you chose fish
      ```
 
-### 7. Configure Neovim (Optional)
+#### 7. Configure Neovim (Optional)
 
 * If you want to install and configure Neovim, follow these steps:
 
@@ -325,7 +323,7 @@ cd Gentleman.Dots
   sed -i '' 's/\/your\/notes\/path/your/actual/obsidian/vault/path/g' ~/.config/nvim/lua/plugins/obsidian.lua
   ```
 
-### 8. Set the Default Shell
+#### 8. Set the Default Shell
 
 * Run the following command, replacing `<shell-name>` with the name of the shell you chose (fish or zsh):
 
@@ -333,7 +331,7 @@ cd Gentleman.Dots
 chsh -s $(which <shell-name>)
 ```
 
-### 9. Restart the Shell or Computer
+#### 9. Restart the Shell or Computer
 
 * Close and reopen your terminal, or restart your computer or WSL instance for the changes to take effect.
 
