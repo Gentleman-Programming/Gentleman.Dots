@@ -71,6 +71,8 @@ Choose and install one of the following terminal emulators:
 
 #### 5. Configuration Transfer for Terminal Emulators
 
+Using Powershell:
+
 **Alacritty Configuration**
 
 ```powershell
