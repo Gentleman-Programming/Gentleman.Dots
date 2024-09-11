@@ -176,10 +176,10 @@ install_homebrew() {
       run_command "(echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> $USER_HOME/.config/fish/config.fish)"
       run_command "eval \"\$(/opt/homebrew/bin/brew shellenv)\""
     elif [ "$os_choice" = "linux" ]; then
-      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.zshrc)"
-      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.bashrc)"
-      run_command "mkdir -p $USER_HOME/.config/fish"
-      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $USER_HOME/.config/fish/config.fish)"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.zshrc)"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.bashrc)"
+      run_command "mkdir -p ~/.config/fish"
+      run_command "(echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.config/fish/config.fish)"
       run_command "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
     fi
   else
