@@ -118,6 +118,17 @@ return {
       -- Load the fzf extension for fast searches
       require("telescope").load_extension("fzf")
 
+      -- Add hidden files and no-ignore options to file search and live_grep
+      opts.pickers = {
+        find_files = {
+          find_command = { "rg", "--files", "--hidden", "--no-ignore", "--iglob", "!.git/" },
+        },
+        live_grep = {
+          additional_args = function()
+            return { "--hidden", "--no-ignore" }
+          end,
+        },
+      }
       return opts
     end,
 
