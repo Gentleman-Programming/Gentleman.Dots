@@ -281,13 +281,13 @@ if is_wsl; then
 else
   if [ "$os_choice" = "linux" ]; then
     if is_arch; then
-      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "none")
     else
       echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
-      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm")
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "none")
     fi
   else
-    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty")
+    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty" "none")
   fi
 
   case "$term_choice" in
@@ -443,7 +443,7 @@ install_dependencies_with_progress() {
   fi
 }
 
-# Step 4: Additional Configurations
+# Step 5: Additional Configurations
 
 # Dependencies Install
 echo -e "${YELLOW}Step 4: Installing Additional Dependencies...${NC}"
@@ -472,6 +472,7 @@ install_window_manager_with_progress() {
 }
 
 # Ask if they want to use Tmux or Zellij, or none
+echo -e "${YELLOW}Step 4: Choose and Install Window Manager${NC}"
 wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij" "none")
 
 case "$wm_choice" in
@@ -573,6 +574,7 @@ case "$wm_choice" in
 esac
 
 # Neovim Configuration
+echo -e "${YELLOW}Step 5: Choose and Install NVIM${NC}"
 install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
 
 if [ "$install_nvim" = "Yes" ]; then
