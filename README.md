@@ -68,7 +68,7 @@ sudo apt-get upgrade
 Choose and install one of the following terminal emulators:
 
 - **Alacritty**: [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases) and place `alacritty.exe` in your `PATH`.
-- **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html).
+- **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html) and create an environment variable called `HOME` that resolves to `C:\Users\your-username`.
 - **Kitty**: [Download and Install](https://sw.kovidgoyal.net/kitty/#get-the-app).
 
 #### 5. Configuration Transfer for Terminal Emulators
@@ -100,6 +100,11 @@ cp .wezterm.lua %userprofile%
 # config.front_end = "WebGpu"
 # config.max_fps = 120
 ```
+
+**If wezterm doesn't take the initial configuration**
+* Create `wezterm` folder in `C:\User\your-username\.config`
+* and copy `.wezterm.lua` in `wezterm.lua` file inside the previous directory
+* start wezterm again
 
 **Kitty Configuration**
 
