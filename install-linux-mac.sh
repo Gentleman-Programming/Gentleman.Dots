@@ -376,7 +376,7 @@ shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh"
 case "$shell_choice" in
 "fish")
   if ! command -v fish &>/dev/null; then
-    install_shell_with_progress "fish" "brew install fish"
+    install_shell_with_progress "fish" "brew install fish starship"
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
