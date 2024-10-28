@@ -73,7 +73,7 @@ Choose and install one of the following terminal emulators:
 
 #### 5. Configuration Transfer for Terminal Emulators
 
-Using Powershell:
+Using PowerShell:
 
 **Alacritty Configuration**
 
@@ -111,6 +111,32 @@ cp .wezterm.lua %userprofile%
 ```powershell
 cp -r GentlemanKitty/* %userprofile%\.config\kitty
 ```
+
+#### 6. Install Chocolatey and win32yank
+
+**Chocolatey** is a package manager for Windows that simplifies the installation of software.
+
+**To install Chocolatey:**
+
+- Open **PowerShell** as an administrator.
+- Run the following command:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; `
+[System.Net.ServicePointManager]::SecurityProtocol = `
+[System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
+```
+
+**To install win32yank:**
+
+- After installing Chocolatey, run:
+
+```powershell
+choco install win32yank
+```
+
+**Note:** `win32yank` is required for clipboard integration in Neovim when using WSL.
 
 ---
 
@@ -348,4 +374,4 @@ You're done! You have manually configured your development environment following
 
 If you have any further questions or need additional assistance, feel free to reach out to the Gentleman.Dots community or consult the project's documentation. 
 
-Happy coding! 
+Happy coding!

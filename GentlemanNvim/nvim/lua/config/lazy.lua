@@ -9,16 +9,16 @@ vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 -- fix copy and paste in wsl
 if vim.fn.has("wsl") == 1 then
   vim.g.clipboard = {
-    name = "WslClipboard",
+    name = "win32yank",
     copy = {
-      ["+"] = "/mnt/c/Windows/System32/clip.exe",
-      ["*"] = "/mnt/c/Windows/System32/clip.exe",
+      ["+"] = "win32yank.exe -i --crlf",
+      ["*"] = "win32yank.exe -i --crlf",
     },
     paste = {
-      ["+"] = '/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -c [Console]::Out.Write(%(Get-Clipboard -Raw).toString().replace("`r", ""))',
-      ["*"] = '/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -c [Console]::Out.Write(%(Get-Clipboard -Raw).toString().replace("`r", ""))',
+      ["+"] = "win32yank.exe -o --lf",
+      ["*"] = "win32yank.exe -o --lf",
     },
-    cache_enabled = 0,
+    cache_enabled = false,
   }
 end
 
