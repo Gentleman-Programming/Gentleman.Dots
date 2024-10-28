@@ -356,7 +356,7 @@ set_as_default_shell() {
   if [ -n "$shell_path" ]; then
     sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
 
-    sudo chsh -s "$shell_path" "$USER"
+    chsh -s "$shell_path" "$USER"
 
     if [ "$SHELL" != "$shell_path" ]; then
       echo -e "${RED}Error: Shell did not change. Please check manually.${NC}"
