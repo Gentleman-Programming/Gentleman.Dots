@@ -81,8 +81,8 @@ return {
       local actions = require("telescope.actions")
 
       opts.defaults = {
+        path_display = { "smart" },
         file_ignore_patterns = {
-
           "node_modules",
           "package-lock.json",
           "yarn.lock",
