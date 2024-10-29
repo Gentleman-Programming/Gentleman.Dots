@@ -83,3 +83,26 @@ vim.api.nvim_set_keymap("x", "<A-j>", "<Nop>", { noremap = true, silent = true }
 vim.api.nvim_set_keymap("x", "<A-k>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("x", "J", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
+
+-- redefine ctrl + w to save with the custom function
+vim.api.nvim_set_keymap("n", "<C-s>", ":lua SaveFile()<CR>", { noremap = true, silent = true })
+
+-- custom save function
+function SaveFile()
+  -- check if a buffer with a file is open
+  if vim.fn.empty(vim.fn.expand("%:t")) == 1 then
+    vim.notify("No file to save", vim.log.levels.WARN)
+    return
+  end
+
+  local filename = vim.fn.expand("%:t") -- get only the filename
+  local success, err = pcall(function()
+    vim.cmd("silent! write") -- try to save the file without showing the default message
+  end)
+
+  if success then
+    vim.notify(filename .. " Saved!") -- show only the custom message if successful
+  else
+    vim.notify("Error: " .. err, vim.log.levels.ERROR) -- show the error message if it fails
+  end
+end
