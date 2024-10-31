@@ -102,9 +102,10 @@ cp .wezterm.lua %userprofile%
 ```
 
 **If wezterm doesn't take the initial configuration**
-* Create `wezterm` folder in `C:\User\your-username\.config`
-* and copy `.wezterm.lua` in `wezterm.lua` file inside the previous directory
-* start wezterm again
+
+- Create `wezterm` folder in `C:\User\your-username\.config`
+- and copy `.wezterm.lua` in `wezterm.lua` file inside the previous directory
+- start wezterm again
 
 **Kitty Configuration**
 
@@ -144,8 +145,8 @@ choco install win32yank
 
 #### Prerequisites
 
-* **macOS or Linux:** Ensure you have one of these operating systems.
-* **Administrator privileges (sudo):** You'll need administrator access to install some tools.
+- **macOS or Linux:** Ensure you have one of these operating systems.
+- **Administrator privileges (sudo):** You'll need administrator access to install some tools.
 
 #### Initial Dependencies Installation
 
@@ -167,14 +168,14 @@ sudo apt-get install -y build-essential curl file git
 
 #### 1. Clone the Repository
 
-* **If the repository is already cloned, you can skip this step.**
-* Open your terminal and run the following command to clone the repository:
+- **If the repository is already cloned, you can skip this step.**
+- Open your terminal and run the following command to clone the repository:
 
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 ```
 
-* Then, navigate to the cloned directory:
+- Then, navigate to the cloned directory:
 
 ```bash
 cd Gentleman.Dots
@@ -182,165 +183,174 @@ cd Gentleman.Dots
 
 #### 2. Install Homebrew (if not installed)
 
-* Homebrew is a package manager for macOS and Linux that makes it easy to install many tools.
-* **If you already have Homebrew installed, you can skip this step.**
-* Run the following command in your terminal to install Homebrew:
+- Homebrew is a package manager for macOS and Linux that makes it easy to install many tools.
+- **If you already have Homebrew installed, you can skip this step.**
+- Run the following command in your terminal to install Homebrew:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-* Follow the on-screen instructions to complete the installation.
+- Follow the on-screen instructions to complete the installation.
 
-#### 3. Choose and Install a Terminal Emulator (Optional)
+#### 3. Install Iosevka Term Nerd Font
 
-* **If you are using WSL, terminal emulators must be installed on Windows.**
-* Choose one of the following terminal emulators and install it by following the instructions:
+Iosevka Term Nerd Font is required for the terminal emulator. Follow these steps to install it:
 
-   * **Alacritty:**
+```bash
+brew tap homebrew/cask-fonts
+brew install --cask font-iosevka-term-nerd-font
+```
 
-      ```bash
-      # macOS/Linux (not Arch)
-      sudo add-apt-repository ppa:aslatter/ppa 
-      sudo apt-get update 
-      sudo apt-get install alacritty
+#### 4. Choose and Install a Terminal Emulator (Optional)
 
-      # Arch Linux
-      sudo pacman -S --noconfirm alacritty
+- **If you are using WSL, terminal emulators must be installed on Windows.**
+- Choose one of the following terminal emulators and install it by following the instructions:
 
-      # Configuration (all systems)
-      mkdir -p ~/.config/alacritty 
-      cp alacritty.toml ~/.config/alacritty/alacritty.toml
-      ```
+  - **Alacritty:**
 
-   * **WezTerm:**
+    ```bash
+    # macOS/Linux (not Arch)
+    sudo add-apt-repository ppa:aslatter/ppa
+    sudo apt-get update
+    sudo apt-get install alacritty
 
-     ```bash
-     # macOS/Linux (not Arch)
-     curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
-     echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
-     sudo apt update
-     sudo apt install wezterm
+    # Arch Linux
+    sudo pacman -S --noconfirm alacritty
 
-     # Arch Linux
-     sudo pacman -S --noconfirm wezterm
+    # Configuration (all systems)
+    mkdir -p ~/.config/alacritty
+    cp alacritty.toml ~/.config/alacritty/alacritty.toml
+    ```
 
-     # Configuration (all systems)
-     mkdir -p ~/.config/wezterm 
-     cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-     ```
+  - **WezTerm:**
 
-   * **Kitty (macOS only):**
+    ```bash
+    # macOS/Linux (not Arch)
+    curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+    echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
+    sudo apt update
+    sudo apt install wezterm
 
-     ```bash
-     brew install --cask kitty
+    # Arch Linux
+    sudo pacman -S --noconfirm wezterm
 
-     # Configuration
-     mkdir -p ~/.config/kitty 
-     cp -r GentlemanKitty/* ~/.config/kitty
-     ```
+    # Configuration (all systems)
+    mkdir -p ~/.config/wezterm
+    cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+    ```
 
-   * **None:** If you do not want to install a terminal emulator, you can skip this step.
+  - **Kitty (macOS only):**
 
-#### 4. Choose and Install a Shell
+    ```bash
+    brew install --cask kitty
 
-* Choose one of the following shells and install it by following the instructions:
+    # Configuration
+    mkdir -p ~/.config/kitty
+    cp -r GentlemanKitty/* ~/.config/kitty
+    ```
 
-   * **Fish:**
+  - **None:** If you do not want to install a terminal emulator, you can skip this step.
 
-     ```bash
-     brew install fish
+#### 5. Choose and Install a Shell
 
-     # Configuration
-     cp -r GentlemanFish/fish ~/.config
+- Choose one of the following shells and install it by following the instructions:
 
-     # (Optional) Update your projects path in ~/.config/fish/config.fish
-     set PROJECT_PATHS "/your/work/path/" 
-     ```
+  - **Fish:**
 
-   * **Zsh:**
+    ```bash
+    brew install fish
 
-     ```bash
-     brew install zsh zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
+    # Configuration
+    cp -r GentlemanFish/fish ~/.config
 
-     # Install Oh My Zsh (if not installed)
-     NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
+    # (Optional) Update your projects path in ~/.config/fish/config.fish
+    set PROJECT_PATHS "/your/work/path/"
+    ```
 
-     # Configuration
-     cp -r GentlemanZsh/.zshrc ~/
+  - **Zsh:**
 
-     # PowerLevel10K configuration
-     brew install powerlevel10k
-     cp -r GentlemanZsh/.p10k.zsh ~/
+    ```bash
+    brew install zsh zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
 
-     # (Optional) Update your projects path in ~/.zshrc
-     export PROJECT_PATHS="/your/work/path/" 
-     ```
+    # Install Oh My Zsh (if not installed)
+    NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
 
-   * **None:** If you do not want to install a shell, you can skip this step.
+    # Configuration
+    cp -r GentlemanZsh/.zshrc ~/
 
-#### 5. Install Additional Dependencies
+    # PowerLevel10K configuration
+    brew install powerlevel10k
+    cp -r GentlemanZsh/.p10k.zsh ~/
 
-* **On Linux (not Arch):**
+    # (Optional) Update your projects path in ~/.zshrc
+    export PROJECT_PATHS="/your/work/path/"
+    ```
+
+  - **None:** If you do not want to install a shell, you can skip this step.
+
+#### 6. Install Additional Dependencies
+
+- **On Linux (not Arch):**
 
   ```bash
   sudo apt-get update && sudo apt-get upgrade -y
   ```
 
-#### 6. Choose and Install a Window Manager (Optional)
+#### 7. Choose and Install a Window Manager (Optional)
 
-* Choose one of the following window managers and install it by following the instructions:
+- Choose one of the following window managers and install it by following the instructions:
 
-   * **Tmux:**
+  - **Tmux:**
 
-     ```bash
-     brew install tmux
+    ```bash
+    brew install tmux
 
-     # Configuration
-     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm 
-     mkdir -p ~/.tmux
-     cp -r GentlemanTmux/.tmux/* ~/.tmux/
-     cp GentlemanTmux/.tmux.conf ~/
+    # Configuration
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    mkdir -p ~/.tmux
+    cp -r GentlemanTmux/.tmux/* ~/.tmux/
+    cp GentlemanTmux/.tmux.conf ~/
 
-     # Install Tmux plugins
-     tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
-     # Wait for the plugin installation to finish. You can monitor the progress in another terminal with:
-     # tmux attach-session -t plugin-installation
-     tmux kill-session -t plugin-installation
-     ```
+    # Install Tmux plugins
+    tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
+    # Wait for the plugin installation to finish. You can monitor the progress in another terminal with:
+    # tmux attach-session -t plugin-installation
+    tmux kill-session -t plugin-installation
+    ```
 
-   * **Zellij:**
+  - **Zellij:**
 
-     ```bash
-     brew install zellij
+    ```bash
+    brew install zellij
 
-     # Configuration
-     mkdir -p ~/.config/zellij
-     cp -r GentlemanZellij/zellij/* ~/.config/zellij/
+    # Configuration
+    mkdir -p ~/.config/zellij
+    cp -r GentlemanZellij/zellij/* ~/.config/zellij/
 
-     # Replace TMUX and tmux in the shell configuration (Zsh)
-     sed -i '' 's/TMUX/WM_VAR="\/\$ZELLIJ/g' ~/.zshrc  # If you chose zsh
-     sed -i '' 's/tmux/WM_CMD="zellij/g' ~/.zshrc       # If you chose zsh
+    # Replace TMUX and tmux in the shell configuration (Zsh)
+    sed -i '' 's/TMUX/WM_VAR="\/\$ZELLIJ/g' ~/.zshrc  # If you chose zsh
+    sed -i '' 's/tmux/WM_CMD="zellij/g' ~/.zshrc       # If you chose zsh
 
-     # Replace TMUX and tmux in the shell configuration (Fish)
-     sed -i '' 's/TMUX/if not set -q ZELLIJ/g' ~/.config/fish/config.fish  # If you chose fish
-     sed -i '' 's/tmux/zellij/g' ~/.config/fish/config.fish               # If you chose fish
-     ```
+    # Replace TMUX and tmux in the shell configuration (Fish)
+    sed -i '' 's/TMUX/if not set -q ZELLIJ/g' ~/.config/fish/config.fish  # If you chose fish
+    sed -i '' 's/tmux/zellij/g' ~/.config/fish/config.fish               # If you chose fish
+    ```
 
-   * **None:** If you do not want to install a window manager, you can skip this step.
-   
-     * If no window manager is chosen, delete the line that runs `tmux` or `zellij`:
+  - **None:** If you do not want to install a window manager, you can skip this step.
 
-     ```bash
-     sed -i '' '/exec tmux/d' ~/.zshrc        # If you chose zsh
-     sed -i '' '/exec zellij/d' ~/.zshrc      # If you chose zsh
-     sed -i '' '/tmux/d' ~/.config/fish/config.fish  # If you chose fish
-     sed -i '' '/zellij/d' ~/.config/fish/config.fish # If you chose fish
-     ```
+    - If no window manager is chosen, delete the line that runs `tmux` or `zellij`:
 
-#### 7. Configure Neovim (Optional)
+    ```bash
+    sed -i '' '/exec tmux/d' ~/.zshrc        # If you chose zsh
+    sed -i '' '/exec zellij/d' ~/.zshrc      # If you chose zsh
+    sed -i '' '/tmux/d' ~/.config/fish/config.fish  # If you chose fish
+    sed -i '' '/zellij/d' ~/.config/fish/config.fish # If you chose fish
+    ```
 
-* If you want to install and configure Neovim, follow these steps:
+#### 8. Configure Neovim
+
+- To install and configure Neovim, follow these steps:
 
   ```bash
   brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
@@ -348,30 +358,82 @@ cd Gentleman.Dots
   # Neovim configuration
   mkdir -p ~/.config/nvim
   cp -r GentlemanNvim/nvim/* ~/.config/nvim/
-
-  # Obsidian configuration (optional)
-  # Replace '/your/notes/path' with the actual path to your Obsidian vault
-  sed -i '' 's/\/your\/notes\/path/your/actual/obsidian/vault/path/g' ~/.config/nvim/lua/plugins/obsidian.lua
   ```
 
-#### 8. Set the Default Shell
+- **Manual Obsidian Configuration**
 
-* Run the following command, replacing `<shell-name>` with the name of the shell you chose (fish or zsh):
+  To set up your Obsidian vault path in Neovim, follow these steps:
+
+  1. **Create the directory for your Obsidian notes** (replace `/path/to/your/notes` with the actual path you’d like to use):
+
+     ```bash
+     mkdir -p /path/to/your/notes
+     ```
+
+  2. **Inside the notes directory, create a `templates` folder** to store any templates you plan to use:
+
+     ```bash
+     mkdir -p /path/to/your/notes/templates
+     ```
+
+  3. **Create the Neovim configuration directory** if it doesn’t already exist:
+
+     ```bash
+     mkdir -p ~/.config/nvim/lua/plugins
+     ```
+
+  4. **Copy the GentlemanNvim configuration** into the Neovim config directory (if not already copied):
+
+     ```bash
+     cp -r GentlemanNvim/nvim/* ~/.config/nvim/
+     ```
+
+  5. **Open the `obsidian.lua` file** to configure the vault path:
+
+     ```bash
+     nano ~/.config/nvim/lua/plugins/obsidian.lua
+     ```
+
+     Alternatively, use Neovim:
+
+     ```bash
+     nvim ~/.config/nvim/lua/plugins/obsidian.lua
+     ```
+
+  6. **Find the line** that contains:
+
+     ```lua
+     path = "/your/notes/path",
+     ```
+
+  7. **Replace `"/your/notes/path"`** with the path you created for your notes, for example:
+
+     ```lua
+     path = "/path/to/your/notes",
+     ```
+
+  8. **Save and close** the file:
+     - In `nano`, press `Ctrl + O` to save and `Ctrl + X` to exit.
+     - In `nvim`, type `:wq` and press `Enter` to save and close.
+
+#### 9. Set the Default Shell
+
+- Run the following command, replacing `<shell-name>` with the name of the shell you chose (fish or zsh):
 
 ```bash
 chsh -s $(which <shell-name>)
 ```
 
-#### 9. Restart the Shell or Computer
+#### 10. Restart the Shell or Computer
 
-* Close and reopen your terminal, or restart your computer or WSL instance for the changes to take effect.
+- Close and reopen your terminal, or restart your computer or WSL instance for the changes to take effect.
 
 You're done! You have manually configured your development environment following the Gentleman.Dots script. Enjoy your new environment!
 
 **Note:** If you encounter any problems during configuration, consult the official documentation of the tools or seek help online.
 
-**I hope this guide has been helpful!** 
+**I hope this guide has been helpful!**
 
-If you have any further questions or need additional assistance, feel free to reach out to the Gentleman.Dots community or consult the project's documentation. 
+If you have any further questions or need additional assistance, feel free to reach out to the Gentleman.Dots community or consult the project's documentation.
 
 Happy coding!
