@@ -328,6 +328,26 @@ else
     echo -e "${YELLOW}No terminal emulator will be installed or configured.${NC}"
     ;;
   esac
+
+  if [ "$term_choice" != "none" ]; then
+    echo -e "${YELLOW}Iosevka Term Nerd Font is required for the terminal emulator.${NC}"
+    font_installed=$(select_option "Do you already have Iosevka Term Nerd Font installed?" "Yes" "No")
+    if [ "$font_installed" = "No" ]; then
+      echo -e "${YELLOW}Installing Iosevka Term Nerd Font...${NC}"
+      if [ "$os_choice" = "linux" ]; then
+        mkdir -p ~/.local/share/fonts
+        wget -O ~/.local/share/fonts/IosevkaTermNerdFontMono.ttf https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
+        unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
+        fc-cache -fv
+      elif [ "$os_choice" = "mac" ]; then
+        brew tap homebrew/cask-fonts
+        brew install --cask font-iosevka-term-nerd-font
+      fi
+      echo -e "${GREEN}Iosevka Term Nerd Font installed.${NC}"
+    else
+      echo -e "${GREEN}Iosevka Term Nerd Font is already installed.${NC}"
+    fi
+  fi
 fi
 
 # Shared Steps (macOS, Linux, or WSL)
