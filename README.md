@@ -418,11 +418,25 @@ brew install --cask font-iosevka-term-nerd-font
 
 #### 9. Set the Default Shell
 
-- Run the following command, replacing `<shell-name>` with the name of the shell you chose (fish or zsh):
+Before setting your default shell, make sure it’s registered in the `/etc/shells` file. This allows the system to recognize it as a valid default shell option.
 
-```bash
-chsh -s $(which <shell-name>)
-```
+1. Check if your chosen shell (e.g., `fish` or `zsh`) is already registered in `/etc/shells` by running:
+
+   ```bash
+   cat /etc/shells
+   ```
+
+2. If your shell isn’t listed, add it manually. For example, to add `fish`, use:
+
+   ```bash
+   echo "$(which fish)" | sudo tee -a /etc/shells
+   ```
+
+3. Now, set the default shell by replacing `<shell-name>` with the name of your shell (like `fish` or `zsh`):
+
+   ```bash
+   chsh -s $(which <shell-name>)
+   ```
 
 #### 10. Restart the Shell or Computer
 
