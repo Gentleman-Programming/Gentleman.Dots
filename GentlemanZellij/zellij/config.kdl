@@ -528,13 +528,13 @@ themes {
 // Choose the theme that is specified in the themes section.
 // Default: 
 //
-theme "everforest"
+theme "kanagawa_dragon"
 
 // The name of the default layout to load on startup
 // Default: "work"
 //
 
-default_layout "work_everforest"
+default_layout "work"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
