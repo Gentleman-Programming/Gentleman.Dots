@@ -1,12 +1,20 @@
 format = """\
-[╭─](fg:arrow)\
-$username\
+($directory)\
 $os\
 $git_branch\
-(at $directory)\
+$fill\
+$nodejs\
+$rust\
+$golang\
+$php\
+$bun\
+$java\
+$c\
+$conda\
+$zig\
 $cmd_duration\
-($python $conda $nodejs $c $rust $java $bun $zig)\
-[\n╰─](fg:arrow)$character\
+$time\
+\n$character\
 """
 
 # Desactivar la línea en blanco al inicio del prompt
@@ -15,12 +23,15 @@ add_newline = true
 # Ajustes de color y estilo Kanagawa Dragon
 palette = "kanagawa_dragon"
 
+[fill]
+symbol = ' '
+
 [palettes.kanagawa_dragon]
-arrow = "#DCD7BA"     # Color hueso claro, suave y visible
-os = "#C4B28A"        # Tono amarillo cálido de dragonYellow
-directory = "#8BA4B0" # Azul celeste suave, dragonBlue2
-git = "#C4746E"       # Rojo suave, dragonRed
-duration = "#957FB8"  # Púrpura suave, oniViolet
+arrow = "#DCD7BA"      # Color hueso claro, suave y visible
+os = "#C4B28A"         # Tono amarillo cálido de dragonYellow
+directory = "#8BA4B0"  # Azul celeste suave, dragonBlue2
+git = "#C4746E"        # Rojo suave, dragonRed
+duration = "#957FB8"   # Púrpura suave, oniViolet
 text_color = "#C5C9C5" # Color claro, dragonWhite
 text_light = "#2A2A37" # Gris oscuro, sumiInk4
 
@@ -48,73 +59,75 @@ truncation_symbol = "…/"
 truncate_to_repo = true
 read_only = "  "
 
-# Otros módulos mantienen los colores del tema
-[time]
-format = "at [󱑈 $time]($style)"
-time_format = "%H:%M"
-style = "bold fg:time"
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
 
 [cmd_duration]
-format = "took [ $duration]($style) "
+format = " took [ $duration]($style) "
 style = "bold fg:duration"
 min_time = 500
 
 [git_branch]
-format = "via [$symbol$branch]($style) "
+format = "-> [$symbol$branch]($style) "
 style = "bold fg:git"
-symbol = " " # Rama con toque oriental
+symbol = " "                           # Rama con toque oriental
 
 [git_status]
 format = '[$all_status$ahead_behind ]($style)'
 style = "fg:text_color bg:git"
 
 [docker_context]
-disabled=true
+disabled = true
 symbol = " "
 
-[nodejs]
-format = "[$symbol$version ]($style)"
-symbol = " "
-version_format = "${raw}"
-disabled=false
-
 [python]
-disabled=false
-format = '[${symbol}${pyenv_prefix}(${version})( \($virtualenv\)) ]($style)'
+disabled = false
+format = '[${symbol}${pyenv_prefix}(${version})( \($virtualenv\))](fg:#FF9E3B)($style)'
 symbol = " "
 version_format = "${raw}"
 
-[conda]
-format = "[$symbol$environment ]($style)"
-ignore_base = false
-disabled = true
-symbol = " "
-
 [java]
-format = "[$symbol$version ]($style)"
+format = '[[ $symbol ($version) ](fg:#FF5D62)]($style)'
 version_format = "${raw}"
 symbol = " "
 disabled = false
 
 [c]
-format = "[$symbol($version(-$name)) ]($style)"
+format = '[[ $symbol ($version) ](fg:#7FB4CA)]($style)'
 symbol = " "
 version_format = "${raw}"
 disabled = false
 
-[rust]
-format ="[$symbol$version ]($style)"
-symbol = " "
-version_format = "${raw}"
-disabled=false
-
 [zig]
-format = '([$symbol($version )]($style))'
+format = '[[ $symbol ($version) ](fg:#FFA066)]($style)'
 version_format = "${raw}"
-disabled=false
+disabled = false
 
 [bun]
-format = '([$symbol($version )]($style))'
 version_format = "${raw}"
-disabled=false
+format = '[[ $symbol ($version) ](fg:#DCD7BA)]($style)'
+disabled = false
 
+[nodejs]
+symbol = ""
+format = '[[ $symbol ($version) ](fg:#87a987)]($style)'
+
+[rust]
+symbol = ""
+format = '[[ $symbol ($version) ](fg:#FF5D62)]($style)'
+
+[golang]
+symbol = ""
+format = '[[ $symbol ($version) ](fg:#7FB4CA)]($style)'
+
+[php]
+symbol = ""
+format = '[[ $symbol ($version) ](fg:#FF9E3B)]($style)'
+
+[time]
+disabled = false
+time_format = "%R"                           # Hour:Minute Format
+format = '[[  $time ](fg:#8BA4B0)]($style)'
