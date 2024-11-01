@@ -51,7 +51,7 @@ return {
     opts = {
       options = {
         -- globalstatus = false,
-        theme = "kanagawa-dragon",
+        theme = "kanagawa",
         icons_enabled = true,
       },
       sections = {
