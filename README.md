@@ -62,7 +62,7 @@ The Iosevka Term Nerd Font is required for terminal emulators in this setup. On 
 2. Extract the archive and locate the font files (`.ttf` or `.otf`).
 3. Right-click each font file and select "Install for all users" to install the font system-wide.
 
-### 4. Launch and Configure the Distribution
+#### 4. Launch and Configure the Distribution
 
 Open the installed distribution to complete setup. Update it with:
 
