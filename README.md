@@ -54,7 +54,15 @@ Install your preferred distribution:
 wsl --install -d <distribution-name>
 ```
 
-#### 3. Launch and Configure the Distribution
+#### 3. Installing the Iosevka Font
+
+The Iosevka Term Nerd Font is required for terminal emulators in this setup. On Windows, this installation must be done manually.
+
+1. Download the Iosevka font from its official site or from [Nerd Fonts GitHub](https://github.com/ryanoasis/nerd-fonts).
+2. Extract the archive and locate the font files (`.ttf` or `.otf`).
+3. Right-click each font file and select "Install for all users" to install the font system-wide.
+
+### 4. Launch and Configure the Distribution
 
 Open the installed distribution to complete setup. Update it with:
 
@@ -63,7 +71,7 @@ sudo apt-get update
 sudo apt-get upgrade
 ```
 
-#### 4. Install a Terminal Emulator
+#### 5. Install a Terminal Emulator
 
 Choose and install one of the following terminal emulators:
 
@@ -71,7 +79,7 @@ Choose and install one of the following terminal emulators:
 - **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html) and create an environment variable called `HOME` that resolves to `C:\Users\your-username`.
 - **Kitty**: [Download and Install](https://sw.kovidgoyal.net/kitty/#get-the-app).
 
-#### 5. Configuration Transfer for Terminal Emulators
+#### 6. Configuration Transfer for Terminal Emulators
 
 Using PowerShell:
 
@@ -113,7 +121,7 @@ cp .wezterm.lua %userprofile%
 cp -r GentlemanKitty/* %userprofile%\.config\kitty
 ```
 
-#### 6. Install Chocolatey and win32yank
+#### 7. Install Chocolatey and win32yank
 
 **Chocolatey** is a package manager for Windows that simplifies the installation of software.
 
