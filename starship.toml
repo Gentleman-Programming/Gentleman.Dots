@@ -5,7 +5,7 @@ $os\
 $git_branch\
 (at $directory)\
 $cmd_duration\
-(via $python $conda $nodejs $c $rust $java $bun $zig)\
+($python $conda $nodejs $c $rust $java $bun $zig)\
 [\n╰─](fg:arrow)$character\
 """
 
@@ -80,40 +80,41 @@ disabled=false
 
 [python]
 disabled=false
-format = '[ ${symbol}${pyenv_prefix}(${version})( \($virtualenv\)) ]($style)'
+format = '[${symbol}${pyenv_prefix}(${version})( \($virtualenv\)) ]($style)'
 symbol = " "
 version_format = "${raw}"
 
 [conda]
-format = "[ $symbol$environment ]($style)"
+format = "[$symbol$environment ]($style)"
 ignore_base = false
 disabled = true
 symbol = " "
 
 [java]
-format = "[ $symbol$version ]($style)"
+format = "[$symbol$version ]($style)"
 version_format = "${raw}"
 symbol = " "
 disabled = false
 
 [c]
-format = "[ $symbol($version(-$name)) ]($style)"
+format = "[$symbol($version(-$name)) ]($style)"
 symbol = " "
 version_format = "${raw}"
 disabled = false
 
 [rust]
-format ="[ $symbol$version ]($style)"
+format ="[$symbol$version ]($style)"
 symbol = " "
 version_format = "${raw}"
 disabled=false
 
 [zig]
-format = '(via [$symbol($version )]($style))'
+format = '([$symbol($version )]($style))'
 version_format = "${raw}"
 disabled=false
 
 [bun]
-format = '(via [$symbol($version )]($style))'
+format = '([$symbol($version )]($style))'
 version_format = "${raw}"
 disabled=false
+
