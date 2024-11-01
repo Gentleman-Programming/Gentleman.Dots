@@ -17,38 +17,38 @@ $time\
 \n$character\
 """
 
-# Desactivar la línea en blanco al inicio del prompt
+# Disable the blank line at the beginning of the prompt
 add_newline = true
 
-# Ajustes de color y estilo Kanagawa Dragon
+# Kanagawa Dragon color and style settings
 palette = "kanagawa_dragon"
 
 [fill]
 symbol = ' '
 
 [palettes.kanagawa_dragon]
-arrow = "#DCD7BA"      # Color hueso claro, suave y visible
-os = "#C4B28A"         # Tono amarillo cálido de dragonYellow
-directory = "#8BA4B0"  # Azul celeste suave, dragonBlue2
-git = "#C4746E"        # Rojo suave, dragonRed
-duration = "#957FB8"   # Púrpura suave, oniViolet
-text_color = "#C5C9C5" # Color claro, dragonWhite
-text_light = "#2A2A37" # Gris oscuro, sumiInk4
+arrow = "#DCD7BA"      # Light bone color, soft and visible
+os = "#C4B28A"         # Warm yellow tone of dragonYellow
+directory = "#8BA4B0"  # Soft sky blue, dragonBlue2
+git = "#C4746E"        # Soft red, dragonRed
+duration = "#957FB8"   # Soft purple, oniViolet
+text_color = "#C5C9C5" # Light color, dragonWhite
+text_light = "#2A2A37" # Dark gray, sumiInk4
 
-# Icono del bigote rosa para el prompt
+# Pink mustache icon for the prompt
 [character]
-success_symbol = "[󱗞](fg:#A3BE8C)" # Bigote en tono rosa oscuro
-error_symbol = "[󱗞](fg:red)"       # Bigote en rojo si hay error
+success_symbol = "[󱗞](fg:#A3BE8C)" # Mustache in dark pink tone
+error_symbol = "[󱗞](fg:red)"       # Mustache in red if there is an error
 
-# Configuración del usuario
+# User settings
 [username]
 style_user = 'bold os'
 style_root = 'bold os_admin'
-format = '[󱗞 $user](fg:$style) ' # Bigote antes del nombre de usuario
+format = '[󱗞 $user](fg:$style) ' # Mustache before the username
 disabled = false
 show_always = true
 
-# Configuración del directorio
+# Directory settings
 [directory]
 format = "[$path](bold $style)[$read_only]($read_only_style) "
 truncation_length = 2
@@ -73,7 +73,7 @@ min_time = 500
 [git_branch]
 format = "-> [$symbol$branch]($style) "
 style = "bold fg:git"
-symbol = " "                           # Rama con toque oriental
+symbol = " "                           # Branch with oriental touch
 
 [git_status]
 format = '[$all_status$ahead_behind ]($style)'
