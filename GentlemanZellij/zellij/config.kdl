@@ -75,7 +75,7 @@ keybinds clear-defaults=true {
     scroll {
         bind "Alt s" { SwitchToMode "Normal"; }
         bind "e" { EditScrollback; SwitchToMode "Normal"; }
-        bind "s" { SwitchToMode "EnterSearch"; SearchInput 0; }
+        bind "s" { SwitchToMode "EnterSearch";SearchInput 0; }
         bind "Alt c" { ScrollToBottom; SwitchToMode "Normal"; }
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
@@ -157,6 +157,47 @@ keybinds clear-defaults=true {
       }
       bind "Alt y" {
         LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
+            "lock"                  "alt + g"
+            "unlock"                "alt + g"
+            "new pane"              "alt + p + n"
+            "change focus of pane"  "alt + p + arrow key"
+            "close pane"            "alt + p + x"
+            "rename pane"           "alt + p + c"
+            "toggle fullscreen"     "alt + p + f"
+            "toggle floating pane"  "alt + p + w"
+            "toggle embed pane"     "alt + p + e"
+            "choose right pane"     "alt + p + l"
+            "choose left pane"      "alt + p + r"
+            "choose upper pane"     "alt + p + k"
+            "choose lower pane"     "alt + p + j"
+            "new tab"               "alt + t + n"
+            "close tab"             "alt + t + x"
+            "change focus of tab"   "alt + t + arrow key"
+            "rename tab"            "alt + t + r"
+            "sync tab"              "alt + t + s"
+            "brake pane to new tab" "alt + t + b"
+            "brake pane left"       "alt + t + ["
+            "brake pane right"      "alt + t + ]"
+            "toggle tab"            "alt + t + tab"
+            "increase pane size"    "alt + n + +"
+            "decrease pane size"    "alt + n + -"
+            "increase pane top"     "alt + n + k"
+            "increase pane right"   "alt + n + l"
+            "increase pane bottom"  "alt + n + j"
+            "increase pane left"    "alt + n + h"
+            "decrease pane top"     "alt + n + K"
+            "decrease pane right"   "alt + n + L"
+            "decrease pane bottom"  "alt + n + J"
+            "decrease pane left"    "alt + n + H"
+            "move pane to top"      "alt + h + k"
+            "move pane to right"    "alt + h + l"
+            "move pane to bottom"   "alt + h + j"
+            "move pane to left"     "alt + h + h"
+            "search"                "alt + s + s"
+            "go into edit mode"     "alt + s + e"
+            "detach session"        "alt + o + w"
+            "open session manager"  "alt + o + w"
+            "quit zellij"           "alt + q"
             floating true
         }
       }
