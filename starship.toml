@@ -1,133 +1,119 @@
-[buf]
-format = '(with [$symbol$version ]($style))'
+format = """\
+[╭─](fg:arrow)\
+$username\
+$os\
+$git_branch\
+(at $directory)\
+$cmd_duration\
+(via $python $conda $nodejs $c $rust $java $bun $zig)\
+[\n╰─](fg:arrow)$character\
+"""
 
-[bun]
-format = '(via [$symbol($version )]($style))'
+# Desactivar la línea en blanco al inicio del prompt
+add_newline = true
 
-[c]
-format = '(via [$symbol($version(-$name) )]($style))'
+# Ajustes de color y estilo Kanagawa Dragon
+palette = "kanagawa_dragon"
 
-[cmake]
-format = '(via [$symbol($version )]($style))'
+[palettes.kanagawa_dragon]
+arrow = "#DCD7BA"     # Color hueso claro, suave y visible
+os = "#C4B28A"        # Tono amarillo cálido de dragonYellow
+directory = "#8BA4B0" # Azul celeste suave, dragonBlue2
+git = "#C4746E"       # Rojo suave, dragonRed
+duration = "#957FB8"  # Púrpura suave, oniViolet
+text_color = "#C5C9C5" # Color claro, dragonWhite
+text_light = "#2A2A37" # Gris oscuro, sumiInk4
 
-[cobol]
-format = '(via [$symbol($version )]($style))'
+# Icono del bigote rosa para el prompt
+[character]
+success_symbol = "[󱗞](fg:#A3BE8C)" # Bigote en tono rosa oscuro
+error_symbol = "[󱗞](fg:red)"       # Bigote en rojo si hay error
 
-[crystal]
-format = '(via [$symbol($version )]($style))'
+# Configuración del usuario
+[username]
+style_user = 'bold os'
+style_root = 'bold os_admin'
+format = '[󱗞 $user](fg:$style) ' # Bigote antes del nombre de usuario
+disabled = false
+show_always = true
 
-[daml]
-format = '(via [$symbol($version )]($style))'
+# Configuración del directorio
+[directory]
+format = "[$path](bold $style)[$read_only]($read_only_style) "
+truncation_length = 2
+style = "fg:directory"
+read_only_style = "fg:directory"
+before_repo_root_style = "fg:directory"
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = "  "
 
-[dart]
-format = '(via [$symbol($version )]($style))'
+# Otros módulos mantienen los colores del tema
+[time]
+format = "at [󱑈 $time]($style)"
+time_format = "%H:%M"
+style = "bold fg:time"
 
-[deno]
-format = '(via [$symbol($version )]($style))'
+[cmd_duration]
+format = "took [ $duration]($style) "
+style = "bold fg:duration"
+min_time = 500
 
-[dotnet]
-format = '(via [$symbol($version )(🎯 $tfm )]($style))'
+[git_branch]
+format = "via [$symbol$branch]($style) "
+style = "bold fg:git"
+symbol = " " # Rama con toque oriental
 
-[elixir]
-format = '(via [$symbol($version \(OTP $otp_version\) )]($style))'
+[git_status]
+format = '[$all_status$ahead_behind ]($style)'
+style = "fg:text_color bg:git"
 
-[elm]
-format = '(via [$symbol($version )]($style))'
-
-[erlang]
-format = '(via [$symbol($version )]($style))'
-
-[fennel]
-format = '(via [$symbol($version )]($style))'
-
-[gleam]
-format = '(via [$symbol($version )]($style))'
-
-[golang]
-format = '(via [$symbol($version )]($style))'
-
-[haskell]
-format = '(via [$symbol($version )]($style))'
-
-[helm]
-format = '(via [$symbol($version )]($style))'
-
-[java]
-format = '(via [$symbol($version )]($style))'
-
-[julia]
-format = '(via [$symbol($version )]($style))'
-
-[kotlin]
-format = '(via [$symbol($version )]($style))'
-
-[lua]
-format = '(via [$symbol($version )]($style))'
-
-[nim]
-format = '(via [$symbol($version )]($style))'
+[docker_context]
+disabled=true
+symbol = " "
 
 [nodejs]
-format = '(via [$symbol($version )]($style))'
-
-[ocaml]
-format = '(via [$symbol($version )(\($switch_indicator$switch_name\) )]($style))'
-
-[opa]
-format = '(via [$symbol($version )]($style))'
-[package]
-format = '(is [$symbol$version]($style) )'
-
-[perl]
-format = '(via [$symbol($version )]($style))'
-
-[php]
-format = '(via [$symbol($version )]($style))'
-
-[purescript]
-format = '(via [$symbol($version )]($style))'
+format = "[$symbol$version ]($style)"
+symbol = " "
+version_format = "${raw}"
+disabled=false
 
 [python]
-format = '(via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style))'
+disabled=false
+format = '[ ${symbol}${pyenv_prefix}(${version})( \($virtualenv\)) ]($style)'
+symbol = " "
+version_format = "${raw}"
 
-[quarto]
-format = '(via [$symbol($version )]($style))'
+[conda]
+format = "[ $symbol$environment ]($style)"
+ignore_base = false
+disabled = true
+symbol = " "
 
-[raku]
-format = '(via [$symbol($version-$vm_version )]($style))'
+[java]
+format = "[ $symbol$version ]($style)"
+version_format = "${raw}"
+symbol = " "
+disabled = false
 
-[red]
-format = '(via [$symbol($version )]($style))'
-
-[rlang]
-format = '(via [$symbol($version )]($style))'
-
-[ruby]
-format = '(via [$symbol($version )]($style))'
+[c]
+format = "[ $symbol($version(-$name)) ]($style)"
+symbol = " "
+version_format = "${raw}"
+disabled = false
 
 [rust]
-format = '(via [$symbol($version )]($style))'
-
-[scala]
-format = '(via [$symbol($version )]($style))'
-
-[swift]
-format = '(via [$symbol($version )]($style))'
-
-[typst]
-format = '(via [$symbol($version )]($style))'
-
-[vagrant]
-format = '(via [$symbol($version )]($style))'
-
-[vlang]
-format = '(via [$symbol($version )]($style))'
+format ="[ $symbol$version ]($style)"
+symbol = " "
+version_format = "${raw}"
+disabled=false
 
 [zig]
 format = '(via [$symbol($version )]($style))'
+version_format = "${raw}"
+disabled=false
 
-[gcloud]
-disabled = true
-
-[aws]
-disabled = true
+[bun]
+format = '(via [$symbol($version )]($style))'
+version_format = "${raw}"
+disabled=false
