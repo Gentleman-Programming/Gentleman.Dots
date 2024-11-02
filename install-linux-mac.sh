@@ -220,10 +220,6 @@ if [ "$os_choice" != "mac" ]; then
   fi
 fi
 
-# Prompt for project path and Obsidian path
-PROJECT_PATHS=$(prompt_user "Enter the path for your projects, it will create the folders for you if they don't exist" "/your/work/path/")
-ensure_directory_exists "$PROJECT_PATHS" "false"
-
 # Function to clone repository with progress bar
 clone_repository_with_progress() {
   local repo_url="$1"
@@ -394,9 +390,23 @@ shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh"
 
 # Case for shell choice
 case "$shell_choice" in
+"nushell")
+  if ! command -v nu &>/dev/null; then
+    install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin"
+  else
+    echo -e "${GREEN}Nushell shell is already installed.${NC}"
+  fi
+  if ! command -v starship &>/dev/null; then
+    install_shell_with_progress "starship" "brew install starship"
+  else
+    echo -e "${GREEN}starship is already installed.${NC}"
+  fi
+  echo -e "${YELLOW}Configuring Nushell...${NC}"
+  run_command "cp -r GentlemanFish/nushell ~/.config"
+  ;;
 "fish")
   if ! command -v fish &>/dev/null; then
-    install_shell_with_progress "fish" "brew install fish"
+    install_shell_with_progress "fish" "brew install fish carapace zoxide atuin"
   else
     echo -e "${GREEN}Fish shell is already installed.${NC}"
   fi
@@ -407,13 +417,10 @@ case "$shell_choice" in
   fi
   echo -e "${YELLOW}Configuring Fish...${NC}"
   run_command "cp -r GentlemanFish/fish ~/.config"
-
-  # Update or append the PROJECT_PATHS line
-  update_or_replace ~/.config/fish/config.fish "set PROJECT_PATHS" "set PROJECT_PATHS \"$PROJECT_PATHS\""
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
-    install_shell_with_progress "zsh" "brew install zsh"
+    install_shell_with_progress "zsh" "brew install zsh zoxide atuin"
   else
     echo -e "${GREEN}zsh is already installed.${NC}"
   fi
@@ -443,9 +450,6 @@ case "$shell_choice" in
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
   run_command "brew install powerlevel10k"
   run_command "cp -r GentlemanZsh/.p10k.zsh ~/"
-
-  # Update or append the PROJECT_PATHS line
-  update_or_replace ~/.zshrc "export PROJECT_PATHS" "export PROJECT_PATHS=\"$PROJECT_PATHS\""
   ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
@@ -583,6 +587,9 @@ case "$wm_choice" in
   elif [[ "$shell_choice" == "fish" ]]; then
     update_or_replace ~/.config/fish/config.fish "TMUX" "if not set -q ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
+  elif [[ "$shell_choice" == "nushell" ]]; then
+    update_or_replace ~/.config/fish/config.fish "zellij" "let MULTIPLEXER = \"zellij\""
+    update_or_replace ~/.config/fish/config.fish "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
   fi
   ;;
 "none")

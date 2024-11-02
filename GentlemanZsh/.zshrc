@@ -49,13 +49,18 @@ alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}"
 
 #plugins
 plugins=(
-  pj 
-  command-not-found     
+  command-not-found
 )
 
 source $ZSH/oh-my-zsh.sh
 
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
+
 eval "$(fzf --zsh)"
+eval "$(zoxide init zsh)"
+eval "$(atuin init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
