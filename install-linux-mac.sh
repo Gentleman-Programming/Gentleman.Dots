@@ -386,7 +386,7 @@ set_as_default_shell() {
 }
 
 echo -e "${YELLOW}Step 3: Choose and Install Shell${NC}"
-shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh")
+shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh" "nushell")
 
 # Case for shell choice
 case "$shell_choice" in
