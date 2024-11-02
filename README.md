@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository contains customized configurations for a complete development environment, including Neovim, Fish, Zsh, Tmux, Zellij, and terminal emulators like Alacritty, WezTerm, and Kitty. You can choose between automatic and manual installation methods depending on your preference and operating system. **Important:** Windows users must follow the manual installation instructions before running the script.
+This repository contains customized configurations for a complete development environment, including Neovim, Fish, Zsh, **Nushell**, Tmux, Zellij, and terminal emulators like Alacritty, WezTerm, and Kitty. You can choose between automatic and manual installation methods depending on your preference and operating system. **Important:** Windows users must follow the manual installation instructions before running the script.
 
 ## Installation (Automatic Recommended!)
 
@@ -91,9 +91,9 @@ cp alacritty.toml %userprofile%\AppData\Roaming\alacritty\alacritty.toml
 
 # Uncomment in alacritty.toml
 
-[shell]
-program = "wsl.exe"
-args = ["--cd","~"]
+#[shell]
+#program = "wsl.exe"
+#args = ["--cd","~"]
 ```
 
 **WezTerm Configuration**
@@ -109,11 +109,11 @@ cp .wezterm.lua %userprofile%
 # config.max_fps = 120
 ```
 
-**If wezterm doesn't take the initial configuration**
+**If WezTerm doesn't take the initial configuration**
 
-- Create `wezterm` folder in `C:\User\your-username\.config`
-- and copy `.wezterm.lua` in `wezterm.lua` file inside the previous directory
-- start wezterm again
+- Create a `wezterm` folder in `C:\User\your-username\.config`
+- Copy `.wezterm.lua` into a `wezterm.lua` file inside the previous directory
+- Start WezTerm again
 
 **Kitty Configuration**
 
@@ -149,7 +149,7 @@ choco install win32yank
 
 ---
 
-### For Linux, Archlinux and WSL
+### For Linux, Arch Linux, and WSL
 
 #### Prerequisites
 
@@ -189,7 +189,31 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
 ```
 
-#### 2. Install Homebrew (if not installed)
+#### 2. Install Shell Enhancements
+
+To enhance your shell experience, we recommend installing the following tools, regardless of which shell you are using:
+
+- **Carapace**: A universal completion generator for your shell.
+
+  ```bash
+  brew install rsteube/carapace/carapace-bin
+  ```
+
+- **Zoxide**: A smarter `cd` command that learns your habits.
+
+  ```bash
+  brew install zoxide
+  ```
+
+- **Atuin**: A magical shell history.
+
+  ```bash
+  bash <(curl https://raw.githubusercontent.com/atuinsh/atuin/main/install.sh)
+  ```
+
+**Note:** Configuration steps for these tools are included in the repository files and will be applied automatically when you copy the configuration files.
+
+#### 3. Install Homebrew (if not installed)
 
 - Homebrew is a package manager for macOS and Linux that makes it easy to install many tools.
 - **If you already have Homebrew installed, you can skip this step.**
@@ -201,7 +225,7 @@ cd Gentleman.Dots
 
 - Follow the on-screen instructions to complete the installation.
 
-#### 3. Install Iosevka Term Nerd Font
+#### 4. Install Iosevka Term Nerd Font
 
 Iosevka Term Nerd Font is required for the terminal emulator. Follow these steps to install it:
 
@@ -210,7 +234,7 @@ brew tap homebrew/cask-fonts
 brew install --cask font-iosevka-term-nerd-font
 ```
 
-#### 4. Choose and Install a Terminal Emulator (Optional)
+#### 5. Choose and Install a Terminal Emulator (Optional)
 
 - **If you are using WSL, terminal emulators must be installed on Windows.**
 - Choose one of the following terminal emulators and install it by following the instructions:
@@ -260,7 +284,7 @@ brew install --cask font-iosevka-term-nerd-font
 
   - **None:** If you do not want to install a terminal emulator, you can skip this step.
 
-#### 5. Choose and Install a Shell
+#### 6. Choose and Install a Shell
 
 - Choose one of the following shells and install it by following the instructions:
 
@@ -271,9 +295,6 @@ brew install --cask font-iosevka-term-nerd-font
 
     # Configuration
     cp -r GentlemanFish/fish ~/.config
-
-    # (Optional) Update your projects path in ~/.config/fish/config.fish
-    set PROJECT_PATHS "/your/work/path/"
     ```
 
   - **Zsh:**
@@ -290,14 +311,22 @@ brew install --cask font-iosevka-term-nerd-font
     # PowerLevel10K configuration
     brew install powerlevel10k
     cp -r GentlemanZsh/.p10k.zsh ~/
+    ```
 
-    # (Optional) Update your projects path in ~/.zshrc
-    export PROJECT_PATHS="/your/work/path/"
+  - **Nushell:**
+
+    ```bash
+    # Install Nushell
+    brew install nushell
+
+    # Configuration
+    mkdir -p ~/.config/nushell
+    cp -r GentlemanNushell/* ~/.config/nushell/
     ```
 
   - **None:** If you do not want to install a shell, you can skip this step.
 
-#### 6. Install Additional Dependencies
+#### 7. Install Additional Dependencies
 
 - **On Linux (not Arch):**
 
@@ -305,7 +334,7 @@ brew install --cask font-iosevka-term-nerd-font
   sudo apt-get update && sudo apt-get upgrade -y
   ```
 
-#### 7. Choose and Install a Window Manager (Optional)
+#### 8. Choose and Install a Window Manager (Optional)
 
 - Choose one of the following window managers and install it by following the instructions:
 
@@ -335,28 +364,13 @@ brew install --cask font-iosevka-term-nerd-font
     # Configuration
     mkdir -p ~/.config/zellij
     cp -r GentlemanZellij/zellij/* ~/.config/zellij/
-
-    # Replace TMUX and tmux in the shell configuration (Zsh)
-    sed -i '' 's/TMUX/WM_VAR="\/\$ZELLIJ/g' ~/.zshrc  # If you chose zsh
-    sed -i '' 's/tmux/WM_CMD="zellij/g' ~/.zshrc       # If you chose zsh
-
-    # Replace TMUX and tmux in the shell configuration (Fish)
-    sed -i '' 's/TMUX/if not set -q ZELLIJ/g' ~/.config/fish/config.fish  # If you chose fish
-    sed -i '' 's/tmux/zellij/g' ~/.config/fish/config.fish               # If you chose fish
     ```
 
   - **None:** If you do not want to install a window manager, you can skip this step.
 
-    - If no window manager is chosen, delete the line that runs `tmux` or `zellij`:
+    - If no window manager is chosen, you may need to adjust your shell configuration files to prevent automatic launching of a window manager.
 
-    ```bash
-    sed -i '' '/exec tmux/d' ~/.zshrc        # If you chose zsh
-    sed -i '' '/exec zellij/d' ~/.zshrc      # If you chose zsh
-    sed -i '' '/tmux/d' ~/.config/fish/config.fish  # If you chose fish
-    sed -i '' '/zellij/d' ~/.config/fish/config.fish # If you chose fish
-    ```
-
-#### 8. Configure Neovim
+#### 9. Configure Neovim
 
 - To install and configure Neovim, follow these steps:
 
@@ -384,19 +398,7 @@ brew install --cask font-iosevka-term-nerd-font
      mkdir -p /path/to/your/notes/templates
      ```
 
-  3. **Create the Neovim configuration directory** if it doesn’t already exist:
-
-     ```bash
-     mkdir -p ~/.config/nvim/lua/plugins
-     ```
-
-  4. **Copy the GentlemanNvim configuration** into the Neovim config directory (if not already copied):
-
-     ```bash
-     cp -r GentlemanNvim/nvim/* ~/.config/nvim/
-     ```
-
-  5. **Open the `obsidian.lua` file** to configure the vault path:
+  3. **Open the `obsidian.lua` file** to configure the vault path:
 
      ```bash
      nano ~/.config/nvim/lua/plugins/obsidian.lua
@@ -408,27 +410,27 @@ brew install --cask font-iosevka-term-nerd-font
      nvim ~/.config/nvim/lua/plugins/obsidian.lua
      ```
 
-  6. **Find the line** that contains:
+  4. **Find the line** that contains:
 
      ```lua
      path = "/your/notes/path",
      ```
 
-  7. **Replace `"/your/notes/path"`** with the path you created for your notes, for example:
+  5. **Replace `"/your/notes/path"`** with the path you created for your notes, for example:
 
      ```lua
      path = "/path/to/your/notes",
      ```
 
-  8. **Save and close** the file:
+  6. **Save and close** the file:
      - In `nano`, press `Ctrl + O` to save and `Ctrl + X` to exit.
      - In `nvim`, type `:wq` and press `Enter` to save and close.
 
-#### 9. Set the Default Shell
+#### 10. Set the Default Shell
 
 Before setting your default shell, make sure it’s registered in the `/etc/shells` file. This allows the system to recognize it as a valid default shell option.
 
-1. Check if your chosen shell (e.g., `fish` or `zsh`) is already registered in `/etc/shells` by running:
+1. Check if your chosen shell (e.g., `fish`, `zsh`, or `nu`) is already registered in `/etc/shells` by running:
 
    ```bash
    cat /etc/shells
@@ -440,13 +442,19 @@ Before setting your default shell, make sure it’s registered in the `/etc/shel
    echo "$(which fish)" | sudo tee -a /etc/shells
    ```
 
-3. Now, set the default shell by replacing `<shell-name>` with the name of your shell (like `fish` or `zsh`):
+   For `nushell`, you might need to add:
+
+   ```bash
+   echo "$(which nu)" | sudo tee -a /etc/shells
+   ```
+
+3. Now, set the default shell by replacing `<shell-name>` with the name of your shell (like `fish`, `zsh`, or `nu`):
 
    ```bash
    chsh -s $(which <shell-name>)
    ```
 
-#### 10. Restart the Shell or Computer
+#### 11. Restart the Shell or Computer
 
 - Close and reopen your terminal, or restart your computer or WSL instance for the changes to take effect.
 
