@@ -645,17 +645,22 @@ case "$wm_choice" in
   # Check and modify ~/.zshrc if it exists
   if [ -f ~/.zshrc ]; then
     run_sed ~/.zshrc '/exec $WM_CMD/d'
+    update_or_replace ~/.zshrc "exec $WM_CMD" "true"
   fi
 
   # Check and modify ~/.config/fish/config.fish if it exists
   if [ -f ~/.config/fish/config.fish ]; then
-    run_sed ~/.config/fish/config.fish '/tmux/d'
-    run_sed ~/.config/fish/config.fish '/zellij/d'
+    update_or_replace ~/.config/fish/config.fish "tmux" "true"
+    update_or_replace ~/.config/fish/config.fish "zellij" "true"
   fi
 
   # Check and modify ~/.config/nushell/config.nu if it exists
-  if [ -f ~/.config/nushell/config.nu ]; then
-    run_sed ~/.config/nushell/config.nu '/run-external $MULTIPLEXER/d'
+  if [ -f ~/.config/fish/config.fish ] || [ -d ~/Library/Application\ Support/nushell ]; then
+    if [[ "$os_type" == "Darwin" ]]; then
+      update_or_replace ~/Library/Application Support/nushell/config.nu "/run-external $MULTIPLEXER" "true"
+    else
+      update_or_replace ~/.config/nushell/config.nu "/run-external $MULTIPLEXER" "true"
+    fi
   fi
   ;;
 *)
