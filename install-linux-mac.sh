@@ -402,7 +402,7 @@ case "$shell_choice" in
     echo -e "${GREEN}starship is already installed.${NC}"
   fi
   echo -e "${YELLOW}Configuring Nushell...${NC}"
-  run_command "cp -r GentlemanFish/nushell ~/.config"
+  run_command "cp -r GentlemanNushell ~/.config"
   ;;
 "fish")
   if ! command -v fish &>/dev/null; then
@@ -595,10 +595,39 @@ case "$wm_choice" in
 "none")
   echo -e "${YELLOW}No window manager will be installed or configured.${NC}"
   # If no window manager is chosen, remove the line that executes tmux or zellij
-  sed -i '' '/exec tmux/d' ~/.zshrc
-  sed -i '' '/exec zellij/d' ~/.zshrc
-  sed -i '' '/tmux/d' ~/.config/fish/config.fish
-  sed -i '' '/zellij/d' ~/.config/fish/config.fish
+
+  # Determine the OS type
+  OS_TYPE=$(uname)
+
+  # Function to run sed with appropriate options based on OS
+  run_sed() {
+    local file=$1
+    local pattern=$2
+
+    if [ "$OS_TYPE" = "Darwin" ]; then
+      # macOS
+      sed -i '' "$pattern" "$file"
+    else
+      # Linux and other Unix-like systems
+      sed -i "$pattern" "$file"
+    fi
+  }
+
+  # Check and modify ~/.zshrc if it exists
+  if [ -f ~/.zshrc ]; then
+    run_sed ~/.zshrc '/exec $WM_CMD/d'
+  fi
+
+  # Check and modify ~/.config/fish/config.fish if it exists
+  if [ -f ~/.config/fish/config.fish ]; then
+    run_sed ~/.config/fish/config.fish '/tmux/d'
+    run_sed ~/.config/fish/config.fish '/zellij/d'
+  fi
+
+  # Check and modify ~/.config/nushell/config.nu if it exists
+  if [ -f ~/.config/nushell/config.nu ]; then
+    run_sed ~/.config/nushell/config.nu '/run-external $MULTIPLEXER/d'
+  fi
   ;;
 *)
   echo -e "${YELLOW}Invalid option. No window manager will be installed or configured.${NC}"
