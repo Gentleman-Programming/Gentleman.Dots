@@ -241,10 +241,10 @@ clone_repository_with_progress() {
 # Step 1: Clone the Repository
 echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
 if [ -d "Gentleman.Dots" ]; then
-  echo -e "${GREEN}Repository already cloned. Skipping...${NC}"
-else
-  clone_repository_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots.git" "Gentleman.Dots" 20
+  echo -e "${GREEN}Repository already cloned. Overwriting...${NC}"
+  rm -rf "Gentleman.Dots"
 fi
+clone_repository_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots.git" "Gentleman.Dots" 20
 cd Gentleman.Dots || exit
 
 # Install Homebrew if not installed
@@ -401,8 +401,20 @@ case "$shell_choice" in
   else
     echo -e "${GREEN}starship is already installed.${NC}"
   fi
+
+  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
+  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
+  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+
   echo -e "${YELLOW}Configuring Nushell...${NC}"
-  run_command "cp -r GentlemanNushell ~/.config"
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    mkdir -p ~/Library/Application\ Support/nushell
+    run_command "cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/"
+  else
+    mkdir -p ~/.config/nushell
+    run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
+  fi
   ;;
 "fish")
   if ! command -v fish &>/dev/null; then
@@ -415,8 +427,13 @@ case "$shell_choice" in
   else
     echo -e "${GREEN}starship is already installed.${NC}"
   fi
+
+  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
+  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
+  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+
   echo -e "${YELLOW}Configuring Fish...${NC}"
-  run_command "cp -r GentlemanFish/fish ~/.config"
+  run_command "cp -rf GentlemanFish/fish ~/.config"
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
@@ -444,12 +461,16 @@ case "$shell_choice" in
   fi
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
-  run_command "cp -r GentlemanZsh/.zshrc ~/"
+  run_command "cp -rf GentlemanZsh/.zshrc ~/"
+
+  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
+  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
+  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
   run_command "brew install powerlevel10k"
-  run_command "cp -r GentlemanZsh/.p10k.zsh ~/"
+  run_command "cp -rf GentlemanZsh/.p10k.zsh ~/"
   ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
@@ -588,8 +609,16 @@ case "$wm_choice" in
     update_or_replace ~/.config/fish/config.fish "TMUX" "if not set -q ZELLIJ"
     update_or_replace ~/.config/fish/config.fish "tmux" "zellij"
   elif [[ "$shell_choice" == "nushell" ]]; then
-    update_or_replace ~/.config/fish/config.fish "zellij" "let MULTIPLEXER = \"zellij\""
-    update_or_replace ~/.config/fish/config.fish "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
+    os_type=$(uname)
+
+    if [[ "$os_type" == "Darwin" ]]; then
+      update_or_replace ~/Library/Application Support/nushell/config.nu "tmux" "let MULTIPLEXER = \"zellij\""
+      update_or_replace ~/Library/Application Support/nushell/config.nu "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
+    else
+      update_or_replace ~/.config/nushell/config.nu "tmux" "let MULTIPLEXER = \"zellij\""
+      update_or_replace ~/.config/nushell/config.nu "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
+    fi
+
   fi
   ;;
 "none")
@@ -666,6 +695,10 @@ sudo chown -R $(whoami) $(brew --prefix)/*
 echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
 run_command "rm -rf Gentleman.Dots"
+
+if [ "$shell_choice" = "nushell" ]; then
+  shell_choice="nu"
+fi
 
 set_as_default_shell "$shell_choice"
 

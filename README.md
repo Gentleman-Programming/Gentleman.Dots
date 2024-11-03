@@ -211,6 +211,14 @@ To enhance your shell experience, we recommend installing the following tools, r
   bash <(curl https://raw.githubusercontent.com/atuinsh/atuin/main/install.sh)
   ```
 
+Additionally, make sure to create the necessary directories if they do not already exist:
+
+```bash
+mkdir -p ~/.cache/starship
+mkdir -p ~/.cache/carapace
+mkdir -p ~/.local/share/atuin
+```
+
 **Note:** Configuration steps for these tools are included in the repository files and will be applied automatically when you copy the configuration files.
 
 #### 3. Install Homebrew (if not installed)
@@ -320,8 +328,14 @@ brew install --cask font-iosevka-term-nerd-font
     brew install nushell
 
     # Configuration
+
+    // Linux
     mkdir -p ~/.config/nushell
     cp -r GentlemanNushell/* ~/.config/nushell/
+
+    // Mac
+    mkdir -p ~/Library/Application\ Support/nushell
+    cp -r GentlemanNushell/* ~/Library/Application\ Support/nushell/
     ```
 
   - **None:** If you do not want to install a shell, you can skip this step.

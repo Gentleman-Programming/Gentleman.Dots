@@ -99,21 +99,18 @@ $env.NU_PLUGIN_DIRS = [
 
 $env.EDITOR = "nvim"
 
-let uname_output = (uname | str trim)
+let brew_path = if $nu.os-info.name == 'macOS' {
+    '/opt/homebrew/bin'
+} else {
+    '/home/linuxbrew/.linuxbrew/bin'
+}
 
 $env.PATH = (
-  $env.PATH
-  | split row (char esep)
-  | append /usr/local/bin
-  | append ($env.HOME | path join .local bin)
-    | if $uname_output == "Darwin" {
-        append "/opt/homebrew/bin"
-      } else {
-          append "/home/linuxbrew/.linuxbrew/bin"
-      }
-    | append /usr/local/bin
-    | append ($env.HOME | path join ".cargo/bin")
-    | uniq 
+$env.PATH 
+| split row (char esep) 
+| prepend '/opt/homebrew/bin'
+| append /usr/local/bin
+| append ($env.HOME | path join ".cargo/bin")
 )
 
 mkdir ~/.cache/starship
