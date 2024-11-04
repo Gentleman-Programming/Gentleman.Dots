@@ -621,13 +621,13 @@ case "$wm_choice" in
     os_type=$(uname)
 
     if [[ "$os_type" == "Darwin" ]]; then
-      update_or_replace ~/Library/Application Support/nushell/config.nu "tmux" "let MULTIPLEXER = \"zellij\""
-      update_or_replace ~/Library/Application Support/nushell/config.nu "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
+      update_or_replace ~/Library/Application Support/nushell/config.nu '"tmux"' 'let MULTIPLEXER = "zellij"'
+      update_or_replace ~/Library/Application Support/nushell/config.nu '"TMUX"' 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"'
     else
-      update_or_replace ~/.config/nushell/config.nu "tmux" "let MULTIPLEXER = \"zellij\""
-      update_or_replace ~/.config/nushell/config.nu "TMUX" "let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\""
+      update_or_replace ~/.config/nushell/config.nu '"tmux"' 'let MULTIPLEXER = "zellij"'
+      update_or_replace ~/.config/nushell/config.nu '"TMUX"' 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"'
+      update_or_replace ~/.config/nushell/config.nu "| prepend '/home/linuxbrew/.linuxbrew/bin'" "| prepend '/opt/homebrew/bin'"
     fi
-
   fi
   ;;
 "none")

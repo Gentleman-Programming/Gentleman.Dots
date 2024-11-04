@@ -99,16 +99,11 @@ $env.NU_PLUGIN_DIRS = [
 
 $env.EDITOR = "nvim"
 
-let brew_path = if $nu.os-info.name == 'macOS' {
-    '/opt/homebrew/bin'
-} else {
-    '/home/linuxbrew/.linuxbrew/bin'
-}
-
 $env.PATH = (
     $env.PATH
     | split row (char esep)
-    | prepend brew_path
+    | prepend '/home/linuxbrew/.linuxbrew/bin'
+# For Mac |'/opt/homebrew/bin'
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
