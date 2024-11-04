@@ -602,7 +602,7 @@ case "$wm_choice" in
   ;;
 "zellij")
   if [ "$show_details" = "Yes" ]; then
-    install_window_manager_with_progress "cargo install zellij"
+    install_window_manager_with_progress "brew uninstall zellij | cargo install zellij"
   else
     run_command "cargo install zellij"
   fi
