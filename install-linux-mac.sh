@@ -593,14 +593,11 @@ case "$wm_choice" in
   fi
   ;;
 "zellij")
-  if ! command -v zellij &>/dev/null; then
     if [ "$show_details" = "Yes" ]; then
-      install_window_manager_with_progress "brew install zellij"
+      install_window_manager_with_progress "cargo install zellij"
     else
       run_command "cargo install zellij"
     fi
-  else
-    echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
 
   echo -e "${YELLOW}Configuring Zellij...${NC}"
