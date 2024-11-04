@@ -223,6 +223,10 @@ if [ "$os_choice" != "mac" ]; then
   else
     install_dependencies
   fi
+else
+  run_command "xcode-select --install"
+  run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+  run_command "source %HOME/.cargo/env"
 fi
 
 # Function to clone repository with progress bar
@@ -596,7 +600,7 @@ case "$wm_choice" in
     if [ "$show_details" = "Yes" ]; then
       install_window_manager_with_progress "brew install zellij"
     else
-      run_command "brew install zellij"
+      run_command "cargo install zellij"
     fi
   else
     echo -e "${GREEN}Zellij is already installed.${NC}"
