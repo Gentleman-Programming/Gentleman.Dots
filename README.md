@@ -521,6 +521,14 @@ Choose one of the following shells and install it:
 
     ```bash
     mkdir -p ~/Library/Application\ Support/nushell
+
+    cp -rf bash-env-json ~/.config/
+    cp -rf bash-env.nu ~/.config/
+
+    # modify config.nu 
+    # change | prepend '/home/linuxbrew/.linuxbrew/bin' with:
+    | prepend '/opt/homebrew/bin'
+
     cp -r GentlemanNushell/* ~/Library/Application\ Support/nushell/
     ```
 
@@ -589,7 +597,7 @@ Choose one of the following shells and install it:
   **Install Zellij using Cargo:**
 
   ```bash
-  cargo install --locked zellij
+  cargo install zellij
   ```
 
   **Configuration:**
@@ -597,6 +605,30 @@ Choose one of the following shells and install it:
   ```bash
   mkdir -p ~/.config/zellij
   cp -r GentlemanZellij/zellij/* ~/.config/zellij/
+
+  # change this files:
+
+  # For fish - ~/.config/fish/config.fish
+
+  if not set -q TMUX
+  # change with ZELLIJ
+      tmux
+  # change with zellij
+  end
+
+  # For zsh - ~/.zshrc
+
+  WM_VAR="/$TMUX"
+  # change with ZELLIJ
+  WM_CMD="tmux"
+  # change with zellij
+
+  # For nushell - ~/.config/nushell/config.nu MAC: ~/Library/Application\ Support/nushell/config.nu
+  
+  let MULTIPLEXER = "tmux" 
+  # change with "zellij"
+  let MULTIPLEXER_ENV_PREFIX = "TMUX"
+  # change with "ZELLIJ"
   ```
 
 - **None:** If you do not want to install a window manager, you can skip this step.
