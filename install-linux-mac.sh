@@ -600,11 +600,10 @@ case "$wm_choice" in
   fi
   ;;
 "zellij")
-    if [ "$show_details" = "Yes" ]; then
-      install_window_manager_with_progress "cargo install zellij"
-    else
-      run_command "cargo install zellij"
-    fi
+  if [ "$show_details" = "Yes" ]; then
+    install_window_manager_with_progress "cargo install zellij"
+  else
+    run_command "cargo install zellij"
   fi
 
   echo -e "${YELLOW}Configuring Zellij...${NC}"
