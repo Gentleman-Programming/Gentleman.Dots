@@ -422,6 +422,7 @@ case "$shell_choice" in
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     mkdir -p ~/Library/Application\ Support/nushell
+    update_or_replace "GentlemanNushell/env.nu" "/home/linuxbrew/.linuxbrew/bin" "    | prepend '/opt/homebrew/bin'"
     run_command "cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/"
   else
     mkdir -p ~/.config/nushell
@@ -621,12 +622,12 @@ case "$wm_choice" in
     os_type=$(uname)
 
     if [[ "$os_type" == "Darwin" ]]; then
-      update_or_replace ~/Library/Application Support/nushell/config.nu '"tmux"' 'let MULTIPLEXER = "zellij"'
-      update_or_replace ~/Library/Application Support/nushell/config.nu '"TMUX"' 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"'
+      update_or_replace "GentlemanNushell/config.nu" '"tmux"' 'let MULTIPLEXER = "zellij"'
+      update_or_replace "GentlemanNushell/config.nu" '"TMUX"' 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"'
+      run_command "cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/"
     else
       update_or_replace ~/.config/nushell/config.nu '"tmux"' 'let MULTIPLEXER = "zellij"'
       update_or_replace ~/.config/nushell/config.nu '"TMUX"' 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"'
-      update_or_replace ~/.config/nushell/config.nu "| prepend '/home/linuxbrew/.linuxbrew/bin'" "| prepend '/opt/homebrew/bin'"
     fi
   fi
   ;;
@@ -666,7 +667,7 @@ case "$wm_choice" in
   # Check and modify ~/.config/nushell/config.nu if it exists
   if [ -f ~/.config/fish/config.fish ] || [ -d ~/Library/Application\ Support/nushell ]; then
     if [[ "$os_type" == "Darwin" ]]; then
-      update_or_replace ~/Library/Application Support/nushell/config.nu "/run-external $MULTIPLEXER" "true"
+      update_or_replace "GentlemanNushell/config.nu" "/run-external $MULTIPLEXER" "true"
     else
       update_or_replace ~/.config/nushell/config.nu "/run-external $MULTIPLEXER" "true"
     fi
