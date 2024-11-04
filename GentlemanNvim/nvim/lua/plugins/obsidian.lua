@@ -1,28 +1,48 @@
+-- This file contains the configuration for the obsidian.nvim plugin in Neovim.
+
 return {
+  -- Plugin: obsidian.nvim
+  -- URL: https://github.com/epwalsh/obsidian.nvim
+  -- Description: A Neovim plugin for integrating with Obsidian, a powerful knowledge base that works on top of a local folder of plain text Markdown files.
   "epwalsh/obsidian.nvim",
-  version = "*", -- recommended, use latest release instead of latest commit
+  version = "*", -- Use the latest release instead of the latest commit (recommended)
+
   dependencies = {
+    -- Dependency: plenary.nvim
+    -- URL: https://github.com/nvim-lua/plenary.nvim
+    -- Description: A Lua utility library for Neovim.
     "nvim-lua/plenary.nvim",
   },
+
   opts = {
+    -- Define workspaces for Obsidian
     workspaces = {
       {
-        name = "GentlemanNotes",
-        path = "/your/notes/path",
+        name = "GentlemanNotes", -- Name of the workspace
+        path = "/your/notes/path", -- Path to the notes directory
       },
     },
+
+    -- Completion settings
     completion = {
-      nvim_cmp = true,
-      min_chars = 2,
+      nvim_cmp = true, -- Enable completion using nvim-cmp
+      min_chars = 2, -- Minimum characters required to trigger completion
     },
-    notes_subdir = "limbo",
-    new_notes_location = "limbo",
+
+    notes_subdir = "limbo", -- Subdirectory for notes
+    new_notes_location = "limbo", -- Location for new notes
+
+    -- Settings for attachments
     attachments = {
-      img_folder = "files",
+      img_folder = "files", -- Folder for image attachments
     },
+
+    -- Settings for daily notes
     daily_notes = {
-      template = "note",
+      template = "note", -- Template for daily notes
     },
+
+    -- Key mappings for Obsidian commands
     mappings = {
       -- "Obsidian follow"
       ["<leader>of"] = {
@@ -52,6 +72,8 @@ return {
         opts = { buffer = true },
       },
     },
+
+    -- Function to generate frontmatter for notes
     note_frontmatter_func = function(note)
       -- This is equivalent to the default frontmatter function.
       local out = { id = note.id, aliases = note.aliases, tags = note.tags }
@@ -66,6 +88,7 @@ return {
       return out
     end,
 
+    -- Function to generate note IDs
     note_id_func = function(title)
       -- Create note IDs in a Zettelkasten format with a timestamp and a suffix.
       -- In this case a note with the title 'My new note' will be given an ID that looks
@@ -83,11 +106,12 @@ return {
       return tostring(os.time()) .. "-" .. suffix
     end,
 
+    -- Settings for templates
     templates = {
-      subdir = "templates",
-      date_format = "%Y-%m-%d-%a",
-      gtime_format = "%H:%M",
-      tags = "",
+      subdir = "templates", -- Subdirectory for templates
+      date_format = "%Y-%m-%d-%a", -- Date format for templates
+      gtime_format = "%H:%M", -- Time format for templates
+      tags = "", -- Default tags for templates
     },
   },
 }

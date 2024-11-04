@@ -267,7 +267,6 @@ Before starting the configuration, you need to install some essential dependenci
 
 - **If the repository is already cloned, you can skip this step.**
 - Open your terminal and run the following command to clone the repository:
-
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 ```
