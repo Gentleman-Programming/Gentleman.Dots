@@ -512,6 +512,8 @@ Choose one of the following shells and install it:
 
     ```bash
     mkdir -p ~/.config/nushell
+    cp -rf bash-env-json ~/.config/
+    cp -rf bash-env.nu ~/.config/
     cp -r GentlemanNushell/* ~/.config/nushell/
     ```
 
@@ -530,13 +532,13 @@ Choose one of the following shells and install it:
 
   ```bash
   sudo apt-get update && sudo apt-get upgrade -y
-  sudo apt-get install -y fzf fd-find ripgrep bat exa git gcc curl
+  sudo apt-get install -y fzf fd-find ripgrep bat exa git gcc curl lazygit jq bash
   ```
 
 - **On macOS:**
 
   ```bash
-  brew install fzf fd ripgrep bat exa git gcc curl lazygit
+  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
   ```
 
 - **On Arch Linux:**
