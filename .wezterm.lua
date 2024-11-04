@@ -31,7 +31,11 @@ if wezterm.config_builder then
 end
 
 -- This is where you actually apply your config choices
-config.window_decorations = "RESIZE" -- removes window title bar
+config.window_padding = {
+	top = 0,
+	right = 0,
+	left = 0,
+}
 config.force_reverse_video_cursor = true
 config.colors = {}
 config.colors.foreground = "#dcd7ba"
