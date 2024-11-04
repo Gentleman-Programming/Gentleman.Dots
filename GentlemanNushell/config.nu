@@ -898,6 +898,7 @@ $env.config = {
  source ~/.cache/carapace/init.nu
  source ~/.local/share/atuin/init.nu
  use ~/.cache/starship/init.nu
+ use ~/.config/bash-env.nu
 
 let MULTIPLEXER = "tmux" 
 let MULTIPLEXER_ENV_PREFIX = "TMUX"

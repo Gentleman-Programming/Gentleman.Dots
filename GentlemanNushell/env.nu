@@ -106,11 +106,12 @@ let brew_path = if $nu.os-info.name == 'macOS' {
 }
 
 $env.PATH = (
-$env.PATH 
-| split row (char esep) 
-| prepend '/opt/homebrew/bin'
-| append /usr/local/bin
-| append ($env.HOME | path join ".cargo/bin")
+    $env.PATH
+    | split row (char esep)
+    | prepend brew_path
+    | append '/usr/local/bin'
+    | append ($env.HOME | path join ".config")
+    | append ($env.HOME | path join ".cargo/bin")
 )
 
 mkdir ~/.cache/starship

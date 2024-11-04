@@ -222,7 +222,11 @@ if [ "$os_choice" != "mac" ]; then
     install_dependencies
   fi
 else
-  run_command "xcode-select --install"
+  if xcode-select -p &>/dev/null; then
+    echo -e "${GREEN}Xcode is already installed.${NC}"
+  else
+    run_command "xcode-select --install"
+  fi
   run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 
@@ -342,7 +346,6 @@ else
         unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
         fc-cache -fv
       elif [ "$os_choice" = "mac" ]; then
-        brew tap homebrew/cask-fonts
         brew install --cask font-iosevka-term-nerd-font
       fi
       echo -e "${GREEN}Iosevka Term Nerd Font installed.${NC}"
@@ -397,8 +400,11 @@ shell_choice=$(select_option "Which shell do you want to install? " "fish" "zsh"
 # Case for shell choice
 case "$shell_choice" in
 "nushell")
+  run_command "cp -rf bash-env-json ~/.config/"
+  run_command "cp -rf bash-env.nu ~/.config/"
+
   if ! command -v nu &>/dev/null; then
-    install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin"
+    install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash"
   else
     echo -e "${GREEN}Nushell shell is already installed.${NC}"
   fi
@@ -421,6 +427,7 @@ case "$shell_choice" in
     mkdir -p ~/.config/nushell
     run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
   fi
+
   ;;
 "fish")
   if ! command -v fish &>/dev/null; then
