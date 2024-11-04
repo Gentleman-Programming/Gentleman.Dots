@@ -135,12 +135,10 @@ install_dependencies() {
     run_command "sudo pacman -S --needed --noconfirm base-devel curl file git"
     run_command "sudo pacman -S rustup"
     run_command "rustup default stable"
-    run_command "source %HOME/.cargo/env"
   else
     run_command "sudo apt-get update"
     run_command "sudo apt-get install -y build-essential curl file git"
     run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-    run_command "source %HOME/.cargo/env"
   fi
 }
 
@@ -226,7 +224,6 @@ if [ "$os_choice" != "mac" ]; then
 else
   run_command "xcode-select --install"
   run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-  run_command "source %HOME/.cargo/env"
 fi
 
 # Function to clone repository with progress bar
