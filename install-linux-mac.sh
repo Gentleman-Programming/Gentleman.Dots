@@ -209,7 +209,7 @@ update_or_replace() {
 }
 
 # Ask if the user wants to see detailed output
-show_details=$(select_option "Do you want to see detailed output? " "No" "Yes")
+show_details="Yes"
 
 # Ask for the operating system
 os_choice=$(select_option "Which operating system are you using? " "mac" "linux")
@@ -421,7 +421,7 @@ case "$shell_choice" in
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
 
-  run_command "cp -rf starship.toml ~/.config/nushell/"
+  run_command "cp -rf starship.toml ~/.config/"
 
   echo -e "${YELLOW}Configuring Nushell...${NC}"
 
