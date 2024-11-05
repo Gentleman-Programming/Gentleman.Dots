@@ -450,7 +450,7 @@ case "$shell_choice" in
 
   run_command "cp -rf GentlemanZsh/.zshrc ~/"
   run_command "cp -rf GentlemanZsh/.p10k.zsh ~/"
-  run_command "cp -rf GentlemanZsh/.oh-my-zsh ~/"
+  run_command "cp -rf GentlemanZsh/oh-my-zsh.sh ~/.oh-my-zsh/"
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
