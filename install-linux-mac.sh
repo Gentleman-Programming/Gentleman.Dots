@@ -448,7 +448,9 @@ case "$shell_choice" in
   mkdir -p ~/.cache/carapace
   mkdir -p ~/.local/share/atuin
 
-  run_command "cp -rf GentlemanZsh ~/"
+  run_command "cp -rf GentlemanZsh/.zshrc ~/"
+  run_command "cp -rf GentlemanZsh/.p10k.zsh ~/"
+  run_command "cp -rf GentlemanZsh/.oh-my-zsh ~/"
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
