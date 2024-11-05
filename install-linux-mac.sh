@@ -407,7 +407,7 @@ case "$shell_choice" in
   run_command "cp -rf bash-env.nu ~/.config/"
 
   install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash starship"
- 
+
   mkdir -p ~/.cache/starship
   mkdir -p ~/.cache/carapace
   mkdir -p ~/.local/share/atuin
@@ -428,7 +428,7 @@ case "$shell_choice" in
   ;;
 "fish")
   install_shell_with_progress "fish" "brew install fish carapace zoxide atuin starship"
-  
+
   mkdir -p ~/.cache/starship
   mkdir -p ~/.cache/carapace
   mkdir -p ~/.local/share/atuin
@@ -443,26 +443,10 @@ case "$shell_choice" in
 
   install_shell_with_progress "zsh" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" ""
 
-  if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-    if [ "$show_details" = "No" ]; then
-      (
-        NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)" &>/dev/null
-      ) &
-      spinner
-    else
-      NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
-    fi
-  else
-    echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
-  fi
-
   echo -e "${YELLOW}Configuring Zsh...${NC}"
+  mkdir -p ~/.cache/carapace
+  mkdir -p ~/.local/share/atuin
   run_command "cp -rf GentlemanZsh/.zshrc ~/"
-  
-　mkdir -p ~/.cache/carapace
-　mkdir -p ~/.local/share/atuin
-
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
@@ -696,6 +680,22 @@ run_command "rm -rf Gentleman.Dots"
 
 if [ "$shell_choice" = "nushell" ]; then
   shell_choice="nu"
+fi
+
+if [[ "$shell_choice" == "zsh" ]]; then
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
+    if [ "$show_details" = "No" ]; then
+      (
+        NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)" &>/dev/null
+      ) &
+      spinner
+    else
+      NO_INTERACTIVE=true sh -c "$(curl -fsSL https://raw.githubusercontent.com/subtlepseudonym/oh-my-zsh/feature/install-noninteractive/tools/install.sh)"
+    fi
+  else
+    echo -e "${GREEN}Oh My Zsh is already installed.${NC}"
+  fi
 fi
 
 set_as_default_shell "$shell_choice"
