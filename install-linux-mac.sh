@@ -408,7 +408,8 @@ case "$shell_choice" in
   run_command "cp -rf bash-env.nu ~/.config/"
 
   install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash starship"
-
+ 
+  [ ! -d ~/.local/share ] && mkdir ~/.local/share
   [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
