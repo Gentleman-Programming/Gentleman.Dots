@@ -421,6 +421,8 @@ case "$shell_choice" in
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
 
+  run_command "cp -rf starship.toml ~/.config/nushell/"
+
   echo -e "${YELLOW}Configuring Nushell...${NC}"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -448,6 +450,8 @@ case "$shell_choice" in
   [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+
+  run_command "cp -rf starship.toml ~/.config/"
 
   echo -e "${YELLOW}Configuring Fish...${NC}"
   run_command "cp -rf GentlemanFish/fish ~/.config"
