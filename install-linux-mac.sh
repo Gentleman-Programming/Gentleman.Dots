@@ -406,16 +406,7 @@ case "$shell_choice" in
   run_command "cp -rf bash-env-json ~/.config/"
   run_command "cp -rf bash-env.nu ~/.config/"
 
-  if ! command -v nu &>/dev/null; then
-    install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash"
-  else
-    echo -e "${GREEN}Nushell shell is already installed.${NC}"
-  fi
-  if ! command -v starship &>/dev/null; then
-    install_shell_with_progress "starship" "brew install starship"
-  else
-    echo -e "${GREEN}starship is already installed.${NC}"
-  fi
+  install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash starship"
 
   [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
@@ -436,17 +427,8 @@ case "$shell_choice" in
 
   ;;
 "fish")
-  if ! command -v fish &>/dev/null; then
-    install_shell_with_progress "fish" "brew install fish carapace zoxide atuin"
-  else
-    echo -e "${GREEN}Fish shell is already installed.${NC}"
-  fi
-  if ! command -v starship &>/dev/null; then
-    install_shell_with_progress "starship" "brew install starship"
-  else
-    echo -e "${GREEN}starship is already installed.${NC}"
-  fi
-
+  install_shell_with_progress "fish" "brew install fish carapace zoxide atuin starship"
+  
   [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
@@ -457,15 +439,9 @@ case "$shell_choice" in
   run_command "cp -rf GentlemanFish/fish ~/.config"
   ;;
 "zsh")
-  if ! command -v zsh &>/dev/null; then
-    install_shell_with_progress "zsh" "brew install zsh carapace zoxide atuin"
-  else
-    echo -e "${GREEN}zsh is already installed.${NC}"
-  fi
+  install_shell_with_progress "zsh" "brew install zsh carapace zoxide atuin"
 
-  if ! command -v zsh-autosuggestions &>/dev/null || ! command -v zsh-syntax-highlighting &>/dev/null || ! command -v zsh-autocomplete &>/dev/null; then
-    install_shell_with_progress "zsh" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" ""
-  fi
+  install_shell_with_progress "zsh" "brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete" ""
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
@@ -484,7 +460,6 @@ case "$shell_choice" in
   echo -e "${YELLOW}Configuring Zsh...${NC}"
   run_command "cp -rf GentlemanZsh/.zshrc ~/"
 
-  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
 
