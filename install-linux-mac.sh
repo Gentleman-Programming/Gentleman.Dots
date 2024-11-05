@@ -448,12 +448,11 @@ case "$shell_choice" in
   mkdir -p ~/.cache/carapace
   mkdir -p ~/.local/share/atuin
 
-  run_command "cp -rf GentlemanZsh/.zshrc ~/"
+  run_command "cp -rf GentlemanZsh ~/"
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
   run_command "brew install powerlevel10k"
-  run_command "cp -rf GentlemanZsh/.p10k.zsh ~/"
   ;;
 *)
   echo -e "${YELLOW}No shell will be installed or configured.${NC}"
