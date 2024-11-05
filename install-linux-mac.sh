@@ -344,6 +344,7 @@ else
     if [ "$font_installed" = "No" ]; then
       echo -e "${YELLOW}Installing Iosevka Term Nerd Font...${NC}"
       if [ "$os_choice" = "linux" ]; then
+        mkdir -p ~/local/share
         mkdir -p ~/.local/share/fonts
         wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
         unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
@@ -428,7 +429,7 @@ case "$shell_choice" in
   ;;
 "fish")
   install_shell_with_progress "fish" "brew install fish carapace zoxide atuin starship"
-  
+  [ ! -d ~/.local/share ] && mkdir ~/.local/share
   [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
@@ -459,7 +460,8 @@ case "$shell_choice" in
 
   echo -e "${YELLOW}Configuring Zsh...${NC}"
   run_command "cp -rf GentlemanZsh/.zshrc ~/"
-
+  
+  [ ! -d ~/.local/share ] && mkdir ~/.local/share
   [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
   [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
 
