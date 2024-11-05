@@ -225,6 +225,12 @@ Before starting the configuration, you need to install some essential dependenci
    rustc --version
    cargo --version
    ```
+   
+6. **Install Homebrew (if not already installed):**
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
 
 ##### macOS
 
@@ -234,27 +240,21 @@ Before starting the configuration, you need to install some essential dependenci
    xcode-select --install
    ```
 
-2. **Install Homebrew (if not already installed):**
-
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-3. **Install Rustup (the Rust toolchain installer):**
+2. **Install Rustup (the Rust toolchain installer):**
 
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    ```
 
-4. **Follow the on-screen instructions to complete the installation.**
+3. **Follow the on-screen instructions to complete the installation.**
 
-5. **Ensure Cargo's bin directory is in your `PATH`:**
+6. **Ensure Cargo's bin directory is in your `PATH`:**
 
    ```bash
    source $HOME/.cargo/env
    ```
 
-6. **Verify the installation:**
+7. **Verify the installation:**
 
    ```bash
    rustc --version
@@ -284,19 +284,19 @@ To enhance your shell experience, we recommend installing the following tools, r
 - **Carapace**: A universal completion generator for your shell.
 
   ```bash
-  cargo install carapace-bin
+  brew install carapace
   ```
 
 - **Zoxide**: A smarter `cd` command that learns your habits.
 
   ```bash
-  cargo install zoxide
+  brew install zoxide
   ```
 
 - **Atuin**: A magical shell history.
 
   ```bash
-  bash <(curl https://raw.githubusercontent.com/atuinsh/atuin/main/install.sh)
+  brew install atuin
   ```
 
 Ensure the required directories exist:
