@@ -451,7 +451,7 @@ case "$shell_choice" in
   ;;
 "zsh")
   if ! command -v zsh &>/dev/null; then
-    install_shell_with_progress "zsh" "brew install zsh zoxide atuin"
+    install_shell_with_progress "zsh" "brew install zsh carapace zoxide atuin"
   else
     echo -e "${GREEN}zsh is already installed.${NC}"
   fi
