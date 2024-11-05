@@ -80,9 +80,12 @@ return {
       -- Set default selection method
       opts.selection = select.unnamed
 
-      -- Define custom prompts for commit messages opts.prompts.Commit = {
-        prompt = "Write commit message for the change with commitizen convention",        selection = select.gitdiff,
+      -- Define custom prompts for commit messages
+      opts.prompts.Commit = {
+        prompt = "Write commit message for the change with commitizen convention",
+        selection = select.gitdiff,
       }
+
       opts.prompts.CommitStaged = {
         prompt = "Write commit message for the change with commitizen convention",
         selection = function(source)
