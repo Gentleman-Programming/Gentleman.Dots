@@ -20,6 +20,9 @@ $time\
 # Disable the blank line at the beginning of the prompt
 add_newline = true
 
+# Command timeout
+command_timeout = 3600000
+
 # Kanagawa Dragon color and style settings
 palette = "kanagawa_dragon"
 
