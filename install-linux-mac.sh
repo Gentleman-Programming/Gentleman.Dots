@@ -344,7 +344,6 @@ else
     if [ "$font_installed" = "No" ]; then
       echo -e "${YELLOW}Installing Iosevka Term Nerd Font...${NC}"
       if [ "$os_choice" = "linux" ]; then
-        mkdir -p ~/local/share
         mkdir -p ~/.local/share/fonts
         wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
         unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
@@ -409,10 +408,9 @@ case "$shell_choice" in
 
   install_shell_with_progress "nushell" "brew install nushell carapace zoxide atuin jq bash starship"
  
-  [ ! -d ~/.local/share ] && mkdir ~/.local/share
-  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
-  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
-  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+  mkdir -p ~/.cache/starship
+  mkdir -p ~/.cache/carapace
+  mkdir -p ~/.local/share/atuin
 
   run_command "cp -rf starship.toml ~/.config/"
 
@@ -430,10 +428,10 @@ case "$shell_choice" in
   ;;
 "fish")
   install_shell_with_progress "fish" "brew install fish carapace zoxide atuin starship"
-  [ ! -d ~/.local/share ] && mkdir ~/.local/share
-  [ ! -d ~/.cache/starship ] && mkdir ~/.cache/starship
-  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
-  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+  
+  mkdir -p ~/.cache/starship
+  mkdir -p ~/.cache/carapace
+  mkdir -p ~/.local/share/atuin
 
   run_command "cp -rf starship.toml ~/.config/"
 
@@ -462,9 +460,9 @@ case "$shell_choice" in
   echo -e "${YELLOW}Configuring Zsh...${NC}"
   run_command "cp -rf GentlemanZsh/.zshrc ~/"
   
-  [ ! -d ~/.local/share ] && mkdir ~/.local/share
-  [ ! -d ~/.cache/carapace ] && mkdir ~/.cache/carapace
-  [ ! -d ~/.local/share/atuin ] && mkdir ~/.local/share/atuin
+　mkdir -p ~/.cache/carapace
+　mkdir -p ~/.local/share/atuin
+
 
   # PowerLevel10K Configuration
   echo -e "${YELLOW}Configuring PowerLevel10K...${NC}"
