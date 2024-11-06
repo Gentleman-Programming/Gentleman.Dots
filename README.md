@@ -168,7 +168,7 @@ Before starting the configuration, you need to install some essential dependenci
 
    ```bash
    sudo pacman -Syu --noconfirm
-   sudo pacman -S --needed --noconfirm base-devel curl file git
+   sudo pacman -S --needed --noconfirm base-devel curl file git wget
    ```
 
 2. **Install Rustup (the Rust toolchain installer):**
