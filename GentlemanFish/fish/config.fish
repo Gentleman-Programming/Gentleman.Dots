@@ -24,6 +24,7 @@ starship init fish | source
 zoxide init fish | source
 atuin init fish | source
 
+set -x PATH $HOME/.cargo/bin $PATH
 set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
 mkdir -p ~/.config/fish/completions
 carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
