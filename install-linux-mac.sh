@@ -135,11 +135,13 @@ install_dependencies() {
     run_command "sudo pacman -S --needed --noconfirm base-devel curl file git"
     run_command "sudo pacman -S rustup"
     run_command "rustup default stable"
+    run_command "mkdir -p $HOME/.config/env"
     run_command ". $HOME/.cargo/env"
   else
     run_command "sudo apt-get update"
     run_command "sudo apt-get install -y build-essential curl file git"
     run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+    run_command "mkdir -p $HOME/.config/env"
     run_command ". $HOME/.cargo/env"
   fi
 }
