@@ -52,7 +52,7 @@ config.colors.brights = { "#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca",
 config.colors.indexed = { [16] = "#ffa066", [17] = "#ff5d62" }
 --  change
 config.window_background_opacity = 0.95
-config.font = wezterm.font("IosevkaTerm NFM")
+config.font = wezterm.font("IosevkaTerm NF")
 config.hide_tab_bar_if_only_one_tab = true
 
 -- activate ONLY if windows --

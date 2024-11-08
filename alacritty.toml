@@ -48,7 +48,7 @@ unfocused_hollow = true
 size = 16
 
 [font.normal]
-family = "IosevkaTerm NFM"
+family = "IosevkaTerm NF"
 
 [window]
 option_as_alt = "Both"
