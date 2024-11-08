@@ -42,18 +42,6 @@ return {
     },
   },
 
-  -- Plugin: nvim-notify
-  -- URL: https://github.com/rcarriga/nvim-notify
-  -- Description: A fancy notification manager for Neovim.
-  {
-    "rcarriga/nvim-notify",
-    opts = {
-      render = "compact", -- Use compact rendering for notifications
-      background_colour = "#1a1b26", -- Set the background color for notifications
-      timeout = 5000, -- Set the timeout for notifications (in milliseconds)
-    },
-  },
-
   -- Plugin: lualine.nvim
   -- URL: https://github.com/nvim-lualine/lualine.nvim
   -- Description: A blazing fast and easy to configure Neovim statusline plugin.
