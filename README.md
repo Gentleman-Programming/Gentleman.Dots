@@ -123,31 +123,21 @@ If WezTerm doesn't take the initial configuration:
 Copy-Item -Path GentlemanKitty\* -Destination $HOME\.config\kitty -Recurse
 ```
 
-#### 7. Install Chocolatey and win32yank
+#### 7. Clipboard Integration Guide
 
-**Chocolatey** is a package manager for Windows that simplifies the installation of software.
+To integrate clipboard functionality into Windows, you need to install a provider.
 
-**To install Chocolatey:**
+- **For Ubuntu**: Install with the following command:
+  ```bash
+  sudo apt install xclip
+  ```
+- **For Arch Linux**: Install with the following command:
+  ```bash
+  sudo pacman -S wl-clipboard
+  ```
 
-- Open **PowerShell** as an administrator.
-- Run the following command:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; `
-[System.Net.ServicePointManager]::SecurityProtocol = `
-[System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
-iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
-```
-
-**To install win32yank:**
-
-- After installing Chocolatey, run:
-
-```powershell
-choco install win32yank
-```
-
-**Note:** `win32yank` is required for clipboard integration in Neovim when using WSL.
+**Note:** This ensures that Neovim clipboard integration works automatically with the system without needing additional configurations
+in the `lazy.lua` file.
 
 ---
 
