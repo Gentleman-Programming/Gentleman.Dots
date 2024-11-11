@@ -276,8 +276,16 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 ```bash
 cd Gentleman.Dots
 ```
+#### 2. Install Homebrew (if not installed on macOS)
 
-#### 2. Install Shell Enhancements
+- **If you already have Homebrew installed, you can skip this step.**
+- Run the following command in your terminal to install Homebrew:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+#### 3. Install Shell Enhancements
 
 To enhance your shell experience, we recommend installing the following tools, regardless of which shell you are using:
 
@@ -309,14 +317,7 @@ mkdir -p ~/.local/share/atuin
 
 **Note:** Configuration steps for these tools are included in the repository files and will be applied automatically when you copy the configuration files.
 
-#### 3. Install Homebrew (if not installed on macOS)
 
-- **If you already have Homebrew installed, you can skip this step.**
-- Run the following command in your terminal to install Homebrew:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
 
 - Follow the on-screen instructions to complete the installation.
 
