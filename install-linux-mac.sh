@@ -132,7 +132,7 @@ is_arch() {
 install_dependencies() {
   if is_arch; then
     run_command "sudo pacman -Syu --noconfirm"
-    run_command "sudo pacman -S --needed --noconfirm base-devel curl file git"
+    run_command "sudo pacman -S --needed --noconfirm base-devel curl file git wget"
     run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
     run_command ". $HOME/.cargo/env"
   else
