@@ -99,7 +99,10 @@ return {
     "MunifTanjim/nui.nvim",
     --- The below dependencies are optional,
     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-    "github/copilot.vim",
+    {
+      "github/copilot.vim",
+      enabled = false,
+    },
     {
       -- support for image pasting
       "HakonHarnes/img-clip.nvim",
