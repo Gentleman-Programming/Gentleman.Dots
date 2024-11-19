@@ -1,5 +1,5 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
-vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#ff69b4", bold = true }) -- color rosa
+vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
 
 return {
   -- Plugin: noice.nvim
