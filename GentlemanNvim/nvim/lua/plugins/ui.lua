@@ -1,4 +1,5 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
+vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#ff69b4", bold = true }) -- color rosa
 
 return {
   -- Plugin: noice.nvim
@@ -140,6 +141,13 @@ return {
     opts = {
       dashboard = {
         preset = {
+          sections = {
+            { section = "header" },
+            { icon = " ", title = "Keymaps", section = "keys", indent = 2, padding = 1 },
+            { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+            { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+            { section = "startup" },
+          },
           header = [[
                     ░░░░░░      ░░░░░░                        
                   ░░░░░░░░░░  ░░░░░░░░░░                      
