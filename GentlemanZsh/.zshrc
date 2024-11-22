@@ -40,7 +40,10 @@ WM_CMD="tmux"
 
 function start_if_needed() {
     if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]]; then
-        exec $WM_CMD
+    # Don't start WM if we are on an IntelliJ terminal
+        if [ -z "$JETBRAINS_INTELLIJ_ZSH_DIR" ]; then
+            exec $WM_CMD
+        fi
     fi
 }
 
