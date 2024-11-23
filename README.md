@@ -590,7 +590,7 @@ Choose one of the following shells and install it:
   **Install Tmux plugins:**
 
   ```bash
-  ~/.tmux/plugins/tpm/bin/install_plugins
+  crtrl + a + I
   ```
 
 - **Zellij:**
