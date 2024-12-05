@@ -27,40 +27,38 @@ return {
   --   name = "modus",
   --   priority = 1000, -- High priority to ensure it loads early
   -- },
-  {
-    -- Plugin for the Kanagawa color scheme
-    "rebelot/kanagawa.nvim",
-    name = "kanagawa",
-    priority = 1000, -- High priority to ensure it loads early
-    opts = {
-      transparent = true, -- Enable transparent background
-      theme = "dragon", -- Set the theme variant to 'dragon'
-      overrides = function(colors)
-        local theme = colors.theme
-        return {
-          NormalFloat = { bg = "none" }, -- Transparent background for floating windows
-          FloatBorder = { bg = "none" }, -- Transparent background for floating window borders
-          FloatTitle = { bg = "none" }, -- Transparent background for floating window titles
-
-          NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 }, -- Custom colors for dark mode
-
-          LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim }, -- Custom colors for Lazy plugin
-          MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim }, -- Custom colors for Mason plugin
-
-          FzfLuaNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 }, -- Custom colors for FzfLua normal
-          FzfLuaBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 }, -- Custom colors for FzfLua border
-          FzfLuaTitle = { fg = theme.ui.special, bold = true }, -- Custom colors for FzfLua title
-
-          Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- Custom colors for popup menu
-          PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 }, -- Custom colors for selected item in popup menu
-          PmenuSbar = { bg = theme.ui.bg_m1 }, -- Custom colors for popup menu scrollbar
-          PmenuThumb = { bg = theme.ui.bg_p2 }, -- Custom colors for popup menu thumb
-        }
-      end,
-    },
-  },
-  -- Plugin for the Rose Pine color scheme
-  -- { "rose-pine/neovim", name = "rose-pine" },
+  -- {
+  --   -- Plugin for the Kanagawa color scheme
+  --   "rebelot/kanagawa.nvim",
+  --   name = "kanagawa",
+  --   priority = 1000, -- High priority to ensure it loads early
+  --   opts = {
+  --     transparent = true, -- Enable transparent background
+  --     theme = "dragon", -- Set the theme variant to 'dragon'
+  --     overrides = function(colors)
+  --       local theme = colors.theme
+  --       return {
+  --         NormalFloat = { bg = "none" }, -- Transparent background for floating windows
+  --         FloatBorder = { bg = "none" }, -- Transparent background for floating window borders
+  --         FloatTitle = { bg = "none" }, -- Transparent background for floating window titles
+  --
+  --         NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 }, -- Custom colors for dark mode
+  --
+  --         LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim }, -- Custom colors for Lazy plugin
+  --         MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim }, -- Custom colors for Mason plugin
+  --
+  --         FzfLuaNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 }, -- Custom colors for FzfLua normal
+  --         FzfLuaBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 }, -- Custom colors for FzfLua border
+  --         FzfLuaTitle = { fg = theme.ui.special, bold = true }, -- Custom colors for FzfLua title
+  --
+  --         Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- Custom colors for popup menu
+  --         PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 }, -- Custom colors for selected item in popup menu
+  --         PmenuSbar = { bg = theme.ui.bg_m1 }, -- Custom colors for popup menu scrollbar
+  --         PmenuThumb = { bg = theme.ui.bg_p2 }, -- Custom colors for popup menu thumb
+  --       }
+  --     end,
+  --   },
+  -- },
   -- Plugin for the Oxocarbon color scheme
   -- { "nyoom-engineering/oxocarbon.nvim", name = "oxocarbon" },
   -- Plugin for the Lush color scheme with a dependency on Zenbones
@@ -108,12 +106,25 @@ return {
   --   lazy = false, -- Load this plugin immediately
   --   priority = 1000, -- High priority to ensure it loads early
   -- },
+  -- Plugin for the Rose Pine color scheme
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    opts = {
+      variant = "moon", -- Set the variant to 'moon'
+      styles = {
+        bold = true,
+        italic = true,
+        transparency = false,
+      },
+    },
+  },
   {
     -- LazyVim configuration
     "LazyVim/LazyVim",
     opts = {
       -- Set the default color scheme
-      colorscheme = "kanagawa-dragon",
+      colorscheme = "rose-pine",
     },
   },
 }

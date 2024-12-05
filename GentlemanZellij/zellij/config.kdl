@@ -321,10 +321,24 @@ themes {
         black "#1a1a1a"
         white "#8D908D"
     }
+
+    rose_pine_moon {
+        fg "#e0def4"
+        bg "#232136"
+        red "#eb6f92"
+        green "#9ccfd8"
+        yellow "#f6c177"
+        blue "#3e8fb0"
+        magenta "#c4a7e7"
+        cyan "#9ccfd8"
+        orange "#f6c177"
+        black "#191724"
+        white "#e0def4"
+    }
 }
 
-theme "kanagawa_dragon"
- 
+theme "rose_pine_moon"
+
 // Choose the base input mode of zellij.
 // Default: normal
 // 
