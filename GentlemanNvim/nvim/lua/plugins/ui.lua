@@ -11,7 +11,7 @@ return {
     config = function()
       require("fzf-lua").setup({
         winopts = {
-          border = "none", -- you can use none, single, double, rounded, etc.
+          border = "rounded", -- you can use none, single, double, rounded, etc.
         },
       })
     end,
