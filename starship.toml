@@ -30,13 +30,13 @@ palette = "rose_pine_moon"
 symbol = ' '
 
 [palettes.rose_pine_moon]
-arrow = "#ea9a97"      # Light lavender color
-os = "#3e8fb0"         # Soft cyan tone
+arrow = "#ea9a97"      # Soft rose
+os = "#3e8fb0"         # Soft cyan
 directory = "#c4a7e7"  # Soft purple
-git = "#eb6f92"        # Soft pink
+git = "#eb6f92"        # Refined pink
 duration = "#f6c177"   # Soft yellow
-text_color = "#e0def4" # Light color
-text_light = "#191724" # Dark gray
+text_color = "#e0def4" # Light text color
+text_light = "#232136" # Base background color
 
 # Pink mustache icon for the prompt
 [character]

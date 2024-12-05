@@ -6,68 +6,67 @@
 # https://www.nushell.sh/book/coloring_and_theming.html
 # And here is the theme collection
 # https://github.com/nushell/nu_scripts/tree/main/themes
-#
+
 let dark_theme = {
-    # color for nushell primitives
-    separator: "#e0def4"                  # rosePineMoon, color claro suave
-    leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
-    header: "#9ccfd8_bold"                 # rosePineMoon, verde pastel bold
-    empty: "#c4a7e7"                       # rosePineMoon, púrpura suave
-    bool: "#eb6f92"                        # rosePineMoon, rosa refinado
-    int: "#e0def4"                         # rosePineMoon, blanco claro
-    filesize: "#31748f"                    # rosePineMoon, azul celeste suave
-    duration: "#e0def4"                    # rosePineMoon, blanco claro
-    date: "#c4a7e7"                        # rosePineMoon, púrpura suave
-    range: "#e0def4"                       # rosePineMoon, blanco claro
-    float: "#eb6f92"                       # rosePineMoon, rosa refinado
-    string: "#e0def4"                      # rosePineMoon, blanco claro
-    nothing: "#9ccfd8"                     # rosePineMoon, verde aqua
-    binary: "#e0def4"                      # rosePineMoon, blanco claro
-    cell-path: "#e0def4"                   # rosePineMoon, blanco claro
-    row_index: "#9ccfd8_bold"              # rosePineMoon, verde pastel bold
-    record: "#e0def4"                      # rosePineMoon, blanco claro
-    list: "#e0def4"                        # rosePineMoon, blanco claro
-    block: "#c4a7e7_bold"                  # rosePineMoon, púrpura suave bold
-    hints: "#6e6a86"                       # rosePineMoon, gris oscuro suave
-    search_result: { bg: "#eb6f92", fg: "#e0def4" } # rosePineMoon (rojo suave) y rosePineMoon (blanco claro)
-    shape_and: "#c4a7e7_bold"              # rosePineMoon, púrpura bold
-    shape_binary: "#c4a7e7_bold"           # rosePineMoon, púrpura bold
-    shape_block: "#c4a7e7_bold"            # rosePineMoon, púrpura bold
-    shape_bool: "#eb6f92"                  # rosePineMoon, rosa refinado
-    shape_closure: "#9ccfd8_bold"          # rosePineMoon, verde pastel bold
-    shape_custom: "#9ccfd8"                # rosePineMoon, verde pastel
-    shape_datetime: "#31748f_bold"         # rosePineMoon, azul celeste suave bold
-    shape_directory: "#31748f"             # rosePineMoon, azul celeste suave
-    shape_external: "#31748f"              # rosePineMoon, azul celeste suave
-    shape_externalarg: "#9ccfd8_bold"      # rosePineMoon, verde pastel bold
-    shape_external_resolved: "#f6c177_bold" # rosePineMoon, amarillo suave bold
-    shape_filepath: "#31748f"              # rosePineMoon, azul celeste suave
-    shape_flag: "#c4a7e7_bold"             # rosePineMoon, púrpura bold
-    shape_float: "#c4a7e7_bold"            # rosePineMoon, púrpura suave bold
-    shape_garbage: { fg: "#e0def4", bg: "#eb6f92", attr: b } # rosePineMoon sobre rosePineMoon bold
-    shape_glob_interpolation: "#31748f_bold" # rosePineMoon, azul celeste bold
-    shape_globpattern: "#31748f_bold"      # rosePineMoon, azul celeste bold
-    shape_int: "#c4a7e7_bold"              # rosePineMoon, púrpura bold
-    shape_internalcall: "#31748f_bold"     # rosePineMoon, azul celeste bold
-    shape_keyword: "#31748f_bold"          # rosePineMoon, azul celeste bold
-    shape_list: "#31748f_bold"             # rosePineMoon, azul celeste bold
-    shape_literal: "#c4a7e7"               # rosePineMoon, púrpura suave
-    shape_match_pattern: "#9ccfd8"         # rosePineMoon, verde pastel
+    separator: "#e0def4"                  # light white
+    leading_trailing_space_bg: { attr: n }
+    header: "#9ccfd8_bold"                 # pastel green bold
+    empty: "#c4a7e7"                       # soft purple
+    bool: "#eb6f92"                        # refined pink
+    int: "#e0def4"                         # light white
+    filesize: "#31748f"                    # soft sky blue
+    duration: "#e0def4"                    # light white
+    date: "#c4a7e7"                        # soft purple
+    range: "#e0def4"                       # light white
+    float: "#eb6f92"                       # refined pink
+    string: "#e0def4"                      # light white
+    nothing: "#9ccfd8"                     # aqua green
+    binary: "#e0def4"                      # light white
+    cell-path: "#e0def4"                   # light white
+    row_index: "#9ccfd8_bold"              # pastel green bold
+    record: "#e0def4"                      # light white
+    list: "#e0def4"                        # light white
+    block: "#c4a7e7_bold"                  # soft purple bold
+    hints: "#6e6a86"                       # soft dark gray
+    search_result: { bg: "#eb6f92", fg: "#e0def4" } # refined pink and light white
+    shape_and: "#c4a7e7_bold"              # purple bold
+    shape_binary: "#c4a7e7_bold"           # purple bold
+    shape_block: "#c4a7e7_bold"            # purple bold
+    shape_bool: "#eb6f92"                  # refined pink
+    shape_closure: "#9ccfd8_bold"          # pastel green bold
+    shape_custom: "#9ccfd8"                # pastel green
+    shape_datetime: "#31748f_bold"         # soft sky blue bold
+    shape_directory: "#31748f"             # soft sky blue
+    shape_external: "#31748f"              # soft sky blue
+    shape_externalarg: "#9ccfd8_bold"      # pastel green bold
+    shape_external_resolved: "#f6c177_bold" # soft yellow bold
+    shape_filepath: "#31748f"              # soft sky blue
+    shape_flag: "#c4a7e7_bold"             # purple bold
+    shape_float: "#c4a7e7_bold"            # soft purple bold
+    shape_garbage: { fg: "#e0def4", bg: "#eb6f92", attr: b } # light white on refined pink bold
+    shape_glob_interpolation: "#31748f_bold" # sky blue bold
+    shape_globpattern: "#31748f_bold"      # sky blue bold
+    shape_int: "#c4a7e7_bold"              # purple bold
+    shape_internalcall: "#31748f_bold"     # sky blue bold
+    shape_keyword: "#31748f_bold"          # sky blue bold
+    shape_list: "#31748f_bold"             # sky blue bold
+    shape_literal: "#c4a7e7"               # soft purple
+    shape_match_pattern: "#9ccfd8"         # pastel green
     shape_matching_brackets: { attr: u }
-    shape_nothing: "#9ccfd8"               # rosePineMoon, verde aqua
-    shape_operator: "#f6c177"              # rosePineMoon, amarillo suave
-    shape_or: "#c4a7e7_bold"               # rosePineMoon, púrpura bold
-    shape_pipe: "#c4a7e7_bold"             # rosePineMoon, púrpura bold
-    shape_range: "#f6c177_bold"            # rosePineMoon, amarillo suave bold
-    shape_record: "#31748f_bold"           # rosePineMoon, azul celeste suave bold
-    shape_redirection: "#c4a7e7_bold"      # rosePineMoon, púrpura bold
-    shape_signature: "#9ccfd8_bold"        # rosePineMoon, verde pastel bold
-    shape_string: "#9ccfd8"                # rosePineMoon, verde pastel
-    shape_string_interpolation: "#31748f_bold" # rosePineMoon, azul celeste bold
-    shape_table: "#c4a7e7_bold"            # rosePineMoon, púrpura bold
-    shape_variable: "#eb6f92"              # rosePineMoon, rosa refinado
-    shape_vardecl: "#eb6f92"               # rosePineMoon, rosa refinado
-    shape_raw_string: "#c4a7e7"            # rosePineMoon, púrpura suave
+    shape_nothing: "#9ccfd8"               # aqua green
+    shape_operator: "#f6c177"              # soft yellow
+    shape_or: "#c4a7e7_bold"               # purple bold
+    shape_pipe: "#c4a7e7_bold"             # purple bold
+    shape_range: "#f6c177_bold"            # soft yellow bold
+    shape_record: "#31748f_bold"           # soft sky blue bold
+    shape_redirection: "#c4a7e7_bold"      # purple bold
+    shape_signature: "#9ccfd8_bold"        # pastel green bold
+    shape_string: "#9ccfd8"                # pastel green
+    shape_string_interpolation: "#31748f_bold" # sky blue bold
+    shape_table: "#c4a7e7_bold"            # purple bold
+    shape_variable: "#eb6f92"              # refined pink
+    shape_vardecl: "#eb6f92"               # refined pink
+    shape_raw_string: "#c4a7e7"            # soft purple
 }
 
 let light_theme = {

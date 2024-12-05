@@ -323,17 +323,17 @@ themes {
     }
 
     rose_pine_moon {
-        fg "#e0def4"
-        bg "#232136"
-        red "#eb6f92"
-        green "#31748f"
-        yellow "#f6c177"
-        blue "#9ccfd8"
-        magenta "#c4a7e7"
-        cyan "#ebbcba"
-        orange "#f6c177"
-        black "#191724"
-        white "#e0def4"
+        fg "#e0def4"        // light text
+        bg "#232136"        // dark background
+        red "#eb6f92"       // refined pink
+        green "#31748f"     // soft teal
+        yellow "#f6c177"    // soft yellow
+        blue "#9ccfd8"      // sky blue
+        magenta "#c4a7e7"   // soft purple
+        cyan "#9ccfd8"      // same as sky blue for consistency
+        orange "#f6c177"    // same as soft yellow
+        black "#191724"     // darker background (almost black)
+        white "#e0def4"     // same as light text
     }
 }
 
