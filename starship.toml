@@ -23,20 +23,20 @@ add_newline = true
 # Command timeout
 command_timeout = 3600000
 
-# Kanagawa Dragon color and style settings
-palette = "kanagawa_dragon"
+# Rose Pine Moon color and style settings
+palette = "rose_pine_moon"
 
 [fill]
 symbol = ' '
 
-[palettes.kanagawa_dragon]
-arrow = "#DCD7BA"      # Light bone color, soft and visible
-os = "#C4B28A"         # Warm yellow tone of dragonYellow
-directory = "#8BA4B0"  # Soft sky blue, dragonBlue2
-git = "#C4746E"        # Soft red, dragonRed
-duration = "#957FB8"   # Soft purple, oniViolet
-text_color = "#C5C9C5" # Light color, dragonWhite
-text_light = "#2A2A37" # Dark gray, sumiInk4
+[palettes.rose_pine_moon]
+arrow = "#ea9a97"      # Light lavender color
+os = "#3e8fb0"         # Soft cyan tone
+directory = "#c4a7e7"  # Soft purple
+git = "#eb6f92"        # Soft pink
+duration = "#f6c177"   # Soft yellow
+text_color = "#e0def4" # Light color
+text_light = "#191724" # Dark gray
 
 # Pink mustache icon for the prompt
 [character]
@@ -132,5 +132,5 @@ format = '[[ $symbol ($version) ](fg:#FF9E3B)]($style)'
 
 [time]
 disabled = false
-time_format = "%R"                           # Hour:Minute Format
+time_format = "%R"                            # Hour:Minute Format
 format = '[[   $time ](fg:#8BA4B0)]($style)'

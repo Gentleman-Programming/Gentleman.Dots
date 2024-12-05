@@ -21,10 +21,10 @@ layout {
 
               hide_frame_for_single_pane "true"
 
-              mode_normal  "#[bg=#eb6f92] "
-              mode_tmux    "#[bg=#f6c177] "
+              mode_normal  "#[bg=#286983] "
+              mode_tmux    "#[bg=#ea9a97] "
 
-              tab_normal   "#[fg=#908caa] {name} "
+              tab_normal   "#[fg=#6e6a86] {name} "
               tab_active   "#[fg=#9ccfd8,bold,italic] {name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
