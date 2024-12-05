@@ -2,6 +2,20 @@
 vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
 
 return {
+  -- Plugin: fzf-lu
+  -- URL: https://github.com/ibhagwan/fzf-lua
+  -- Description: A Neovim plugin for fuzzy finding files, buffers, and more.
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("fzf-lua").setup({
+        winopts = {
+          border = "none", -- you can use none, single, double, rounded, etc.
+        },
+      })
+    end,
+  },
   -- Plugin: noice.nvim
   -- URL: https://github.com/folke/noice.nvim
   -- Description: A Neovim plugin for enhancing the command-line UI.
