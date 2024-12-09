@@ -54,7 +54,6 @@ config.window_padding = {
 	left = 0,
 }
 
-config.force_reverse_video_cursor = true
 config.colors = {}
 config.colors.foreground = "#dcd7ba"
 config.colors.background = "#181616"
