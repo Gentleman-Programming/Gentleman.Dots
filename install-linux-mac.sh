@@ -253,12 +253,12 @@ download_and_extract_with_progress() {
 
 # Step 1: Download and Extract
 echo -e "${YELLOW}Step 1: Download and Extract${NC}"
-if [ -d "Gentleman.Dots-testing-new-stuff" ]; then
+if [ -d "Gentleman.Dots" ]; then
   echo -e "${GREEN}Files already exist. Overwriting...${NC}"
-  rm -rf "Gentleman.Dots-testing-new-stuff"
+  rm -rf "Gentleman.Dots"
 fi
-download_and_extract_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots/archive/refs/heads/testing-new-stuff.zip" "Gentleman.Dots-testing-new-stuff"
-cd Gentleman.Dots-testing-new-stuff || exit
+download_and_extract_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots/archive/refs/heads/testing-new-stuff.zip" "Gentleman.Dots"
+cd Gentleman.Dots || exit
 
 # Install Homebrew if not installed
 install_homebrew
