@@ -232,32 +232,33 @@ else
   run_command ". $HOME/.cargo/env"
 fi
 
-# Function to clone repository with progress bar
-clone_repository_with_progress() {
-  local repo_url="$1"
-  local clone_dir="$2"
-  local progress_duration=$3
+# Function to download and extract zip with progress bar
+download_and_extract_with_progress() {
+  local zip_url="$1"
+  local extract_dir="$2"
 
-  echo -e "${YELLOW}Cloning repository...${NC}"
+  echo -e "${YELLOW}Downloading and extracting...${NC}"
 
   if [ "$show_details" = "No" ]; then
-    # Run clone command in the background and show progress
-    (git clone "$repo_url" "$clone_dir" &>/dev/null) &
-    spinner "$progress_duration"
+    # Download and extract in background with progress spinner
+    (curl -L "$zip_url" -o temp.zip && unzip temp.zip && rm temp.zip &>/dev/null) &
+    spinner
   else
-    # Run clone command normally
-    git clone "$repo_url" "$clone_dir"
+    # Download and extract normally
+    curl -L "$zip_url" -o temp.zip
+    unzip temp.zip
+    rm temp.zip
   fi
 }
 
-# Step 1: Clone the Repository
-echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
-if [ -d "Gentleman.Dots" ]; then
-  echo -e "${GREEN}Repository already cloned. Overwriting...${NC}"
-  rm -rf "Gentleman.Dots"
+# Step 1: Download and Extract
+echo -e "${YELLOW}Step 1: Download and Extract${NC}"
+if [ -d "Gentleman.Dots-testing-new-stuff" ]; then
+  echo -e "${GREEN}Files already exist. Overwriting...${NC}"
+  rm -rf "Gentleman.Dots-testing-new-stuff"
 fi
-clone_repository_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots.git" "Gentleman.Dots" 20
-cd Gentleman.Dots || exit
+download_and_extract_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots/archive/refs/heads/testing-new-stuff.zip" "Gentleman.Dots-testing-new-stuff"
+cd Gentleman.Dots-testing-new-stuff || exit
 
 # Install Homebrew if not installed
 install_homebrew
