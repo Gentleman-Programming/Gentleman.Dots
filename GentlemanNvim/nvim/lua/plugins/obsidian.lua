@@ -114,15 +114,6 @@ return {
         tags = "", -- Default tags for templates
       },
     },
-    config = function(_, opts)
-      require("obsidian").setup(opts)
-
-      -- HACK: fix error, disable completion.nvim_cmp option, manually register sources
-      local cmp = require("cmp")
-      cmp.register_source("obsidian", require("cmp_obsidian").new())
-      cmp.register_source("obsidian_new", require("cmp_obsidian_new").new())
-      cmp.register_source("obsidian_tags", require("cmp_obsidian_tags").new())
-    end,
   },
   {
     "saghen/blink.cmp",
