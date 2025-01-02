@@ -71,6 +71,8 @@ config.colors.indexed = { [16] = "#ffa066", [17] = "#ff5d62" }
 config.window_background_opacity = 0.95
 config.font = wezterm.font("IosevkaTerm NF")
 config.hide_tab_bar_if_only_one_tab = true
+config.max_fps = 240
+config.enable_kitty_graphics = true
 
 -- activate ONLY if windows --
 
