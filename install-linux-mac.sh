@@ -316,7 +316,7 @@ else
       if is_arch; then
         install_terminal_with_progress "WezTerm" "sudo pacman -S --noconfirm wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       else
-        install_terminal_with_progress "WezTerm" "brew install western --cask" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+        install_terminal_with_progress "WezTerm" "brew install wezterm --cask" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
