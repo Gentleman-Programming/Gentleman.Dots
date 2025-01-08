@@ -13,7 +13,7 @@ end
 -- Terminal color scheme
 config.colors = {
 	foreground = "#e0def4", -- Set the foreground color (Text)
-	background = "#232136", -- Set the background color (Base)
+	background = "#0d0c15", -- Base más oscuro (Rosé Pine Dawn)
 	cursor_bg = "#c4a7e7", -- Set the cursor background color (Iris)
 	cursor_fg = "#e0def4", -- Set the cursor foreground color (Text)
 	cursor_border = "#c4a7e7", -- Set the cursor border color (Iris)
