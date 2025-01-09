@@ -894,6 +894,14 @@ $env.config = {
     ]
 }
 
+def fzfbat [] {
+  fzf --preview "bat --theme=gruvbox-dark --color=always {}" 
+}
+
+def fzfnvim [] {
+  nvim (fzf --preview "bat --theme=gruvbox-dark --color=always {}")
+}
+
  source ~/.zoxide.nu
  source ~/.cache/carapace/init.nu
  source ~/.local/share/atuin/init.nu
