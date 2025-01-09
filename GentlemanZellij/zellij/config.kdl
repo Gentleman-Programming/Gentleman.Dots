@@ -326,7 +326,7 @@ themes {
         fg "#e0def4"        // light text
         bg "#232136"        // dark background
         red "#eb6f92"       // refined pink
-        green "#31748f"     // soft teal
+        green "#3e8fb0"     // soft teal
         yellow "#f6c177"    // soft yellow
         blue "#9ccfd8"      // sky blue
         magenta "#c4a7e7"   // soft purple

@@ -14,7 +14,7 @@ let dark_theme = {
     empty: "#c4a7e7"                       # soft purple
     bool: "#eb6f92"                        # refined pink
     int: "#e0def4"                         # light white
-    filesize: "#31748f"                    # soft sky blue
+    filesize: "#3e8fb0"                    # soft sky blue
     duration: "#e0def4"                    # light white
     date: "#c4a7e7"                        # soft purple
     range: "#e0def4"                       # light white
@@ -35,21 +35,21 @@ let dark_theme = {
     shape_bool: "#eb6f92"                  # refined pink
     shape_closure: "#9ccfd8_bold"          # pastel green bold
     shape_custom: "#9ccfd8"                # pastel green
-    shape_datetime: "#31748f_bold"         # soft sky blue bold
-    shape_directory: "#31748f"             # soft sky blue
-    shape_external: "#31748f"              # soft sky blue
+    shape_datetime: "#3e8fb0_bold"         # soft sky blue bold
+    shape_directory: "#3e8fb0"             # soft sky blue
+    shape_external: "#3e8fb0"              # soft sky blue
     shape_externalarg: "#9ccfd8_bold"      # pastel green bold
     shape_external_resolved: "#f6c177_bold" # soft yellow bold
-    shape_filepath: "#31748f"              # soft sky blue
+    shape_filepath: "#3e8fb0"              # soft sky blue
     shape_flag: "#c4a7e7_bold"             # purple bold
     shape_float: "#c4a7e7_bold"            # soft purple bold
     shape_garbage: { fg: "#e0def4", bg: "#eb6f92", attr: b } # light white on refined pink bold
-    shape_glob_interpolation: "#31748f_bold" # sky blue bold
-    shape_globpattern: "#31748f_bold"      # sky blue bold
+    shape_glob_interpolation: "#3e8fb0_bold" # sky blue bold
+    shape_globpattern: "#3e8fb0_bold"      # sky blue bold
     shape_int: "#c4a7e7_bold"              # purple bold
-    shape_internalcall: "#31748f_bold"     # sky blue bold
-    shape_keyword: "#31748f_bold"          # sky blue bold
-    shape_list: "#31748f_bold"             # sky blue bold
+    shape_internalcall: "#3e8fb0_bold"     # sky blue bold
+    shape_keyword: "#3e8fb0_bold"          # sky blue bold
+    shape_list: "#3e8fb0_bold"             # sky blue bold
     shape_literal: "#c4a7e7"               # soft purple
     shape_match_pattern: "#9ccfd8"         # pastel green
     shape_matching_brackets: { attr: u }
@@ -58,11 +58,11 @@ let dark_theme = {
     shape_or: "#c4a7e7_bold"               # purple bold
     shape_pipe: "#c4a7e7_bold"             # purple bold
     shape_range: "#f6c177_bold"            # soft yellow bold
-    shape_record: "#31748f_bold"           # soft sky blue bold
+    shape_record: "#3e8fb0_bold"           # soft sky blue bold
     shape_redirection: "#c4a7e7_bold"      # purple bold
     shape_signature: "#9ccfd8_bold"        # pastel green bold
     shape_string: "#9ccfd8"                # pastel green
-    shape_string_interpolation: "#31748f_bold" # sky blue bold
+    shape_string_interpolation: "#3e8fb0_bold" # sky blue bold
     shape_table: "#c4a7e7_bold"            # purple bold
     shape_variable: "#eb6f92"              # refined pink
     shape_vardecl: "#eb6f92"               # refined pink
