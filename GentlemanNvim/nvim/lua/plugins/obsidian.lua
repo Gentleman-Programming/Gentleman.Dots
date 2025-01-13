@@ -26,7 +26,7 @@ return {
 
       -- Completion settings
       completion = {
-        nvim_cmp = true,
+        nvim_cmp = false,
       },
 
       notes_subdir = "limbo", -- Subdirectory for notes
