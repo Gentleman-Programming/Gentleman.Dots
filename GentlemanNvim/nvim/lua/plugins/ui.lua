@@ -16,9 +16,6 @@ return {
     "ibhagwan/fzf-lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = function(_, opts)
-      opts.winopts = {
-        border = "none",
-      }
       opts.files["actions"] = {
         ["ctrl-i"] = { actions.toggle_ignore },
         ["ctrl-h"] = { actions.toggle_hidden },
