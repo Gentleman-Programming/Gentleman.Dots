@@ -1,7 +1,32 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
 vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
 
+local actions = require("fzf-lua.actions")
+
 return {
+  -- Plugin: fzf-lua
+  -- URL: https://github.com/ibhagwan/fzf-lua
+  -- Description: A Neovim plugin for fuzzy finding files, buffers, and more.
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = function(_, opts)
+      opts.winopts = {
+        border = "none",
+      }
+      opts.files["actions"] = {
+        ["ctrl-i"] = { actions.toggle_ignore },
+        ["ctrl-h"] = { actions.toggle_hidden },
+        ["ctrl-g"] = false,
+      }
+
+      opts.grep["actions"] = {
+        ["ctrl-i"] = { actions.toggle_ignore },
+        ["ctrl-h"] = { actions.toggle_hidden },
+        ["ctrl-g"] = false,
+      }
+    end,
+  },
   -- Plugin: noice.nvim
   -- URL: https://github.com/folke/noice.nvim
   -- Description: A Neovim plugin for enhancing the command-line UI.
