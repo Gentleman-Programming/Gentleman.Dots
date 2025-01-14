@@ -71,7 +71,7 @@ config.colors.indexed = { [16] = "#ffa066", [17] = "#ff5d62" }
 
 -- Background
 config.window_background_opacity = 0.75 -- Adjust this value as needed
-config.macos_window_background_blur = 40 -- Adjust this value as needed
+config.macos_window_background_blur = 20 -- Adjust this value as needed
 config.win32_system_backdrop = "Acrylic" -- Only Works in Windows
 
 -- UI
