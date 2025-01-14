@@ -68,16 +68,29 @@ config.colors.ansi = { "#090618", "#c34043", "#76946a", "#c0a36e", "#7e9cd8", "#
 config.colors.brights = { "#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#dcd7ba" }
 config.colors.indexed = { [16] = "#ffa066", [17] = "#ff5d62" }
 --  change
-config.window_background_opacity = 0.95
+
+-- Background
+config.window_background_opacity = 0.75 -- Adjust this value as needed
+config.macos_window_background_blur = 40 -- Adjust this value as needed
+config.win32_system_backdrop = "Acrylic" -- Only Works in Windows
+
+-- UI
 config.font = wezterm.font("IosevkaTerm NF")
 config.hide_tab_bar_if_only_one_tab = true
-config.max_fps = 240
+config.max_fps = 240 -- hack for smoothness
 config.enable_kitty_graphics = true
 
 -- activate ONLY if windows --
 
 -- config.default_domain = 'WSL:Ubuntu'
 -- config.front_end = "OpenGL"
+-- local gpus = wezterm.gui.enumerate_gpus()
+-- if #gpus > 0 then
+--   config.webgpu_preferred_adapter = gpus[1] -- only set if there's at least one GPU
+-- else
+--   -- fallback to default behavior or log a message
+--   wezterm.log_info("No GPUs found, using default settings")
+-- end
 
 -- and finally, return the configuration to wezterm
 return config
