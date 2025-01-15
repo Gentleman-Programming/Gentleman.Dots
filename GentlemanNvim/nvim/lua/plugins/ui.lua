@@ -4,11 +4,6 @@ vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true })
 local actions = require("fzf-lua.actions")
 
 return {
-  -- Plugin: folke/todo-comments.nvim
-  -- URL: https://github.com/folke/todo-comments.nvim
-  -- Description: Plugin para resaltar y buscar comentarios TODO, FIX, HACK, etc. en tu código.
-  -- IMPORTANT: using version "*" to fix a bug
-  { "folke/todo-comments.nvim", version = "*" },
   -- Plugin: fzf-lua
   -- URL: https://github.com/ibhagwan/fzf-lua
   -- Description: A Neovim plugin for fuzzy finding files, buffers, and more.
