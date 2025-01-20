@@ -1,9 +1,8 @@
 return {
   "saghen/blink.cmp",
-  version = false,
-  build = "cargo +nightly build --release",
+  version = "*",
   dependencies = {
-    { "saghen/blink.compat", lazy = true, version = false },
+    { "saghen/blink.compat", lazy = true, version = "*" },
   },
   opts = {
     sources = {
