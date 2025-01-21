@@ -324,7 +324,7 @@ themes {
 
     rose_pine_moon {
         fg "#e0def4"        // light text
-        bg "#232136"        // dark background
+        bg "#191724"        // dark background
         red "#eb6f92"       // refined pink
         green "#3e8fb0"     // soft teal
         yellow "#f6c177"    // soft yellow

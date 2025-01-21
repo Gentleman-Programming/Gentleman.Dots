@@ -1,11 +1,11 @@
 # Adaptation of colors from WezTerm to Alacritty in TOML format
 
 [[colors.indexed_colors]]
-color = "#ffa066"  # Additional color
+color = "#ffa066" # Additional color
 index = 16
 
 [[colors.indexed_colors]]
-color = "#ff5d62"  # Additional color
+color = "#ff5d62" # Additional color
 index = 17
 
 [colors.bright]
@@ -19,8 +19,8 @@ white = "#dcd7ba"   # Bright ANSI White
 yellow = "#e6c384"  # Bright ANSI Yellow
 
 [colors.cursor]
-cursor = "#c8c093"  # Cursor color
-text = "#c8c093"    # Cursor text color
+cursor = "#c8c093" # Cursor color
+text = "#c8c093"   # Cursor text color
 
 [colors.normal]
 black = "#090618"   # ANSI Black
@@ -33,12 +33,12 @@ white = "#c8c093"   # ANSI White
 yellow = "#c0a36e"  # ANSI Yellow
 
 [colors.primary]
-background = "#181616"  # Background color
-foreground = "#dcd7ba"  # Foreground color
+background = "#191724" # Background color
+foreground = "#dcd7ba" # Foreground color
 
 [colors.selection]
-background = "#2d4f67"  # Selection background color
-text = "#c8c093"        # Selection text color
+background = "#2d4f67" # Selection background color
+text = "#c8c093"       # Selection text color
 
 [cursor]
 style = "Block"
@@ -61,4 +61,3 @@ TERM = "xterm-256color"
 #[shell]
 #program = "wsl.exe"
 #args = ["--cd","~"]
-
