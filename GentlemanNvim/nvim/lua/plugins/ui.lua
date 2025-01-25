@@ -1,8 +1,6 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
 vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
 
-local actions = require("fzf-lua.actions")
-
 return {
   -- Plugin: fzf-lua
   -- URL: https://github.com/ibhagwan/fzf-lua
@@ -11,6 +9,7 @@ return {
     "ibhagwan/fzf-lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = function(_, opts)
+      local actions = require("fzf-lua.actions")
       opts.files["actions"] = {
         ["ctrl-i"] = { actions.toggle_ignore },
         ["ctrl-h"] = { actions.toggle_hidden },
