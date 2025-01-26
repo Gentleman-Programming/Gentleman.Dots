@@ -1,28 +1,23 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
 vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
 
-local actions = require("fzf-lua.actions")
-
 return {
-  -- Plugin: fzf-lua
-  -- URL: https://github.com/ibhagwan/fzf-lua
-  -- Description: A Neovim plugin for fuzzy finding files, buffers, and more.
+  -- Plugin: folke/todo-comments.nvim
+  -- URL: https://github.com/folke/todo-comments.nvim
+  -- Description: Plugin para resaltar y buscar comentarios TODO, FIX, HACK, etc. en tu código.
+  -- IMPORTANT: using version "*" to fix a bug
+  { "folke/todo-comments.nvim", version = "*" },
+  -- Plugin: folke/which-key.nvim
+  -- URL: https://github.com/folke/which-key.nvim
+  -- Description: Plugin para mostrar un popup con los keybindings disponibles.
+  -- IMPORTANT: using event "VeryLazy" to optimize loading time
   {
-    "ibhagwan/fzf-lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = function(_, opts)
-      opts.files["actions"] = {
-        ["ctrl-i"] = { actions.toggle_ignore },
-        ["ctrl-h"] = { actions.toggle_hidden },
-        ["ctrl-g"] = false,
-      }
-
-      opts.grep["actions"] = {
-        ["ctrl-i"] = { actions.toggle_ignore },
-        ["ctrl-h"] = { actions.toggle_hidden },
-        ["ctrl-g"] = false,
-      }
-    end,
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      preset = "classic",
+      win = { border = "single" },
+    },
   },
   -- Plugin: noice.nvim
   -- URL: https://github.com/folke/noice.nvim
@@ -74,7 +69,7 @@ return {
     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
     opts = {
       options = {
-        theme = "kanagawa", -- Set the theme for lualine
+        theme = "rose-pine", -- Set the theme for lualine
         icons_enabled = true, -- Enable icons in the statusline
       },
       sections = {
