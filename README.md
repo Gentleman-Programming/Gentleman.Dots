@@ -225,7 +225,7 @@ Before starting the configuration, you need to install some essential dependenci
    rustc --version
    cargo --version
    ```
-   
+
 6. **Install Homebrew (if not already installed):**
 
    ```bash
@@ -267,6 +267,7 @@ Before starting the configuration, you need to install some essential dependenci
 
 - **If the repository is already cloned, you can skip this step.**
 - Open your terminal and run the following command to clone the repository:
+
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 ```
@@ -276,6 +277,7 @@ git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 ```bash
 cd Gentleman.Dots
 ```
+
 #### 2. Install Homebrew (if not installed on macOS)
 
 - **If you already have Homebrew installed, you can skip this step.**
@@ -316,8 +318,6 @@ mkdir -p ~/.local/share/atuin
 ```
 
 **Note:** Configuration steps for these tools are included in the repository files and will be applied automatically when you copy the configuration files.
-
-
 
 - Follow the on-screen instructions to complete the installation.
 
@@ -541,19 +541,19 @@ Choose one of the following shells and install it:
 
   ```bash
   sudo apt-get update && sudo apt-get upgrade -y
-  sudo apt-get install -y fzf fd-find ripgrep bat exa git gcc curl lazygit jq bash
+  sudo apt-get install -y nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
   ```
 
 - **On macOS:**
 
   ```bash
-  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
+  brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
   ```
 
 - **On Arch Linux:**
 
   ```bash
-  sudo pacman -S --noconfirm fzf fd ripgrep bat exa git gcc curl lazygit
+  sudo pacman -S --noconfirm nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
   ```
 
 #### 8. Choose and Install a Window Manager (Optional)
