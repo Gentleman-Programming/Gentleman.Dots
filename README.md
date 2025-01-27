@@ -444,7 +444,7 @@ Choose one of the following shells and install it:
   **Linux (Debian/Ubuntu):**
 
   ```bash
-  sudo apt-get install fish
+  brew install fish
   ```
 
   **Arch Linux:**
@@ -471,7 +471,7 @@ Choose one of the following shells and install it:
   **Linux (Debian/Ubuntu):**
 
   ```bash
-  sudo apt-get install zsh
+  brew install zsh
   ```
 
   **Arch Linux:**
@@ -540,20 +540,19 @@ Choose one of the following shells and install it:
 - **On Linux (Debian/Ubuntu):**
 
   ```bash
-  sudo apt-get update && sudo apt-get upgrade -y
-  sudo apt-get install -y nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
   ```
 
 - **On macOS:**
 
   ```bash
-  brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
   ```
 
 - **On Arch Linux:**
 
   ```bash
-  sudo pacman -S --noconfirm nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+  sudo pacman -S --noconfirm fzf fd ripgrep bat exa git gcc curl lazygit
   ```
 
 #### 8. Choose and Install a Window Manager (Optional)
@@ -569,7 +568,7 @@ Choose one of the following shells and install it:
   **Linux (Debian/Ubuntu):**
 
   ```bash
-  sudo apt-get install tmux
+  brew install tmux
   ```
 
   **Arch Linux:**
@@ -590,7 +589,7 @@ Choose one of the following shells and install it:
   **Install Tmux plugins:**
 
   ```bash
-  ~/.tmux/plugins/tpm/bin/install_plugins
+  crtrl + a + I
   ```
 
 - **Zellij:**
