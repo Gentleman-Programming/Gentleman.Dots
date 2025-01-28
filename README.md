@@ -2,7 +2,22 @@
 
 ## Description
 
-This repository contains customized configurations for a complete development environment, including Neovim, Fish, Zsh, **Nushell**, Tmux, Zellij, and terminal emulators like Alacritty, WezTerm, and Kitty. You can choose between automatic and manual installation methods depending on your preference and operating system. **Important:** Windows users must follow the manual installation instructions before running the script.
+This repository contains customized configurations for a complete development environment, including:
+
+  * Neovim
+  * Fish
+  * Zsh
+  * **Nushell**
+  * Tmux
+  * Zellij
+  * Terminal emulators:
+      * Alacritty
+      * WezTerm
+      * Kitty
+
+You can choose between automatic and manual installation methods depending on your preference and operating system.
+
+**Important:** Windows users **must** follow the manual installation instructions before running the script.
 
 ## Installation (Automatic Recommended!)
 
@@ -160,35 +175,35 @@ choco install win32yank
 
 #### 1. Install Dependencies
 
-##### Arch Linux
+###### Arch Linux
 ```bash
 sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm base-devel curl file git wget
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
-##### Linux
+###### Linux
 ```bash
 sudo apt-get update
 sudo apt-get install -y build-essential curl file git
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
-##### Mac
+###### Mac
 ```bash
 xcode-select --install
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
 #### 2. Install Iosevka Term Nerd Font (icons and font style)
-##### Arch Linux / Linux
+###### Arch Linux / Linux
 ```bash
 mkdir -p ~/.local/share/fonts
 wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
 unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
 fc-cache -fv
 ```
-##### Mac
+###### Mac
 ```bash
 brew install --cask font-iosevka-term-nerd-font
 ```
@@ -234,12 +249,15 @@ mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
 ```
-###### 2. Step => Arch Linux / Linux
+###### 2. Step
+
+***Arch Linux / Linux***
 ```bash
 mkdir -p ~/.config/nushell
 run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
 ```
-###### 2. Step => Mac
+
+***Mac***
 ```bash
 mkdir -p ~/Library/Application\ Support/nushell
 
@@ -255,7 +273,7 @@ fi
 
 cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ```
-##### Fish + Starship
+###### Fish + Starship
 ```bash
 brew install fish carapace zoxide atuin starship
 mkdir -p ~/.cache/starship
@@ -264,7 +282,7 @@ mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
 cp -rf GentlemanFish/fish ~/.config
 ```
-##### Zsh + Power10k
+###### Zsh + Power10k**
 ```bash
 brew install zsh carapace zoxide atuin
 brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
@@ -338,7 +356,8 @@ fi
 ```
 
 ###### 3. Step => If you use Nushell
-####### Mac
+
+***Mac***
 ```bash
 # update or replace "tmux"
 if grep -q '"tmux"' GentlemanNushell/config.nu; then
@@ -363,7 +382,8 @@ fi
 # copy files to nushell support directory
 cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ```
-####### Arch Linux / Linux
+
+***Arch Linux / Linux***
 ```bash
 if grep -q '"tmux"' ~/.config/nushell/config.nu; then
   awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
@@ -400,19 +420,23 @@ else
 fi
 ```
 #### 7. Set Default Shell
-##### 1. Step => ZSH
+###### 1. Step
+
+***ZSH***
 ```bash
 shell_path=$(which "zsh")
 ```
-##### 1. Step => Fish
+
+***Fish**
 ```bash
 shell_path=$(which "fish")
 ```
-##### 1. Step => Nushell
+
+***Nushell***
 ```bash
 shell_path=$(which "nu")
 ```
-##### 2. Step => Execute to Replace Default Shell
+###### 2. Step => Execute to Replace Default Shell
 ```bash
 if [ -n "$shell_path" ]; then
   # Add shell to /etc/shells if not already present
