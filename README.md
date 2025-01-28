@@ -36,6 +36,13 @@ bash ./install-linux-mac.sh
 
 Welcome to the Gentleman.Dots manual configuration guide! This document will walk you through the steps required to set up your development environment.
 
+***Clone the repo before continuing!!!***
+```bash
+curl -L "https://github.com/Gentleman-Programming/Gentleman.Dots/archive/refs/heads/testing-new-stuff.zip" -o temp.zip
+unzip temp.zip
+rm temp.zip
+cd Gentleman.Dots
+```
 ---
 
 ### For Windows
