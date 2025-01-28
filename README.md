@@ -158,573 +158,284 @@ choco install win32yank
 - **macOS or Linux:** Ensure you have one of these operating systems.
 - **Administrator privileges (sudo):** You'll need administrator access to install some tools.
 
-#### Initial Dependencies Installation (Including Rust and Cargo)
-
-Before starting the configuration, you need to install some essential dependencies, including **Rust** (and Cargo, Rust's package manager) for managing Rust-based tools. Run the commands corresponding to your operating system.
+#### 1. Install Dependencies
 
 ##### Arch Linux
-
-1. **Update the system and install base development tools:**
-
-   ```bash
-   sudo pacman -Syu --noconfirm
-   sudo pacman -S --needed --noconfirm base-devel curl file git wget
-   ```
-
-2. **Install Rustup (the Rust toolchain installer):**
-
-   ```bash
-   sudo pacman -S rustup
-   ```
-
-3. **Initialize Rustup and install the stable toolchain:**
-
-   ```bash
-   rustup default stable
-   ```
-
-4. **Ensure Cargo's bin directory is in your `PATH`:**
-
-   ```bash
-   source $HOME/.cargo/env
-   ```
-
-5. **Verify the installation:**
-
-   ```bash
-   rustc --version
-   cargo --version
-   ```
-
-##### Other Linux Systems (e.g., Ubuntu)
-
-1. **Update the system and install base development tools:**
-
-   ```bash
-   sudo apt-get update
-   sudo apt-get install -y build-essential curl file git
-   ```
-
-2. **Install Rustup (the Rust toolchain installer):**
-
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
-
-3. **Follow the on-screen instructions to complete the installation.**
-
-4. **Ensure Cargo's bin directory is in your `PATH`:**
-
-   ```bash
-   source $HOME/.cargo/env
-   ```
-
-5. **Verify the installation:**
-
-   ```bash
-   rustc --version
-   cargo --version
-   ```
-
-6. **Install Homebrew (if not already installed):**
-
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-##### macOS
-
-1. **Install Xcode command line tools:**
-
-   ```bash
-   xcode-select --install
-   ```
-
-2. **Install Rustup (the Rust toolchain installer):**
-
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
-
-3. **Follow the on-screen instructions to complete the installation.**
-
-6. **Ensure Cargo's bin directory is in your `PATH`:**
-
-   ```bash
-   source $HOME/.cargo/env
-   ```
-
-7. **Verify the installation:**
-
-   ```bash
-   rustc --version
-   cargo --version
-   ```
-
----
-
-#### 1. Clone the Repository
-
-- **If the repository is already cloned, you can skip this step.**
-- Open your terminal and run the following command to clone the repository:
-
 ```bash
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+sudo pacman -Syu --noconfirm
+sudo pacman -S --needed --noconfirm base-devel curl file git wget
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+. $HOME/.cargo/env
+```
+##### Linux
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential curl file git
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+. $HOME/.cargo/env
+```
+##### Mac
+```bash
+xcode-select --install
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+. $HOME/.cargo/env
+```
+#### 2. Install Iosevka Term Nerd Font (icons and font style)
+##### Arch Linux / Linux
+```bash
+mkdir -p ~/.local/share/fonts
+wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
+unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
+fc-cache -fv
+```
+##### Mac
+```bash
+brew install --cask font-iosevka-term-nerd-font
+```
+#### 3. Choose and Install Terminal Emulator
+##### Alacritty
+###### Arch Linux
+```bash
+sudo pacman -S --noconfirm alacritty
+mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
+```
+###### Linux / Mac
+```bash
+brew install alacritty --cask
+mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
 
-- Then, navigate to the cloned directory:
-
+##### WezTerm
+###### Arch Linux
 ```bash
-cd Gentleman.Dots
+sudo pacman -S --noconfirm wezterm
+mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
-
-#### 2. Install Homebrew (if not installed on macOS)
-
-- **If you already have Homebrew installed, you can skip this step.**
-- Run the following command in your terminal to install Homebrew:
-
+###### Linux / Mac
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install wezterm --cask
+mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
-
-#### 3. Install Shell Enhancements
-
-To enhance your shell experience, we recommend installing the following tools, regardless of which shell you are using:
-
-- **Carapace**: A universal completion generator for your shell.
-
-  ```bash
-  brew install carapace
-  ```
-
-- **Zoxide**: A smarter `cd` command that learns your habits.
-
-  ```bash
-  brew install zoxide
-  ```
-
-- **Atuin**: A magical shell history.
-
-  ```bash
-  brew install atuin
-  ```
-
-Ensure the required directories exist:
-
+##### Kitty
+###### Mac
 ```bash
+brew install --cask kitty
+mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
+```
+#### 4. Choose and Install a Shell
+##### Nushell
+###### 1. Step
+```bash
+cp -rf bash-env-json ~/.config/
+cp -rf bash-env.nu ~/.config/
+brew install nushell carapace zoxide atuin jq bash starship
 mkdir -p ~/.cache/starship
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
+cp -rf starship.toml ~/.config/
 ```
-
-**Note:** Configuration steps for these tools are included in the repository files and will be applied automatically when you copy the configuration files.
-
-- Follow the on-screen instructions to complete the installation.
-
-#### 4. Install Iosevka Term Nerd Font
-
-Iosevka Term Nerd Font is required for the terminal emulator.
-
-**On macOS:**
-
+###### 2. Step => Arch Linux / Linux
 ```bash
-brew tap homebrew/cask-fonts
-brew install --cask font-iosevka-term-nerd-font
+mkdir -p ~/.config/nushell
+run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
+```
+###### 2. Step => Mac
+```bash
+mkdir -p ~/Library/Application\ Support/nushell
+
+## udpate config to use mac
+if grep -q "/home/linuxbrew/.linuxbrew/bin" GentlemanNushell/env.nu; then
+  awk -v search="/home/linuxbrew/.linuxbrew/bin" -v replace="    | prepend '/opt/homebrew/bin'" '
+  $0 ~ search {print replace; next}
+  {print}
+  ' GentlemanNushell/env.nu > GentlemanNushell/env.nu.tmp && mv GentlemanNushell/env.nu.tmp GentlemanNushell/env.nu
+else
+  echo "    | prepend '/opt/homebrew/bin'" >> GentlemanNushell/env.nu
+fi
+
+cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
+```
+##### Fish + Starship
+```bash
+brew install fish carapace zoxide atuin starship
+mkdir -p ~/.cache/starship
+mkdir -p ~/.cache/carapace
+mkdir -p ~/.local/share/atuin
+cp -rf starship.toml ~/.config/
+cp -rf GentlemanFish/fish ~/.config
+```
+##### Zsh + Power10k
+```bash
+brew install zsh carapace zoxide atuin
+brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
+mkdir -p ~/.cache/carapace
+mkdir -p ~/.local/share/atuin
+cp -rf GentlemanZsh/.zshrc ~/
+cp -rf GentlemanZsh/.p10k.zsh ~/
+cp -rf GentlemanZsh/.oh-my-zsh ~/
+brew install powerlevel10k
+```
+#### 5. Choose and Install Window Manager
+##### Tmux
+```bash
+brew install tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+mkdir -p ~/.tmux
+cp -r GentlemanTmux/.tmux/* ~/.tmux/
+cp GentlemanTmux/.tmux.conf ~/
+tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
+tmux kill-session -t plugin-installation
+```
+##### Zellij
+###### 1. Step => Install Zellij
+```bash
+cargo install zellij
+mkdir -p ~/.config/zellij
+cp -r GentlemanZellij/zellij/* ~/.config/zellij/
+```
+###### 2. Step => If you use ZSH
+```bash
+# update or replace TMUX
+if grep -q "TMUX" ~/.zshrc; then
+  awk -v search="TMUX" -v replace='WM_VAR="/$ZELLIJ"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
+else
+  echo 'WM_VAR="/$ZELLIJ"' >> ~/.zshrc
+fi
+
+# update or replace tmux
+if grep -q "tmux" ~/.zshrc; then
+  awk -v search="tmux" -v replace='WM_CMD="zellij"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
+else
+  echo 'WM_CMD="zellij"' >> ~/.zshrc
+fi
+```
+###### 3. Step => If you use Fish
+```bash
+if grep -q "TMUX" ~/.config/fish/config.fish; then
+  awk -v search="TMUX" -v replace="if not set -q ZELLIJ" '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.config/fish/config.fish > ~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
+else
+  echo "if not set -q ZELLIJ" >> ~/.config/fish/config.fish
+fi
+
+# update or replace tmux
+if grep -q "tmux" ~/.config/fish/config.fish; then
+  awk -v search="tmux" -v replace="zellij" '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.config/fish/config.fish > ~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
+else
+  echo "zellij" >> ~/.config/fish/config.fish
+fi
 ```
 
-**On Linux:**
-
-- Download the font from [Nerd Fonts GitHub](https://github.com/ryanoasis/nerd-fonts/releases).
-- Extract the font files and move them to your local fonts directory:
-
-  ```bash
-  mkdir -p ~/.local/share/fonts
-  cp path_to_downloaded_fonts/*.ttf ~/.local/share/fonts/
-  fc-cache -fv
-  ```
-
-#### 5. Choose and Install a Terminal Emulator (Optional)
-
-- **If you are using WSL, terminal emulators must be installed on Windows.**
-- Choose one of the following terminal emulators and install it by following the instructions:
-
-  - **Alacritty:**
-
-    **macOS:**
-
-    ```bash
-    brew install --cask alacritty
-    ```
-
-    **Linux (Debian/Ubuntu):**
-
-    ```bash
-    sudo add-apt-repository ppa:aslatter/ppa
-    sudo apt-get update
-    sudo apt-get install alacritty
-    ```
-
-    **Arch Linux:**
-
-    ```bash
-    sudo pacman -S --noconfirm alacritty
-    ```
-
-    **Configuration (all systems):**
-
-    ```bash
-    mkdir -p ~/.config/alacritty
-    cp alacritty.toml ~/.config/alacritty/alacritty.toml
-    ```
-
-  - **WezTerm:**
-
-    **macOS:**
-
-    ```bash
-    brew install --cask wezterm
-    ```
-
-    **Linux (Debian/Ubuntu):**
-
-    ```bash
-    curl -LO https://github.com/wez/wezterm/releases/latest/download/WezTerm-debian-ubuntu.latest.deb
-    sudo apt install ./WezTerm-debian-ubuntu.latest.deb
-    ```
-
-    **Arch Linux:**
-
-    ```bash
-    sudo pacman -S --noconfirm wezterm
-    ```
-
-    **Configuration (all systems):**
-
-    ```bash
-    mkdir -p ~/.config/wezterm
-    cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-    ```
-
-  - **Kitty:**
-
-    **macOS:**
-
-    ```bash
-    brew install --cask kitty
-    ```
-
-    **Linux:**
-
-    ```bash
-    # Download the installer script and run it
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    ```
-
-    **Configuration:**
-
-    ```bash
-    mkdir -p ~/.config/kitty
-    cp -r GentlemanKitty/* ~/.config/kitty
-    ```
-
-  - **None:** If you do not want to install a terminal emulator, you can skip this step.
-
-#### 6. Choose and Install a Shell
-
-Choose one of the following shells and install it:
-
-- **Fish:**
-
-  **macOS:**
-
-  ```bash
-  brew install fish
-  ```
-
-  **Linux (Debian/Ubuntu):**
-
-  ```bash
-  brew install fish
-  ```
-
-  **Arch Linux:**
-
-  ```bash
-  sudo pacman -S fish
-  ```
-
-  **Configuration:**
-
-  ```bash
-  mkdir -p ~/.config/fish
-  cp -r GentlemanFish/fish/* ~/.config/fish/
-  ```
-
-- **Zsh:**
-
-  **macOS:**
-
-  ```bash
-  brew install zsh zsh-autosuggestions zsh-syntax-highlighting
-  ```
-
-  **Linux (Debian/Ubuntu):**
-
-  ```bash
-  brew install zsh
-  ```
-
-  **Arch Linux:**
-
-  ```bash
-  sudo pacman -S zsh zsh-autosuggestions zsh-syntax-highlighting
-  ```
-
-  **Install Oh My Zsh:**
-
-  ```bash
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  ```
-
-  **Configuration:**
-
-  ```bash
-  cp -r GentlemanZsh/.zshrc ~/
-  ```
-
-  **PowerLevel10K Theme:**
-
-  ```bash
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-  cp -r GentlemanZsh/.p10k.zsh ~/
-  ```
-
-- **Nushell:**
-
-  **Install Nushell using Cargo:**
-
-  ```bash
-  cargo install nu
-  ```
-
-  **Configuration:**
-
-  - **Linux:**
-
-    ```bash
-    mkdir -p ~/.config/nushell
-    cp -rf bash-env-json ~/.config/
-    cp -rf bash-env.nu ~/.config/
-    cp -r GentlemanNushell/* ~/.config/nushell/
-    ```
-
-  - **macOS:**
-
-    ```bash
-    mkdir -p ~/Library/Application\ Support/nushell
-
-    cp -rf bash-env-json ~/.config/
-    cp -rf bash-env.nu ~/.config/
-
-    # modify config.nu 
-    # change | prepend '/home/linuxbrew/.linuxbrew/bin' with:
-    | prepend '/opt/homebrew/bin'
-
-    cp -r GentlemanNushell/* ~/Library/Application\ Support/nushell/
-    ```
-
-- **None:** If you do not want to install a shell, you can skip this step.
-
-#### 7. Install Additional Dependencies
-
-- **On Linux (Debian/Ubuntu):**
-
-  ```bash
-  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
-  ```
-
-- **On macOS:**
-
-  ```bash
-  brew install fzf fd ripgrep bat exa git gcc curl lazygit jq bash
-  ```
-
-- **On Arch Linux:**
-
-  ```bash
-  sudo pacman -S --noconfirm fzf fd ripgrep bat exa git gcc curl lazygit
-  ```
-
-#### 8. Choose and Install a Window Manager (Optional)
-
-- **Tmux:**
-
-  **macOS:**
-
-  ```bash
-  brew install tmux
-  ```
-
-  **Linux (Debian/Ubuntu):**
-
-  ```bash
-  brew install tmux
-  ```
-
-  **Arch Linux:**
-
-  ```bash
-  sudo pacman -S tmux
-  ```
-
-  **Configuration:**
-
-  ```bash
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  mkdir -p ~/.tmux
-  cp -r GentlemanTmux/.tmux/* ~/.tmux/
-  cp GentlemanTmux/.tmux.conf ~/
-  ```
-
-  **Install Tmux plugins:**
-
-  ```bash
-  crtrl + a + I
-  ```
-
-- **Zellij:**
-
-  **Install Zellij using Cargo:**
-
-  ```bash
-  cargo install zellij
-  ```
-
-  **Configuration:**
-
-  ```bash
-  mkdir -p ~/.config/zellij
-  cp -r GentlemanZellij/zellij/* ~/.config/zellij/
-
-  # change this files:
-
-  # For fish - ~/.config/fish/config.fish
-
-  if not set -q TMUX
-  # change with ZELLIJ
-      tmux
-  # change with zellij
-  end
-
-  # For zsh - ~/.zshrc
-
-  WM_VAR="/$TMUX"
-  # change with ZELLIJ
-  WM_CMD="tmux"
-  # change with zellij
-
-  # For nushell - ~/.config/nushell/config.nu MAC: ~/Library/Application\ Support/nushell/config.nu
-  
-  let MULTIPLEXER = "tmux" 
-  # change with "zellij"
-  let MULTIPLEXER_ENV_PREFIX = "TMUX"
-  # change with "ZELLIJ"
-  ```
-
-- **None:** If you do not want to install a window manager, you can skip this step.
-
-#### 9. Configure Neovim
-
-- **Install Neovim and dependencies:**
-
-  **macOS:**
-
-  ```bash
-  brew install neovim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
-  ```
-
-  **Linux (Debian/Ubuntu):**
-
-  ```bash
-  sudo apt-get install -y neovim nodejs npm git gcc fzf fd-find ripgrep coreutils bat curl
-  ```
-
-  **Arch Linux:**
-
-  ```bash
-  sudo pacman -S neovim nodejs npm git gcc fzf fd ripgrep coreutils bat curl lazygit
-  ```
-
-- **Neovim configuration:**
-
-  ```bash
-  mkdir -p ~/.config/nvim
-  cp -r GentlemanNvim/nvim/* ~/.config/nvim/
-  ```
-
-- **Manual Obsidian Configuration**
-
-  To set up your Obsidian vault path in Neovim:
-
-  1. **Create the directory for your Obsidian notes** (replace `/path/to/your/notes` with your desired path):
-
-     ```bash
-     mkdir -p /path/to/your/notes
-     ```
-
-  2. **Create a `templates` folder** inside your notes directory:
-
-     ```bash
-     mkdir -p /path/to/your/notes/templates
-     ```
-
-  3. **Edit the `obsidian.lua` file** to configure the vault path:
-
-     ```bash
-     nvim ~/.config/nvim/lua/plugins/obsidian.lua
-     ```
-
-  4. **Update the `path` setting** in `obsidian.lua`:
-
-     ```lua
-     path = "/path/to/your/notes",
-     ```
-
-  5. **Save and close** the file.
-
-#### 10. Set the Default Shell
-
-Before setting your default shell, ensure it's listed in `/etc/shells`.
-
-1. **Check if your shell is listed:**
-
-   ```bash
-   cat /etc/shells
-   ```
-
-2. **Add your shell to `/etc/shells` if necessary:**
-
-   - For Fish:
-
-     ```bash
-     echo "$(which fish)" | sudo tee -a /etc/shells
-     ```
-
-   - For Nushell:
-
-     ```bash
-     echo "$(which nu)" | sudo tee -a /etc/shells
-     ```
-
-3. **Change your default shell:**
-
-   ```bash
-   chsh -s $(which <shell-name>)
-   ```
-
-   Replace `<shell-name>` with `fish`, `zsh`, or `nu`.
-
-#### 11. Restart the Shell or Computer
+###### 3. Step => If you use Nushell
+####### Mac
+```bash
+# update or replace "tmux"
+if grep -q '"tmux"' GentlemanNushell/config.nu; then
+  awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' GentlemanNushell/config.nu > GentlemanNushell/config.nu.tmp && mv GentlemanNushell/config.nu.tmp GentlemanNushell/config.nu
+else
+  echo 'let MULTIPLEXER = "zellij"' >> GentlemanNushell/config.nu
+fi
+
+# update or replace "TMUX"
+if grep -q '"TMUX"' GentlemanNushell/config.nu; then
+  awk -v search='"TMUX"' -v replace='let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' GentlemanNushell/config.nu > GentlemanNushell/config.nu.tmp && mv GentlemanNushell/config.nu.tmp GentlemanNushell/config.nu
+else
+  echo 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' >> GentlemanNushell/config.nu
+fi
+
+# copy files to nushell support directory
+cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
+```
+####### Arch Linux / Linux
+```bash
+if grep -q '"tmux"' ~/.config/nushell/config.nu; then
+  awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.config/nushell/config.nu > ~/.config/nushell/config.nu.tmp && mv ~/.config/nushell/config.nu.tmp ~/.config/nushell/config.nu
+else
+  echo 'let MULTIPLEXER = "zellij"' >> ~/.config/nushell/config.nu
+fi
+
+# update or replace "TMUX"
+if grep -q '"TMUX"' ~/.config/nushell/config.nu; then
+  awk -v search='"TMUX"' -v replace='let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' '
+  $0 ~ search {print replace; next}
+  {print}
+  ' ~/.config/nushell/config.nu > ~/.config/nushell/config.nu.tmp && mv ~/.config/nushell/config.nu.tmp ~/.config/nushell/config.nu
+else
+  echo 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' >> ~/.config/nushell/config.nu
+fi
+```
+#### 6. Install NVIM
+```bash
+brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+mkdir -p ~/.config/nvim
+cp -r GentlemanNvim/nvim/* ~/.config/nvim/
+# update or replace /your/notes/path
+if grep -q "/your/notes/path" "$HOME/.config/nvim/lua/plugins/obsidian.lua"; then
+  awk -v search="/your/notes/path" -v replace="path = '$OBSIDIAN_PATH'" '
+  $0 ~ search {print replace; next}
+  {print}
+  ' "$obsidian_config_file" > "${obsidian_config_file}.tmp" && mv "${obsidian_config_file}.tmp" "$obsidian_config_file"
+else
+  echo "path = '$OBSIDIAN_PATH'" >> "$obsidian_config_file"
+fi
+```
+#### 7. Set Default Shell
+##### 1. Step => ZSH
+```bash
+shell_path=$(which "zsh")
+```
+##### 1. Step => Fish
+```bash
+shell_path=$(which "fish")
+```
+##### 1. Step => Nushell
+```bash
+shell_path=$(which "nu")
+```
+##### 2. Step => Execute to Replace Default Shell
+```bash
+if [ -n "$shell_path" ]; then
+  # Add shell to /etc/shells if not already present
+  sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
+
+  # Change the default shell for the user
+  sudo chsh -s "$shell_path" "$USER"
+
+  # Verify if the shell has been changed
+  if [ "$SHELL" != "$shell_path" ]; then
+    echo -e "${RED}Error: Shell did not change. Please check manually.${NC}"
+    echo -e "${GREEN}Command: sudo chsh -s $shell_path \$USER ${NC}"
+  else
+    echo -e "${GREEN}Shell changed to $shell_path successfully.${NC}"
+  fi
+else
+  echo -e "${RED}Shell $shell_choice not found.${NC}"
+fi
+
+# Execute the chosen shell
+exec $shell_choice
+```
+#### 8. Restart the Shell or Computer
 
 - **Close and reopen your terminal**, or **restart your computer** or **WSL instance** for the changes to take effect.
 
