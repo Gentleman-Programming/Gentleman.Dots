@@ -50,17 +50,29 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 #set -l cyan 7fbbb3
 #set -l pink d699b6
 
-# rose pine moon colors
-set -l foreground e0def4 # text - un blanco suave para texto principal
-set -l selection 2a2a37 # highlight_high - azul oscuro para selección
-set -l comment 6e6a86 # muted - gris para comentarios
-set -l red eb6f92 # love - rojo suave
-set -l orange f6c177 # gold - naranja suave
-set -l yellow f6c177 # gold - amarillo cálido
-set -l green 9ccfd8 # pine - verde pastel
-set -l purple c4a7e7 # iris - púrpura suave
-set -l cyan 9ccfd8 # foam - verde azulado
-set -l pink eb6f92 # love - rosa suave
+## rose pine moon colors
+#set -l foreground e0def4 # text - un blanco suave para texto principal
+#set -l selection 2a2a37 # highlight_high - azul oscuro para selección
+#set -l comment 6e6a86 # muted - gris para comentarios
+#set -l red eb6f92 # love - rojo suave
+#set -l orange f6c177 # gold - naranja suave
+#set -l yellow f6c177 # gold - amarillo cálido
+#set -l green 9ccfd8 # pine - verde pastel
+#set -l purple c4a7e7 # iris - púrpura suave
+#set -l cyan 9ccfd8 # foam - verde azulado
+#set -l pink eb6f92 # love - rosa suave
+
+# Sakura colors
+set -l foreground c5a3a9  # na: texto (rosa claro)
+set -l selection 3f3b3e   # gr: gris oscuro (resaltado)
+set -l comment 4e4044     # nb: marrón oscuro (comentarios)
+set -l red c58ea7         # ia: rosa intenso (errores)
+set -l orange 9e97d0      # ca: púrpura suave (advertencias)
+set -l yellow 9e97d0      # ca: púrpura suave (advertencias)
+set -l green 878fb9       # va: azul claro (éxito)
+set -l purple 9e97d0      # ca: púrpura suave (destacado)
+set -l cyan 878fb9        # va: azul claro (información)
+set -l pink c58ea7        # ia: rosa intenso (destacado)
 
 # Syntax Highlighting Colors
 set -g fish_color_normal $foreground

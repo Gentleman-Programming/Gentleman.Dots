@@ -24,23 +24,23 @@ add_newline = true
 command_timeout = 3600000
 
 # Rose Pine Moon color and style settings
-palette = "rose_pine_moon"
+palette = "sakura"
 
 [fill]
 symbol = ' '
 
-[palettes.rose_pine_moon]
-arrow = "#ea9a97"      # Soft rose
-os = "#3e8fb0"         # Soft cyan
-directory = "#c4a7e7"  # Soft purple
-git = "#eb6f92"        # Refined pink
-duration = "#f6c177"   # Soft yellow
-text_color = "#e0def4" # Light text color
-text_light = "#232136" # Base background color
+[palettes.sakura]
+arrow = "#c58ea7"      # Soft rose (ia: rosa)
+os = "#878fb9"         # Soft cyan (va: verde)
+directory = "#9e97d0"  # Soft purple (ca: púrpura)
+git = "#c58ea7"        # Refined pink (ia: rosa)
+duration = "#9e97d0"   # Soft yellow (ca: púrpura)
+text_color = "#c5a3a9" # Light text color (na: blanco)
+text_light = "#1c1a1c" # Base background color (bl: fondo)
 
 # Pink mustache icon for the prompt
 [character]
-success_symbol = "[󱗞](fg:#A3BE8C)" # Mustache in dark pink tone
+success_symbol = "[󱗞](fg:#c5a3a9)" # Mustache in dark pink tone
 error_symbol = "[󱗞](fg:red)"       # Mustache in red if there is an error
 
 # User settings

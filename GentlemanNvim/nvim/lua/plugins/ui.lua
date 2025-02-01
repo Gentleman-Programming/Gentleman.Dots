@@ -1,6 +1,4 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
-vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
-
 return {
   -- Plugin: folke/todo-comments.nvim
   -- URL: https://github.com/folke/todo-comments.nvim
@@ -71,7 +69,7 @@ return {
     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
     opts = {
       options = {
-        theme = "rose-pine", -- Set the theme for lualine
+        theme = "sakura", -- Set the theme for lualine
         icons_enabled = true, -- Enable icons in the statusline
       },
       sections = {

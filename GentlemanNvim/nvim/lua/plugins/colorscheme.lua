@@ -1,4 +1,46 @@
 return {
+  {
+    {
+      "xiyaowong/transparent.nvim",
+      config = function()
+        require("transparent").setup({
+          enable = true, -- boolean: enable transparent
+          extra_groups = { -- table/string: additional groups that should be cleared
+            "Normal",
+            "NormalNC",
+            "Comment",
+            "Constant",
+            "Special",
+            "Identifier",
+            "Statement",
+            "PreProc",
+            "Type",
+            "Underlined",
+            "Todo",
+            "String",
+            "Function",
+            "Conditional",
+            "Repeat",
+            "Operator",
+            "Structure",
+            "LineNr",
+            "NonText",
+            "SignColumn",
+            "CursorLineNr",
+            "EndOfBuffer",
+          },
+          exclude = {}, -- table: groups you don't want to clear
+        })
+        vim.cmd("TransparentEnable") -- execute the command to enable transparency
+      end,
+    },
+    { "rktjmp/lush.nvim" },
+    "anAcc22/sakura.nvim",
+    config = function()
+      vim.opt.background = "dark"
+      vim.cmd("colorscheme sakura")
+    end,
+  },
   -- {
   --   -- Plugin for the Catppuccin color scheme
   --   "catppuccin/nvim",
@@ -83,7 +125,8 @@ return {
   --   lazy = false, -- Load this plugin immediately
   -- },
   -- {
-  --   -- Plugin for the Everforest color scheme
+  -- Plugin for the Everforest color scheme
+  -- {
   --   "neanias/everforest-nvim",
   --   version = false, -- Use the latest version
   --   lazy = false, -- Load this plugin immediately
@@ -107,24 +150,34 @@ return {
   --   priority = 1000, -- High priority to ensure it loads early
   -- },
   -- Plugin for the Rose Pine color scheme
-  {
-    "rose-pine/neovim",
-    name = "rose-pine",
-    opts = {
-      variant = "moon", -- Set the variant to 'moon'
-      styles = {
-        bold = true,
-        italic = true,
-        transparency = true,
-      },
-    },
-  },
+  -- {
+  --   "folke/tokyonight.nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   opts = {
+  --     bold = true,
+  --     italic = true,
+  --     transparent = true,
+  --   },
+  -- },
+  -- {
+  --   "rose-pine/neovim",
+  --   name = "rose-pine",
+  --   opts = {
+  --     variant = "moon", -- Set the variant to 'moon'
+  --     styles = {
+  --       bold = true,
+  --       italic = true,
+  --       transparency = true,
+  --     },
+  --   },
+  -- },
   {
     -- LazyVim configuration
     "LazyVim/LazyVim",
     opts = {
       -- Set the default color scheme
-      colorscheme = "rose-pine",
+      colorscheme = "sakura",
     },
   },
 }
