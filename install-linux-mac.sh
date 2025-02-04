@@ -240,15 +240,30 @@ download_and_extract_with_progress() {
   echo -e "${YELLOW}Downloading and extracting...${NC}"
 
   if [ "$show_details" = "No" ]; then
-    # Download and extract in background with progress spinner
-    (curl -L "$zip_url" -o temp.zip && mkdir -p "$extract_dir" && unzip temp.zip -d "$extract_dir" && rm temp.zip &>/dev/null) &
+    (
+      curl -L "$zip_url" -o temp.zip &&
+        mkdir -p "$extract_dir" &&
+        unzip temp.zip -d "$extract_dir" &&
+        rm temp.zip &&
+        # Si el zip extrajo una única carpeta, movemos su contenido a $extract_dir
+        if [ "$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 1 ]; then
+          subdir=$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d)
+          mv "$subdir"/* "$extract_dir"/
+          rm -rf "$subdir"
+        fi
+    ) &>/dev/null &
     spinner
   else
-    # Download and extract normally
     curl -L "$zip_url" -o temp.zip
     mkdir -p "$extract_dir"
     unzip temp.zip -d "$extract_dir"
     rm temp.zip
+    # Mismo chequeo y movimiento para el modo con detalles
+    if [ "$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 1 ]; then
+      subdir=$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d)
+      mv "$subdir"/* "$extract_dir"/
+      rm -rf "$subdir"
+    fi
   fi
 }
 
