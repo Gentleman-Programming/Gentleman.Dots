@@ -241,12 +241,13 @@ download_and_extract_with_progress() {
 
   if [ "$show_details" = "No" ]; then
     # Download and extract in background with progress spinner
-    (curl -L "$zip_url" -o temp.zip && unzip temp.zip && rm temp.zip &>/dev/null) &
+    (curl -L "$zip_url" -o temp.zip && mkdir -p "$extract_dir" && unzip temp.zip -d "$extract_dir" && rm temp.zip &>/dev/null) &
     spinner
   else
     # Download and extract normally
     curl -L "$zip_url" -o temp.zip
-    unzip temp.zip
+    mkdir -p "$extract_dir"
+    unzip temp.zip -d "$extract_dir"
     rm temp.zip
   fi
 }
