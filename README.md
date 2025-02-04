@@ -221,9 +221,15 @@ brew install --cask font-iosevka-term-nerd-font
 sudo pacman -S --noconfirm alacritty
 mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
-###### Linux / Mac
+###### Mac
 ```bash
 brew install alacritty --cask
+mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
+```
+
+###### Linux
+```bash
+sudo add-apt-repository ppa:aslatter/ppa; sudo apt update; sudo apt install alacritty
 mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
 
@@ -233,11 +239,17 @@ mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.
 sudo pacman -S --noconfirm wezterm
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
-###### Linux / Mac
+###### Mac
 ```bash
 brew install wezterm --cask
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
+###### Linux
+```bash
+brew tap wez/wezterm-linuxbrew; brew install wezterm
+mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+```
+
 ##### Kitty
 ###### Mac
 ```bash
