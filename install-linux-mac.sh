@@ -304,7 +304,7 @@ else
       if is_arch; then
         install_terminal_with_progress "Alacritty" "sudo pacman -S --noconfirm alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       else
-        install_terminal_with_progress "Alacritty" "brew install alacritty --cask" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
+        install_terminal_with_progress "Alacritty" "sudo add-apt-repository ppa:aslatter/ppa; sudo apt update; sudo apt install alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       fi
     else
       echo -e "${GREEN}Alacritty is already installed.${NC}"
@@ -315,7 +315,7 @@ else
       if is_arch; then
         install_terminal_with_progress "WezTerm" "sudo pacman -S --noconfirm wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       else
-        install_terminal_with_progress "WezTerm" "brew install wezterm --cask" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+        install_terminal_with_progress "WezTerm" "brew tap wez/wezterm-linuxbrew; brew install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
       echo -e "${GREEN}WezTerm is already installed.${NC}"
