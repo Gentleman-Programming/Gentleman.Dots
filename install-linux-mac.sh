@@ -361,8 +361,8 @@ else
       echo -e "${YELLOW}Installing Iosevka Term Nerd Font...${NC}"
       if [ "$os_choice" = "linux" ]; then
         mkdir -p ~/.local/share/fonts
-        wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
-        unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
+        wget -O ~/.local/share/fonts/IosevkaTerm.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip
+        unzip ~/.local/share/fonts/IosevkaTerm.zip -d ~/.local/share/fonts/
         fc-cache -fv
       elif [ "$os_choice" = "mac" ]; then
         brew install --cask font-iosevka-term-nerd-font
