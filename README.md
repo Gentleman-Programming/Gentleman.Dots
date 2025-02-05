@@ -222,6 +222,7 @@ fc-cache -fv
 ###### Mac
 
 ```bash
+brew tap homebrew/cask-fonts
 brew install --cask font-iosevka-term-nerd-font
 ```
 
