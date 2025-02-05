@@ -293,7 +293,7 @@ mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 ```bash
 cp -rf bash-env-json ~/.config/
 cp -rf bash-env.nu ~/.config/
-brew install nushell carapace zoxide atuin jq bash starship
+brew install nushell carapace zoxide atuin jq bash starship fzf
 mkdir -p ~/.cache/starship
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
@@ -330,7 +330,7 @@ cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ###### Fish + Starship
 
 ```bash
-brew install fish carapace zoxide atuin starship
+brew install fish carapace zoxide atuin starship fzf
 mkdir -p ~/.cache/starship
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
@@ -341,7 +341,7 @@ cp -rf GentlemanFish/fish ~/.config
 ###### Zsh + Power10k\*\*
 
 ```bash
-brew install zsh carapace zoxide atuin
+brew install zsh carapace zoxide atuin fzf
 brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
