@@ -492,6 +492,36 @@ else
 fi
 ```
 
+- **Manual Obsidian Configuration**
+
+  To set up your Obsidian vault path in Neovim:
+
+  1. **Create the directory for your Obsidian notes** (replace `/path/to/your/notes` with your desired path):
+
+     ```bash
+     mkdir -p /path/to/your/notes
+     ```
+
+  2. **Create a `templates` folder** inside your notes directory:
+
+     ```bash
+     mkdir -p /path/to/your/notes/templates
+     ```
+
+  3. **Edit the `obsidian.lua` file** to configure the vault path:
+
+     ```bash
+     nvim ~/.config/nvim/lua/plugins/obsidian.lua
+     ```
+
+  4. **Update the `path` setting** in `obsidian.lua`:
+
+     ```lua
+     path = "/path/to/your/notes",
+     ```
+
+  5. **Save and close** the file.
+
 #### 7. Set Default Shell
 
 ###### 1. Step
