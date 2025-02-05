@@ -4,16 +4,16 @@
 
 This repository contains customized configurations for a complete development environment, including:
 
-  * Neovim
-  * Fish
-  * Zsh
-  * **Nushell**
-  * Tmux
-  * Zellij
-  * Terminal emulators:
-      * Alacritty
-      * WezTerm
-      * Kitty
+- Neovim
+- Fish
+- Zsh
+- **Nushell**
+- Tmux
+- Zellij
+- Terminal emulators:
+  - Alacritty
+  - WezTerm
+  - Kitty
 
 You can choose between automatic and manual installation methods depending on your preference and operating system.
 
@@ -36,11 +36,13 @@ bash ./install-linux-mac.sh
 
 Welcome to the Gentleman.Dots manual configuration guide! This document will walk you through the steps required to set up your development environment.
 
-***Clone the repo before continuing!!!***
+**_Clone the repo before continuing!!!_**
+
 ```bash
 git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
 ```
+
 ---
 
 ### For Windows
@@ -181,82 +183,111 @@ choco install win32yank
 #### 1. Install Dependencies
 
 ###### Arch Linux
+
 ```bash
 sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm base-devel curl file git wget
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
+
 ###### Linux
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y build-essential curl file git
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
+
 ###### Mac
+
 ```bash
 xcode-select --install
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
 ```
+
 #### 2. Install Iosevka Term Nerd Font (icons and font style)
+
 ###### Arch Linux / Linux
+
 ```bash
 mkdir -p ~/.local/share/fonts
-wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Iosevka.zip
+wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip
 unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
 fc-cache -fv
 ```
+
 ###### Mac
+
 ```bash
 brew install --cask font-iosevka-term-nerd-font
 ```
+
 #### 3. Choose and Install Terminal Emulator
+
 ##### Alacritty
+
 ###### Arch Linux
+
 ```bash
 sudo pacman -S --noconfirm alacritty
 mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
+
 ###### Mac
+
 ```bash
 brew install alacritty --cask
 mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
 
 ###### Linux
+
 ```bash
 sudo add-apt-repository ppa:aslatter/ppa; sudo apt update; sudo apt install alacritty
 mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
 ```
 
 ##### WezTerm
+
 ###### Arch Linux
+
 ```bash
 sudo pacman -S --noconfirm wezterm
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
+
 ###### Mac
+
 ```bash
 brew install wezterm --cask
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
+
 ###### Linux
+
 ```bash
 brew tap wez/wezterm-linuxbrew; brew install wezterm
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
 
 ##### Kitty
+
 ###### Mac
+
 ```bash
 brew install --cask kitty
 mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 ```
+
 #### 4. Choose and Install a Shell
+
 ##### Nushell
+
 ###### 1. Step
+
 ```bash
 cp -rf bash-env-json ~/.config/
 cp -rf bash-env.nu ~/.config/
@@ -266,15 +297,18 @@ mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
 ```
+
 ###### 2. Step
 
-***Arch Linux / Linux***
+**_Arch Linux / Linux_**
+
 ```bash
 mkdir -p ~/.config/nushell
 run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
 ```
 
-***Mac***
+**_Mac_**
+
 ```bash
 mkdir -p ~/Library/Application\ Support/nushell
 
@@ -290,7 +324,9 @@ fi
 
 cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ```
+
 ###### Fish + Starship
+
 ```bash
 brew install fish carapace zoxide atuin starship
 mkdir -p ~/.cache/starship
@@ -299,7 +335,9 @@ mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
 cp -rf GentlemanFish/fish ~/.config
 ```
-###### Zsh + Power10k**
+
+###### Zsh + Power10k\*\*
+
 ```bash
 brew install zsh carapace zoxide atuin
 brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
@@ -310,8 +348,11 @@ cp -rf GentlemanZsh/.p10k.zsh ~/
 cp -rf GentlemanZsh/.oh-my-zsh ~/
 brew install powerlevel10k
 ```
+
 #### 5. Choose and Install Window Manager
+
 ##### Tmux
+
 ```bash
 brew install tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -321,14 +362,19 @@ cp GentlemanTmux/.tmux.conf ~/
 tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
 tmux kill-session -t plugin-installation
 ```
+
 ##### Zellij
+
 ###### 1. Step => Install Zellij
+
 ```bash
 cargo install zellij
 mkdir -p ~/.config/zellij
 cp -r GentlemanZellij/zellij/* ~/.config/zellij/
 ```
+
 ###### 2. Step => If you use ZSH
+
 ```bash
 # update or replace TMUX
 if grep -q "TMUX" ~/.zshrc; then
@@ -350,7 +396,9 @@ else
   echo 'WM_CMD="zellij"' >> ~/.zshrc
 fi
 ```
+
 ###### 3. Step => If you use Fish
+
 ```bash
 if grep -q "TMUX" ~/.config/fish/config.fish; then
   awk -v search="TMUX" -v replace="if not set -q ZELLIJ" '
@@ -374,7 +422,8 @@ fi
 
 ###### 3. Step => If you use Nushell
 
-***Mac***
+**_Mac_**
+
 ```bash
 # update or replace "tmux"
 if grep -q '"tmux"' GentlemanNushell/config.nu; then
@@ -400,7 +449,8 @@ fi
 cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ```
 
-***Arch Linux / Linux***
+**_Arch Linux / Linux_**
+
 ```bash
 if grep -q '"tmux"' ~/.config/nushell/config.nu; then
   awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
@@ -421,7 +471,9 @@ else
   echo 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' >> ~/.config/nushell/config.nu
 fi
 ```
+
 #### 6. Install NVIM
+
 ```bash
 brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
 mkdir -p ~/.config/nvim
@@ -436,24 +488,31 @@ else
   echo "path = '$OBSIDIAN_PATH'" >> "$obsidian_config_file"
 fi
 ```
+
 #### 7. Set Default Shell
+
 ###### 1. Step
 
-***ZSH***
+**_ZSH_**
+
 ```bash
 shell_path=$(which "zsh")
 ```
 
-***Fish**
+**\*Fish**
+
 ```bash
 shell_path=$(which "fish")
 ```
 
-***Nushell***
+**_Nushell_**
+
 ```bash
 shell_path=$(which "nu")
 ```
+
 ###### 2. Step => Execute to Replace Default Shell
+
 ```bash
 if [ -n "$shell_path" ]; then
   # Add shell to /etc/shells if not already present
@@ -476,6 +535,7 @@ fi
 # Execute the chosen shell
 exec $shell_choice
 ```
+
 #### 8. Restart the Shell or Computer
 
 - **Close and reopen your terminal**, or **restart your computer** or **WSL instance** for the changes to take effect.
