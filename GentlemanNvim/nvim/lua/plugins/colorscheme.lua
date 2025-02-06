@@ -4,7 +4,7 @@ return {
       "xiyaowong/transparent.nvim",
       config = function()
         require("transparent").setup({
-          enable = true, -- boolean: enable transparent
+          enable = false, -- boolean: enable transparent
           extra_groups = { -- table/string: additional groups that should be cleared
             "Normal",
             "NormalNC",
@@ -31,7 +31,7 @@ return {
           },
           exclude = {}, -- table: groups you don't want to clear
         })
-        vim.cmd("TransparentEnable") -- execute the command to enable transparency
+        -- vim.cmd("TransparentEnable") -- execute the command to enable transparency
       end,
     },
     { "rktjmp/lush.nvim" },
@@ -173,11 +173,19 @@ return {
   --   },
   -- },
   {
+    "dgox16/oldworld.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      variant = "oled",
+    },
+  },
+  {
     -- LazyVim configuration
     "LazyVim/LazyVim",
     opts = {
       -- Set the default color scheme
-      colorscheme = "sakura",
+      colorscheme = "oldworld",
     },
   },
 }

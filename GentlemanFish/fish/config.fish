@@ -62,17 +62,31 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 #set -l cyan 9ccfd8 # foam - verde azulado
 #set -l pink eb6f92 # love - rosa suave
 
-# Sakura colors
-set -l foreground c5a3a9  # na: texto (rosa claro)
-set -l selection 3f3b3e   # gr: gris oscuro (resaltado)
-set -l comment 4e4044     # nb: marrón oscuro (comentarios)
-set -l red c58ea7         # ia: rosa intenso (errores)
-set -l orange 9e97d0      # ca: púrpura suave (advertencias)
-set -l yellow 9e97d0      # ca: púrpura suave (advertencias)
-set -l green 878fb9       # va: azul claro (éxito)
-set -l purple 9e97d0      # ca: púrpura suave (destacado)
-set -l cyan 878fb9        # va: azul claro (información)
-set -l pink c58ea7        # ia: rosa intenso (destacado)
+## Sakura colors
+#set -l foreground c5a3a9  # na: text (light pink)
+#set -l selection 3f3b3e   # gr: dark gray (highlight)
+#set -l comment 4e4044     # nb: dark brown (comments)
+#set -l red c58ea7         # ia: intense pink (errors)
+#set -l orange 9e97d0      # ca: soft purple (warnings)
+#set -l yellow 9e97d0      # ca: soft purple (warnings)
+#set -l green 878fb9       # va: light blue (success)
+#set -l purple 9e97d0      # ca: soft purple (highlight)
+#set -l cyan 878fb9        # va: light blue (information)
+#set -l pink c58ea7        # ia: intense pink (highlight)
+
+# --- Base colors ---
+set -l foreground C9C7CD  # na: main text (light gray)
+set -l selection 3B4252   # gr: dark gray (highlight)
+set -l comment 4C566A     # nb: medium gray (comments)
+
+# --- Accent colors ---
+set -l red EA83A5         # ia: intense pink (errors)
+set -l orange F5A191      # ca: light peach (warnings)
+set -l yellow E6B99D      # ca: beige (warnings)
+set -l green 90B99F       # va: soft green (success)
+set -l purple 92A2D5      # ca: lavender blue (highlight)
+set -l cyan 85B5BA        # va: blue-green (information)
+set -l pink E29ECA        # ia: soft pink (highlight)
 
 # Syntax Highlighting Colors
 set -g fish_color_normal $foreground

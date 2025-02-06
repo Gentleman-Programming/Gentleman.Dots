@@ -1701,26 +1701,53 @@
   typeset -g POWERLEVEL9K_DISABLE_HOT_RELOAD=true
 
   # If p10k is already loaded, reload configuration.
+  #
+  # Sakura Theme
   # This works even with POWERLEVEL9K_DISABLE_HOT_RELOAD=true.
-  typeset -g COLOR_BACKGROUND="#181616"    # Dark background
-  typeset -g COLOR_FOREGROUND="#dcd7ba"    # Light text
-  typeset -g COLOR_BLACK="#090618"         # ANSI Black
-  typeset -g COLOR_RED="#c34043"           # ANSI Red
-  typeset -g COLOR_GREEN="#76946a"         # ANSI Green
-  typeset -g COLOR_YELLOW="#c0a36e"        # ANSI Yellow
-  typeset -g COLOR_BLUE="#7e9cd8"          # ANSI Blue
-  typeset -g COLOR_MAGENTA="#957fb8"       # ANSI Magenta
-  typeset -g COLOR_CYAN="#6a9589"          # ANSI Cyan
-  typeset -g COLOR_WHITE="#c8c093"         # ANSI White
+  # typeset -g COLOR_BACKGROUND="#181616"    # Dark background
+  # typeset -g COLOR_FOREGROUND="#dcd7ba"    # Light text
+  # typeset -g COLOR_BLACK="#090618"         # ANSI Black
+  # typeset -g COLOR_RED="#c34043"           # ANSI Red
+  # typeset -g COLOR_GREEN="#76946a"         # ANSI Green
+  # typeset -g COLOR_YELLOW="#c0a36e"        # ANSI Yellow
+  # typeset -g COLOR_BLUE="#7e9cd8"          # ANSI Blue
+  # typeset -g COLOR_MAGENTA="#957fb8"       # ANSI Magenta
+  # typeset -g COLOR_CYAN="#6a9589"          # ANSI Cyan
+  # typeset -g COLOR_WHITE="#c8c093"         # ANSI White
+  #
+  # typeset -g COLOR_BRIGHT_BLACK="#727169"  # Bright Black
+  # typeset -g COLOR_BRIGHT_RED="#e82424"    # Bright Red
+  # typeset -g COLOR_BRIGHT_GREEN="#98bb6c"  # Bright Green
+  # typeset -g COLOR_BRIGHT_YELLOW="#e6c384" # Bright Yellow
+  # typeset -g COLOR_BRIGHT_BLUE="#7fb4ca"   # Bright Blue
+  # typeset -g COLOR_BRIGHT_MAGENTA="#938aa9" # Bright Magenta
+  # typeset -g COLOR_BRIGHT_CYAN="#7aa89f"   # Bright Cyan
+  # typeset -g COLOR_BRIGHT_WHITE="#dcd7ba"  # Bright White
+ 
+  # OldWorld Theme
+  # --- Base colors ---
+  typeset -g COLOR_BACKGROUND="#000000"    # bl: dark background (almost black)
+  typeset -g COLOR_FOREGROUND="#C9C7CD"    # na: main text (light gray)
 
-  typeset -g COLOR_BRIGHT_BLACK="#727169"  # Bright Black
-  typeset -g COLOR_BRIGHT_RED="#e82424"    # Bright Red
-  typeset -g COLOR_BRIGHT_GREEN="#98bb6c"  # Bright Green
-  typeset -g COLOR_BRIGHT_YELLOW="#e6c384" # Bright Yellow
-  typeset -g COLOR_BRIGHT_BLUE="#7fb4ca"   # Bright Blue
-  typeset -g COLOR_BRIGHT_MAGENTA="#938aa9" # Bright Magenta
-  typeset -g COLOR_BRIGHT_CYAN="#7aa89f"   # Bright Cyan
-  typeset -g COLOR_BRIGHT_WHITE="#dcd7ba"  # Bright White
+  # --- ANSI colors ---
+  typeset -g COLOR_BLACK="#000000"         # bl: dark background (almost black)
+  typeset -g COLOR_RED="#EA83A5"           # ia: intense pink (errors)
+  typeset -g COLOR_GREEN="#90B99F"         # va: soft green (success)
+  typeset -g COLOR_YELLOW="#E6B99D"        # ca: beige (warnings)
+  typeset -g COLOR_BLUE="#85B5BA"          # va: light blue-green (information)
+  typeset -g COLOR_MAGENTA="#92A2D5"       # ca: blue lavender (highlight)
+  typeset -g COLOR_CYAN="#85B5BA"          # va: light blue-green (links)
+  typeset -g COLOR_WHITE="#C9C7CD"         # na: main text (light gray)
+
+  # --- Bright ANSI colors ---
+  typeset -g COLOR_BRIGHT_BLACK="#4C566A"  # nb: medium gray (bright black)
+  typeset -g COLOR_BRIGHT_RED="#EA83A5"    # ia: intense pink (bright red)
+  typeset -g COLOR_BRIGHT_GREEN="#90B99F"  # va: soft green (bright green)
+  typeset -g COLOR_BRIGHT_YELLOW="#E6B99D" # ca: beige (bright yellow)
+  typeset -g COLOR_BRIGHT_BLUE="#85B5BA"   # va: light blue-green (bright blue)
+  typeset -g COLOR_BRIGHT_MAGENTA="#92A2D5" # ca: blue lavender (bright magenta)
+  typeset -g COLOR_BRIGHT_CYAN="#85B5BA"   # va: light blue-green (bright cyan)
+  typeset -g COLOR_BRIGHT_WHITE="#C9C7CD"  # na: main text (bright white)
 
   # Color assignment for Powerlevel10k
   typeset -g POWERLEVEL9K_BACKGROUND=$COLOR_BACKGROUND

@@ -23,24 +23,33 @@ add_newline = true
 # Command timeout
 command_timeout = 3600000
 
-# Rose Pine Moon color and style settings
-palette = "sakura"
+# color and style settings
+palette = "oldWorld"
 
 [fill]
 symbol = ' '
 
-[palettes.sakura]
-arrow = "#c58ea7"      # Soft rose (ia: rosa)
-os = "#878fb9"         # Soft cyan (va: verde)
-directory = "#9e97d0"  # Soft purple (ca: púrpura)
-git = "#c58ea7"        # Refined pink (ia: rosa)
-duration = "#9e97d0"   # Soft yellow (ca: púrpura)
-text_color = "#c5a3a9" # Light text color (na: blanco)
-text_light = "#1c1a1c" # Base background color (bl: fondo)
+# [palettes.sakura]
+# arrow = "#c58ea7"      # ia: rosa
+# os = "#878fb9"         # va: azul
+# directory = "#9e97d0"  # ca: púrpura
+# git = "#c58ea7"        # ia: rosa
+# duration = "#9e97d0"   # ca: púrpura
+# text_color = "#c5a3a9" # na: texto
+# text_light = "#1c1a1c" # bl: fondo
+
+[palettes.oldWorld]
+arrow = "#EA83A5"      # ia: intense pink
+os = "#85B5BA"         # va: light blue-green
+directory = "#92A2D5"  # ca: blue lavender
+git = "#EA83A5"        # ia: intense pink
+duration = "#92A2D5"   # ca: blue lavender
+text_color = "#C9C7CD" # na: light gray
+text_light = "#000000" # bl: dark gray
 
 # Pink mustache icon for the prompt
 [character]
-success_symbol = "[󱗞](fg:#c5a3a9)" # Mustache in dark pink tone
+success_symbol = "[󱗞](fg:#85B5BA)" # Mustache in dark pink tone
 error_symbol = "[󱗞](fg:red)"       # Mustache in red if there is an error
 
 # User settings
