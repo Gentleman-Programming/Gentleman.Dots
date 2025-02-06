@@ -309,6 +309,12 @@ rm -rf ~/.zoxide.nu
 cp -r GentlemanNushell/.zoxide.nu ~/
 ```
 
+Comment this line until the problem is fixed inside nushell `env.nu` after first run
+
+```bash
+zoxide init nushell | save -f ~/.zoxide.nu
+```
+
 ###### 2. Step
 
 **_Arch Linux / Linux_**
