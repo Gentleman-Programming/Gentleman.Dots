@@ -276,6 +276,13 @@ mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 
 ##### Kitty
 
+###### Arch Linux
+
+```bash
+sudo pacman -S --noconfirm kitty
+mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
+```
+
 ###### Mac
 
 ```bash
