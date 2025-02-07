@@ -299,22 +299,6 @@ mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
 ```
 
-**IMPORTANT** as for now, on the latest versión of Nushell `0.102.0`,
-Zoxide NEEDS to update it's versión to be up to Nushell changes...
-BUT I already made it work, please use the following command to use a
-custom .zoxide.nu file if you see any issues:
-
-```bash
-rm -rf ~/.zoxide.nu
-cp -r GentlemanNushell/.zoxide.nu ~/
-```
-
-Comment this line until the problem is fixed inside nushell `env.nu` after first run
-
-```bash
-zoxide init nushell | save -f ~/.zoxide.nu
-```
-
 ###### 2. Step
 
 **_Arch Linux / Linux_**
