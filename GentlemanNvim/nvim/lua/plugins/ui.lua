@@ -1,15 +1,14 @@
 -- This file contains the configuration for various UI-related plugins in Neovim.
-vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#c34043", bold = true }) -- color kanagawa dragon red
-
 return {
   -- Plugin: folke/todo-comments.nvim
   -- URL: https://github.com/folke/todo-comments.nvim
-  -- Description: Plugin para resaltar y buscar comentarios TODO, FIX, HACK, etc. en tu código.
+  -- Description: Plugin to highlight and search for TODO, FIX, HACK, etc. comments in your code.
   -- IMPORTANT: using version "*" to fix a bug
   { "folke/todo-comments.nvim", version = "*" },
+
   -- Plugin: folke/which-key.nvim
   -- URL: https://github.com/folke/which-key.nvim
-  -- Description: Plugin para mostrar un popup con los keybindings disponibles.
+  -- Description: Plugin to show a popup with available keybindings.
   -- IMPORTANT: using event "VeryLazy" to optimize loading time
   {
     "folke/which-key.nvim",
@@ -19,6 +18,7 @@ return {
       win = { border = "single" },
     },
   },
+
   -- Plugin: noice.nvim
   -- URL: https://github.com/folke/noice.nvim
   -- Description: A Neovim plugin for enhancing the command-line UI.
@@ -69,7 +69,7 @@ return {
     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
     opts = {
       options = {
-        theme = "kanagawa", -- Set the theme for lualine
+        theme = "oldworld", -- Set the theme for lualine
         icons_enabled = true, -- Enable icons in the statusline
       },
       sections = {
@@ -156,6 +156,25 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      picker = {
+        matcher = {
+          fuzzy = true,
+          smartcase = true,
+          ignorecase = true,
+          filename_bonus = true,
+        },
+        sources = {
+          explorer = {
+            matcher = {
+              fuzzy = true, -- Enables fuzzy matching, so you can be a bit imprecise with your search terms
+              smartcase = true, -- If your search term has uppercase letters, the search becomes case-sensitive
+              ignorecase = true, -- Ignores case when searching, unless smartcase is triggered
+              filename_bonus = true, -- Gives a higher priority to matches in filenames
+              sort_empty = false, -- If no matches are found, it won't sort the results
+            },
+          },
+        },
+      },
       dashboard = {
         sections = {
           { section = "header" },
@@ -180,19 +199,19 @@ return {
     ██████████████████              ██████████████████        
         ██████████                      ██████████            
 ]],
-        -- stylua: ignore
-        ---@type snacks.dashboard.Item[]
-        keys = {
-          { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
-          { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-          { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
-          { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-          { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
-          { icon = " ", key = "s", desc = "Restore Session", section = "session" },
-          { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
-          { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
-          { icon = " ", key = "q", desc = "Quit", action = ":qa" },
-        },
+          -- stylua: ignore
+          ---@type snacks.dashboard.Item[]
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
+            { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
         },
       },
     },

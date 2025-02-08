@@ -321,10 +321,52 @@ themes {
         black "#1a1a1a"
         white "#8D908D"
     }
+
+    rose_pine_moon {
+        fg "#e0def4"        // light text
+        bg "#191724"        // dark background
+        red "#eb6f92"       // refined pink
+        green "#31748f"     // soft teal
+        yellow "#f6c177"    // soft yellow
+        blue "#9ccfd8"      // sky blue
+        magenta "#c4a7e7"   // soft purple
+        cyan "#9ccfd8"      // same as sky blue for consistency
+        orange "#f6c177"    // same as soft yellow
+        black "#191724"     // darker background (almost black)
+        white "#e0def4"     // same as light text
+    }
+
+    sakura {
+        fg "#c5a3a9"        // na: texto principal
+        bg "#1c1a1c"        // bl: fondo oscuro
+        red "#2B1720"       // ia: rosa
+        green "#878fb9"     // va: azul
+        yellow "#9e97d0"    // ca: púrpura (sustituye amarillo)
+        blue "#878fb9"      // va: azul
+        magenta "#9e97d0"   // ca: púrpura
+        cyan "#878fb9"      // va: azul
+        orange "#9e97d0"    // ca: púrpura
+        black "#1c1a1c"     // bl: fondo
+        white "#c5a3a9"     // na: texto claro
+    }
+
+    oldWorld {
+        fg "#C9C7CD"        // na: texto principal (gris claro)
+        bg "#000000"        // bl: fondo oscuro (gris casi negro)
+        red "#EA83A5"       // ia: rosa intenso
+        green "#90B99F"     // va: verde suave
+        yellow "#E6B99D"    // ca: beige (reemplaza el amarillo)
+        blue "#85B5BA"      // va: azul-verde
+        magenta "#92A2D5"   // ca: azul lavanda
+        cyan "#85B5BA"      // va: azul-verde
+        orange "#F5A191"    // ca: melocotón claro
+        black "#000000"     // bl: fondo oscuro (gris casi negro)
+        white "#C9C7CD"     // na: texto claro (gris claro)
+    }
 }
 
-theme "kanagawa_dragon"
- 
+theme "oldWorld"
+
 // Choose the base input mode of zellij.
 // Default: normal
 // 
@@ -340,9 +382,9 @@ default_mode "locked"
 // default_cwd "/tmp"
  
 // The name of the default layout to load on startup
-// Default: "work"
+// Default: "work_oldWorld"
 // 
-default_layout "work"
+default_layout "work_oldWorld"
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)

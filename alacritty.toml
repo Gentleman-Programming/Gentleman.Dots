@@ -1,44 +1,85 @@
-# Adaptation of colors from WezTerm to Alacritty in TOML format
+# Adaptation of WezTerm colors to Alacritty (Dark Theme)
 
-[[colors.indexed_colors]]
-color = "#ffa066"  # Additional color
-index = 16
-
-[[colors.indexed_colors]]
-color = "#ff5d62"  # Additional color
-index = 17
-
-[colors.bright]
-black = "#727169"   # Bright ANSI Black
-blue = "#7fb4ca"    # Bright ANSI Blue
-cyan = "#7aa89f"    # Bright ANSI Cyan
-green = "#98bb6c"   # Bright ANSI Green
-magenta = "#938aa9" # Bright ANSI Magenta
-red = "#e82424"     # Bright ANSI Red
-white = "#dcd7ba"   # Bright ANSI White
-yellow = "#e6c384"  # Bright ANSI Yellow
-
-[colors.cursor]
-cursor = "#c8c093"  # Cursor color
-text = "#c8c093"    # Cursor text color
-
-[colors.normal]
-black = "#090618"   # ANSI Black
-blue = "#7e9cd8"    # ANSI Blue
-cyan = "#6a9589"    # ANSI Cyan
-green = "#76946a"   # ANSI Green
-magenta = "#957fb8" # ANSI Magenta
-red = "#c34043"     # ANSI Red
-white = "#c8c093"   # ANSI White
-yellow = "#c0a36e"  # ANSI Yellow
+# Sakura Theme
+# [[colors.indexed_colors]]
+# index = 16
+# color = "#9e97d0" # ca: purple
+#
+# [[colors.indexed_colors]]
+# index = 17
+# color = "#c58ea7" # ia: pink
+#
+# [colors.bright]
+# black = "#3f3b3e"   # gr: dark gray
+# blue = "#665E7A"    # vb: dark blue
+# cyan = "#c58ea7"    # ia: cyan (pink)
+# green = "#878fb9"   # va: green (blue)
+# magenta = "#9e97d0" # ca: magenta
+# red = "#c58ea7"     # ia: red
+# white = "#c5a3a9"   # na: white
+# yellow = "#9e97d0"  # ca: yellow (purple)
+#
+# [colors.cursor]
+# cursor = "#9e97d0" # ca: purple
+# text = "#c5a3a9"   # na: text
+#
+# [colors.normal]
+# black = "#1c1a1c"   # bl: black background
+# blue = "#665E7A"    # vb: dark blue
+# cyan = "#c58ea7"    # ia: cyan (pink)
+# green = "#878fb9"   # va: green (blue)
+# magenta = "#9e97d0" # ca: magenta
+# red = "#c58ea7"     # ia: red
+# white = "#c5a3a9"   # na: light text
+# yellow = "#9e97d0"  # ca: yellow (purple)
+#
+# [colors.primary]
+# background = "#1c1a1c" # bl: background
+# foreground = "#786577" # na: text
+#
+# [colors.selection]
+# background = "#3f3b3e" # gr: gray
+# text = "#c5a3a9"       # na: text
 
 [colors.primary]
-background = "#181616"  # Background color
-foreground = "#dcd7ba"  # Foreground color
+background = "#000000" # bl: dark background (almost black)
+foreground = "#C9C7CD" # na: main text (light gray)
+
+[colors.cursor]
+cursor = "#92A2D5" # ca: blue lavender (cursor)
+text = "#C9C7CD"   # na: main text (light gray)
 
 [colors.selection]
-background = "#2d4f67"  # Selection background color
-text = "#c8c093"        # Selection text color
+background = "#3B4252" # gr: dark gray (selection background)
+text = "#C9C7CD"       # na: main text (light gray)
+
+[colors.normal]
+black = "#000000"   # bl: dark background (almost black)
+red = "#EA83A5"     # ia: intense pink (errors)
+green = "#90B99F"   # va: soft green (success)
+yellow = "#E6B99D"  # ca: beige (warnings)
+blue = "#85B5BA"    # va: light blue-green (information)
+magenta = "#92A2D5" # ca: blue lavender (highlight)
+cyan = "#85B5BA"    # va: light blue-green (links)
+white = "#C9C7CD"   # na: main text (light gray)
+
+[colors.bright]
+black = "#4C566A"   # nb: medium gray (bright black)
+red = "#EA83A5"     # ia: intense pink (bright red)
+green = "#90B99F"   # va: soft green (bright green)
+yellow = "#E6B99D"  # ca: beige (bright yellow)
+blue = "#85B5BA"    # va: light blue-green (bright blue)
+magenta = "#92A2D5" # ca: blue lavender (bright magenta)
+cyan = "#85B5BA"    # va: light blue-green (bright cyan)
+white = "#C9C7CD"   # na: main text (bright white)
+
+[[colors.indexed_colors]]
+index = 16
+color = "#F5A191" # ca: light peach (orange)
+
+[[colors.indexed_colors]]
+index = 17
+color = "#E29ECA" # ia: soft pink (pink)
 
 [cursor]
 style = "Block"
@@ -56,9 +97,3 @@ opacity = 0.96
 
 [env]
 TERM = "xterm-256color"
-
-# Uncomment for Windows
-#[shell]
-#program = "wsl.exe"
-#args = ["--cd","~"]
-

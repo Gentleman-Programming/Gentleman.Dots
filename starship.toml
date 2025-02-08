@@ -23,24 +23,33 @@ add_newline = true
 # Command timeout
 command_timeout = 3600000
 
-# Kanagawa Dragon color and style settings
-palette = "kanagawa_dragon"
+# color and style settings
+palette = "oldWorld"
 
 [fill]
 symbol = ' '
 
-[palettes.kanagawa_dragon]
-arrow = "#DCD7BA"      # Light bone color, soft and visible
-os = "#C4B28A"         # Warm yellow tone of dragonYellow
-directory = "#8BA4B0"  # Soft sky blue, dragonBlue2
-git = "#C4746E"        # Soft red, dragonRed
-duration = "#957FB8"   # Soft purple, oniViolet
-text_color = "#C5C9C5" # Light color, dragonWhite
-text_light = "#2A2A37" # Dark gray, sumiInk4
+# [palettes.sakura]
+# arrow = "#c58ea7"      # ia: rosa
+# os = "#878fb9"         # va: azul
+# directory = "#9e97d0"  # ca: púrpura
+# git = "#c58ea7"        # ia: rosa
+# duration = "#9e97d0"   # ca: púrpura
+# text_color = "#c5a3a9" # na: texto
+# text_light = "#1c1a1c" # bl: fondo
+
+[palettes.oldWorld]
+arrow = "#EA83A5"      # ia: intense pink
+os = "#85B5BA"         # va: light blue-green
+directory = "#92A2D5"  # ca: blue lavender
+git = "#EA83A5"        # ia: intense pink
+duration = "#92A2D5"   # ca: blue lavender
+text_color = "#C9C7CD" # na: light gray
+text_light = "#000000" # bl: dark gray
 
 # Pink mustache icon for the prompt
 [character]
-success_symbol = "[󱗞](fg:#A3BE8C)" # Mustache in dark pink tone
+success_symbol = "[󱗞](fg:#85B5BA)" # Mustache in dark pink tone
 error_symbol = "[󱗞](fg:red)"       # Mustache in red if there is an error
 
 # User settings
@@ -132,5 +141,5 @@ format = '[[ $symbol ($version) ](fg:#FF9E3B)]($style)'
 
 [time]
 disabled = false
-time_format = "%R"                           # Hour:Minute Format
+time_format = "%R"                            # Hour:Minute Format
 format = '[[   $time ](fg:#8BA4B0)]($style)'
