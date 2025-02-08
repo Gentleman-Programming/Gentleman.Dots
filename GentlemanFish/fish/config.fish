@@ -51,16 +51,16 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 #set -l pink d699b6
 
 ## rose pine moon colors
-#set -l foreground e0def4 # text - un blanco suave para texto principal
-#set -l selection 2a2a37 # highlight_high - azul oscuro para selección
-#set -l comment 6e6a86 # muted - gris para comentarios
-#set -l red eb6f92 # love - rojo suave
-#set -l orange f6c177 # gold - naranja suave
-#set -l yellow f6c177 # gold - amarillo cálido
-#set -l green 9ccfd8 # pine - verde pastel
-#set -l purple c4a7e7 # iris - púrpura suave
-#set -l cyan 9ccfd8 # foam - verde azulado
-#set -l pink eb6f92 # love - rosa suave
+#set -l foreground e0def4 # text - a soft white for main text
+#set -l selection 2a2a37 # highlight_high - dark blue for selection
+#set -l comment 6e6a86 # muted - gray for comments
+#set -l red eb6f92 # love - soft red
+#set -l orange f6c177 # gold - soft orange
+#set -l yellow f6c177 # gold - warm yellow
+#set -l green 9ccfd8 # pine - pastel green
+#set -l purple c4a7e7 # iris - soft purple
+#set -l cyan 9ccfd8 # foam - teal
+#set -l pink eb6f92 # love - soft pink
 
 ## Sakura colors
 #set -l foreground c5a3a9  # na: text (light pink)
@@ -75,18 +75,18 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 #set -l pink c58ea7        # ia: intense pink (highlight)
 
 # --- Base colors ---
-set -l foreground C9C7CD  # na: main text (light gray)
-set -l selection 3B4252   # gr: dark gray (highlight)
-set -l comment 4C566A     # nb: medium gray (comments)
+set -l foreground C9C7CD # na: main text (light gray)
+set -l selection 3B4252 # gr: dark gray (highlight)
+set -l comment 4C566A # nb: medium gray (comments)
 
 # --- Accent colors ---
-set -l red EA83A5         # ia: intense pink (errors)
-set -l orange F5A191      # ca: light peach (warnings)
-set -l yellow E6B99D      # ca: beige (warnings)
-set -l green 90B99F       # va: soft green (success)
-set -l purple 92A2D5      # ca: lavender blue (highlight)
-set -l cyan 85B5BA        # va: blue-green (information)
-set -l pink E29ECA        # ia: soft pink (highlight)
+set -l red EA83A5 # ia: intense pink (errors)
+set -l orange F5A191 # ca: light peach (warnings)
+set -l yellow E6B99D # ca: beige (warnings)
+set -l green 90B99F # va: soft green (success)
+set -l purple 92A2D5 # ca: lavender blue (highlight)
+set -l cyan 85B5BA # va: blue-green (information)
+set -l pink E29ECA # ia: soft pink (highlight)
 
 # Syntax Highlighting Colors
 set -g fish_color_normal $foreground

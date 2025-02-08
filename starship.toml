@@ -30,13 +30,13 @@ palette = "oldWorld"
 symbol = ' '
 
 # [palettes.sakura]
-# arrow = "#c58ea7"      # ia: rosa
-# os = "#878fb9"         # va: azul
-# directory = "#9e97d0"  # ca: púrpura
-# git = "#c58ea7"        # ia: rosa
-# duration = "#9e97d0"   # ca: púrpura
-# text_color = "#c5a3a9" # na: texto
-# text_light = "#1c1a1c" # bl: fondo
+# arrow = "#c58ea7"      # ia: pink
+# os = "#878fb9"         # va: blue
+# directory = "#9e97d0"  # ca: purple
+# git = "#c58ea7"        # ia: pink
+# duration = "#9e97d0"   # ca: purple
+# text_color = "#c5a3a9" # na: text
+# text_light = "#1c1a1c" # bl: background
 
 [palettes.oldWorld]
 arrow = "#EA83A5"      # ia: intense pink

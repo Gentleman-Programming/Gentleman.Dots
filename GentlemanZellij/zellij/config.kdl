@@ -337,31 +337,31 @@ themes {
     }
 
     sakura {
-        fg "#c5a3a9"        // na: texto principal
-        bg "#1c1a1c"        // bl: fondo oscuro
-        red "#2B1720"       // ia: rosa
-        green "#878fb9"     // va: azul
-        yellow "#9e97d0"    // ca: púrpura (sustituye amarillo)
-        blue "#878fb9"      // va: azul
-        magenta "#9e97d0"   // ca: púrpura
-        cyan "#878fb9"      // va: azul
-        orange "#9e97d0"    // ca: púrpura
-        black "#1c1a1c"     // bl: fondo
-        white "#c5a3a9"     // na: texto claro
+      fg "#c5a3a9"        // na: main text
+      bg "#1c1a1c"        // bl: dark background
+      red "#2B1720"       // ia: pink
+      green "#878fb9"     // va: blue
+      yellow "#9e97d0"    // ca: purple (replaces yellow)
+      blue "#878fb9"      // va: blue
+      magenta "#9e97d0"   // ca: purple
+      cyan "#878fb9"      // va: blue
+      orange "#9e97d0"    // ca: purple
+      black "#1c1a1c"     // bl: background
+      white "#c5a3a9"     // na: light text
     }
 
     oldWorld {
-        fg "#C9C7CD"        // na: texto principal (gris claro)
-        bg "#000000"        // bl: fondo oscuro (gris casi negro)
-        red "#EA83A5"       // ia: rosa intenso
-        green "#90B99F"     // va: verde suave
-        yellow "#E6B99D"    // ca: beige (reemplaza el amarillo)
-        blue "#85B5BA"      // va: azul-verde
-        magenta "#92A2D5"   // ca: azul lavanda
-        cyan "#85B5BA"      // va: azul-verde
-        orange "#F5A191"    // ca: melocotón claro
-        black "#000000"     // bl: fondo oscuro (gris casi negro)
-        white "#C9C7CD"     // na: texto claro (gris claro)
+      fg "#C9C7CD"        // na: main text (light gray)
+      bg "#000000"        // bl: dark background (almost black)
+      red "#EA83A5"       // ia: intense pink
+      green "#90B99F"     // va: soft green
+      yellow "#E6B99D"    // ca: beige (replaces yellow)
+      blue "#85B5BA"      // va: blue-green
+      magenta "#92A2D5"   // ca: lavender blue
+      cyan "#85B5BA"      // va: blue-green
+      orange "#F5A191"    // ca: light peach
+      black "#000000"     // bl: dark background (almost black)
+      white "#C9C7CD"     // na: light text (light gray)
     }
 }
 
