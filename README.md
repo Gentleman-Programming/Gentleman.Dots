@@ -1,5 +1,7 @@
 # Gentleman.Dots
 
+![Screenshot 2025-02-07 102533](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
+
 ## Description
 
 This repository contains customized configurations for a complete development environment, including:
@@ -26,7 +28,7 @@ You can choose between automatic and manual installation methods depending on yo
 The **automatic installation script** is the quickest and easiest way to set up your development environment. This script handles all the heavy lifting, but remember that you **must install the font** mentioned below before running it. The script is designed for macOS, Linux, and WSL systems. If you’re on Windows, you’ll need to follow the manual steps first before attempting to run this script.
 
 ```bash
-curl -O https://raw.githubusercontent.com/Gentleman-Programming/Gentleman.Dots/main/install-linux-mac.sh
+curl -O https://raw.githubusercontent.com/Gentleman-Programming/Gentleman.Dots/refs/heads/main/install-linux-mac.sh
 
 sudo chmod +x install-linux-mac.sh
 bash ./install-linux-mac.sh
@@ -301,22 +303,6 @@ mkdir -p ~/.cache/starship
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
-```
-
-**IMPORTANT** as for now, on the latest versión of Nushell `0.102.0`,
-Zoxide NEEDS to update it's versión to be up to Nushell changes...
-BUT I already made it work, please use the following command to use a
-custom .zoxide.nu file if you see any issues:
-
-```bash
-rm -rf ~/.zoxide.nu
-cp -r GentlemanNushell/.zoxide.nu ~/
-```
-
-Comment this line until the problem is fixed inside nushell `env.nu` after first run
-
-```bash
-zoxide init nushell | save -f ~/.zoxide.nu
 ```
 
 ###### 2. Step

@@ -6,69 +6,165 @@
 # https://www.nushell.sh/book/coloring_and_theming.html
 # And here is the theme collection
 # https://github.com/nushell/nu_scripts/tree/main/themes
-#
+
+
+# Sakura Theme
+# let dark_theme = {
+#    separator: "#786577"                # na: text (dark pink)
+#    leading_trailing_space_bg: { attr: "n" }
+#    header: "#878fb9_bold"              # va: blue + bold
+#    empty: "#9e97d0"                    # ca: soft purple
+#    bool: "#c58ea7"                     # ia: pink
+#    int: "#786577"                      # na: text (dark pink)
+#    filesize: "#878fb9"                 # va: blue
+#    duration: "#786577"                 # na: text (dark pink)
+#    date: "#9e97d0"                     # ca: purple
+#    range: "#786577"                    # na: text (dark pink)
+#    float: "#c58ea7"                    # ia: pink
+#    string: "#786577"                   # na: text (dark pink)
+#    nothing: "#878fb9"                  # va: blue
+#    binary: "#786577"                   # na: text (dark pink)
+#    cellpath: "#786577"                 # na: text (dark pink)
+#    row_index: "#878fb9_bold"           # va: blue + bold
+#    record: "#786577"                   # na: text (dark pink)
+#    list: "#786577"                     # na: text (dark pink)
+#    block: "#9e97d0_bold"               # ca: purple + bold
+#    hints: "#3f3b3e"                    # gr: dark gray
+#    search_result: { bg: "#c58ea7", fg: "#786577" } # ia/na
+#    shape_and: "#9e97d0_bold"           # ca: purple + bold
+#    shape_binary: "#9e97d0_bold"        # ca: purple + bold
+#    shape_block: "#9e97d0_bold"         # ca: purple + bold
+#    shape_bool: "#c58ea7"               # ia: pink
+#    shape_closure: "#878fb9_bold"       # va: blue + bold
+#    shape_custom: "#878fb9"             # va: blue
+#    shape_datetime: "#878fb9_bold"      # va: blue + bold
+#    shape_directory: "#9e97d0"          # ca: purple
+#    shape_external: "#878fb9"           # va: blue
+#    shape_externalarg: "#878fb9_bold"   # va: blue + bold
+#    shape_external_resolved: "#9e97d0_bold" # ca: purple + bold
+#    shape_filepath: "#878fb9"           # va: blue
+#    shape_flag: "#9e97d0_bold"          # ca: purple + bold
+#    shape_float: "#9e97d0_bold"         # ca: purple + bold
+#    shape_garbage: { fg: "#786577", bg: "#c58ea7", attr: "b" } # na/ia
+#    shape_glob_interpolation: "#878fb9_bold" # va: blue + bold
+#    shape_globpattern: "#878fb9_bold"   # va: blue + bold
+#    shape_int: "#9e97d0_bold"           # ca: purple + bold
+#    shape_internalcall: "#878fb9_bold"  # va: blue + bold
+#    shape_keyword: "#878fb9_bold"       # va: blue + bold
+#    shape_list: "#878fb9_bold"          # va: blue + bold
+#    shape_literal: "#9e97d0"            # ca: purple
+#    shape_match_pattern: "#878fb9"      # va: blue
+#    shape_matching_brackets: { attr: "u" }
+#    shape_nothing: "#878fb9"            # va: blue
+#    shape_operator: "#9e97d0"           # ca: purple (replaces yellow)
+#    shape_or: "#9e97d0_bold"            # ca: purple + bold
+#    shape_pipe: "#9e97d0_bold"          # ca: purple + bold
+#    shape_range: "#9e97d0_bold"         # ca: purple + bold
+#    shape_record: "#878fb9_bold"        # va: blue + bold
+#    shape_redirection: "#9e97d0_bold"   # ca: purple + bold
+#    shape_signature: "#878fb9_bold"     # va: blue + bold
+#    shape_string: "#878fb9"             # va: blue
+#    shape_string_interpolation: "#878fb9_bold" # va: blue + bold
+#    shape_table: "#9e97d0_bold"         # ca: purple + bold
+#    shape_variable: "#c58ea7"           # ia: pink
+#    shape_vardecl: "#c58ea7"            # ia: pink
+#    shape_raw_string: "#9e97d0"         # ca: purple
+# 
+
 let dark_theme = {
-    # color for nushell primitives
-    separator: "#c5c9c5"                  # dragonWhite, color claro suave
-    leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
-    header: "#87a987_bold"                 # dragonGreen, verde pastel bold
-    empty: "#8992a7"                       # dragonViolet, púrpura suave
-    bool: "#a292a3"                        # dragonPink, rosa refinado
-    int: "#c5c9c5"                         # dragonWhite, blanco claro
-    filesize: "#8ba4b0"                    # dragonBlue2, azul celeste suave
-    duration: "#c5c9c5"                    # dragonWhite, blanco claro
-    date: "#957FB8"                        # oniViolet, púrpura suave
-    range: "#c5c9c5"                       # dragonWhite, blanco claro
-    float: "#a292a3"                       # dragonPink, rosa refinado
-    string: "#c5c9c5"                      # dragonWhite, blanco claro
-    nothing: "#8ea4a2"                     # dragonAqua, verde aqua
-    binary: "#c5c9c5"                      # dragonWhite, blanco claro
-    cell-path: "#c5c9c5"                   # dragonWhite, blanco claro
-    row_index: "#87a987_bold"              # dragonGreen, verde pastel bold
-    record: "#c5c9c5"                      # dragonWhite, blanco claro
-    list: "#c5c9c5"                        # dragonWhite, blanco claro
-    block: "#8992a7_bold"                  # dragonViolet, púrpura suave bold
-    hints: "#54546D"                       # sumiInk6, gris oscuro suave
-    search_result: { bg: "#c4746e", fg: "#c5c9c5" } # dragonRed (rojo suave) y dragonWhite (blanco claro)
-    shape_and: "#957FB8_bold"              # oniViolet, púrpura bold
-    shape_binary: "#957FB8_bold"           # oniViolet, púrpura bold
-    shape_block: "#8992a7_bold"            # dragonViolet, púrpura bold
-    shape_bool: "#a292a3"                  # dragonPink, rosa refinado
-    shape_closure: "#87a987_bold"          # dragonGreen, verde pastel bold
-    shape_custom: "#87a987"                # dragonGreen, verde pastel
-    shape_datetime: "#8ba4b0_bold"         # dragonBlue2, azul celeste suave bold
-    shape_directory: "#8ba4b0"             # dragonBlue2, azul celeste suave
-    shape_external: "#8ba4b0"              # dragonBlue2, azul celeste suave
-    shape_externalarg: "#87a987_bold"      # dragonGreen, verde pastel bold
-    shape_external_resolved: "#c4b28a_bold" # dragonYellow, amarillo suave bold
-    shape_filepath: "#8ba4b0"              # dragonBlue2, azul celeste suave
-    shape_flag: "#8992a7_bold"             # dragonViolet, púrpura bold
-    shape_float: "#957FB8_bold"            # oniViolet, púrpura suave bold
-    shape_garbage: { fg: "#c5c9c5", bg: "#c4746e", attr: b } # dragonWhite sobre dragonRed bold
-    shape_glob_interpolation: "#8ba4b0_bold" # dragonBlue2, azul celeste bold
-    shape_globpattern: "#8ba4b0_bold"      # dragonBlue2, azul celeste bold
-    shape_int: "#957FB8_bold"              # oniViolet, púrpura bold
-    shape_internalcall: "#8ba4b0_bold"     # dragonBlue2, azul celeste bold
-    shape_keyword: "#8ba4b0_bold"          # dragonBlue2, azul celeste bold
-    shape_list: "#8ba4b0_bold"             # dragonBlue2, azul celeste bold
-    shape_literal: "#8992a7"               # dragonViolet, púrpura suave
-    shape_match_pattern: "#87a987"         # dragonGreen, verde pastel
-    shape_matching_brackets: { attr: u }
-    shape_nothing: "#8ea4a2"               # dragonAqua, verde aqua
-    shape_operator: "#c4b28a"              # dragonYellow, amarillo suave
-    shape_or: "#957FB8_bold"               # oniViolet, púrpura bold
-    shape_pipe: "#957FB8_bold"             # oniViolet, púrpura bold
-    shape_range: "#c4b28a_bold"            # dragonYellow, amarillo suave bold
-    shape_record: "#8ba4b0_bold"           # dragonBlue2, azul celeste suave bold
-    shape_redirection: "#957FB8_bold"      # oniViolet, púrpura bold
-    shape_signature: "#87a987_bold"        # dragonGreen, verde pastel bold
-    shape_string: "#87a987"                # dragonGreen, verde pastel
-    shape_string_interpolation: "#8ba4b0_bold" # dragonBlue2, azul celeste bold
-    shape_table: "#8992a7_bold"            # dragonViolet, púrpura bold
-    shape_variable: "#a292a3"              # dragonPink, rosa refinado
-    shape_vardecl: "#a292a3"               # dragonPink, rosa refinado
-    shape_raw_string: "#957FB8"            # oniViolet, púrpura suave
+    # --- base elements ---
+    separator: "#C9C7CD"                     # table borders (light gray)
+    leading_trailing_space_bg: { attr: "n" } # spaces without background
+    header: "#92A2D5_bold"                   # headers (lavender blue + bold)
+    empty: "#ACA1CF"                         # empty elements (lilac gray)
+    bool: "#E29ECA"                          # booleans (soft pink)
+    int: "#C9C7CD"                           # integers (light gray)
+    filesize: "#85B5BA"                      # file sizes (blue-green)
+    duration: "#90B99F"                      # duration (soft green)
+    date: "#E6B99D"                          # dates (warm beige)
+    range: "#C9C7CD"                         # ranges (light gray)
+    float: "#EA83A5"                         # floats (intense pink)
+    string: "#C9C7CD"                        # general text (light gray)
+    nothing: "#92A2D5"                       # null values (lavender blue)
+    binary: "#85B5BA"                        # binaries (blue-green)
+    cellpath: "#90B99F"                      # cell paths (grayish green)
+    row_index: "#92A2D5_bold"                # row indices (lavender blue + bold)
+    record: "#ACA1CF"                        # records (lilac gray)
+    list: "#C9C7CD"                          # lists (light gray)
+    block: "#ACA1CF_bold"                    # blocks (lilac gray + bold)
+    hints: "#90B99F"                         # hints (soft green)
+    search_result: { fg: "#000000", bg: "#F5A191" } # search result (peach background)
+
+    # --- syntax elements/commands ---
+    shape_and: "#ACA1CF_bold"                # AND operator (lilac gray + bold)
+    shape_binary: "#85B5BA_bold"             # binaries (blue-green + bold)
+    shape_block: "#92A2D5"                   # blocks (lavender blue)
+    shape_bool: "#E29ECA"                    # booleans (soft pink)
+    shape_closure: "#EA83A5"                 # closures (intense pink)
+    shape_custom: "#85B5BA"                  # custom commands (blue-green)
+    shape_datetime: "#E6B99D_bold"           # dates (beige + bold)
+    shape_directory: "#92A2D5"               # directories (lavender blue)
+    shape_external: "#85B5BA"                # external commands (blue-green)
+    shape_externalarg: "#ACA1CF_bold"        # external arguments (lilac gray + bold)
+    shape_filepath: "#90B99F"                # file paths (grayish green)
+    shape_flag: "#92A2D5_bold"               # flags (lavender blue + bold)
+    shape_float: "#EA83A5"                   # floats (intense pink)
+    shape_garbage: { fg: "#000000", bg: "#EA83A5", attr: "b" } # error (intense pink background)
+    shape_globpattern: "#85B5BA_bold"        # glob patterns (blue-green + bold)
+    shape_int: "#ACA1CF"                     # integers (lilac gray)
+    shape_internalcall: "#85B5BA_bold"       # internal calls (blue-green + bold)
+    shape_keyword: "#92A2D5"                 # keywords (lavender blue)
+    shape_literal: "#E6B99D"                 # literals (beige)
+    shape_operator: "#F5A191"                # operators (peach)
+    shape_or: "#E29ECA_bold"                 # OR operator (soft pink + bold)
+    shape_pipe: "#85B5BA"                    # pipes (blue-green)
+    shape_string: "#90B99F"                  # strings (soft green)
+    shape_variable: "#EA83A5"                # variables (intense pink)
 }
+
+# $env.LS_COLORS = (
+#    "di=38;2;197;142;167:" +       # Directories: intense pink (#C58EA7)
+#    "fi=38;2;197;163;169:" +       # Regular files: light pink (#C5A3A9)
+#    "ln=38;2;158;151;208:" +       # Symbolic links: soft purple (#9E97D0)
+#    "ex=38;2;135;143;185:" +       # Executable files: light blue (#878FB9)
+#    "or=38;2;197;142;167:" +       # Broken symbolic links: intense pink (#C58EA7)
+#    "*.txt=38;2;197;163;169:" +    # .txt files: light pink (#C5A3A9)
+#    "*.jpg=38;2;158;151;208:" +    # .jpg files: soft purple (#9E97D0)
+#    "*.png=38;2;158;151;208:" +    # .png files: soft purple (#9E97D0)
+#    "*.zip=38;2;135;143;185:" +    # .zip files: light blue (#878FB9)
+#    "*.gz=38;2;135;143;185:" +     # .gz files: light blue (#878FB9)
+#    "*.tar=38;2;135;143;185:" +    # .tar files: light blue (#878FB9)
+#    "*.log=38;2;63;59;62:" +       # .log files: dark gray (#3F3B3E)
+#    "*.md=38;2;197;163;169:" +     # .md files: light pink (#C5A3A9)
+#    "*.py=38;2;135;143;185:" +     # .py files: light blue (#878FB9)
+#    "*.rs=38;2;197;142;167:" +     # .rs files: intense pink (#C58EA7)
+#    "*.sh=38;2;135;143;185:"       # .sh files: light blue (#878FB9)
+# )
+
+$env.LS_COLORS = (
+    # --- Directories and file types ---
+    "di=38;2;146;162;213:" +       # Directories: lavender blue (#92A2D5)
+    "fi=38;2;201;199;205:" +       # Regular files: light gray (#C9C7CD)
+    "ln=38;2;172;161;207:" +       # Symbolic links: lilac gray (#ACA1CF)
+    "ex=38;2;133;181;186:" +       # Executable files: blue-green (#85B5BA)
+    "or=38;2;234;131;165:" +       # Broken links: intense pink (#EA83A5)
+
+    # --- Specific extensions ---
+    "*.txt=38;2;201;199;205:" +    # .txt: light gray (#C9C7CD)
+    "*.jpg=38;2;172;161;207:" +    # .jpg: lilac gray (#ACA1CF)
+    "*.png=38;2;172;161;207:" +    # .png: lilac gray (#ACA1CF)
+    "*.zip=38;2;133;181;186:" +    # .zip: blue-green (#85B5BA)
+    "*.gz=38;2;133;181;186:" +     # .gz: blue-green (#85B5BA)
+    "*.tar=38;2;133;181;186:" +    # .tar: blue-green (#85B5BA)
+    "*.log=38;2;229;158;202:" +    # .log: soft pink (#E29ECA)
+    "*.md=38;2;229;158;202:" +     # .md: soft pink (#E29ECA)
+    "*.py=38;2;133;181;186:" +     # .py: blue-green (#85B5BA)
+    "*.rs=38;2;234;131;165:" +     # .rs: intense pink (#EA83A5)
+    "*.sh=38;2;133;181;186:" +     # .sh: blue-green (#85B5BA)
+
+    # --- Default color for other files ---
+    "*=38;2;201;199;205"           # Default: light gray (#C9C7CD)
+)
 
 let light_theme = {
     # color for nushell primitives
@@ -291,7 +387,7 @@ $env.config = {
         pre_prompt: [{ null }] # run before the prompt is shown
         pre_execution: [{ null }] # run before the repl input is run
         env_change: {
-            PWD: [{|before, after| null }] # run if the PWD environment is different since the last repl input
+          PWD: [{|before, after| if $before != $after { zoxide add -- $after } else { null }}]
         }
         display_output: "if (term size).columns >= 100 { table -e } else { table }" # run to display the output of a pipeline
         command_not_found: { null } # return an error message when a command is not found
@@ -907,8 +1003,8 @@ def fzfnvim [] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-let MULTIPLEXER = "tmux" 
-let MULTIPLEXER_ENV_PREFIX = "TMUX"
+let MULTIPLEXER = "zellij"
+let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
 
 def start_multiplexer [] {
   if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
