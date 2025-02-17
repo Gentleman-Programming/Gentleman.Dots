@@ -276,6 +276,29 @@ brew tap wez/wezterm-linuxbrew; brew install wezterm
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
 
+##### Ghostty
+
+###### Arch Linux
+
+```bash
+pacman -S ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
+###### Mac
+
+```bash
+brew install --cask ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
+###### Linux
+
+```bash
+brew install --cask ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
 ##### Kitty
 
 ###### Mac
@@ -284,6 +307,8 @@ mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 brew install --cask kitty
 mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 ```
+
+**Reload the config after install doing `ctrl+shift+,` | `cmd+shift+,`**
 
 #### 4. Choose and Install a Shell
 
@@ -532,7 +557,7 @@ fi
 shell_path=$(which "zsh")
 ```
 
-**\*Fish**
+**_Fish_**
 
 ```bash
 shell_path=$(which "fish")

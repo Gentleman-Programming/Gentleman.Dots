@@ -289,13 +289,13 @@ if is_wsl; then
 else
   if [ "$os_choice" = "linux" ]; then
     if is_arch; then
-      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "none")
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "ghostty" "none")
     else
       echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
-      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "none")
+      term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "ghostty" "none")
     fi
   else
-    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty" "none")
+    term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty" "ghostty" "none")
   fi
 
   case "$term_choice" in
@@ -307,7 +307,8 @@ else
         install_terminal_with_progress "Alacritty" "sudo add-apt-repository ppa:aslatter/ppa; sudo apt update; sudo apt install alacritty" "mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml"
       fi
     else
-      echo -e "${GREEN}Alacritty is already installed.${NC}"
+      mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
+      echo -e "${GREEN}Alacritty is already installed and config migrated.${NC}"
     fi
     ;;
   "wezterm")
@@ -318,7 +319,8 @@ else
         install_terminal_with_progress "WezTerm" "brew tap wez/wezterm-linuxbrew; brew install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
-      echo -e "${GREEN}WezTerm is already installed.${NC}"
+      mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+      echo -e "${GREEN}WezTerm is already installed and config migrated.${NC}"
     fi
     ;;
   "kitty")
@@ -326,10 +328,23 @@ else
       if ! command -v kitty &>/dev/null; then
         install_terminal_with_progress "Kitty" "brew install --cask kitty" "mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty"
       else
-        echo -e "${GREEN}Kitty is already installed.${NC}"
+        mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
+        echo -e "${GREEN}Kitty is already installed and config migrated.${NC}"
       fi
     else
       echo -e "${YELLOW}Kitty installation is not available for Linux.${NC}"
+    fi
+    ;;
+  "ghostty")
+    if ! command -v ghostty &>/dev/null; then
+      if is_arch; then
+        install_terminal_with_progress "Ghostty" "pacman -S ghostty" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
+      else
+        install_terminal_with_progress "Ghostty" "brew install --cask ghostty" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
+      fi
+    else
+      mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+      echo -e "${GREEN}Ghostty is already installed and config migrated, remember to reload your config $(ctrl+shift+,) | $(cmd+shift+,) .${NC}"
     fi
     ;;
   *)
