@@ -1,6 +1,6 @@
 # Gentleman.Dots
 
-![Screenshot 2025-02-07 102533](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
+![Screenshot](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
 
 ## Description
 
@@ -14,46 +14,161 @@ This repository contains customized configurations for a complete development en
 - Zellij
 - Terminal emulators:
   - Alacritty
-  - WezTerm
-  - Kitty
+  - **WezTerm** (default)
 
-You can choose between automatic and manual installation methods depending on your preference and operating system.
+You can now automatically set up your environment using our new Nix Flake approach with Home Manager. This method is fully declarative and reproducible, and it lets you easily override default options. In our flake, all configurations are defined inline in local modules (e.g., `fish.nix`, `nushell.nix`, etc.), and the flake also:
 
-**Important:** Windows users **must** follow the manual installation instructions before running the script.
+1. Installs all the required dependencies (git, curl, rustc, cargo, tmux, zellij, neovim, etc.).
+2. Automatically performs placeholder replacements in configuration files according to your chosen multiplexer (Zellij vs. Tmux).
 
-## Installation (Automatic Recommended!)
+---
 
-### The Easy Way! Test the automated process and let the script do all the work for you 😘
+## Previous Steps
 
-The **automatic installation script** is the quickest and easiest way to set up your development environment. This script handles all the heavy lifting, but remember that you **must install the font** mentioned below before running it. The script is designed for macOS, Linux, and WSL systems. If you’re on Windows, you’ll need to follow the manual steps first before attempting to run this script.
+### Installing Nix and Home Manager
+
+Before running the automated installation commands, make sure Nix is installed:
+
+- **macOS and Linux:**
+
+  ```bash
+  curl -L https://nixos.org/nix/install | sh
+  . ~/.nix-profile/etc/profile.d/nix.sh
+  ```
+
+- **WSL (Windows Subsystem for Linux):**
+
+  Open your WSL terminal and run:
+
+  ```bash
+  curl -L https://nixos.org/nix/install | sh
+  . ~/.nix-profile/etc/profile.d/nix.sh
+  ```
+
+Next, install Home Manager (see the official instructions or use our flake method):
 
 ```bash
-curl -O https://raw.githubusercontent.com/Gentleman-Programming/Gentleman.Dots/refs/heads/main/install-linux-mac.sh
-
-sudo chmod +x install-linux-mac.sh
-bash ./install-linux-mac.sh
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install
 ```
 
-## Manual Installation
+---
 
-Welcome to the Gentleman.Dots manual configuration guide! This document will walk you through the steps required to set up your development environment.
+## Automatic Installation (Recommended for Linux, macOS, and WSL)
 
-**_Clone the repo before continuing!!!_**
+### The Easy Way – Let Nix Do the Heavy Lifting
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+   cd Gentleman.Dots
+   ```
+
+2. **Run the Installation Commands:**
+
+   ```bash
+   nix profile install .#gentleman-dots
+   home-manager switch --flake .#gentleman
+   ```
+
+This flake uses local modules (e.g., `fish.nix`, `nushell.nix`, `kitty.nix`, etc.) that contain inline configurations for each tool. It also installs all necessary dependencies based on your options and automatically performs placeholder replacements in configuration files—e.g., if you choose Zellij as your multiplexer, it will update placeholders in your .zshrc, config.fish, and config.nu accordingly. Files are deployed to system-specific locations; for example, the Nushell configuration is copied to:
+
+- **macOS:** `~/Library/Application Support/nushell`
+- **Linux/WSL:** `~/.config/nushell`
+
+---
+
+## Available Configurations
+
+The default options are defined in the flake as follows:
+
+```nix
+gentlemanOptions = {
+  terminal = "wezterm";      # Default terminal is WezTerm
+  shell = "nushell";         # Default shell is Nushell
+  windowManager = "zellij";  # Default multiplexer is Zellij
+  installNeovim = true;
+  osType = if system == "x86_64-darwin" then "mac" else "linux";
+  starship = true;           # Starship is enabled by default
+  powerlevel10k = false;
+  useTmux = false;
+};
+```
+
+You can override these defaults by editing the `gentlemanOptions` block in `flake.nix` or by selecting one of the preset configurations listed below.
+
+### Preset Configurations
+
+To activate one, run the corresponding command:
+
+- **Zellij with Fish and Starship:**
+
+  ```bash
+  home-manager switch --flake .#zellij-fish-starship
+  ```
+
+- **Zellij with Nushell and Starship:**
+
+  ```bash
+  home-manager switch --flake .#zellij-nushell-starship
+  ```
+
+- **Zellij with Zsh and Powerlevel10k:**
+
+  ```bash
+  home-manager switch --flake .#zellij-zsh-power10k
+  ```
+
+- **Tmux with Fish and Starship:**
+
+  ```bash
+  home-manager switch --flake .#tmux-fish-starship
+  ```
+
+- **Tmux with Nushell and Starship:**
+
+  ```bash
+  home-manager switch --flake .#tmux-nushell-starship
+  ```
+
+- **Tmux with Zsh and Powerlevel10k:**
+
+  ```bash
+  home-manager switch --flake .#tmux-zsh-power10k
+  ```
+
+### Overriding the Terminal Emulator
+
+If you want to use a different terminal than the default WezTerm, you can override the `terminal` option. For example, to use Alacritty instead of WezTerm with the Zellij with Nushell and Starship preset, run:
+
+```bash
+home-manager switch --flake .#zellij-nushell-starship --override 'gentlemanOptions.terminal="alacritty"'
+```
+
+Similarly, for Kitty:
+
+```bash
+home-manager switch --flake .#zellij-nushell-starship --override 'gentlemanOptions.terminal="kitty"'
+```
+
+_Note:_ These presets are defined in the flake. If you wish to create additional variants or adjust the options, modify the `gentlemanOptions` block or add new homeConfigurations.
+
+---
+
+## Manual Installation for Windows
+
+### Clone the Repository
 
 ```bash
 git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
 ```
 
----
-
-### For Windows
-
-**Important:** Windows users must follow these manual installation steps before running the automated script.
-
 #### 1. Install WSL
 
-WSL (Windows Subsystem for Linux) allows you to run Linux on Windows. Install it and set it to version 2:
+WSL (Windows Subsystem for Linux) lets you run Linux on Windows. Install and set it to version 2:
 
 ```powershell
 wsl --install
@@ -62,551 +177,133 @@ wsl --set-default-version 2
 
 #### 2. Install a Linux Distribution
 
-Install a Linux distribution (e.g., Ubuntu) in WSL:
+For example, install Ubuntu:
 
 ```powershell
 wsl --install -d Ubuntu
 ```
 
-To list available distributions:
+List available distributions:
 
 ```powershell
 wsl --list --online
 ```
 
-Install your preferred distribution:
+Then install your preferred distribution:
 
 ```powershell
 wsl --install -d <distribution-name>
 ```
 
-#### 3. Installing the Iosevka Font
+#### 3. Install the Iosevka Term Nerd Font
 
-The Iosevka Term Nerd Font is required for terminal emulators in this setup. On Windows, this installation must be done manually.
+This font is required by our terminal emulators. Download it from the [Nerd Fonts GitHub](https://github.com/ryanoasis/nerd-fonts) or its official site. Then extract and install the font files (right-click each file and select **"Install for all users"**).
 
-1. **Download the Iosevka font** from its official site or from [Nerd Fonts GitHub](https://github.com/ryanoasis/nerd-fonts).
-2. **Extract the archive** and locate the font files (`.ttf` or `.otf`).
-3. **Install the fonts**:
-   - Right-click each font file and select **"Install for all users"** to install the font system-wide.
+#### 4. Install a Terminal Emulator
 
-#### 4. Launch and Configure the Distribution
+Choose and install one of the following:
 
-Open the installed distribution to complete setup. Update it with:
+- **Alacritty:** [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases). Make sure `alacritty.exe` is in your `PATH`.
+- **WezTerm:** [Download and Install](https://wezfurlong.org/wezterm/installation.html). Also, set the `HOME` environment variable to point to `C:\Users\your-username`.
 
-```bash
-sudo apt-get update
-sudo apt-get upgrade
-```
-
-#### 5. Install a Terminal Emulator
-
-Choose and install one of the following terminal emulators:
-
-- **Alacritty**: [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases) and place `alacritty.exe` in your `PATH`.
-- **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html) and create an environment variable called `HOME` that resolves to `C:\Users\your-username`.
-- **Kitty**: [Download and Install](https://sw.kovidgoyal.net/kitty/#get-the-app).
-
-#### 6. Configuration Transfer for Terminal Emulators
+#### 5. Transfer Emulator Configurations
 
 Using PowerShell:
 
-**Alacritty Configuration**
+**Alacritty:**
 
 ```powershell
 mkdir $env:APPDATA\alacritty
 Copy-Item -Path alacritty.toml -Destination $env:APPDATA\alacritty\alacritty.toml
 
-# In alacritty.toml, uncomment and set the shell program to WSL:
-
+# In alacritty.toml, uncomment and set:
 #[shell]
 #program = "wsl.exe"
 #args = ["--cd", "~"]
 ```
 
-**WezTerm Configuration**
+**WezTerm:**
 
 ```powershell
 Copy-Item -Path .wezterm.lua -Destination $HOME
-
-# Uncomment for Windows settings in .wezterm.lua:
-
-# config.default_domain = 'WSL:Ubuntu'
-# config.front_end = "WebGpu"
-# config.max_fps = 120
 ```
 
-If WezTerm doesn't take the initial configuration:
+_If WezTerm doesn’t pick up the configuration, create a folder `C:\Users\your-username\.config\wezterm` and place `.wezterm.lua` there._
 
-- Create a `wezterm` folder in `C:\Users\your-username\.config`
-- Copy `.wezterm.lua` into `wezterm.lua` inside that directory
-- Restart WezTerm
+#### 6. Install Chocolatey and win32yank
 
-**Kitty Configuration**
+**Chocolatey** is a Windows package manager.
 
-```powershell
-Copy-Item -Path GentlemanKitty\* -Destination $HOME\.config\kitty -Recurse
-```
+**Install Chocolatey:**
 
-#### 7. Install Chocolatey and win32yank
-
-**Chocolatey** is a package manager for Windows that simplifies the installation of software.
-
-**To install Chocolatey:**
-
-- Open **PowerShell** as an administrator.
-- Run the following command:
+Open PowerShell as Administrator and run:
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; `
-[System.Net.ServicePointManager]::SecurityProtocol = `
-[System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
 iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
 ```
 
-**To install win32yank:**
-
-- After installing Chocolatey, run:
+**Install win32yank:**
 
 ```powershell
 choco install win32yank
 ```
 
-**Note:** `win32yank` is required for clipboard integration in Neovim when using WSL.
+_win32yank is needed for clipboard integration in Neovim when using WSL._
+
+#### 7. Launch and Update Your Linux Distribution
+
+Open your installed Linux distribution (WSL) and run the appropriate update commands:
+
+- **For Ubuntu/Debian:**
+
+  ```bash
+  sudo apt-get update
+  sudo apt-get upgrade
+  ```
+
+- **For Arch Linux:**
+
+  ```bash
+  sudo pacman -Syu
+  ```
+
+- **For Fedora:**
+
+  ```bash
+  sudo dnf upgrade --refresh
+  ```
 
 ---
 
-### For Linux, Arch Linux, macOS, and WSL
+## Summary
 
-#### Prerequisites
+With the new Nix Flake method, you can automatically install your complete development environment with a single, declarative configuration. Key points:
 
-- **macOS or Linux:** Ensure you have one of these operating systems.
-- **Administrator privileges (sudo):** You'll need administrator access to install some tools.
+- **Defaults:**
 
-#### 1. Install Dependencies
+  - Terminal: WezTerm
+  - Shell: Nushell
+  - Multiplexer: Zellij
 
-###### Arch Linux
+- **Overriding Options:**  
+  Modify the `gentlemanOptions` block in `flake.nix` or use Nix overrides at build time.
 
-```bash
-sudo pacman -Syu --noconfirm
-sudo pacman -S --needed --noconfirm base-devel curl file git wget
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-. $HOME/.cargo/env
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+- **Local Configuration Files:**  
+  All configurations are defined inline in local modules (e.g., `fish.nix`, `nushell.nix`, etc.) and are deployed automatically to system-specific locations. For example, the Nushell configuration is copied to:
 
-###### Linux
+  - **macOS:** `~/Library/Application Support/nushell`
+  - **Linux/WSL:** `~/.config/nushell`
 
-```bash
-sudo apt-get update
-sudo apt-get install -y build-essential curl file git
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-. $HOME/.cargo/env
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+- **Dependencies & Automatic Replacements:**  
+  The flake installs all necessary dependencies (git, curl, rustc, cargo, tmux, etc.) and performs placeholder replacements in configuration files (e.g., replacing “tmux” with “zellij” when applicable).
 
-###### Mac
+- **Windows Users:**  
+  Must install and configure WSL, manually install the Iosevka Term Nerd Font, set up Alacritty or WezTerm, install Chocolatey with win32yank, and finally launch and update the Linux distribution.
 
-```bash
-xcode-select --install
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-. $HOME/.cargo/env
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-#### 2. Install Iosevka Term Nerd Font (icons and font style)
-
-###### Arch Linux / Linux
-
-```bash
-mkdir -p ~/.local/share/fonts
-wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip
-unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
-fc-cache -fv
-```
-
-###### Mac
-
-```bash
-brew tap homebrew/cask-fonts
-brew install --cask font-iosevka-term-nerd-font
-```
-
-#### 3. Choose and Install Terminal Emulator
-
-##### Alacritty
-
-###### Arch Linux
-
-```bash
-sudo pacman -S --noconfirm alacritty
-mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
-```
-
-###### Mac
-
-```bash
-brew install alacritty --cask
-mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
-```
-
-###### Linux
-
-```bash
-sudo add-apt-repository ppa:aslatter/ppa; sudo apt update; sudo apt install alacritty
-mkdir -p ~/.config/alacritty && cp alacritty.toml ~/.config/alacritty/alacritty.toml
-```
-
-##### WezTerm
-
-###### Arch Linux
-
-```bash
-sudo pacman -S --noconfirm wezterm
-mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-```
-
-###### Mac
-
-```bash
-brew install wezterm --cask
-mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-```
-
-###### Linux
-
-```bash
-brew tap wez/wezterm-linuxbrew; brew install wezterm
-mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
-```
-
-##### Ghostty
-
-###### Arch Linux
-
-```bash
-pacman -S ghostty
-mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
-```
-
-###### Mac
-
-```bash
-brew install --cask ghostty
-mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
-```
-
-###### Linux
-
-```bash
-brew install --cask ghostty
-mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
-```
-
-##### Kitty
-
-###### Mac
-
-```bash
-brew install --cask kitty
-mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
-```
-
-**Reload the config after install doing `ctrl+shift+,` | `cmd+shift+,`**
-
-#### 4. Choose and Install a Shell
-
-##### Nushell
-
-###### 1. Step
-
-```bash
-cp -rf bash-env-json ~/.config/
-cp -rf bash-env.nu ~/.config/
-brew install nushell carapace zoxide atuin jq bash starship fzf
-mkdir -p ~/.cache/starship
-mkdir -p ~/.cache/carapace
-mkdir -p ~/.local/share/atuin
-cp -rf starship.toml ~/.config/
-```
-
-###### 2. Step
-
-**_Arch Linux / Linux_**
-
-```bash
-mkdir -p ~/.config/nushell
-run_command "cp -rf GentlemanNushell/* ~/.config/nushell/"
-```
-
-**_Mac_**
-
-```bash
-mkdir -p ~/Library/Application\ Support/nushell
-
-## udpate config to use mac
-if grep -q "/home/linuxbrew/.linuxbrew/bin" GentlemanNushell/env.nu; then
-  awk -v search="/home/linuxbrew/.linuxbrew/bin" -v replace="    | prepend '/opt/homebrew/bin'" '
-  $0 ~ search {print replace; next}
-  {print}
-  ' GentlemanNushell/env.nu > GentlemanNushell/env.nu.tmp && mv GentlemanNushell/env.nu.tmp GentlemanNushell/env.nu
-else
-  echo "    | prepend '/opt/homebrew/bin'" >> GentlemanNushell/env.nu
-fi
-
-cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
-```
-
-###### Fish + Starship
-
-```bash
-brew install fish carapace zoxide atuin starship fzf
-mkdir -p ~/.cache/starship
-mkdir -p ~/.cache/carapace
-mkdir -p ~/.local/share/atuin
-cp -rf starship.toml ~/.config/
-cp -rf GentlemanFish/fish ~/.config
-```
-
-###### Zsh + Power10k\*\*
-
-```bash
-brew install zsh carapace zoxide atuin fzf
-brew install zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete
-mkdir -p ~/.cache/carapace
-mkdir -p ~/.local/share/atuin
-cp -rf GentlemanZsh/.zshrc ~/
-cp -rf GentlemanZsh/.p10k.zsh ~/
-cp -rf GentlemanZsh/.oh-my-zsh ~/
-brew install powerlevel10k
-```
-
-#### 5. Choose and Install Window Manager
-
-##### Tmux
-
-```bash
-brew install tmux
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-mkdir -p ~/.tmux
-cp -r GentlemanTmux/.tmux/* ~/.tmux/
-cp GentlemanTmux/.tmux.conf ~/
-tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
-tmux kill-session -t plugin-installation
-```
-
-##### Zellij
-
-###### 1. Step => Install Zellij
-
-```bash
-cargo install zellij
-mkdir -p ~/.config/zellij
-cp -r GentlemanZellij/zellij/* ~/.config/zellij/
-```
-
-###### 2. Step => If you use ZSH
-
-```bash
-# update or replace TMUX
-if grep -q "TMUX" ~/.zshrc; then
-  awk -v search="TMUX" -v replace='WM_VAR="/$ZELLIJ"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
-else
-  echo 'WM_VAR="/$ZELLIJ"' >> ~/.zshrc
-fi
-
-# update or replace tmux
-if grep -q "tmux" ~/.zshrc; then
-  awk -v search="tmux" -v replace='WM_CMD="zellij"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
-else
-  echo 'WM_CMD="zellij"' >> ~/.zshrc
-fi
-```
-
-###### 3. Step => If you use Fish
-
-```bash
-if grep -q "TMUX" ~/.config/fish/config.fish; then
-  awk -v search="TMUX" -v replace="if not set -q ZELLIJ" '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.config/fish/config.fish > ~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
-else
-  echo "if not set -q ZELLIJ" >> ~/.config/fish/config.fish
-fi
-
-# update or replace tmux
-if grep -q "tmux" ~/.config/fish/config.fish; then
-  awk -v search="tmux" -v replace="zellij" '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.config/fish/config.fish > ~/.config/fish/config.fish.tmp && mv ~/.config/fish/config.fish.tmp ~/.config/fish/config.fish
-else
-  echo "zellij" >> ~/.config/fish/config.fish
-fi
-```
-
-###### 3. Step => If you use Nushell
-
-**_Mac_**
-
-```bash
-# update or replace "tmux"
-if grep -q '"tmux"' GentlemanNushell/config.nu; then
-  awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' GentlemanNushell/config.nu > GentlemanNushell/config.nu.tmp && mv GentlemanNushell/config.nu.tmp GentlemanNushell/config.nu
-else
-  echo 'let MULTIPLEXER = "zellij"' >> GentlemanNushell/config.nu
-fi
-
-# update or replace "TMUX"
-if grep -q '"TMUX"' GentlemanNushell/config.nu; then
-  awk -v search='"TMUX"' -v replace='let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' GentlemanNushell/config.nu > GentlemanNushell/config.nu.tmp && mv GentlemanNushell/config.nu.tmp GentlemanNushell/config.nu
-else
-  echo 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' >> GentlemanNushell/config.nu
-fi
-
-# copy files to nushell support directory
-cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
-```
-
-**_Arch Linux / Linux_**
-
-```bash
-if grep -q '"tmux"' ~/.config/nushell/config.nu; then
-  awk -v search='"tmux"' -v replace='let MULTIPLEXER = "zellij"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.config/nushell/config.nu > ~/.config/nushell/config.nu.tmp && mv ~/.config/nushell/config.nu.tmp ~/.config/nushell/config.nu
-else
-  echo 'let MULTIPLEXER = "zellij"' >> ~/.config/nushell/config.nu
-fi
-
-# update or replace "TMUX"
-if grep -q '"TMUX"' ~/.config/nushell/config.nu; then
-  awk -v search='"TMUX"' -v replace='let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' '
-  $0 ~ search {print replace; next}
-  {print}
-  ' ~/.config/nushell/config.nu > ~/.config/nushell/config.nu.tmp && mv ~/.config/nushell/config.nu.tmp ~/.config/nushell/config.nu
-else
-  echo 'let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"' >> ~/.config/nushell/config.nu
-fi
-```
-
-#### 6. Install NVIM
-
-```bash
-brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
-mkdir -p ~/.config/nvim
-cp -r GentlemanNvim/nvim/* ~/.config/nvim/
-# update or replace /your/notes/path
-if grep -q "/your/notes/path" "$HOME/.config/nvim/lua/plugins/obsidian.lua"; then
-  awk -v search="/your/notes/path" -v replace="path = '$OBSIDIAN_PATH'" '
-  $0 ~ search {print replace; next}
-  {print}
-  ' "$obsidian_config_file" > "${obsidian_config_file}.tmp" && mv "${obsidian_config_file}.tmp" "$obsidian_config_file"
-else
-  echo "path = '$OBSIDIAN_PATH'" >> "$obsidian_config_file"
-fi
-```
-
-- **Manual Obsidian Configuration**
-
-  To set up your Obsidian vault path in Neovim:
-
-  1. **Create the directory for your Obsidian notes** (replace `/path/to/your/notes` with your desired path):
-
-     ```bash
-     mkdir -p /path/to/your/notes
-     ```
-
-  2. **Create a `templates` folder** inside your notes directory:
-
-     ```bash
-     mkdir -p /path/to/your/notes/templates
-     ```
-
-  3. **Edit the `obsidian.lua` file** to configure the vault path:
-
-     ```bash
-     nvim ~/.config/nvim/lua/plugins/obsidian.lua
-     ```
-
-  4. **Update the `path` setting** in `obsidian.lua`:
-
-     ```lua
-     path = "/path/to/your/notes",
-     ```
-
-  5. **Save and close** the file.
-
-#### 7. Set Default Shell
-
-###### 1. Step
-
-**_ZSH_**
-
-```bash
-shell_path=$(which "zsh")
-```
-
-**_Fish_**
-
-```bash
-shell_path=$(which "fish")
-```
-
-**_Nushell_**
-
-```bash
-shell_path=$(which "nu")
-```
-
-###### 2. Step => Execute to Replace Default Shell
-
-```bash
-if [ -n "$shell_path" ]; then
-  # Add shell to /etc/shells if not already present
-  sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
-
-  # Change the default shell for the user
-  sudo chsh -s "$shell_path" "$USER"
-
-  # Verify if the shell has been changed
-  if [ "$SHELL" != "$shell_path" ]; then
-    echo -e "${RED}Error: Shell did not change. Please check manually.${NC}"
-    echo -e "${GREEN}Command: sudo chsh -s $shell_path \$USER ${NC}"
-  else
-    echo -e "${GREEN}Shell changed to $shell_path successfully.${NC}"
-  fi
-else
-  echo -e "${RED}Shell $shell_choice not found.${NC}"
-fi
-
-# Execute the chosen shell
-exec $shell_choice
-```
-
-#### 8. Restart the Shell or Computer
-
-- **Close and reopen your terminal**, or **restart your computer** or **WSL instance** for the changes to take effect.
-
----
-
-You're done! You have manually configured your development environment following the Gentleman.Dots guide. Enjoy your new setup!
-
-**Note:** If you encounter any problems during configuration, consult the official documentation of the tools or seek help online.
+For any questions or further customizations, please open an issue or submit a pull request.
 
 **Happy coding!**
 
-952189428
+— Gentleman
