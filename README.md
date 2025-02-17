@@ -70,7 +70,7 @@ nix-shell '<home-manager>' -A install
 
    ```bash
    nix profile install .#gentleman-dots
-   home-manager switch --flake .#gentleman
+   home-manager switch --flake .#zellij-nushell-starship
    ```
 
 This flake uses local modules (e.g., `fish.nix`, `nushell.nix`, `kitty.nix`, etc.) that contain inline configurations for each tool. It also installs all necessary dependencies based on your options and automatically performs placeholder replacements in configuration files—e.g., if you choose Zellij as your multiplexer, it will update placeholders in your .zshrc, config.fish, and config.nu accordingly. Files are deployed to system-specific locations; for example, the Nushell configuration is copied to:
