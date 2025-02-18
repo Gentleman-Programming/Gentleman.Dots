@@ -1,5 +1,4 @@
 
-{ config, pkgs, ... }:
 {
   home.file = {
     ".config/ghostty/config" = {

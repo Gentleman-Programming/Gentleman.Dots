@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    ghostty = { url = "github:ghostty-org/ghostty"; };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,16 +23,16 @@
             inherit pkgs;
             modules = [
               ./nushell.nix  
+              ./ghostty.nix  
               ./wezterm.nix  
               ./zellij.nix   
               ./starship.nix 
               ./nvim.nix     
               {
-                home.username = "YourUser";  # ensure this is your username
-                home.homeDirectory = "/Users/YourUser"; # ensure this is your home directory
+                home.username = "anua";  # ensure this is your username
+                home.homeDirectory = "/Users/anua"; # ensure this is your home directory
                 home.stateVersion = "24.11";  # use a valid version
                 home.packages = [
-                  pkgs.wezterm
                   pkgs.zellij
                   pkgs.nushell
                   pkgs.volta

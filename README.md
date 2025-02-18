@@ -16,7 +16,7 @@ This repository contains customized configurations for a complete development en
 - **Nushell**
 - Zellij
 - Terminal emulators:
-  - **WezTerm** (default)
+  - **WezTerm**
   - **Ghostty**
 
 You can now automatically set up your environment using our new Nix Flake approach with Home Manager. This method is fully declarative and reproducible, and it lets you easily override default options. In our flake, all configurations are defined inline in local modules (e.g., `zellij.nix`, `nushell.nix`, etc.), and the flake also installs all the required dependencies (git, curl, rustc, cargo, zellij, neovim, etc.).
@@ -108,7 +108,8 @@ Modify the parameters in your `flake.nix` file as follows:
             inherit pkgs;
             modules = [
               ./nushell.nix
-              ./wezterm.nix # change to ./ghostty.nix for Ghostty
+              ./wezterm.nix
+              ./ghostty.nix
               ./zellij.nix
               ./starship.nix
               ./nvim.nix
@@ -117,8 +118,6 @@ Modify the parameters in your `flake.nix` file as follows:
                 home.homeDirectory = "/Users/YourUser"; # On macOS; on Linux use "/home/YourUser"
                 home.stateVersion = "24.11";  # Use a valid version
                 home.packages = [
-                  pkgs.wezterm # change wezterm for ghostty if wanted
-                  #pkgs.ghostty
                   pkgs.zellij
                   pkgs.nushell
                   pkgs.volta
@@ -156,10 +155,10 @@ Modify the parameters in your `flake.nix` file as follows:
 
 - Change the line `home.username = "YourUser";` to reflect your machine's username.
 
-- Change the terminal emulator, you can choose between `Ghostty` or `Wezterm (default)`
+- Install your terminal emulator, configs will we already applied:
 
-  - change the module ./wezterm.nix for ./ghostty.nix and remember to refresh the configuration after installation _(shift + command + ,)_
-  - just change pkgs.wezter for pkgs.ghostty
+  - Wezterm: <https://wezterm.org/installation.html>
+  - Ghostty: <https://ghostty.org/download>
 
 - Modify `home.homeDirectory` accordingly:
 
