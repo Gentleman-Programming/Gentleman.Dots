@@ -205,8 +205,8 @@ start_multiplexer
   nushellEnvText = ''
 def create_left_prompt [] {
     let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
-        null => $env.PWD;
-        "" => "~";
+        null => $env.PWD
+        "" => "~"
         $relative_pwd => ([~ $relative_pwd] | path join)
     }
 
