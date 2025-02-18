@@ -10,7 +10,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: 
+  outputs = { nixpkgs, home-manager, ... }: 
 
     let
       system = "aarch64-darwin";  # make sure this matches your system
@@ -27,8 +27,8 @@
               ./starship.nix 
               ./nvim.nix     
               {
-                home.username = "anua";  # ensure this is your username
-                home.homeDirectory = "/Users/anua"; # ensure this is your home directory
+                home.username = "YourUser";  # ensure this is your username
+                home.homeDirectory = "/Users/YourUser"; # ensure this is your home directory
                 home.stateVersion = "24.11";  # use a valid version
                 home.packages = [
                   pkgs.wezterm
@@ -53,7 +53,6 @@
                 ];
                 programs.nushell.enable = true;
                 programs.starship.enable = true;
-                home.file.".config/nvim".source = ./nvim; # ensure this file exists
 
                 home.activation.createObsidianDirs = ''
                   mkdir -p "$HOME/.config/obsidian/templates"

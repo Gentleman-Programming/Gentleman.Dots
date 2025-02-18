@@ -1,5 +1,9 @@
-{ config, pkgs, ... }:
 {
+
+  home.file = {
+    ".config/zellij/plugins" = { source = ./zellij; };
+  };
+
   home.file = {
     ".config/zellij/config.kdl" = {
       text = ''
@@ -346,6 +350,7 @@ themes {
 theme "oldWorld"
 default_mode "locked"
 scrollback_editor "nvim"
+default_layout "work_oldWorld"
       '';
     };
     ".config/zellij/layouts/work_oldWorld.kdl" = {

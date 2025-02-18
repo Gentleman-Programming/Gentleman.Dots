@@ -2,6 +2,12 @@
 
 ![Screenshot](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
 
+Hey Gentleman, here’s the updated README in English with a section that lists the possible values for the `system` field:
+
+---
+
+# Gentleman.Dots
+
 ## Description
 
 This repository contains customized configurations for a complete development environment, including:
@@ -25,141 +31,149 @@ You can now automatically set up your environment using our new Nix Flake approa
 
 ## Previous Steps
 
-### Installing Nix and Home Manager
+## Installation Steps (for macOS/Linux/WSL)
 
-Before running the automated installation commands, make sure Nix is installed:
-
-- **macOS and Linux:**
-
-  ```bash
-  curl -L https://nixos.org/nix/install | sh
-  . ~/.nix-profile/etc/profile.d/nix.sh
-  ```
-
-- **WSL (Windows Subsystem for Linux):**
-
-  Open your WSL terminal and run:
-
-  ```bash
-  curl -L https://nixos.org/nix/install | sh
-  . ~/.nix-profile/etc/profile.d/nix.sh
-  ```
-
-Next, install Home Manager (see the official instructions or use our flake method):
+### 1. Install the Nix Package Manager
 
 ```bash
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-nix-channel --update
-nix-shell '<home-manager>' -A install
+sh <(curl -L https://nixos.org/nix/install)
 ```
 
----
+### 2. Configure Nix to Use Extra Experimental Features
 
-## Automatic Installation (Recommended for Linux, macOS, and WSL)
+To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), open the configuration file and add the following line:
 
-### The Easy Way – Let Nix Do the Heavy Lifting
+```bash
+sudo nvim /etc/nix/nix.conf
+```
 
-1. **Clone the Repository:**
+Add:
 
-   ```bash
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
-   cd Gentleman.Dots
-   ```
+```
+extra-experimental-features = flakes nix-command
+```
 
-2. **Run the Installation Commands:**
+_(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
 
-   ```bash
-   nix profile install .#gentleman-dots
-   home-manager switch --flake .#zellij-nushell-starship
-   ```
+### 3. Prepare the `flake.nix` File
 
-This flake uses local modules (e.g., `fish.nix`, `nushell.nix`, `kitty.nix`, etc.) that contain inline configurations for each tool. It also installs all necessary dependencies based on your options and automatically performs placeholder replacements in configuration files—e.g., if you choose Zellij as your multiplexer, it will update placeholders in your .zshrc, config.fish, and config.nu accordingly. Files are deployed to system-specific locations; for example, the Nushell configuration is copied to:
+Before running the next command, you need to make a few changes in the `flake.nix` file to match your environment. **Make sure to update the `system` field with your system's value**. Below are the possible values:
 
-- **macOS:** `~/Library/Application Support/nushell`
-- **Linux/WSL:** `~/.config/nushell`
+- **"aarch64-darwin"**  
+  _Architecture: Apple Silicon (M1, M2, M3, etc.)._  
+  _Operating System: macOS._
 
----
+- **"x86_64-darwin"**  
+  _Architecture: Intel (older Macs)._  
+  _Operating System: macOS._
 
-## Available Configurations
+- **"x86_64-linux"**  
+  _Architecture: 64-bit Intel/AMD._  
+  _Operating System: Linux._
 
-The default options are defined in the flake as follows:
+- **"aarch64-linux"**  
+  _Architecture: 64-bit ARM (e.g., Raspberry Pi 4, ARM servers)._  
+  _Operating System: Linux._
+
+- **"i686-linux"**  
+  _Architecture: 32-bit Intel/AMD (obsolete)._  
+  _Operating System: Linux._
+
+- **"riscv64-linux"**  
+  _Architecture: 64-bit RISC-V._  
+  _Operating System: Linux (experimental)._
+
+- **"x86_64-freebsd"**  
+  _Architecture: 64-bit Intel/AMD._  
+  _Operating System: FreeBSD._
+
+Modify the parameters in your `flake.nix` file as follows:
 
 ```nix
-gentlemanOptions = {
-  terminal = "wezterm";      # Default terminal is WezTerm
-  shell = "nushell";         # Default shell is Nushell
-  windowManager = "zellij";  # Default multiplexer is Zellij
-  installNeovim = true;
-  osType = if system == "x86_64-darwin" then "mac" else "linux";
-  starship = true;           # Starship is enabled by default
-  powerlevel10k = false;
-  useTmux = false;
-};
+{
+  description = "Gentleman: Single config for all systems in one go";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { nixpkgs, home-manager, ... }:
+
+    let
+      system = "aarch64-darwin";  # Make sure this matches your system (e.g., "x86_64-linux" for Linux)
+      pkgs = import nixpkgs { inherit system; };
+    in {
+      homeConfigurations = {
+        "gentleman" =
+          home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              ./nushell.nix
+              ./wezterm.nix
+              ./zellij.nix
+              ./starship.nix
+              ./nvim.nix
+              {
+                home.username = "YourUser";  # Here, "YourUser" must be your machine's username
+                home.homeDirectory = "/Users/YourUser"; # On macOS; on Linux use "/home/YourUser"
+                home.stateVersion = "24.11";  # Use a valid version
+                home.packages = [
+                  pkgs.wezterm
+                  pkgs.zellij
+                  pkgs.nushell
+                  pkgs.volta
+                  pkgs.carapace
+                  pkgs.zoxide
+                  pkgs.atuin
+                  pkgs.jq
+                  pkgs.bash
+                  pkgs.starship
+                  pkgs.fzf
+                  pkgs.neovim
+                  pkgs.nodejs  # npm comes with nodejs
+                  pkgs.gcc
+                  pkgs.fd
+                  pkgs.ripgrep
+                  pkgs.coreutils
+                  pkgs.bat
+                  pkgs.lazygit
+                ];
+                programs.nushell.enable = true;
+                programs.starship.enable = true;
+
+                home.activation.createObsidianDirs = ''
+                  mkdir -p "$HOME/.config/obsidian/templates"
+                '';
+              }
+            ];
+          };
+      };
+    };
+}
 ```
 
-You can override these defaults by editing the `gentlemanOptions` block in `flake.nix` or by selecting one of the preset configurations listed below.
+**Important:**
 
-### Preset Configurations
+- Change the line `home.username = "YourUser";` to reflect your machine's username.
+- Modify `home.homeDirectory` accordingly:
+  - On macOS: `/Users/YourUser`
+  - On Linux: `/home/YourUser`
+- **Don't forget to update the `system` field** (currently set to `"aarch64-darwin"`) with the appropriate value from the list above.
 
-To activate one, run the corresponding command:
+### 4. Run the Installation
 
-- **Zellij with Fish and Starship:**
-
-  ```bash
-  home-manager switch --flake .#zellij-fish-starship
-  ```
-
-- **Zellij with Nushell and Starship:**
-
-  ```bash
-  home-manager switch --flake .#zellij-nushell-starship
-  ```
-
-- **Zellij with Zsh and Powerlevel10k:**
-
-  ```bash
-  home-manager switch --flake .#zellij-zsh-power10k
-  ```
-
-- **Tmux with Fish and Starship:**
-
-  ```bash
-  home-manager switch --flake .#tmux-fish-starship
-  ```
-
-- **Tmux with Nushell and Starship:**
-
-  ```bash
-  home-manager switch --flake .#tmux-nushell-starship
-  ```
-
-- **Tmux with Zsh and Powerlevel10k:**
-
-  ```bash
-  home-manager switch --flake .#tmux-zsh-power10k
-  ```
-
-- **Ghostty con Zellij, Nushell y Starship:**
-
-  ```bash
-  home-manager switch --flake .#ghostty-zellij-nushell-starship
-  ```
-
-### Overriding the Terminal Emulator
-
-If you want to use a different terminal than the default WezTerm, you can override the `terminal` option. For example, to use Alacritty instead of WezTerm with the Zellij with Nushell and Starship preset, run:
+Once you're in the repo directory and have made the above changes, run:
 
 ```bash
-home-manager switch --flake .#zellij-nushell-starship --override 'gentlemanOptions.terminal="alacritty"'
+nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
 ```
 
-Similarly, for Kitty:
-
-```bash
-home-manager switch --flake .#zellij-nushell-starship --override 'gentlemanOptions.terminal="kitty"'
-```
-
-_Note:_ These presets are defined in the flake. If you wish to create additional variants or adjust the options, modify the `gentlemanOptions` block or add new homeConfigurations.
+_(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
 ---
 
@@ -281,20 +295,7 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
   sudo dnf upgrade --refresh
   ```
 
----
-
 ## Summary
-
-With the new Nix Flake method, you can automatically install your complete development environment with a single, declarative configuration. Key points:
-
-- **Defaults:**
-
-  - Terminal: WezTerm
-  - Shell: Nushell
-  - Multiplexer: Zellij
-
-- **Overriding Options:**  
-  Modify the `gentlemanOptions` block in `flake.nix` or use Nix overrides at build time.
 
 - **Local Configuration Files:**  
   All configurations are defined inline in local modules (e.g., `fish.nix`, `nushell.nix`, etc.) and are deployed automatically to system-specific locations. For example, the Nushell configuration is copied to:
