@@ -191,6 +191,7 @@ sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm base-devel curl file git wget
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 ###### Linux
@@ -200,6 +201,7 @@ sudo apt-get update
 sudo apt-get install -y build-essential curl file git
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 ###### Mac
@@ -208,6 +210,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 xcode-select --install
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 . $HOME/.cargo/env
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 #### 2. Install Iosevka Term Nerd Font (icons and font style)
@@ -273,6 +276,29 @@ brew tap wez/wezterm-linuxbrew; brew install wezterm
 mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
 ```
 
+##### Ghostty
+
+###### Arch Linux
+
+```bash
+pacman -S ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
+###### Mac
+
+```bash
+brew install --cask ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
+###### Linux
+
+```bash
+brew install --cask ghostty
+mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
+```
+
 ##### Kitty
 
 ###### Arch Linux
@@ -288,6 +314,8 @@ mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 brew install --cask kitty
 mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 ```
+
+**Reload the config after install doing `ctrl+shift+,` | `cmd+shift+,`**
 
 #### 4. Choose and Install a Shell
 
@@ -536,7 +564,7 @@ fi
 shell_path=$(which "zsh")
 ```
 
-**\*Fish**
+**_Fish_**
 
 ```bash
 shell_path=$(which "fish")
@@ -584,3 +612,5 @@ You're done! You have manually configured your development environment following
 **Note:** If you encounter any problems during configuration, consult the official documentation of the tools or seek help online.
 
 **Happy coding!**
+
+952189428

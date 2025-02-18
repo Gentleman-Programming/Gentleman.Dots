@@ -112,7 +112,6 @@ $env.PATH = (
 mkdir ~/.cache/starship
 mkdir ~/.cache/carapace
 mkdir ~/.local/share/atuin
-$env.__zoxide_hooked = true
 $env.STARSHIP_CONFIG = $env.HOME | path join ".config/starship.toml"
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
 
