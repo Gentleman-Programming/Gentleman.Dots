@@ -901,10 +901,15 @@ $env.EDITOR = "nvim"
 $env.PATH = (
     $env.PATH
     | split row (char esep)
+    | prepend '/opt/homebrew/bin'
+    | prepend '/Users/anua/.volta/bin'
+    | prepend '/nix/var/nix/profiles/default/bin'
+    | prepend '/Users/anua/.bun/bin'
     | prepend '/home/linuxbrew/.linuxbrew/bin'
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
+    | append '/usr/local/lib/*'
 )
 
 mkdir ~/.cache/starship

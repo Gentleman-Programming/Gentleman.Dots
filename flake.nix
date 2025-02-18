@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/archive/release-23.05.tar.gz";
+      url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
@@ -35,9 +35,9 @@
             (if config.gentlemanOptions.terminal == "alacritty" then [ pkgs.alacritty ] else [])
             (if config.gentlemanOptions.terminal == "wezterm" then [ pkgs.wezterm ] else [])
             (if config.gentlemanOptions.terminal == "kitty" then [ pkgs.kitty ] else [])
-            (if config.gentlemanOptions.shell == "zsh" then [ pkgs.zsh ] else [])
-            (if config.gentlemanOptions.shell == "fish" then [ pkgs.fish ] else [])
-            (if config.gentlemanOptions.shell == "nushell" then [ pkgs.nushell ] else [])
+            (if config.gentlemanOptions.shell == "zsh" then [ pkgs.zsh pkgs.volta pkgs.carapace pkgs.zoxide pkgs.atuin pkgs.fzf pkgs.zsh-autosuggestions pkgs.zsh-syntax-highlighting pkgs.zsh-autocomplete ] else [])
+            (if config.gentlemanOptions.shell == "fish" then [ pkgs.fish pkgs.volta pkgs.carapace pkgs.zoxide pkgs.atuin pkgs.starship pkgs.fzf ] else [])
+            (if config.gentlemanOptions.shell == "nushell" then [ pkgs.nushell pkgs.volta pkgs.carapace pkgs.zoxide pkgs.atuin pkgs.jq pkgs.bash pkgs.starship pkgs.fzf ] else [])
             (if (config.gentlemanOptions.windowManager == "tmux") || config.gentlemanOptions.useTmux then [ pkgs.tmux ] else [])
             (if config.gentlemanOptions.windowManager == "zellij" then [ pkgs.zellij ] else [])
             (if config.gentlemanOptions.installNeovim then [ pkgs.neovim pkgs.nodejs pkgs.npm pkgs.gcc pkgs.fzf pkgs.fd pkgs.ripgrep pkgs.coreutils pkgs.bat pkgs.lazygit ] else [])
