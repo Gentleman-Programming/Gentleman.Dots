@@ -139,6 +139,12 @@ To activate one, run the corresponding command:
   home-manager switch --flake .#tmux-zsh-power10k
   ```
 
+- **Ghostty con Zellij, Nushell y Starship:**
+
+  ```bash
+  home-manager switch --flake .#ghostty-zellij-nushell-starship
+  ```
+
 ### Overriding the Terminal Emulator
 
 If you want to use a different terminal than the default WezTerm, you can override the `terminal` option. For example, to use Alacritty instead of WezTerm with the Zellij with Nushell and Starship preset, run:

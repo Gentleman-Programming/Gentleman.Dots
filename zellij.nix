@@ -211,9 +211,6 @@ keybinds clear-defaults=true {
     shared_except "locked" "entersearch" "renametab" "renamepane" "move" {
         bind "m" { SwitchToMode "move"; }
     }
-    shared_except "locked" "entersearch" "search" "renametab" "renamepane" "session" {
-        bind "o" { SwitchToMode "session"; }
-    }
     shared_except "locked" "tab" "entersearch" "renametab" "renamepane" {
         bind "t" { SwitchToMode "tab"; }
     }
@@ -305,45 +302,45 @@ themes {
     }
 
     rose_pine_moon {
-        fg "#e0def4"        // light text
-        bg "#191724"        // dark background
-        red "#eb6f92"       // refined pink
-        green "#31748f"     // soft teal
-        yellow "#f6c177"    // soft yellow
-        blue "#9ccfd8"      // sky blue
-        magenta "#c4a7e7"   // soft purple
-        cyan "#9ccfd8"      // same as sky blue for consistency
-        orange "#f6c177"    // same as soft yellow
-        black "#191724"     // darker background (almost black)
-        white "#e0def4"     // same as light text
+        fg "#e0def4"
+        bg "#191724"
+        red "#eb6f92"
+        green "#31748f"
+        yellow "#f6c177"
+        blue "#9ccfd8"
+        magenta "#c4a7e7"
+        cyan "#9ccfd8"
+        orange "#f6c177"
+        black "#191724"
+        white "#e0def4"
     }
 
     sakura {
-      fg "#c5a3a9"        // na: main text
-      bg "#1c1a1c"        // bl: dark background
-      red "#2B1720"       // ia: pink
-      green "#878fb9"     // va: blue
-      yellow "#9e97d0"    // ca: purple (replaces yellow)
-      blue "#878fb9"      // va: blue
-      magenta "#9e97d0"   // ca: purple
-      cyan "#878fb9"      // va: blue
-      orange "#9e97d0"    // ca: purple
-      black "#1c1a1c"     // bl: background
-      white "#c5a3a9"     // na: light text
+      fg "#c5a3a9"
+      bg "#1c1a1c"
+      red "#2B1720"
+      green "#878fb9"
+      yellow "#9e97d0"
+      blue "#878fb9"
+      magenta "#9e97d0"
+      cyan "#878fb9"
+      orange "#9e97d0"
+      black "#1c1a1c"
+      white "#c5a3a9"
     }
 
     oldWorld {
-      fg "#C9C7CD"        // na: main text (light gray)
-      bg "#000000"        // bl: dark background (almost black)
-      red "#EA83A5"       // ia: intense pink
-      green "#90B99F"     // va: soft green
-      yellow "#E6B99D"    // ca: beige (replaces yellow)
-      blue "#85B5BA"      // va: blue-green
-      magenta "#92A2D5"   // ca: lavender blue
-      cyan "#85B5BA"      // va: blue-green
-      orange "#F5A191"    // ca: light peach
-      black "#000000"     // bl: dark background (almost black)
-      white "#C9C7CD"     // na: light text (light gray)
+      fg "#C9C7CD"
+      bg "#000000"
+      red "#EA83A5"
+      green "#90B99F"
+      yellow "#E6B99D"
+      blue "#85B5BA"
+      magenta "#92A2D5"
+      cyan "#85B5BA"
+      orange "#F5A191"
+      black "#000000"
+      white "#C9C7CD"
     }
 }
 theme "oldWorld"
@@ -365,28 +362,28 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-                format_left   "{mode} #[fg=#E29ECA,bold]{session}{tabs}"  
+                format_left   "{mode} #[fg=#E29ECA,bold]{session}{tabs}"
                 format_right  "{command_git_branch} {datetime}"
                 format_space  ""
 
                 border_enabled  "false"
                 border_char     "─"
-                border_format   "#[fg=#161617]{char}"  
+                border_format   "#[fg=#161617]{char}"
                 border_position "top"
 
                 hide_frame_for_single_pane "true"
-                mode_normal  "#[bg=#85B5BA] "  
-                mode_tmux    "#[bg=#EA83A5] "  
+                mode_normal  "#[bg=#85B5BA] "
+                mode_tmux    "#[bg=#EA83A5] "
 
-                tab_normal   "#[fg=#C9C7CD] {name} "  
-                tab_active   "#[fg=#92A2D5,bold,italic] {name} "  
+                tab_normal   "#[fg=#C9C7CD] {name} "
+                tab_active   "#[fg=#92A2D5,bold,italic] {name} "
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                command_git_branch_format      "#[fg=#85B5BA] {stdout} "  
+                command_git_branch_format      "#[fg=#85B5BA] {stdout} "
                 command_git_branch_interval    "10"
                 command_git_branch_rendermode  "static"
 
-                datetime        "#[fg=#C9C7CD,bold] {format} "  
+                datetime        "#[fg=#C9C7CD,bold] {format} "
                 datetime_format "%A, %d %b %Y %H:%M"
                 datetime_timezone "Europe/Berlin"
             }

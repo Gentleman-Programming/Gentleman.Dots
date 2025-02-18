@@ -20,7 +20,7 @@ return {
       workspaces = {
         {
           name = "GentlemanNotes", -- Name of the workspace
-          path = "/your/notes/path", -- Path to the notes directory
+          path = os.getenv("HOME") .. "/.config/obsidian", -- Path to the notes directory
         },
       },
 
