@@ -158,7 +158,7 @@ Modify the parameters in your `flake.nix` file as follows:
 - Install your terminal emulator, configs will we already applied:
 
   - Wezterm: <https://wezterm.org/installation.html>
-  - Ghostty: <https://ghostty.org/download>
+  - Ghostty: <https://ghostty.org/download> _Remember to reload Ghostty's Config inside the terminal_**(shift + command + ,)**
 
 - Modify `home.homeDirectory` accordingly:
 

@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    ghostty = { url = "github:ghostty-org/ghostty"; };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,8 +28,8 @@
               ./starship.nix 
               ./nvim.nix     
               {
-                home.username = "anua";  # ensure this is your username
-                home.homeDirectory = "/Users/anua"; # ensure this is your home directory
+                home.username = "YourUser";  # Here, "YourUser" must be your machine's username
+                home.homeDirectory = "/Users/YourUser"; # On macOS; on Linux use "/home/YourUser"
                 home.stateVersion = "24.11";  # use a valid version
                 home.packages = [
                   pkgs.zellij
