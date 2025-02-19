@@ -1,10 +1,9 @@
-{ ... }:
+{ lib, ... }:
 {
-  home.file = {
-    ".config/nvim" = {
-      # Usamos source para copiar todo el directorio "nvim" que está en el mismo directorio que este módulo.
-      source = ./nvim;
-      recursive = true;
-    };
-  };
+  home.activation.copyNvim = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    echo "Copiando configuración de nvim..."
+    rm -rf "$HOME/.config/nvim"
+    cp -r ${toString ./nvim} "$HOME/.config/nvim"
+    chmod -R u+w "$HOME/.config/nvim"
+  '';
 }

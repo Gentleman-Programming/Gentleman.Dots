@@ -97,9 +97,8 @@ Modify the parameters in your `flake.nix` file as follows:
   };
 
   outputs = { nixpkgs, home-manager, ... }:
-
     let
-      system = "aarch64-darwin";  # Make sure this matches your system (e.g., "x86_64-linux" for Linux)
+      system = "aarch64-darwin";  # Make sure this matches your system
       pkgs = import nixpkgs { inherit system; };
     in {
       homeConfigurations = {
@@ -109,37 +108,52 @@ Modify the parameters in your `flake.nix` file as follows:
             modules = [
               ./nushell.nix
               ./wezterm.nix
-              ./ghostty.nix
+              ./wezterm.nix
               ./zellij.nix
               ./starship.nix
               ./nvim.nix
               {
-                home.username = "YourUser";  # Here, "YourUser" must be your machine's username
-                home.homeDirectory = "/Users/YourUser"; # On macOS; on Linux use "/home/YourUser"
-                home.stateVersion = "24.11";  # Use a valid version
-                home.packages = [
-                  pkgs.zellij
-                  pkgs.nushell
-                  pkgs.volta
-                  pkgs.carapace
-                  pkgs.zoxide
-                  pkgs.atuin
-                  pkgs.jq
-                  pkgs.bash
-                  pkgs.starship
-                  pkgs.fzf
-                  pkgs.neovim
-                  pkgs.nodejs  # npm comes with nodejs
-                  pkgs.gcc
-                  pkgs.fd
-                  pkgs.ripgrep
-                  pkgs.coreutils
-                  pkgs.bat
-                  pkgs.lazygit
+                # Personal data
+                home.username = "YourUser";  # Change this to your username
+                home.homeDirectory = "/Users/YourUser";  # On macOS; on Linux it would be "/home/yourUser"
+                home.stateVersion = "24.11";
+
+                # Group packages by categories to keep everything organized
+                home.packages = with pkgs; [
+                  # ─── Terminals and window managers ──────────────────────────────
+                  zellij
+                  nushell
+
+                  # ─── Development tools and utilities ─────────────────────────
+                  volta
+                  carapace
+                  zoxide
+                  atuin
+                  jq
+                  bash
+                  starship
+                  fzf
+                  neovim
+                  nodejs
+
+                  # ─── Compilers, search tools, and system utilities ─────────────
+                  gcc
+                  fd
+                  ripgrep
+                  coreutils
+                  bat
+                  lazygit
+
+                  # ─── Nerd Fonts ────────────────────────────────────────────────────
+                  # Adding IosevkaTerm NF to improve terminal look
+                  nerd-fonts.iosevka-term
                 ];
+
+                # Enable specific programs
                 programs.nushell.enable = true;
                 programs.starship.enable = true;
 
+                # Custom activation: create directories for Obsidian
                 home.activation.createObsidianDirs = ''
                   mkdir -p "$HOME/.config/obsidian/templates"
                 '';
@@ -172,7 +186,7 @@ Modify the parameters in your `flake.nix` file as follows:
 Once you're in the repo directory and have made the above changes, run:
 
 ```bash
-nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
+nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
 ```
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
