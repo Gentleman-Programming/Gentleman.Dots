@@ -1,0 +1,276 @@
+#!/usr/bin/env bash
+#
+# Copyright 2024 Simon Guest
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the “Software”), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, subl# icense, and/or sell copies of the
+# Software, and to permit persons to whom the Software is furnished to
+# do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+VERSION="0.9.1"
+USAGE="bash-env-json [--help] [--shellfns <comma-separated-function-names>] [path]"
+
+shopt -s extglob
+
+function capture() {
+    local -n _capture_env="$1"
+    local -n _capture_shellvars="$2"
+    local _name _value
+    # some shell variables leak into our environment, so inhibit that:
+    local -A _inhibit_shellvars=([_value]=X [BASH_LINENO]=X [COLUMNS]=X [LINES]=X)
+
+    # environment variables
+    while IFS='=' read -r -d '' _name _value; do
+        _capture_env["$_name"]="${_value}"
+    done < <(env -0)
+
+    # shellvars
+    for _name in $(
+        set -o posix
+        set | sed -n -e '/^[a-zA-Z_][a-zA-Z_0-9]*=/s/=.*$//p'
+        set +o posix
+    ); do
+        if test -v "$_name" -a ! "${_capture_env[$_name]+EXISTS}" -a ! "${_inhibit_shellvars[$_name]+EXISTS}"; then
+            _capture_shellvars["$_name"]="${!_name}"
+        fi
+    done
+}
+
+function emit_value() {
+    # jq -R produces nothing on empty input, but we want ""
+    if test -n "$1"; then
+        echo -n "$1" | jq -R
+    else
+        echo -n '""'
+    fi
+}
+
+function emit_meta() {
+    local _prefix="$1"
+    local _suffix="$2"
+    local _usage="$3"
+    echo -n "$_prefix\"meta\":{\"version\":"
+    emit_value "$VERSION"
+    test -n "$_usage" && {
+        echo -n ',"usage":'
+        emit_value "$USAGE"
+    }
+    echo "}$_suffix"
+}
+
+function emit_error() {
+    local _msg="$1"
+    local _usage="$2"
+    echo -n '{"error":'
+    emit_value "$_msg"
+    emit_meta , '}' "$_usage"
+}
+
+function emit_error_exit() {
+    emit_error "$@" | jq
+    exit 1
+}
+
+function emit_help_exit() {
+    emit_meta '{' '}' usage | jq
+    exit 0
+}
+
+function emit_version_exit() {
+    emit_meta '{' '}' | jq
+    exit 0
+}
+
+function emit() {
+    local _name
+    local -a _names
+    local _comma=""
+    local _sep="$1"
+    local _tag="$2"
+    local -n _emit_previous="$3"
+    local -n _emit_current="$4"
+
+    echo -n "$_sep\"$_tag\":{"
+
+    # changes
+    _names=("${!_emit_current[@]}")
+    for _name in "${_names[@]}"; do
+        if test "${_emit_current[$_name]}" != "${_emit_previous[$_name]}" -o "${_emit_previous[$_name]+EXISTS}" != EXISTS; then
+            if [[ "$_name" != BASH_FUNC_* ]]; then
+                echo -n "${_comma}\"$_name\":"
+                emit_value "${_emit_current[$_name]}"
+                _comma=","
+            fi
+        fi
+    done
+
+    # unset
+    for _name in "${!_emit_previous[@]}"; do
+        if test ! -v "$_name"; then
+            if [[ "$_name" != BASH_FUNC_* ]]; then
+                echo -n "${_comma}\"$_name\":null"
+                _comma=","
+            fi
+        fi
+    done
+
+    echo -n "}"
+}
+
+function eval_or_source() {
+    local _source _path _error_file
+    _path="$1"
+
+    _error_file=$(mktemp -u)
+    touch "$_error_file"
+    # shellcheck disable=SC2094
+    exec 3<"$_error_file" 4>"$_error_file"
+    rm -f "$_error_file"
+
+    if test -n "$_path"; then
+        # source from file if specified
+
+        if test ! -r "$_path"; then
+            emit_error_exit "no such file '$_path'"
+        fi
+
+        # ShellCheck can't cope with sourcing from an unknown path
+        # shellcheck disable=SC1090
+        if ! source "$_path" >/dev/null 2>&4; then
+            exec 4>&-
+            emit_error_exit "$(head -1 <&3)"
+        fi
+    else
+        # otherwise eval from stdin
+        _source=$(</dev/stdin)
+        if ! eval "$_source" >/dev/null 2>&4; then
+            exec 4>&-
+            # discard error location, because it is this file not the one sourced
+            emit_error_exit "$(sed -e 's/^.*line\s*[0-9]*:\s*//' <&3)"
+        fi
+    fi
+}
+
+function invoke_safely() {
+    local _fn="$1"
+
+    _error_file=$(mktemp -u)
+    touch "$_error_file"
+    # shellcheck disable=SC2094
+    exec 3<"$_error_file" 4>"$_error_file"
+    rm -f "$_error_file"
+
+    "$_fn" >/dev/null 2>&4 || {
+        exec 4>&-
+        emit_error_exit "$(head -1 <&3)"
+    }
+}
+
+function get_args() {
+    local -n _opt_path="$1"
+    local -n _opt_shellfn_names="$2"
+    shift 2
+
+    # process args
+    while test -n "$1"; do
+        case "$1" in
+        --help)
+            emit_help_exit
+            ;;
+        --version)
+            emit_version_exit
+            ;;
+        --shellfns)
+            test -z "$2" && {
+                bad_usage "--shellfns requires comma-separated list of function names"
+            }
+            mapfile -td, _opt_shellfn_names <<<"$2,"
+            unset '_opt_shellfn_names[-1]'
+            shift
+            ;;
+        -*)
+            bad_usage "unexpected option: $1"
+            ;;
+        *)
+            test -n "$_opt_path" && {
+                bad_usage "repeated path '$_opt_path'"
+            }
+            _opt_path="$1"
+            ;;
+        esac
+        shift
+    done
+}
+
+function main() {
+    local _path _fn
+    declare -a _shellfn_names
+
+    get_args _path _shellfn_names "$@"
+
+    declare -A _env_previous
+    declare -A _env_current
+    declare -A _shellvars_previous
+    declare -A _shellvars_current
+
+    capture _env_previous _shellvars_previous
+    eval_or_source "$_path"
+    capture _env_current _shellvars_current
+
+    # accumulate result in a file until we know we are error-free
+    _result_file=$(mktemp -u)
+    touch "$_result_file"
+    # shellcheck disable=SC2094
+    exec 5<"$_result_file" 6>"$_result_file"
+    rm -f "$_result_file"
+
+    emit "{" env _env_previous _env_current >&6
+    emit "," shellvars _shellvars_previous _shellvars_current >&6
+
+    test "${#_shellfn_names[@]}" -gt 0 && {
+        echo ",\"fn\":{" >&6
+    }
+
+    local _fn_comma=""
+    for _fn in "${_shellfn_names[@]}"; do
+        capture _env_previous _shellvars_previous
+        invoke_safely "$_fn"
+        capture _env_current _shellvars_current
+
+        echo "$_fn_comma\"$_fn\":" >&6
+        emit "{" env _env_previous _env_current >&6
+        emit "," shellvars _shellvars_previous _shellvars_current >&6
+        echo "}" >&6
+        _fn_comma=","
+    done
+
+    test "${#_shellfn_names[@]}" -gt 0 && {
+        echo "}" >&6
+    }
+
+    emit_meta ',' '}' >&6
+    exec 6>&-
+
+    jq <&5
+}
+
+function bad_usage() {
+    emit_error_exit "$1" usage
+}
+
+main "$@"
