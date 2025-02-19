@@ -105,6 +105,7 @@ $env.PATH = (
     | prepend ($env.HOME | path join ".volta/bin")
     | prepend ($env.HOME | path join ".bun/bin")
     | prepend ($env.HOME | path join ".nix-profile/bin")
+    | prepend '/Users/var/nix/profiles/default/bin'
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
