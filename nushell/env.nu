@@ -3,8 +3,7 @@
 # version = "0.99.1"
 
 def create_left_prompt [] {
-    let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
-        null => $env.PWD
+let dir = match (do --ignore-errors { $env.PWD | path relative-to $nu.home-path }) {        null => $env.PWD
         '' => '~'
         $relative_pwd => ([~ $relative_pwd] | path join)
     }
@@ -103,11 +102,9 @@ $env.PATH = (
     $env.PATH
     | split row (char esep)
     | prepend '/opt/homebrew/bin'
-    | prepend "/nix/var/nix/profiles/per-user/($env.USER)/home-manager/bin"
     | prepend ($env.HOME | path join ".volta/bin")
     | prepend ($env.HOME | path join ".bun/bin")
-    | prepend '/nix/var/nix/profiles/default/bin'
-    | prepend '/Users/var/nix/profiles/default/bin'
+    | prepend ($env.HOME | path join ".nix-profile/bin")
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")

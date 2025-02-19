@@ -83,90 +83,6 @@ Before running the next command, you need to make a few changes in the `flake.ni
 
 Modify the parameters in your `flake.nix` file as follows:
 
-```nix
-{
-  description = "Gentleman: Single config for all systems in one go";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    flake-utils.url = "github:numtide/flake-utils";
-  };
-
-  outputs = { nixpkgs, home-manager, ... }:
-    let
-      system = "aarch64-darwin";  # Make sure this matches your system
-      pkgs = import nixpkgs { inherit system; };
-    in {
-      homeConfigurations = {
-        "gentleman" =
-          home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [
-              ./nushell.nix
-              ./wezterm.nix
-              ./wezterm.nix
-              ./zellij.nix
-              ./starship.nix
-              ./nvim.nix
-              {
-                # Personal data
-                home.username = "YourUser";  # Change this to your username
-                home.homeDirectory = "/Users/YourUser";  # On macOS; on Linux it would be "/home/yourUser"
-                home.stateVersion = "24.11";
-
-                # Group packages by categories to keep everything organized
-                home.packages = with pkgs; [
-                  # ─── Terminals and window managers ──────────────────────────────
-                  zellij
-                  nushell
-
-                  # ─── Development tools and utilities ─────────────────────────
-                  volta
-                  carapace
-                  zoxide
-                  atuin
-                  jq
-                  bash
-                  starship
-                  fzf
-                  neovim
-                  nodejs
-
-                  # ─── Compilers, search tools, and system utilities ─────────────
-                  gcc
-                  fd
-                  ripgrep
-                  coreutils
-                  bat
-                  lazygit
-
-                  # ─── Nerd Fonts ────────────────────────────────────────────────────
-                  # Adding IosevkaTerm NF to improve terminal look
-                  nerd-fonts.iosevka-term
-                ];
-
-                # Enable specific programs
-                programs.nushell.enable = true;
-                programs.starship.enable = true;
-
-                # Custom activation: create directories for Obsidian
-                home.activation.createObsidianDirs = ''
-                  mkdir -p "$HOME/.config/obsidian/templates"
-                '';
-              }
-            ];
-          };
-      };
-    };
-}
-```
-
-**Important:**
-
 - Change the line `home.username = "YourUser";` to reflect your machine's username.
 
 - Install your terminal emulator, configs will we already applied:
@@ -190,6 +106,16 @@ nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backu
 ```
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
+
+Now run the following script to add Nushell to your list of available shells and select it as the default one:
+
+```
+bash
+shellPath=$(which nu)
+
+sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
+sudo chsh -s "$shellPath" "$USER"
+```
 
 ---
 

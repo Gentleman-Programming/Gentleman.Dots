@@ -12,7 +12,7 @@
 
   outputs = { nixpkgs, home-manager, ... }:
     let
-      system = "aarch64-darwin";  # Make sure this matches your system
+      system = "aarch64-darwin";  # Asegurate de que coincida con tu sistema
       pkgs = import nixpkgs { inherit system; };
     in {
       homeConfigurations = {
@@ -27,18 +27,17 @@
               ./starship.nix 
               ./nvim.nix     
               {
-                # Personal data
-                home.username = "YourUser";  # Change this to your username
-                home.homeDirectory = "/Users/YourUser";  # On macOS; on Linux it would be "/home/yourUser"
+                # Datos personales
+                home.username = "alanbuscaglia";
+                home.homeDirectory = "/Users/alanbuscaglia/"; 
                 home.stateVersion = "24.11";
 
-                # Group packages by categories to keep everything organized
                 home.packages = with pkgs; [
-                  # ─── Terminals and window managers ──────────────────────────────
+                  # ─── Terminals y utilidades ───
                   zellij
                   nushell
 
-                  # ─── Development tools and utilities ─────────────────────────
+                  # ─── Herramientas de desarrollo ───
                   volta
                   carapace
                   zoxide
@@ -49,8 +48,9 @@
                   fzf
                   neovim
                   nodejs
+                  lazygit
 
-                  # ─── Compilers, search tools, and system utilities ─────────────
+                  # ─── Compiladores y utilidades de sistema ───
                   gcc
                   fd
                   ripgrep
@@ -58,19 +58,12 @@
                   bat
                   lazygit
 
-                  # ─── Nerd Fonts ────────────────────────────────────────────────────
-                  # Adding IosevkaTerm NF to improve terminal look
+                  # ─── Nerd Fonts ───
                   nerd-fonts.iosevka-term
                 ];
 
-                # Enable specific programs
                 programs.nushell.enable = true;
                 programs.starship.enable = true;
-
-                # Custom activation: create directories for Obsidian
-                home.activation.createObsidianDirs = ''
-                  mkdir -p "$HOME/.config/obsidian/templates"
-                '';
               }
             ];
           };

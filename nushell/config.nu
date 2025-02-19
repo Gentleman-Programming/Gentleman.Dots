@@ -6,57 +6,140 @@
 # https://www.nushell.sh/book/coloring_and_theming.html
 # And here is the theme collection
 # https://github.com/nushell/nu_scripts/tree/main/themes
-#
-let dark_theme = {
-    # --- Elementos base ---
-    separator: "#C9C7CD"                     # Bordes de tabla (gris claro)
-    leading_trailing_space_bg: { attr: "n" } # Espacios sin fondo
-    header: "#92A2D5_bold"                   # Encabezados (azul lavanda + bold)
-    empty: "#ACA1CF"                         # Elementos vacíos (gris lila)
-    bool: "#E29ECA"                          # Booleanos (rosa suave)
-    int: "#C9C7CD"                           # Enteros (gris claro)
-    filesize: "#85B5BA"                      # Tamaños de archivo (azul-verde)
-    duration: "#90B99F"                      # Duración (verde suave)
-    date: "#E6B99D"                          # Fechas (beige cálido)
-    range: "#C9C7CD"                         # Rangos (gris claro)
-    float: "#EA83A5"                         # Flotantes (rosa intenso)
-    string: "#C9C7CD"                        # Texto general (gris claro)
-    nothing: "#92A2D5"                       # Valores nulos (azul lavanda)
-    binary: "#85B5BA"                        # Binarios (azul-verde)
-    cellpath: "#90B99F"                      # Rutas de celdas (verde grisáceo)
-    row_index: "#92A2D5_bold"                # Índices de filas (azul lavanda + bold)
-    record: "#ACA1CF"                        # Registros (gris lila)
-    list: "#C9C7CD"                          # Listas (gris claro)
-    block: "#ACA1CF_bold"                    # Bloques (gris lila + bold)
-    hints: "#90B99F"                         # Hints (verde suave)
-    search_result: { fg: "#000000", bg: "#F5A191" } # Búsqueda (fondo melocotón)
 
-    # --- Elementos de sintaxis/comandos ---
-    shape_and: "#ACA1CF_bold"                # Operador AND (gris lila + bold)
-    shape_binary: "#85B5BA_bold"             # Binarios (azul-verde + bold)
-    shape_block: "#92A2D5"                   # Bloques (azul lavanda)
-    shape_bool: "#E29ECA"                    # Booleanos (rosa suave)
-    shape_closure: "#EA83A5"                 # Closures (rosa intenso)
-    shape_custom: "#85B5BA"                  # Comandos personalizados (azul-verde)
-    shape_datetime: "#E6B99D_bold"           # Fechas (beige + bold)
-    shape_directory: "#92A2D5"               # Directorios (azul lavanda)
-    shape_external: "#85B5BA"                # Comandos externos (azul-verde)
-    shape_externalarg: "#ACA1CF_bold"        # Argumentos externos (gris lila + bold)
-    shape_filepath: "#90B99F"                # Rutas (verde grisáceo)
-    shape_flag: "#92A2D5_bold"               # Flags (azul lavanda + bold)
-    shape_float: "#EA83A5"                   # Flotantes (rosa intenso)
-    shape_garbage: { fg: "#000000", bg: "#EA83A5", attr: "b" } # Error (fondo rosa intenso)
-    shape_globpattern: "#85B5BA_bold"        # Patrones glob (azul-verde + bold)
-    shape_int: "#ACA1CF"                     # Enteros (gris lila)
-    shape_internalcall: "#85B5BA_bold"       # Llamadas internas (azul-verde + bold)
-    shape_keyword: "#92A2D5"                 # Keywords (azul lavanda)
-    shape_literal: "#E6B99D"                 # Literales (beige)
-    shape_operator: "#F5A191"                # Operadores (melocotón)
-    shape_or: "#E29ECA_bold"                 # Operador OR (rosa suave + bold)
-    shape_pipe: "#85B5BA"                    # Pipes (azul-verde)
-    shape_string: "#90B99F"                  # Cadenas (verde suave)
-    shape_variable: "#EA83A5"                # Variables (rosa intenso)
+
+# Sakura Theme
+# let dark_theme = {
+#    separator: "#786577"                # na: text (dark pink)
+#    leading_trailing_space_bg: { attr: "n" }
+#    header: "#878fb9_bold"              # va: blue + bold
+#    empty: "#9e97d0"                    # ca: soft purple
+#    bool: "#c58ea7"                     # ia: pink
+#    int: "#786577"                      # na: text (dark pink)
+#    filesize: "#878fb9"                 # va: blue
+#    duration: "#786577"                 # na: text (dark pink)
+#    date: "#9e97d0"                     # ca: purple
+#    range: "#786577"                    # na: text (dark pink)
+#    float: "#c58ea7"                    # ia: pink
+#    string: "#786577"                   # na: text (dark pink)
+#    nothing: "#878fb9"                  # va: blue
+#    binary: "#786577"                   # na: text (dark pink)
+#    cellpath: "#786577"                 # na: text (dark pink)
+#    row_index: "#878fb9_bold"           # va: blue + bold
+#    record: "#786577"                   # na: text (dark pink)
+#    list: "#786577"                     # na: text (dark pink)
+#    block: "#9e97d0_bold"               # ca: purple + bold
+#    hints: "#3f3b3e"                    # gr: dark gray
+#    search_result: { bg: "#c58ea7", fg: "#786577" } # ia/na
+#    shape_and: "#9e97d0_bold"           # ca: purple + bold
+#    shape_binary: "#9e97d0_bold"        # ca: purple + bold
+#    shape_block: "#9e97d0_bold"         # ca: purple + bold
+#    shape_bool: "#c58ea7"               # ia: pink
+#    shape_closure: "#878fb9_bold"       # va: blue + bold
+#    shape_custom: "#878fb9"             # va: blue
+#    shape_datetime: "#878fb9_bold"      # va: blue + bold
+#    shape_directory: "#9e97d0"          # ca: purple
+#    shape_external: "#878fb9"           # va: blue
+#    shape_externalarg: "#878fb9_bold"   # va: blue + bold
+#    shape_external_resolved: "#9e97d0_bold" # ca: purple + bold
+#    shape_filepath: "#878fb9"           # va: blue
+#    shape_flag: "#9e97d0_bold"          # ca: purple + bold
+#    shape_float: "#9e97d0_bold"         # ca: purple + bold
+#    shape_garbage: { fg: "#786577", bg: "#c58ea7", attr: "b" } # na/ia
+#    shape_glob_interpolation: "#878fb9_bold" # va: blue + bold
+#    shape_globpattern: "#878fb9_bold"   # va: blue + bold
+#    shape_int: "#9e97d0_bold"           # ca: purple + bold
+#    shape_internalcall: "#878fb9_bold"  # va: blue + bold
+#    shape_keyword: "#878fb9_bold"       # va: blue + bold
+#    shape_list: "#878fb9_bold"          # va: blue + bold
+#    shape_literal: "#9e97d0"            # ca: purple
+#    shape_match_pattern: "#878fb9"      # va: blue
+#    shape_matching_brackets: { attr: "u" }
+#    shape_nothing: "#878fb9"            # va: blue
+#    shape_operator: "#9e97d0"           # ca: purple (replaces yellow)
+#    shape_or: "#9e97d0_bold"            # ca: purple + bold
+#    shape_pipe: "#9e97d0_bold"          # ca: purple + bold
+#    shape_range: "#9e97d0_bold"         # ca: purple + bold
+#    shape_record: "#878fb9_bold"        # va: blue + bold
+#    shape_redirection: "#9e97d0_bold"   # ca: purple + bold
+#    shape_signature: "#878fb9_bold"     # va: blue + bold
+#    shape_string: "#878fb9"             # va: blue
+#    shape_string_interpolation: "#878fb9_bold" # va: blue + bold
+#    shape_table: "#9e97d0_bold"         # ca: purple + bold
+#    shape_variable: "#c58ea7"           # ia: pink
+#    shape_vardecl: "#c58ea7"            # ia: pink
+#    shape_raw_string: "#9e97d0"         # ca: purple
+# 
+
+let dark_theme = {
+    # --- base elements ---
+    separator: "#C9C7CD"                     # table borders (light gray)
+    leading_trailing_space_bg: { attr: "n" } # spaces without background
+    header: "#92A2D5_bold"                   # headers (lavender blue + bold)
+    empty: "#ACA1CF"                         # empty elements (lilac gray)
+    bool: "#E29ECA"                          # booleans (soft pink)
+    int: "#C9C7CD"                           # integers (light gray)
+    filesize: "#85B5BA"                      # file sizes (blue-green)
+    duration: "#90B99F"                      # duration (soft green)
+    date: "#E6B99D"                          # dates (warm beige)
+    range: "#C9C7CD"                         # ranges (light gray)
+    float: "#EA83A5"                         # floats (intense pink)
+    string: "#C9C7CD"                        # general text (light gray)
+    nothing: "#92A2D5"                       # null values (lavender blue)
+    binary: "#85B5BA"                        # binaries (blue-green)
+    cellpath: "#90B99F"                      # cell paths (grayish green)
+    row_index: "#92A2D5_bold"                # row indices (lavender blue + bold)
+    record: "#ACA1CF"                        # records (lilac gray)
+    list: "#C9C7CD"                          # lists (light gray)
+    block: "#ACA1CF_bold"                    # blocks (lilac gray + bold)
+    hints: "#90B99F"                         # hints (soft green)
+    search_result: { fg: "#000000", bg: "#F5A191" } # search result (peach background)
+
+    # --- syntax elements/commands ---
+    shape_and: "#ACA1CF_bold"                # AND operator (lilac gray + bold)
+    shape_binary: "#85B5BA_bold"             # binaries (blue-green + bold)
+    shape_block: "#92A2D5"                   # blocks (lavender blue)
+    shape_bool: "#E29ECA"                    # booleans (soft pink)
+    shape_closure: "#EA83A5"                 # closures (intense pink)
+    shape_custom: "#85B5BA"                  # custom commands (blue-green)
+    shape_datetime: "#E6B99D_bold"           # dates (beige + bold)
+    shape_directory: "#92A2D5"               # directories (lavender blue)
+    shape_external: "#85B5BA"                # external commands (blue-green)
+    shape_externalarg: "#ACA1CF_bold"        # external arguments (lilac gray + bold)
+    shape_filepath: "#90B99F"                # file paths (grayish green)
+    shape_flag: "#92A2D5_bold"               # flags (lavender blue + bold)
+    shape_float: "#EA83A5"                   # floats (intense pink)
+    shape_garbage: { fg: "#000000", bg: "#EA83A5", attr: "b" } # error (intense pink background)
+    shape_globpattern: "#85B5BA_bold"        # glob patterns (blue-green + bold)
+    shape_int: "#ACA1CF"                     # integers (lilac gray)
+    shape_internalcall: "#85B5BA_bold"       # internal calls (blue-green + bold)
+    shape_keyword: "#92A2D5"                 # keywords (lavender blue)
+    shape_literal: "#E6B99D"                 # literals (beige)
+    shape_operator: "#F5A191"                # operators (peach)
+    shape_or: "#E29ECA_bold"                 # OR operator (soft pink + bold)
+    shape_pipe: "#85B5BA"                    # pipes (blue-green)
+    shape_string: "#90B99F"                  # strings (soft green)
+    shape_variable: "#EA83A5"                # variables (intense pink)
 }
+
+# $env.LS_COLORS = (
+#    "di=38;2;197;142;167:" +       # Directories: intense pink (#C58EA7)
+#    "fi=38;2;197;163;169:" +       # Regular files: light pink (#C5A3A9)
+#    "ln=38;2;158;151;208:" +       # Symbolic links: soft purple (#9E97D0)
+#    "ex=38;2;135;143;185:" +       # Executable files: light blue (#878FB9)
+#    "or=38;2;197;142;167:" +       # Broken symbolic links: intense pink (#C58EA7)
+#    "*.txt=38;2;197;163;169:" +    # .txt files: light pink (#C5A3A9)
+#    "*.jpg=38;2;158;151;208:" +    # .jpg files: soft purple (#9E97D0)
+#    "*.png=38;2;158;151;208:" +    # .png files: soft purple (#9E97D0)
+#    "*.zip=38;2;135;143;185:" +    # .zip files: light blue (#878FB9)
+#    "*.gz=38;2;135;143;185:" +     # .gz files: light blue (#878FB9)
+#    "*.tar=38;2;135;143;185:" +    # .tar files: light blue (#878FB9)
+#    "*.log=38;2;63;59;62:" +       # .log files: dark gray (#3F3B3E)
+#    "*.md=38;2;197;163;169:" +     # .md files: light pink (#C5A3A9)
+#    "*.py=38;2;135;143;185:" +     # .py files: light blue (#878FB9)
+#    "*.rs=38;2;197;142;167:" +     # .rs files: intense pink (#C58EA7)
+#    "*.sh=38;2;135;143;185:"       # .sh files: light blue (#878FB9)
+# )
 
 $env.LS_COLORS = (
     # --- Directories and file types ---
@@ -234,8 +317,7 @@ $env.config = {
     }
 
     filesize: {
-        metric: false # true => KB, MB, GB (ISO standard), false => KiB, MiB, GiB (Windows standard)
-        format: "auto" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, auto
+        unit: "MB" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, auto
     }
 
     cursor_shape: {
@@ -905,6 +987,14 @@ $env.config = {
             event: { edit: selectall }
         }
     ]
+}
+
+def fzfbat [] {
+  fzf --preview "bat --theme=gruvbox-dark --color=always {}" 
+}
+
+def fzfnvim [] {
+  nvim (fzf --preview "bat --theme=gruvbox-dark --color=always {}")
 }
 
  source ~/.zoxide.nu
