@@ -28,8 +28,8 @@
               ./starship.nix 
               ./nvim.nix     
               {
-                home.username = "YourUser";  # Here, "YourUser" must be your machine's username
-                home.homeDirectory = "/Users/YourUser"; # On macOS; on Linux use "/home/YourUser"
+                home.username = "anua";  # Here, "YourUser" must be your machine's username
+                home.homeDirectory = "/Users/anua"; # On macOS; on Linux use "/home/YourUser"
                 home.stateVersion = "24.11";  # use a valid version
                 home.packages = [
                   pkgs.zellij
