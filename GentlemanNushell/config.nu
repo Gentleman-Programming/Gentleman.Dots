@@ -1008,7 +1008,7 @@ let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
 
 def start_multiplexer [] {
   if $MULTIPLEXER not-in ($env | columns) {
-    if $env.MULTIPLEXER == 'zellij' {
+    if $MULTIPLEXER == 'zellij' {
       if 'ZELLIJ_AUTO_ATTACH' in ($env | columns) and $env.ZELLIJ_AUTO_ATTACH == 'true' {
         zellij attach -c
       } else {
@@ -1020,7 +1020,7 @@ def start_multiplexer [] {
       }
     } else {
       if 'TMUX_AUTO_ATTACH' in ($env | columns) and $env.TMUX_AUTO_ATTACH == 'true' {
-        tmux attach || tmux new
+        tmux attach or tmux new
       } else {
         tmux
       }
