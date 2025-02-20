@@ -327,6 +327,11 @@ mkdir -p ~/.cache/starship
 mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
+starship init nu | save -f ~/.cache/starship/init.nu
+zoxide init nushell | save -f ~/.zoxide.nu
+atuin init nu | save -f ~/.local/share/atuin/init.nu
+carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
+
 ```
 
 ###### 2. Step
