@@ -429,6 +429,11 @@ case "$shell_choice" in
 
   run_command "cp -rf starship.toml ~/.config/"
 
+  starship init nu | save -f ~/.cache/starship/init.nu
+  zoxide init nushell | save -f ~/.zoxide.nu
+  atuin init nu | save -f ~/.local/share/atuin/init.nu
+  carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
+
   echo -e "${YELLOW}Configuring Nushell...${NC}"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
