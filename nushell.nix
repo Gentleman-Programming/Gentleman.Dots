@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   systemType = if pkgs.stdenv.isDarwin then "mac" else "linux";
 in {

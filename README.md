@@ -109,13 +109,30 @@ _(This command applies the configuration defined in the flake, installing all de
 
 Now run the following script to add Nushell to your list of available shells and select it as the default one:
 
-```
+````
 bash
 shellPath=$(which nu)
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
-```
+
+if [ ! -d ~/.cache/starship ]; then
+  mkdir -p ~/.cache/starship
+fi
+
+if [ ! -d ~/.cache/carapace ]; then
+  mkdir -p ~/.cache/carapace
+fi
+
+if [ ! -d ~/.local/share/atuin ]; then
+  mkdir -p ~/.local/share/atuin
+fi
+
+starship init nu
+zoxide init nushell
+atuin init nu
+carapace _carapace nushell
+``
 
 ---
 
@@ -126,7 +143,7 @@ sudo chsh -s "$shellPath" "$USER"
 ```bash
 git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
-```
+````
 
 #### 1. Install WSL
 

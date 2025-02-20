@@ -28,8 +28,8 @@
               ./nvim.nix     
               {
                 # Datos personales
-                home.username = "alanbuscaglia";
-                home.homeDirectory = "/Users/alanbuscaglia/"; 
+                home.username = "YourUser";
+                home.homeDirectory = "/Users/YourUser/"; 
                 home.stateVersion = "24.11";
 
                 home.packages = with pkgs; [
