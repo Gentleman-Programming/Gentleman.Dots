@@ -1008,7 +1008,11 @@ let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
 
 def start_multiplexer [] {
   if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
-    run-external $MULTIPLEXER
+    if not (ps | where name == $MULTIPLEXER | is-empty) {
+      run-external $MULTIPLEXER attach
+    } else {
+      run-external $MULTIPLEXER
+    }
   }
 }
 
