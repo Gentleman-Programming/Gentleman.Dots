@@ -1003,17 +1003,18 @@ def fzfnvim [] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-let MULTIPLEXER = "zellij"
-let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
-
-def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
-    if not (ps | where name == $MULTIPLEXER | is-empty) {
-      run-external $MULTIPLEXER attach
+def start_zellij [] {
+  if 'ZELLIJ' not-in ($env | columns) {
+    if 'ZELLIJ_AUTO_ATTACH' in ($env | columns) and $env.ZELLIJ_AUTO_ATTACH == 'true' {
+      zellij attach -c
     } else {
-      run-external $MULTIPLEXER
+      zellij
+    }
+
+    if 'ZELLIJ_AUTO_EXIT' in ($env | columns) and $env.ZELLIJ_AUTO_EXIT == 'true' {
+      exit
     }
   }
 }
 
-start_multiplexer
+start_zellij
