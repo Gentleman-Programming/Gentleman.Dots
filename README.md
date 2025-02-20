@@ -323,14 +323,24 @@ mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 cp -rf bash-env-json ~/.config/
 cp -rf bash-env.nu ~/.config/
 brew install nushell carapace zoxide atuin jq bash starship fzf
-mkdir -p ~/.cache/starship
-mkdir -p ~/.cache/carapace
-mkdir -p ~/.local/share/atuin
 cp -rf starship.toml ~/.config/
-starship init nu | save -f ~/.cache/starship/init.nu
-zoxide init nushell | save -f ~/.zoxide.nu
-atuin init nu | save -f ~/.local/share/atuin/init.nu
-carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
+
+if [ ! -d ~/.cache/starship ]; then
+  mkdir -p ~/.cache/starship
+fi
+
+if [ ! -d ~/.cache/carapace ]; then
+  mkdir -p ~/.cache/carapace
+fi
+
+if [ ! -d ~/.local/share/atuin ]; then
+  mkdir -p ~/.local/share/atuin
+fi
+
+starship init nu
+zoxide init nushell
+atuin init nu
+carapace _carapace nushell
 
 ```
 
