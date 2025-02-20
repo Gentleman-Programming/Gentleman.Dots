@@ -109,13 +109,5 @@ $env.PATH = (
     | append ($env.HOME | path join ".cargo/bin")
 )
 
-mkdir ~/.cache/starship
-mkdir ~/.cache/carapace
-mkdir ~/.local/share/atuin
 $env.STARSHIP_CONFIG = $env.HOME | path join ".config/starship.toml"
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-
-starship init nu | save -f ~/.cache/starship/init.nu
-zoxide init nushell | save -f ~/.zoxide.nu
-atuin init nu | save -f ~/.local/share/atuin/init.nu
-carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
