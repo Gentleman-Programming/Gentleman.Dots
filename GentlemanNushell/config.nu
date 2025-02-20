@@ -1007,8 +1007,28 @@ let MULTIPLEXER = "zellij"
 let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
 
 def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
-    run-external $MULTIPLEXER
+  if $MULTIPLEXER not-in ($env | columns) {
+    if $env.MULTIPLEXER == 'zellij' {
+      if 'ZELLIJ_AUTO_ATTACH' in ($env | columns) and $env.ZELLIJ_AUTO_ATTACH == 'true' {
+        zellij attach -c
+      } else {
+        zellij
+      }
+
+      if 'ZELLIJ_AUTO_EXIT' in ($env | columns) and $env.ZELLIJ_AUTO_EXIT == 'true' {
+        exit
+      }
+    } else {
+      if 'TMUX_AUTO_ATTACH' in ($env | columns) and $env.TMUX_AUTO_ATTACH == 'true' {
+        tmux attach || tmux new
+      } else {
+        tmux
+      }
+
+      if 'TMUX_AUTO_EXIT' in ($env | columns) and $env.TMUX_AUTO_EXIT == 'true' {
+        exit
+      }
+    }
   }
 }
 
