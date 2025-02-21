@@ -49,6 +49,7 @@
                   neovim
                   nodejs
                   lazygit
+                  bun
 
                   # ─── Compiladores y utilidades de sistema ───
                   gcc
