@@ -20,22 +20,21 @@
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
-              ./aerospace.nix
               ./nushell.nix  
               ./ghostty.nix  
               ./wezterm.nix  
-              ./zellij.nix   
+              # ./zellij.nix   
               ./starship.nix 
               ./nvim.nix     
               {
                 # Datos personales
                 home.username = "YourUser";
-                home.homeDirectory = "/Users/YourUser/"; 
+                home.homeDirectory = "/Users/YourUser/";
                 home.stateVersion = "24.11";
 
                 home.packages = with pkgs; [
                   # ─── Terminals y utilidades ───
-                  zellij
+                  # zellij
                   nushell
 
                   # ─── Herramientas de desarrollo ───

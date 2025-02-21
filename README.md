@@ -12,12 +12,11 @@ This repository contains customized configurations for a complete development en
 
 - Neovim
 - **Nushell**
-- Zellij
 - Terminal emulators:
   - **WezTerm**
   - **Ghostty**
 
-You can now automatically set up your environment using our new Nix Flake approach with Home Manager. This method is fully declarative and reproducible, and it lets you easily override default options. In our flake, all configurations are defined inline in local modules (e.g., `zellij.nix`, `nushell.nix`, etc.), and the flake also installs all the required dependencies (git, curl, rustc, cargo, zellij, neovim, etc.).
+You can now automatically set up your environment using our new Nix Flake approach with Home Manager. This method is fully declarative and reproducible, and it lets you easily override default options. In our flake, all configurations are defined inline in local modules (e.g., `nushell.nix`, etc.), and the flake also installs all the required dependencies (git, curl, rustc, cargo, neovim, etc.).
 
 ---
 
@@ -92,6 +91,8 @@ Modify the parameters in your `flake.nix` file as follows:
 
   - On macOS: `/Users/YourUser`
   - On Linux: `/home/YourUser`
+
+- If you want my `aerospace` tile windows manager configuration you can copy the one inside `./aerospace/.aerospace.toml` into your `$HOME` path
 
 - **Don't forget to update the `system` field** (currently set to `"aarch64-darwin"`) with the appropriate value from the list above.
 
@@ -261,7 +262,7 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
   - **Linux/WSL:** `~/.config/nushell`
 
 - **Dependencies & Automatic Replacements:**  
-  The flake installs all necessary dependencies (git, curl, rustc, cargo, tmux, etc.) and performs placeholder replacements in configuration files (e.g., replacing “tmux” with “zellij” when applicable).
+  The flake installs all necessary dependencies (git, curl, rustc, cargo, tmux, etc.) and performs placeholder replacements in configuration files.
 
 - **Windows Users:**  
   Must install and configure WSL, manually install the Iosevka Term Nerd Font, set up Alacritty or WezTerm, install Chocolatey with win32yank, and finally launch and update the Linux distribution.
