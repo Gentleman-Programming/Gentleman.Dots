@@ -20,6 +20,7 @@
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
+              ./aerospace.nix
               ./nushell.nix  
               ./ghostty.nix  
               ./wezterm.nix  
