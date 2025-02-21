@@ -2,8 +2,6 @@
 
 ![Screenshot](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
 
-Hey Gentleman, here’s the updated README in English with a section that lists the possible values for the `system` field:
-
 ---
 
 # Gentleman.Dots
