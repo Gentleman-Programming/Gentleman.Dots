@@ -222,6 +222,9 @@ keybinds clear-defaults=true {
     shared_among "normal" "resize" "tab" "scroll" "prompt" "tmux" {
         bind "p" { SwitchToMode "pane"; }
     }
+    shared_among "normal" "resize" "tab" "scroll" "prompt" "tmux" {
+        bind "o" { SwitchToMode "session"; }
+    }
     shared_except "locked" "resize" "pane" "tab" "entersearch" "renametab" "renamepane" {
         bind "r" { SwitchToMode "resize"; }
     }
