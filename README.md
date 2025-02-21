@@ -109,7 +109,7 @@ _(This command applies the configuration defined in the flake, installing all de
 
 Now run the following script to add Nushell to your list of available shells and select it as the default one:
 
-````
+```
 bash
 shellPath=$(which nu)
 
@@ -132,7 +132,7 @@ starship init nu
 zoxide init nushell
 atuin init nu
 carapace _carapace nushell
-``
+```
 
 ---
 
@@ -143,7 +143,7 @@ carapace _carapace nushell
 ```bash
 git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots
-````
+```
 
 #### 1. Install WSL
 
