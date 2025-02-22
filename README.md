@@ -117,27 +117,6 @@ sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shel
 sudo chsh -s "$shellPath" "$USER"
 ```
 
-Now only for Nushell
-
-```bash
-if [ ! -d ~/.cache/starship ]; then
-  mkdir -p ~/.cache/starship
-fi
-
-if [ ! -d ~/.cache/carapace ]; then
-  mkdir -p ~/.cache/carapace
-fi
-
-if [ ! -d ~/.local/share/atuin ]; then
-  mkdir -p ~/.local/share/atuin
-fi
-
-starship init nu
-zoxide init nushell
-atuin init nu
-carapace _carapace nushell
-```
-
 ---
 
 ## Manual Installation for Windows

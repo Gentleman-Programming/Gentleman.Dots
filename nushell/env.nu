@@ -105,7 +105,7 @@ $env.PATH = (
     | prepend ($env.HOME | path join ".volta/bin")
     | prepend ($env.HOME | path join ".bun/bin")
     | prepend ($env.HOME | path join ".nix-profile/bin")
-    | prepend '/Users/var/nix/profiles/default/bin'
+    | prepend '/nix/var/nix/profiles/default/bin'
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
@@ -116,3 +116,20 @@ $env.STARSHIP_CONFIG = $env.HOME | path join ".config/starship.toml"
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
 $env.ZELLIJ_AUTO_ATTACH = 'true'
 $env.ZELLIJ_AUTO_EXIT = 'true'
+
+if [ ! -d ~/.cache/starship ]; then
+  mkdir -p ~/.cache/starship
+fi
+
+if [ ! -d ~/.cache/carapace ]; then
+  mkdir -p ~/.cache/carapace
+fi
+
+if [ ! -d ~/.local/share/atuin ]; then
+  mkdir -p ~/.local/share/atuin
+fi
+
+starship init nu
+zoxide init nushell
+atuin init nu
+carapace _carapace nushell

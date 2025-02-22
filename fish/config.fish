@@ -11,7 +11,7 @@ else
 end
 
 # Agregar paths al inicio del PATH
-set -x PATH $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /Users/var/nix/profiles/default/bin $PATH
+set -x PATH $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $PATH
 
 # Agregar paths al final del PATH
 set -x PATH $PATH /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/*
@@ -24,6 +24,7 @@ atuin init fish | source
 
 set -x PATH $HOME/.cargo/bin $PATH
 set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
+
 mkdir -p ~/.config/fish/completions
 carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
 carapace _carapace | source
