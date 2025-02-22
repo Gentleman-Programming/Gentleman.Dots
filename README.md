@@ -12,6 +12,7 @@ This repository contains customized configurations for a complete development en
 
 - Neovim
 - **Nushell**
+- **Fish**
 - Terminal emulators:
   - **WezTerm**
   - **Ghostty**
@@ -106,15 +107,19 @@ nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backu
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-Now run the following script to add Nushell to your list of available shells and select it as the default one:
+Now run the following script to add Nushell or `Fish` to your list of available shells and select it as the default one:
 
 ```
 bash
-shellPath=$(which nu)
+shellPath=$(which nu) || shellPath=$(which fish)
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
+```
 
+Now only for Nushell
+
+```bash
 if [ ! -d ~/.cache/starship ]; then
   mkdir -p ~/.cache/starship
 fi

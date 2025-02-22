@@ -24,6 +24,7 @@
               ./ghostty.nix  
               ./wezterm.nix  
               # ./zellij.nix   
+              ./fish.nix
               ./starship.nix 
               ./nvim.nix     
               {
@@ -35,6 +36,7 @@
                 home.packages = with pkgs; [
                   # ─── Terminals y utilidades ───
                   # zellij
+                  fish
                   nushell
 
                   # ─── Herramientas de desarrollo ───
@@ -63,8 +65,6 @@
                   nerd-fonts.iosevka-term
                 ];
 
-                programs.nushell.enable = true;
-                programs.starship.enable = true;
               }
             ];
           };
