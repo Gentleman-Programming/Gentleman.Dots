@@ -32,7 +32,12 @@ set -x LS_COLORS "di=38;5;67:ow=48;5;60:ex=38;5;132:ln=38;5;144:*.tar=38;5;180:*
 set -g fish_greeting ""
 
 ## alias
-alias ls='gls --color=auto'
+if test (uname) = Darwin
+    alias ls='ls --color=auto'
+else
+    alias ls='gls --color=auto'
+end
+
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
 
