@@ -117,19 +117,19 @@ $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
 $env.ZELLIJ_AUTO_ATTACH = 'true'
 $env.ZELLIJ_AUTO_EXIT = 'true'
 
-if [ ! -d ~/.cache/starship ]; then
-  mkdir -p ~/.cache/starship
-fi
+if ((ls ~/.cache | where name == "starship" | length) == 0) {
+    mkdir ~/.cache/starship
+}
 
-if [ ! -d ~/.cache/carapace ]; then
-  mkdir -p ~/.cache/carapace
-fi
+if ((ls ~/.cache | where name == "carapace" | length) == 0) {
+    mkdir ~/.cache/carapace
+}
 
-if [ ! -d ~/.local/share/atuin ]; then
-  mkdir -p ~/.local/share/atuin
-fi
+if ((ls ~/.local/share | where name == "atuin" | length) == 0) {
+    mkdir ~/.local/share/atuin
+}
 
-starship init nu
-zoxide init nushell
-atuin init nu
-carapace _carapace nushell
+starship init nu | save -f ~/.cache/starship/init.nu
+zoxide init nushell | save -f ~/.zoxide.nu
+atuin init nu | save -f ~/.local/share/atuin/init.nu
+carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
