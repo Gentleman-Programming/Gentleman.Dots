@@ -62,4 +62,6 @@ keybind = alt+l=goto_split:right
 
 # Miscellaneous
 keybind = ctrl+k=clear_screen
-keybind = alt+s=write_screen_file:open # Use it by writing 'nvim' first and then the keybinding to open the file with nvim
+
+# Use it by writing 'nvim' first and then the keybinding to open the file with nvim
+keybind = alt+s=write_screen_file:open
