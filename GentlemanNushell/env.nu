@@ -115,3 +115,20 @@ $env.ZELLIJ_AUTO_ATTACH = 'true'
 $env.ZELLIJ_AUTO_EXIT = 'true'
 $env.TMUX_AUTO_ATTACH = 'true'
 $env.TMUX_AUTO_EXIT = 'true'
+
+if ((ls ~/.cache | where name == "starship" | length) == 0) {
+    mkdir ~/.cache/starship
+}
+
+if ((ls ~/.cache | where name == "carapace" | length) == 0) {
+    mkdir ~/.cache/carapace
+}
+
+if ((ls ~/.local/share | where name == "atuin" | length) == 0) {
+    mkdir ~/.local/share/atuin
+}
+
+starship init nu | save -f ~/.cache/starship/init.nu
+zoxide init nushell | save -f ~/.zoxide.nu
+atuin init nu | save -f ~/.local/share/atuin/init.nu
+carapace _carapace nushell | save --force ~/.cache/carapace/init.nu

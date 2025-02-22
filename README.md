@@ -324,24 +324,6 @@ cp -rf bash-env-json ~/.config/
 cp -rf bash-env.nu ~/.config/
 brew install nushell carapace zoxide atuin jq bash starship fzf
 cp -rf starship.toml ~/.config/
-
-if [ ! -d ~/.cache/starship ]; then
-  mkdir -p ~/.cache/starship
-fi
-
-if [ ! -d ~/.cache/carapace ]; then
-  mkdir -p ~/.cache/carapace
-fi
-
-if [ ! -d ~/.local/share/atuin ]; then
-  mkdir -p ~/.local/share/atuin
-fi
-
-starship init nu
-zoxide init nushell
-atuin init nu
-carapace _carapace nushell
-
 ```
 
 ###### 2. Step
