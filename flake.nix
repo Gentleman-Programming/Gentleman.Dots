@@ -55,6 +55,7 @@
 
                   # ─── Compiladores y utilidades de sistema ───
                   gcc
+                  coreutils
                   fd
                   ripgrep
                   coreutils
