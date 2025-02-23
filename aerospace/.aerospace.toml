@@ -219,3 +219,10 @@ automatically-unhide-macos-hidden-apps = false
     others = "main"
     stream = "main"
 
+[[on-window-detected]]
+    if.app-id="com.mitchellh.ghostty"
+        run= [
+            "layout tiling",
+        ]
+
+
