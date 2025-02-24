@@ -52,6 +52,7 @@
                   nodejs
                   lazygit
                   bun
+                  cargo
 
                   # ─── Compiladores y utilidades de sistema ───
                   gcc

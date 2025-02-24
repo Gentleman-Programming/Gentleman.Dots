@@ -156,6 +156,7 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      image = {},
       picker = {
         matcher = {
           fuzzy = true,
