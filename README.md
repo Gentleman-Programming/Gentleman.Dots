@@ -107,11 +107,23 @@ nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backu
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-Now run the following script to add Nushell or `Fish` to your list of available shells and select it as the default one:
+### 5. Default Shell
 
+Now run the following script to add `Nushell` or `Fish` to your list of available shells and select it as the default one:
+
+**Fish:**
+
+```bash
+shellPath=$(which fish)
+
+sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
+sudo chsh -s "$shellPath" "$USER"
 ```
-bash
-shellPath=$(which nu) || shellPath=$(which fish)
+
+**Nushell:**
+
+```bash
+shellPath=$(which nu)
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
