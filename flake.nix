@@ -30,8 +30,8 @@
               ./zsh.nix  # Zsh configuration
               {
                 # Personal data
-                home.username = "alanbuscaglia";  # Replace with your username
-                home.homeDirectory = "/Users/alanbuscaglia/";  # Replace with your home directory
+                home.username = "YourUser";  # Replace with your username
+                home.homeDirectory = "/Users/YourUser/";  # Replace with your home directory
                 home.stateVersion = "24.11";  # State version
 
                 home.packages = with pkgs; [
@@ -40,12 +40,6 @@
                   fish
                   zsh
                   nushell
-
-                  # ─── Zsh Plugins ───
-                  zsh-autocomplete
-                  zsh-syntax-highlighting
-                  zsh-autosuggestions
-                  zsh-vi-mode
 
                   # ─── Development tools ───
                   volta
