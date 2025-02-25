@@ -17,6 +17,7 @@ eval ($BREW_BIN shellenv)
 starship init fish | source
 zoxide init fish | source
 atuin init fish | source
+fzf --fish | source
 
 set -x PATH $HOME/.cargo/bin $PATH
 set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
