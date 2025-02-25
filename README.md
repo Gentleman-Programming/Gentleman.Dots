@@ -13,6 +13,7 @@ This repository contains customized configurations for a complete development en
 - Neovim
 - **Nushell**
 - **Fish**
+- **Zsh**
 - Terminal emulators:
   - **WezTerm**
   - **Ghostty**
@@ -109,7 +110,7 @@ _(This command applies the configuration defined in the flake, installing all de
 
 ### 5. Default Shell
 
-Now run the following script to add `Nushell` or `Fish` to your list of available shells and select it as the default one:
+Now run the following script to add `Nushell`, `Fish` or `Zsh` to your list of available shells and select it as the default one:
 
 **Fish:**
 
@@ -124,6 +125,15 @@ sudo chsh -s "$shellPath" "$USER"
 
 ```bash
 shellPath=$(which nu)
+
+sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
+sudo chsh -s "$shellPath" "$USER"
+```
+
+**Zsh:**
+
+```bash
+shellPath=$(which zsh)
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
