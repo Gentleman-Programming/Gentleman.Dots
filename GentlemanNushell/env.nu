@@ -111,10 +111,6 @@ $env.PATH = (
 
 $env.STARSHIP_CONFIG = $env.HOME | path join ".config/starship.toml"
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-$env.ZELLIJ_AUTO_ATTACH = 'true'
-$env.ZELLIJ_AUTO_EXIT = 'true'
-$env.TMUX_AUTO_ATTACH = 'true'
-$env.TMUX_AUTO_EXIT = 'true'
 
 if ((ls ~/.cache | where name == "starship" | length) == 0) {
     mkdir ~/.cache/starship

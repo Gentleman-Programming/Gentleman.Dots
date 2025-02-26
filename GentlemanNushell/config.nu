@@ -1003,32 +1003,12 @@ def fzfnvim [] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-let MULTIPLEXER = "zellij"
-let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
+let MULTIPLEXER = "tmux" 
+let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
 def start_multiplexer [] {
-  if $MULTIPLEXER not-in ($env | columns) {
-    if $MULTIPLEXER == 'zellij' {
-      if 'ZELLIJ_AUTO_ATTACH' in ($env | columns) and $env.ZELLIJ_AUTO_ATTACH == 'true' {
-        zellij attach -c
-      } else {
-        zellij
-      }
-
-      if 'ZELLIJ_AUTO_EXIT' in ($env | columns) and $env.ZELLIJ_AUTO_EXIT == 'true' {
-        exit
-      }
-    } else {
-      if 'TMUX_AUTO_ATTACH' in ($env | columns) and $env.TMUX_AUTO_ATTACH == 'true' {
-        tmux attach or tmux new
-      } else {
-        tmux
-      }
-
-      if 'TMUX_AUTO_EXIT' in ($env | columns) and $env.TMUX_AUTO_EXIT == 'true' {
-        exit
-      }
-    }
+  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+    run-external $MULTIPLEXER
   }
 }
 
