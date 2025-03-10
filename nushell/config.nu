@@ -1003,6 +1003,6 @@ def fzfnvim [] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-if "ZELLIJ" not-in ($env | columns) {
-  run-external zellij
-} 
+# if "ZELLIJ" not-in ($env | columns) {
+#   run-external zellij
+# } 
