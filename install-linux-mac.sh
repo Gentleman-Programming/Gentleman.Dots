@@ -520,9 +520,9 @@ install_window_manager_with_progress() {
   fi
 }
 
-# Ask if they want to use Tmux or Zellij, or none
+# Ask if they want to use Tmux or Zellij
 echo -e "${YELLOW}Step 4: Choose and Install Window Manager${NC}"
-wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij" "none")
+wm_choice=$(select_option "Which window manager do you want to install? " "tmux" "zellij")
 
 case "$wm_choice" in
 "tmux")
@@ -640,7 +640,7 @@ case "$wm_choice" in
   # Check and modify ~/.zshrc if it exists
   if [ -f ~/.zshrc ]; then
     run_sed ~/.zshrc '/exec $WM_CMD/d'
-    update_or_replace ~/.zshrc "exec $WM_CMD" "true"
+    update_or_replace ~/.zshrc "exec \$WM_CMD" "true"
   fi
 
   # Check and modify ~/.config/fish/config.fish if it exists
@@ -652,9 +652,9 @@ case "$wm_choice" in
   # Check and modify ~/.config/nushell/config.nu if it exists
   if [ -f ~/.config/fish/config.fish ] || [ -d ~/Library/Application\ Support/nushell ]; then
     if [[ "$os_type" == "Darwin" ]]; then
-      update_or_replace "GentlemanNushell/config.nu" "/run-external $MULTIPLEXER" "true"
+      update_or_replace "GentlemanNushell/config.nu" "run-external \$MULTIPLEXER" "true"
     else
-      update_or_replace ~/.config/nushell/config.nu "/run-external $MULTIPLEXER" "true"
+      update_or_replace ~/.config/nushell/config.nu "run-external \$MULTIPLEXER" "true"
     fi
   fi
   ;;
