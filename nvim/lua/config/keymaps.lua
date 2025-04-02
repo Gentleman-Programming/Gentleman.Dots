@@ -4,6 +4,14 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Code Companion keymaps
+vim.keymap.set({ "n", "v" }, "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<leader>a", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true })
+vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true })
+
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd([[cab cc CodeCompanion]])
+
 -- Position cursor at the middle of the screen after scrolling half page
 vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
 vim.keymap.set("n", "<C-u>", "<C-u>zz") -- Scroll up half a page and center the cursor
