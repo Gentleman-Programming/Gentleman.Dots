@@ -1,3 +1,46 @@
+local mode = {
+  "mode",
+  fmt = function(s)
+    local mode_map = {
+      ["NORMAL"] = "N",
+      ["O-PENDING"] = "N?",
+      ["INSERT"] = "I",
+      ["VISUAL"] = "V",
+      ["V-BLOCK"] = "VB",
+      ["V-LINE"] = "VL",
+      ["V-REPLACE"] = "VR",
+      ["REPLACE"] = "R",
+      ["COMMAND"] = "!",
+      ["SHELL"] = "SH",
+      ["TERMINAL"] = "T",
+      ["EX"] = "X",
+      ["S-BLOCK"] = "SB",
+      ["S-LINE"] = "SL",
+      ["SELECT"] = "S",
+      ["CONFIRM"] = "Y?",
+      ["MORE"] = "M",
+    }
+    return mode_map[s] or s
+  end,
+}
+
+local function codecompanion_adapter_name()
+  local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+  if not chat then
+    return nil
+  end
+
+  return " " .. chat.adapter.formatted_name
+end
+
+local function codecompanion_current_model_name()
+  local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+  if not chat then
+    return nil
+  end
+
+  return chat.settings.model
+end
 -- This file contains the configuration for various UI-related plugins in Neovim.
 return {
   -- Plugin: folke/todo-comments.nvim
@@ -17,34 +60,6 @@ return {
       preset = "classic",
       win = { border = "single" },
     },
-  },
-
-  -- Plugin: noice.nvim
-  -- URL: https://github.com/folke/noice.nvim
-  -- Description: A Neovim plugin for enhancing the command-line UI.
-  {
-    "folke/noice.nvim",
-    config = function()
-      require("noice").setup({
-        cmdline = {
-          view = "cmdline", -- Use the cmdline view for the command-line
-        },
-        presets = {
-          bottom_search = true, -- Enable bottom search view
-          command_palette = true, -- Enable command palette view
-          lsp_doc_border = true, -- Enable LSP documentation border
-        },
-        -- Uncomment the following lines to customize the cmdline popup view
-        -- views = {
-        --   cmdline_popup = {
-        --     filter_options = {},
-        --     win_options = {
-        --       winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
-        --     },
-        --   },
-        -- },
-      })
-    end,
   },
 
   -- Plugin: nvim-docs-view
@@ -80,6 +95,62 @@ return {
           },
         },
       },
+      extensions = {
+        "quickfix",
+        {
+          filetypes = { "oil" },
+          sections = {
+            lualine_a = {
+              mode,
+            },
+            lualine_b = {
+              function()
+                local ok, oil = pcall(require, "oil")
+                if not ok then
+                  return ""
+                end
+
+                ---@diagnostic disable-next-line: param-type-mismatch
+                local path = vim.fn.fnamemodify(oil.get_current_dir(), ":~")
+                return path .. " %m"
+              end,
+            },
+          },
+        },
+        {
+          filetypes = { "codecompanion" },
+          sections = {
+            lualine_a = {
+              mode,
+            },
+            lualine_b = {
+              codecompanion_adapter_name,
+            },
+            lualine_c = {
+              codecompanion_current_model_name,
+            },
+            lualine_x = {},
+            lualine_y = {
+              "progress",
+            },
+            lualine_z = {
+              "location",
+            },
+          },
+          inactive_sections = {
+            lualine_a = {},
+            lualine_b = {
+              codecompanion_adapter_name,
+            },
+            lualine_c = {},
+            lualine_x = {},
+            lualine_y = {
+              "progress",
+            },
+            lualine_z = {},
+          },
+        },
+      },
     },
   },
 
@@ -109,30 +180,6 @@ return {
     end,
   },
 
-  -- Plugin: mini.nvim
-  -- URL: https://github.com/echasnovski/mini.nvim
-  -- Description: A collection of minimal, fast, and modular Lua plugins for Neovim.
-  {
-    "echasnovski/mini.nvim",
-    version = false, -- Use the latest version
-    config = function()
-      require("mini.animate").setup({
-        resize = {
-          enable = false, -- Disable resize animations
-        },
-        open = {
-          enable = false, -- Disable open animations
-        },
-        close = {
-          enable = false, -- Disable close animations
-        },
-        scroll = {
-          enable = false, -- Disable scroll animations
-        },
-      })
-    end,
-  },
-
   -- Plugin: zen-mode.nvim
   -- URL: https://github.com/folke/zen-mode.nvim
   -- Description: A Neovim plugin for distraction-free coding.
@@ -156,6 +203,7 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      notifier = {},
       image = {},
       picker = {
         matcher = {
