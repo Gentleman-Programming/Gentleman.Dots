@@ -29,34 +29,13 @@ return {
     { "<leader>ae", "<cmd>CodeCompanion /explain<cr>", mode = { "v" }, desc = "AI [E]xplain" },
   },
   config = true,
-  dependencies = {
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
-    { "nvim-lua/plenary.nvim" },
-    -- Test with blink.cmp
-    {
-      "saghen/blink.cmp",
-      lazy = false,
-      version = "*",
-      opts = {
-        keymap = {
-          preset = "enter",
-          ["<S-Tab>"] = { "select_prev", "fallback" },
-          ["<Tab>"] = { "select_next", "fallback" },
-        },
-        cmdline = { sources = { "cmdline" } },
-        sources = {
-          default = { "lsp", "path", "buffer", "codecompanion" },
-        },
-      },
-    },
-  },
   opts = {
     adapters = {
       copilot = function()
         return require("codecompanion.adapters").extend("copilot", {
           schema = {
             model = {
-              default = "gpt-4o",
+              default = "claude-3.7-sonnet",
             },
           },
         })
