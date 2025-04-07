@@ -55,6 +55,7 @@
                   lazygit
                   bun
                   cargo
+                  go
 
                   # ─── Compilers and system utilities ───
                   gcc
