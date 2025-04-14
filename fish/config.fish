@@ -1,5 +1,14 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
+
+    # Install Fisher if not installed
+    if not functions -q fisher
+        curl -sL https://git.io/fisher | source
+        fisher install jorgebucaran/fisher
+    end
+
+    # Set Catppuccin Mocha as default theme
+    fish_config theme choose "Catppuccin Mocha"
 end
 
 if test (uname) = Darwin
@@ -85,40 +94,40 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 #set -l cyan 878fb9        # va: light blue (information)
 #set -l pink c58ea7        # ia: intense pink (highlight)
 
-# --- Base colors ---
-set -l foreground C9C7CD # na: main text (light gray)
-set -l selection 3B4252 # gr: dark gray (highlight)
-set -l comment 4C566A # nb: medium gray (comments)
-
-# --- Accent colors ---
-set -l red EA83A5 # ia: intense pink (errors)
-set -l orange F5A191 # ca: light peach (warnings)
-set -l yellow E6B99D # ca: beige (warnings)
-set -l green 90B99F # va: soft green (success)
-set -l purple 92A2D5 # ca: lavender blue (highlight)
-set -l cyan 85B5BA # va: blue-green (information)
-set -l pink E29ECA # ia: soft pink (highlight)
-
-# Syntax Highlighting Colors
-set -g fish_color_normal $foreground
-set -g fish_color_command $cyan
-set -g fish_color_keyword $pink
-set -g fish_color_quote $yellow
-set -g fish_color_redirection $foreground
-set -g fish_color_end $orange
-set -g fish_color_error $red
-set -g fish_color_param $purple
-set -g fish_color_comment $comment
-set -g fish_color_selection --background=$selection
-set -g fish_color_search_match --background=$selection
-set -g fish_color_operator $green
-set -g fish_color_escape $pink
-set -g fish_color_autosuggestion $comment
-
-# Completion Pager Colors
-set -g fish_pager_color_progress $comment
-set -g fish_pager_color_prefix $cyan
-set -g fish_pager_color_completion $foreground
-set -g fish_pager_color_description $comment
-
+## --- Base colors ---
+#set -l foreground C9C7CD # na: main text (light gray)
+#set -l selection 3B4252 # gr: dark gray (highlight)
+#set -l comment 4C566A # nb: medium gray (comments)
+#
+## --- Accent colors ---
+#set -l red EA83A5 # ia: intense pink (errors)
+#set -l orange F5A191 # ca: light peach (warnings)
+#set -l yellow E6B99D # ca: beige (warnings)
+#set -l green 90B99F # va: soft green (success)
+#set -l purple 92A2D5 # ca: lavender blue (highlight)
+#set -l cyan 85B5BA # va: blue-green (information)
+#set -l pink E29ECA # ia: soft pink (highlight)
+#
+## Syntax Highlighting Colors
+#set -g fish_color_normal $foreground
+#set -g fish_color_command $cyan
+#set -g fish_color_keyword $pink
+#set -g fish_color_quote $yellow
+#set -g fish_color_redirection $foreground
+#set -g fish_color_end $orange
+#set -g fish_color_error $red
+#set -g fish_color_param $purple
+#set -g fish_color_comment $comment
+#set -g fish_color_selection --background=$selection
+#set -g fish_color_search_match --background=$selection
+#set -g fish_color_operator $green
+#set -g fish_color_escape $pink
+#set -g fish_color_autosuggestion $comment
+#
+## Completion Pager Colors
+#set -g fish_pager_color_progress $comment
+#set -g fish_pager_color_prefix $cyan
+#set -g fish_pager_color_completion $foreground
+#set -g fish_pager_color_description $comment
+#
 clear
