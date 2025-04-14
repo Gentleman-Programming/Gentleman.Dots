@@ -56,6 +56,7 @@
                   bun
                   cargo
                   go
+                  nil
 
                   # ─── Compilers and system utilities ───
                   gcc
