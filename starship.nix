@@ -24,7 +24,7 @@ $time\
 
 add_newline = true
 command_timeout = 3600000
-palette = "oldWorld"
+palette = "catppuccin_mocha"
 
 [fill]
 symbol = ' '

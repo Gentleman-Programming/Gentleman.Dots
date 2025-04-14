@@ -1,45 +1,56 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
-
-# Add paths to the beginning of PATH
-SETUVAR PATH_BEGIN:$HOME/.volta/bin\x1e$HOME/.bun/bin\x1e$HOME/.nix-profile/bin\x1e/Users/var/nix/profiles/default/bin\x1e$PATH
-
-# Add paths to the end of PATH
-SETUVAR PATH_END:$PATH\x1e/usr/local/bin\x1e$HOME/.config\x1e$HOME/.cargo/bin\x1e/usr/local/lib/*
-
+SETUVAR --export CARAPACE_BRIDGES:zsh\x2cfish\x2cbash\x2cinshellisense
 SETUVAR FZF_DEFAULT_OPTS:\x2d\x2dheight\x2040\x25
 SETUVAR FZF_DISABLE_KEYBINDINGS:0
 SETUVAR FZF_LEGACY_KEYBINDINGS:1
 SETUVAR FZF_PREVIEW_DIR_CMD:ls
 SETUVAR FZF_PREVIEW_FILE_CMD:head\x20\x2dn\x2010
 SETUVAR FZF_TMUX_HEIGHT:40\x25
-SETUVAR __fish_initialized:3100
-SETUVAR fish_color_autosuggestion:585858
-SETUVAR fish_color_cancel:\x2dr
-SETUVAR fish_color_command:a1b56c
-SETUVAR fish_color_comment:f7ca88
-SETUVAR fish_color_cwd:green
+SETUVAR PATH_BEGIN:\x24HOME/\x2evolta/bin\x1e\x24HOME/\x2ebun/bin\x1e\x24HOME/\x2enix\x2dprofile/bin\x1e/Users/var/nix/profiles/default/bin\x1e\x24PATH
+SETUVAR PATH_END:\x24PATH\x1e/usr/local/bin\x1e\x24HOME/\x2econfig\x1e\x24HOME/\x2ecargo/bin\x1e/usr/local/lib/\x2a
+SETUVAR __fish_initialized:3400
+SETUVAR _fisher_catppuccin_2F_fish_files:\x7e/\x2econfig/fish/themes/Catppuccin\x20Frappe\x2etheme\x1e\x7e/\x2econfig/fish/themes/Catppuccin\x20Latte\x2etheme\x1e\x7e/\x2econfig/fish/themes/Catppuccin\x20Macchiato\x2etheme\x1e\x7e/\x2econfig/fish/themes/Catppuccin\x20Mocha\x2etheme
+SETUVAR _fisher_jorgebucaran_2F_fisher_files:\x7e/\x2econfig/fish/functions/fisher\x2efish\x1e\x7e/\x2econfig/fish/completions/fisher\x2efish
+SETUVAR _fisher_plugins:jorgebucaran/fisher\x1ecatppuccin/fish
+SETUVAR _fisher_upgraded_to_4_4:\x1d
+SETUVAR fish_color_autosuggestion:6c7086
+SETUVAR fish_color_cancel:f38ba8
+SETUVAR fish_color_command:89b4fa
+SETUVAR fish_color_comment:7f849c
+SETUVAR fish_color_cwd:f9e2af
 SETUVAR fish_color_cwd_root:red
-SETUVAR fish_color_end:ba8baf
-SETUVAR fish_color_error:ab4642
-SETUVAR fish_color_escape:86c1b9
+SETUVAR fish_color_end:fab387
+SETUVAR fish_color_error:f38ba8
+SETUVAR fish_color_escape:eba0ac
+SETUVAR fish_color_gray:6c7086
 SETUVAR fish_color_history_current:\x2d\x2dbold
-SETUVAR fish_color_host:normal
-SETUVAR fish_color_host_remote:yellow
+SETUVAR fish_color_host:89b4fa
+SETUVAR fish_color_host_remote:a6e3a1
+SETUVAR fish_color_keyword:f38ba8
 SETUVAR fish_color_match:7cafc2
-SETUVAR fish_color_normal:normal
-SETUVAR fish_color_operator:7cafc2
-SETUVAR fish_color_param:d8d8d8
-SETUVAR fish_color_quote:f7ca88
-SETUVAR fish_color_redirection:d8d8d8
-SETUVAR fish_color_search_match:bryellow\x1e\x2d\x2dbackground\x3dbrblack
-SETUVAR fish_color_selection:white\x1e\x2d\x2dbold\x1e\x2d\x2dbackground\x3dbrblack
-SETUVAR fish_color_status:red
-SETUVAR fish_color_user:brgreen
+SETUVAR fish_color_normal:cdd6f4
+SETUVAR fish_color_operator:f5c2e7
+SETUVAR fish_color_option:a6e3a1
+SETUVAR fish_color_param:f2cdcd
+SETUVAR fish_color_quote:a6e3a1
+SETUVAR fish_color_redirection:f5c2e7
+SETUVAR fish_color_search_match:\x2d\x2dbackground\x3d313244
+SETUVAR fish_color_selection:\x2d\x2dbackground\x3d313244
+SETUVAR fish_color_status:f38ba8
+SETUVAR fish_color_user:94e2d5
 SETUVAR fish_color_valid_path:\x2d\x2dunderline
 SETUVAR fish_key_bindings:fish_default_key_bindings
-SETUVAR fish_pager_color_completion:normal
-SETUVAR fish_pager_color_description:B3A06D\x1eyellow
-SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
-SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
-SETUVAR fish_pager_color_selected_background:\x2dr
+SETUVAR fish_pager_color_background:\x1d
+SETUVAR fish_pager_color_completion:cdd6f4
+SETUVAR fish_pager_color_description:6c7086
+SETUVAR fish_pager_color_prefix:f5c2e7
+SETUVAR fish_pager_color_progress:6c7086
+SETUVAR fish_pager_color_secondary_background:\x1d
+SETUVAR fish_pager_color_secondary_completion:\x1d
+SETUVAR fish_pager_color_secondary_description:\x1d
+SETUVAR fish_pager_color_secondary_prefix:\x1d
+SETUVAR fish_pager_color_selected_background:\x1d
+SETUVAR fish_pager_color_selected_completion:\x1d
+SETUVAR fish_pager_color_selected_description:\x1d
+SETUVAR fish_pager_color_selected_prefix:\x1d
