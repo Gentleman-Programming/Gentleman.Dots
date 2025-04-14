@@ -350,7 +350,7 @@ themes {
       white "#C9C7CD"
     }
 }
-theme "oldWorld"
+theme "catppuccin-mocha"
 default_mode "locked"
 scrollback_editor "nvim"
 default_layout "work_oldWorld"
