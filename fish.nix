@@ -17,7 +17,7 @@
           owner = "jorgebucaran";
           repo = "fisher";
           rev = "4.4.4";
-          sha256 = "sha256-k8aBgZuKPB784qa9vZJe1E8bLqXXGFRi6xfRiR3yJ5c=";
+          sha256 = "sha256-e8gIaVbuUzTwKtuMPNXBT5STeddYqQegduWBtURLT3M=";
         };
       }
       {
@@ -26,7 +26,7 @@
           owner = "catppuccin";
           repo = "fish";
           rev = "0ce27b518e8ead555dec34dd8be3df5bd75cff8e";
-          sha256 = "sha256-Dc/zdxfzAUM5NX8PxzfljRbYvO9f9syuLJ4WuCGgzQE=";
+          sha256 = "sha256-Dc/zdxfzAUM5NX8PxzfljRbYvO9f9syuLO8yBr+R3qg=";
         };
       }
     ];
