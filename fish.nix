@@ -104,15 +104,6 @@
           sha256 = "sha256-Dc/zdxfzAUM5NX8PxzfljRbYvO9f9syuLO8yBr+R3qg=";
         };
       }
-      {
-        name = "fish-vi-mode";
-        src = pkgs.fetchFromGitHub {
-          owner = "fish-shell";
-          repo = "fish-vi-mode";
-          rev = "master";
-          sha256 = lib.fakeSha256;
-        };
-      }
     ];
   };
 }
