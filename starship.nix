@@ -91,7 +91,7 @@ min_time  = 500
 
 [git_branch]
 format   = "-> [$symbol$branch]($style) "
-style    = "bold fg:git"
+style    = "bold fg:mauve"
 symbol   = " "
 
 [git_status]
