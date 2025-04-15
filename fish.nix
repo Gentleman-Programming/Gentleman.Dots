@@ -48,6 +48,31 @@
       # set -x LS_COLORS "di=38;5;67:ow=48;5;60:ex=38;5;132:ln=38;5;144:*.tar=38;5;180:*.zip=38;5;180:*.jpg=38;5;175:*.png=38;5;175:*.mp3=38;5;175:*.wav=38;5;175:*.txt=38;5;223:*.sh=38;5;132"
       set -g fish_greeting ""
 
+      # Enable vi mode
+      fish_vi_key_bindings
+
+      # Set visual indicator for vi mode
+      function fish_mode_prompt
+          switch $fish_bind_mode
+              case default
+                  set_color --bold red
+                  echo '[N] '
+              case insert
+                  set_color --bold green
+                  echo '[I] '
+              case replace_one
+                  set_color --bold green
+                  echo '[R] '
+              case visual
+                  set_color --bold magenta
+                  echo '[V] '
+              case '*'
+                  set_color --bold red
+                  echo '[?] '
+          end
+          set_color normal
+      end
+
       if test (uname) = Darwin
           alias ls='ls --color=auto'
       else
@@ -77,6 +102,15 @@
           repo = "fish";
           rev = "0ce27b518e8ead555dec34dd8be3df5bd75cff8e";
           sha256 = "sha256-Dc/zdxfzAUM5NX8PxzfljRbYvO9f9syuLO8yBr+R3qg=";
+        };
+      }
+      {
+        name = "fish-vi-mode";
+        src = pkgs.fetchFromGitHub {
+          owner = "fish-shell";
+          repo = "fish-vi-mode";
+          rev = "master";
+          sha256 = lib.fakeSha256;
         };
       }
     ];
