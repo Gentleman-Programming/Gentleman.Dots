@@ -60,6 +60,9 @@ crust = "#11111b"
 [character]
 success_symbol = "[󱗞](fg:green)"
 error_symbol   = "[󱗞](fg:red)"
+vimcmd_symbol = "[N](bold red)"
+vimcmd_replace_one_symbol = "[R](bold peach)"
+vimcmd_visual_symbol = "[V](bold purple)"
 
 [username]
 style_user    = 'bold teal'
