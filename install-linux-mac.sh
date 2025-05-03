@@ -252,7 +252,7 @@ if [ -d "Gentleman.Dots" ]; then
   echo -e "${GREEN}Repository already cloned. Overwriting...${NC}"
   rm -rf "Gentleman.Dots"
 fi
-clone_repository_with_progress "https://github.com/Gentleman-Programming/Gentleman.Dots.git" "Gentleman.Dots" 20
+clone_repository_with_progress "https://github.com/deuriib/Config.LazyVim.git" "Config.LazyVim" 20
 cd Gentleman.Dots || exit
 
 # Install Homebrew if not installed
