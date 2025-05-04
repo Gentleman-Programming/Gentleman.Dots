@@ -16,7 +16,7 @@ return {
   --   enabled = false,
   -- },
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
+    "yetone/avante.nvim",
     enabled = false,
   },
 }
