@@ -26,7 +26,7 @@ logo='
 '
 # Display logo and title
 echo -e "${PINK}${logo}${NC}"
-echo -e "${PURPLE}Welcome to the Gentleman.Dots Auto Config!${NC}"
+echo -e "${PURPLE}Welcome to the deuriib Auto Config!${NC}"
 
 sudo -v
 
