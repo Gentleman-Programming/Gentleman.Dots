@@ -248,9 +248,9 @@ clone_repository_with_progress() {
 
 # Step 1: Clone the Repository
 echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
-if [ -d "Gentleman.Dots" ]; then
+if [ -d "Config.LazyVim" ]; then
   echo -e "${GREEN}Repository already cloned. Overwriting...${NC}"
-  rm -rf "Gentleman.Dots"
+  rm -rf "Config.LazyVim"
 fi
 clone_repository_with_progress "https://github.com/deuriib/Config.LazyVim.git" "Config.LazyVim" 20
 cd Config.LazyVim || exit
