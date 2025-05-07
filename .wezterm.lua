@@ -115,7 +115,7 @@ config.window_padding = {
 }
 
 -- Set the terminal font
-config.font = wezterm.font("IosevkaTerm NF")
+config.font = wezterm.font("Maple Mono")
 
 -- Hide the tab bar if only one tab is open
 config.hide_tab_bar_if_only_one_tab = true
