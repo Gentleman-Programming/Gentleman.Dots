@@ -89,7 +89,7 @@ unfocused_hollow = true
 size = 16
 
 [font.normal]
-family = "IosevkaTerm NF"
+family = "Maple Mono"
 
 [window]
 option_as_alt = "Both"
