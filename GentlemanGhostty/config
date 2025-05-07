@@ -28,7 +28,7 @@ palette = 13=#92A2D5
 palette = 14=#85B5BA
 palette = 15=#C9C7CD
 
-font-family = IosevkaTerm NF
+font-family = Maple Mono
 font-size = 16
 window-padding-color = extend
 window-step-resize = true
