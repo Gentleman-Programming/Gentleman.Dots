@@ -253,7 +253,7 @@ if [ -d "Gentleman.Dots" ]; then
   rm -rf "Gentleman.Dots"
 fi
 clone_repository_with_progress "https://github.com/deuriib/Config.LazyVim.git" "Config.LazyVim" 20
-cd Gentleman.Dots || exit
+cd Config.LazyVim || exit
 
 # Install Homebrew if not installed
 install_homebrew
@@ -350,21 +350,13 @@ else
 
   if [ "$term_choice" != "none" ]; then
     echo -e "${YELLOW}Iosevka Term Nerd Font is required for the terminal emulator.${NC}"
-    font_installed=$(select_option "Do you already have Iosevka Term Nerd Font installed?" "Yes" "No")
+    font_installed=$(select_option "Do you already have Maple Nono installed?" "Yes" "No")
     if [ "$font_installed" = "No" ]; then
-      echo -e "${YELLOW}Installing Iosevka Term Nerd Font...${NC}"
-      if [ "$os_choice" = "linux" ]; then
-        mkdir -p ~/.local/share/fonts
-        wget -O ~/.local/share/fonts/IosevkaTerm.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip
-        unzip ~/.local/share/fonts/IosevkaTerm.zip -d ~/.local/share/fonts/
-        fc-cache -fv
-      elif [ "$os_choice" = "mac" ]; then
-        brew tap homebrew/cask-fonts
-        brew install --cask font-iosevka-term-nerd-font
-      fi
-      echo -e "${GREEN}Iosevka Term Nerd Font installed.${NC}"
+      echo -e "${YELLOW}Installing Maple Mono Font...${NC}"
+      brew install --cask font-maple-mono
+      echo -e "${GREEN}Maple Mono installed.${NC}"
     else
-      echo -e "${GREEN}Iosevka Term Nerd Font is already installed.${NC}"
+      echo -e "${GREEN}Maple Mono is already installed.${NC}"
     fi
   fi
 fi
