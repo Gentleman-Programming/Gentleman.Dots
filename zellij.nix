@@ -280,6 +280,62 @@ plugins {
 }
 
 themes {
+    catppuccin-latte {
+      bg "#acb0be" // Surface2
+      fg "#4c4f69" // Text
+      red "#d20f39"
+      green "#40a02b"
+      blue "#1e66f5"
+      yellow "#df8e1d"
+      magenta "#ea76cb" // Pink
+      orange "#fe640b" // Peach
+      cyan "#04a5e5" // Sky
+      black "#e6e9ef" // Mantle
+      white "#4c4f69" // Text
+    }
+
+    catppuccin-frappe {
+      bg "#626880" // Surface2
+      fg "#c6d0f5" // Text
+      red "#e78284"
+      green "#a6d189"
+      blue "#8caaee"
+      yellow "#e5c890"
+      magenta "#f4b8e4" // Pink
+      orange "#ef9f76" // Peach
+      cyan "#99d1db" // Sky
+      black "#292c3c" // Mantle
+      white "#c6d0f5" // Text
+    }
+
+    catppuccin-macchiato {
+      bg "#5b6078" // Surface2
+      fg "#cad3f5" // Text
+      red "#ed8796"
+      green "#a6da95"
+      blue "#8aadf4"
+      yellow "#eed49f"
+      magenta "#f5bde6" // Pink
+      orange "#f5a97f" // Peach
+      cyan "#91d7e3" // Sky
+      black "#1e2030" // Mantle
+      white "#cad3f5" // Text
+    }
+
+    catppuccin-mocha {
+      bg "#585b70" // Surface2
+      fg "#cdd6f4" // Text
+      red "#f38ba8"
+      green "#a6e3a1"
+      blue "#89b4fa"
+      yellow "#f9e2af"
+      magenta "#f5c2e7" // Pink
+      orange "#fab387" // Peach
+      cyan "#89dceb" // Sky
+      black "#181825" // Mantle
+      white "#cdd6f4" // Text
+    }
+
     kanagawa_dragon {
         fg "#dcdccc"
         bg "#282828"
@@ -368,38 +424,39 @@ layout {
     }
 
     default_tab_template {
-        pane size=1 borderless=true {
-            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-                format_left   "{mode} #[fg=#E29ECA,bold]{session}{tabs}"
-                format_right  "{command_git_branch} {datetime}"
-                format_space  ""
+      pane size=1 borderless=true {
+        plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+          format_left   "{mode} #[fg=#cdd6f4,bold]{session}{tabs}"
+          format_right  "{command_git_branch} {datetime}"
+          format_space  ""
 
-                border_enabled  "false"
-                border_char     "─"
-                border_format   "#[fg=#161617]{char}"
-                border_position "top"
+          border_enabled  "false"
+          border_char     "─"
+          border_format   "#[fg=#181825]{char}"
+          border_position "top"
 
-                hide_frame_for_single_pane "true"
-                mode_normal  "#[bg=#85B5BA] "
-                mode_tmux    "#[bg=#EA83A5] "
+          hide_frame_for_single_pane "true"
 
-                tab_normal   "#[fg=#C9C7CD] {name} "
-                tab_active   "#[fg=#92A2D5,bold,italic] {name} "
+          mode_normal  "#[bg=#a6e3a1] "   
+          mode_tmux    "#[bg=#f38ba8] "  
 
-                command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                command_git_branch_format      "#[fg=#85B5BA] {stdout} "
-                command_git_branch_interval    "10"
-                command_git_branch_rendermode  "static"
+          tab_normal   "#[fg=#cdd6f4] {name} "                  
+          tab_active   "#[fg=#f5c2e7,bold,italic] {name} "      
 
-                datetime        "#[fg=#C9C7CD,bold] {format} "
-                datetime_format "%A, %d %b %Y %H:%M"
-                datetime_timezone "Europe/Berlin"
-            }
+          command_git_branch_command    "git rev-parse --abbrev-ref HEAD"
+          command_git_branch_format     "#[fg=#89dceb] {stdout} " 
+          command_git_branch_interval   "10"
+          command_git_branch_rendermode "static"
+
+          datetime         "#[fg=#cdd6f4,bold] {format} "
+          datetime_format  "%A, %d %b %Y %H:%M"
+          datetime_timezone "Europe/Berlin"
         }
-        children
-        pane size=1 borderless=true  {
-            plugin location="zellij:status-bar"
-        }
+      }
+      children
+      pane size=1 borderless=true {
+        plugin location="zellij:status-bar"
+      }
     }
 }
       '';
