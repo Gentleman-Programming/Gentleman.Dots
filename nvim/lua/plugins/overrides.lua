@@ -11,6 +11,19 @@ return {
     opts = { use_diagnostic_signs = true }, -- Use diagnostic signs for trouble.nvim
   },
 
+  -- Plugin: noice.nvim
+  -- URL: https://github.com/folke/noice.nvim
+  -- Description: Highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      cmdline = {
+        enabled = true,
+        view = "cmdline",
+      },
+    },
+  },
   -- Add symbols-outline.nvim plugin
   {
     -- Plugin: symbols-outline.nvim
