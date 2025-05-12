@@ -66,11 +66,28 @@ return {
           terminalColors = true, -- define vim.g.terminal_color_{0,17}
           colors = { -- add/modify theme and palette colors
             palette = {},
-            theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+            theme = {
+              wave = {},
+              lotus = {},
+              dragon = {},
+              all = {
+                ui = {
+                  bg_gutter = "none", -- set bg color for normal background
+                  bg_sidebar = "none", -- set bg color for sidebar like nvim-tree
+                  bg_float = "none", -- set bg color for floating windows
+                },
+              },
+            },
           },
           overrides = function(colors) -- add/modify highlights
             return {
               LineNr = { bg = "none" },
+              NormalFloat = { bg = "none" },
+              FloatBorder = { bg = "none" },
+              FloatTitle = { bg = "none" },
+              TelescopeNormal = { bg = "none" },
+              TelescopeBorder = { bg = "none" },
+              LspInfoBorder = { bg = "none" },
             }
           end,
           theme = "wave", -- Load "wave" theme
