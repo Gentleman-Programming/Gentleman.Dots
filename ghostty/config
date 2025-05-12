@@ -1,29 +1,28 @@
 background-opacity = 0.95
 background-blur-radius = 20
 
-theme = catppuccin-mocha.conf
+palette = 0=#16161d
+palette = 1=#c34043
+palette = 2=#76946a
+palette = 3=#c0a36e
+palette = 4=#7e9cd8
+palette = 5=#957fb8
+palette = 6=#6a9589
+palette = 7=#c8c093
+palette = 8=#727169
+palette = 9=#e82424
+palette = 10=#98bb6c
+palette = 11=#e6c384
+palette = 12=#7fb4ca
+palette = 13=#938aa9
+palette = 14=#7aa89f
+palette = 15=#dcd7ba
 
-#palette = 0=#27272a
-#palette = 1=#ea83a5
-#palette = 2=#90b99f
-#palette = 3=#e6b99d
-#palette = 4=#9ca2cf
-#palette = 5=#aca1cf
-#palette = 6=#85b5ba
-#palette = 7=#c9c7cd
-#palette = 8=#353539
-#palette = 9=#ED96B3
-#palette = 10=#a7c8b3
-#palette = =11=#eac5ae
-#palette = 12=#acb1d7
-#palette = 13=#b7aed5
-#palette = 14=#97c0c4
-#palette = 15=#d3d1d7
-#background = #161617
-#foreground = #c9c7cd
-#cursor-color = #c9c7cd
-#selection-background = #3C3B3E
-#selection-foreground = #c9c7cd
+background = 1f1f28
+foreground = dcd7ba
+cursor-color = c8c093
+selection-background = 2d4f67
+selection-foreground = c8c093
 
 font-family = IosevkaTerm NF
 font-size = 18

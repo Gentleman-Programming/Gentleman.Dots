@@ -49,11 +49,19 @@ return {
       opts = {},
     },
     {
+      "rebelot/kanagawa.nvim",
+      priority = 1000,
+      lazy = true,
+      opts = {
+        theme = "wave",
+      },
+    },
+    {
       -- LazyVim configuration
       "LazyVim/LazyVim",
       opts = {
         -- Set the default color scheme
-        colorscheme = "catppuccin",
+        colorscheme = "kanagawa",
       },
     },
   },
