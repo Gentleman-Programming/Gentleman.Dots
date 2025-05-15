@@ -1,7 +1,7 @@
  { config, pkgs, ... }:
  {
    home.file = {
-     ".config/wezter/wezterm.lua" = {
+     ".config/wezterm/wezterm.lua" = {
        text = ''
 -- Import the wezterm API
 local wezterm = require("wezterm")
