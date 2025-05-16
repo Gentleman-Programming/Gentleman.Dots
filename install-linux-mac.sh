@@ -668,22 +668,20 @@ echo -e "${YELLOW}Step 5: Choose and Install NVIM${NC}"
 install_nvim=$(select_option "Do you want to install Neovim?" "Yes" "No")
 
 if [ "$install_nvim" = "Yes" ]; then
-  OBSIDIAN_PATH=$(prompt_user "Enter the path for your Obsidian vault, it will create the folders for you if they don't exist" "/your/notes/path")
+  OBSIDIAN_PATH="$HOME/.config/obsidian"
   ensure_directory_exists "$OBSIDIAN_PATH" "true"
+  mkdir -p "$OBSIDIAN_PATH/templates"
 
-  # Install additional packages with Neovim
   install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
-  # Neovim Configuration
   echo -e "${YELLOW}Configuring Neovim...${NC}"
   run_command "mkdir -p ~/.config/nvim"
   run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
-  # Obsidian Configuration
+
   echo -e "${YELLOW}Configuring Obsidian...${NC}"
   obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
 
   if [ -f "$obsidian_config_file" ]; then
-    # Replace the vault path in the existing configuration
     update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
   else
     echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
