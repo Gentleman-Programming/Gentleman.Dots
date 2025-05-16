@@ -51,7 +51,7 @@ local config = {}
 --	[17] = "--E29ECA",
  	},
  }
-config.color_scheme = "Catppuccin Mocha"
+config.color_scheme = 'Kanagawa (Gogh)'
 config.window_padding = {
 	top = 0,
 	right = 0,
