@@ -605,5 +605,3 @@ You're done! You have manually configured your development environment following
 **Note:** If you encounter any problems during configuration, consult the official documentation of the tools or seek help online.
 
 **Happy coding!**
-
-952189428
