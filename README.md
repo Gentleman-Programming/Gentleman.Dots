@@ -1,6 +1,6 @@
 # Gentleman.Dots
 
-![Screenshot 2025-02-07 102533](https://github.com/user-attachments/assets/3f6c4f62-23d7-41d7-b7b1-42c7e0c32336)
+<img width="1917" alt="image" src="https://github.com/user-attachments/assets/cac40da9-b3e6-4d99-998f-c002383b6048" />
 
 ## Description
 
