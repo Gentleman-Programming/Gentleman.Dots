@@ -41,45 +41,46 @@
 # background = "#3f3b3e" # gr: gray
 # text = "#c5a3a9"       # na: text
 
+# Kanagawa Wave Theme Colors
 [colors.primary]
-background = "#000000" # bl: dark background (almost black)
-foreground = "#C9C7CD" # na: main text (light gray)
+background = "#1F1F28" # winterBlue
+foreground = "#DCD7BA" # fujiWhite
 
 [colors.cursor]
-cursor = "#92A2D5" # ca: blue lavender (cursor)
-text = "#C9C7CD"   # na: main text (light gray)
+cursor = "#7FB4CA" # waveAqua2
+text = "#1F1F28"   # winterBlue (contrast for cursor)
 
 [colors.selection]
-background = "#3B4252" # gr: dark gray (selection background)
-text = "#C9C7CD"       # na: main text (light gray)
+background = "#223249" # waveBlue2
+text = "#DCD7BA"       # fujiWhite
 
 [colors.normal]
-black = "#000000"   # bl: dark background (almost black)
-red = "#EA83A5"     # ia: intense pink (errors)
-green = "#90B99F"   # va: soft green (success)
-yellow = "#E6B99D"  # ca: beige (warnings)
-blue = "#85B5BA"    # va: light blue-green (information)
-magenta = "#92A2D5" # ca: blue lavender (highlight)
-cyan = "#85B5BA"    # va: light blue-green (links)
-white = "#C9C7CD"   # na: main text (light gray)
+black = "#1F1F28"   # winterBlue
+red = "#E46876"     # waveRed
+green = "#98BB6C"   # waveGreen
+yellow = "#DCD478"  # waveYellow
+blue = "#7FB4CA"    # waveAqua2
+magenta = "#957FB8" # wavePurple
+cyan = "#6A9589"    # waveAqua1
+white = "#DCD7BA"   # fujiWhite
 
 [colors.bright]
-black = "#4C566A"   # nb: medium gray (bright black)
-red = "#EA83A5"     # ia: intense pink (bright red)
-green = "#90B99F"   # va: soft green (bright green)
-yellow = "#E6B99D"  # ca: beige (bright yellow)
-blue = "#85B5BA"    # va: light blue-green (bright blue)
-magenta = "#92A2D5" # ca: blue lavender (bright magenta)
-cyan = "#85B5BA"    # va: light blue-green (bright cyan)
-white = "#C9C7CD"   # na: main text (bright white)
+black = "#2D4F67"   # waveBlue1 (brighter black)
+red = "#E46876"     # waveRed
+green = "#98BB6C"   # waveGreen
+yellow = "#DCD478"  # waveYellow
+blue = "#7FB4CA"    # waveAqua2
+magenta = "#957FB8" # wavePurple
+cyan = "#6A9589"    # waveAqua1
+white = "#C8C093"   # oldWhite (brighter white)
 
 [[colors.indexed_colors]]
 index = 16
-color = "#F5A191" # ca: light peach (orange)
+color = "#FFA066" # waveOrange
 
 [[colors.indexed_colors]]
 index = 17
-color = "#E29ECA" # ia: soft pink (pink)
+color = "#2D4F67" # waveBlue1 (using as an additional distinct color)
 
 [cursor]
 style = "Block"
