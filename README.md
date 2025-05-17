@@ -48,6 +48,27 @@ extra-experimental-features = flakes nix-command
 
 _(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
 
+### 1.1. Archalinux
+
+### 1.1. Install Nix and enable flakes on Arch Linux 
+   ```bash
+   sudo pacman -S nix
+```
+#### 1.1.1 If it doesn't work:
+
+Download the file with `curl --proto '=https' --tlsv1.2 -sSfL https://nixos.org/nix/install -o nix-install.sh`, view it: `less ./nix-install.sh`, and run the script `./nix-install.sh --daemon` to start Nix installation. 
+
+### 1.2 Configure Nix to Use Extra Experimental Features
+
+To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), open the configuration file and add the following lin
+e:
+```bash
+# In /etc/nix/nix.conf:
+   experimental-features = nix-command flakes
+   sudo systemctl enable --now nix-daemon.servi
+   ce
+```
+
 ### 3. Prepare the `flake.nix` File
 
 Before running the next command, you need to make a few changes in the `flake.nix` file to match your environment. **Make sure to update the `system` field with your system's value**. Below are the possible values:
