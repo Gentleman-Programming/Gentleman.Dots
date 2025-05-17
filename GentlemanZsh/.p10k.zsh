@@ -1724,30 +1724,29 @@
   # typeset -g COLOR_BRIGHT_CYAN="#7aa89f"   # Bright Cyan
   # typeset -g COLOR_BRIGHT_WHITE="#dcd7ba"  # Bright White
  
-  # OldWorld Theme
-  # --- Base colors ---
-  typeset -g COLOR_BACKGROUND="#000000"    # bl: dark background (almost black)
-  typeset -g COLOR_FOREGROUND="#C9C7CD"    # na: main text (light gray)
+  # kanagawa Theme
+  typeset -g COLOR_BACKGROUND="#1f1f28"    # bl: dark background
+  typeset -g COLOR_FOREGROUND="#dcd7ba"    # na: main text
 
   # --- ANSI colors ---
-  typeset -g COLOR_BLACK="#000000"         # bl: dark background (almost black)
-  typeset -g COLOR_RED="#EA83A5"           # ia: intense pink (errors)
-  typeset -g COLOR_GREEN="#90B99F"         # va: soft green (success)
-  typeset -g COLOR_YELLOW="#E6B99D"        # ca: beige (warnings)
-  typeset -g COLOR_BLUE="#85B5BA"          # va: light blue-green (information)
-  typeset -g COLOR_MAGENTA="#92A2D5"       # ca: blue lavender (highlight)
-  typeset -g COLOR_CYAN="#85B5BA"          # va: light blue-green (links)
-  typeset -g COLOR_WHITE="#C9C7CD"         # na: main text (light gray)
+  typeset -g COLOR_BLACK="#090618"         # bl: dark background
+  typeset -g COLOR_RED="#c34043"           # ia: intense red
+  typeset -g COLOR_GREEN="#76946a"         # va: soft green
+  typeset -g COLOR_YELLOW="#c0a36e"        # ca: beige
+  typeset -g COLOR_BLUE="#7e9cd8"          # va: light blue
+  typeset -g COLOR_MAGENTA="#957fb8"       # ca: lavender
+  typeset -g COLOR_CYAN="#6a9589"          # va: teal
+  typeset -g COLOR_WHITE="#c8c093"         # na: light gray
 
   # --- Bright ANSI colors ---
-  typeset -g COLOR_BRIGHT_BLACK="#4C566A"  # nb: medium gray (bright black)
-  typeset -g COLOR_BRIGHT_RED="#EA83A5"    # ia: intense pink (bright red)
-  typeset -g COLOR_BRIGHT_GREEN="#90B99F"  # va: soft green (bright green)
-  typeset -g COLOR_BRIGHT_YELLOW="#E6B99D" # ca: beige (bright yellow)
-  typeset -g COLOR_BRIGHT_BLUE="#85B5BA"   # va: light blue-green (bright blue)
-  typeset -g COLOR_BRIGHT_MAGENTA="#92A2D5" # ca: blue lavender (bright magenta)
-  typeset -g COLOR_BRIGHT_CYAN="#85B5BA"   # va: light blue-green (bright cyan)
-  typeset -g COLOR_BRIGHT_WHITE="#C9C7CD"  # na: main text (bright white)
+  typeset -g COLOR_BRIGHT_BLACK="#727169"  # nb: medium gray
+  typeset -g COLOR_BRIGHT_RED="#e82424"    # ia: bright red
+  typeset -g COLOR_BRIGHT_GREEN="#98bb6c"  # va: bright green
+  typeset -g COLOR_BRIGHT_YELLOW="#e6c384" # ca: bright beige
+  typeset -g COLOR_BRIGHT_BLUE="#7fb4ca"   # va: bright blue
+  typeset -g COLOR_BRIGHT_MAGENTA="#938aa9" # ca: bright lavender
+  typeset -g COLOR_BRIGHT_CYAN="#7aa89f"   # va: bright teal
+  typeset -g COLOR_BRIGHT_WHITE="#dcd7ba"  # na: bright white
 
   # Color assignment for Powerlevel10k
   typeset -g POWERLEVEL9K_BACKGROUND=$COLOR_BACKGROUND

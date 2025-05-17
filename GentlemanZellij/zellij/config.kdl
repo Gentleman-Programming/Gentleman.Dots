@@ -311,6 +311,20 @@ themes {
         white "#8D909D"
     } 
 
+    kanagawa_wave {
+        fg "#DCD7BA"
+        bg "#1F1F28"
+        red "#C34043"
+        green "#76946A"
+        yellow "#C0A36E"
+        blue "#7E9CD8"
+        magenta "#957FB8"
+        cyan "#6A9589"
+        orange "#FFA066"
+        black "#1F1F28"
+        white "#DCD7BA"
+    }
+
     everforest {
         fg "#d3c6aa"
         bg "#282828"
@@ -368,7 +382,7 @@ themes {
     }
 }
 
-theme "oldWorld"
+theme "kanagawa_wave"
 
 // Choose the base input mode of zellij.
 // Default: normal
@@ -387,7 +401,7 @@ default_mode "locked"
 // The name of the default layout to load on startup
 // Default: "work_oldWorld"
 // 
-default_layout "work_oldWorld"
+default_layout "work_kanagawa"
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)
