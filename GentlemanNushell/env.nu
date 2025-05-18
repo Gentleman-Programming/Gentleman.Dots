@@ -3,8 +3,7 @@
 # version = "0.99.1"
 
 def create_left_prompt [] {
-    let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
-        null => $env.PWD
+let dir = match (do --ignore-errors { $env.PWD | path relative-to $nu.home-path }) {        null => $env.PWD
         '' => '~'
         $relative_pwd => ([~ $relative_pwd] | path join)
     }
@@ -104,9 +103,13 @@ $env.PATH = (
     | split row (char esep)
     | prepend '/home/linuxbrew/.linuxbrew/bin'
 # For Mac |'/opt/homebrew/bin'
+    | prepend ($env.HOME | path join ".volta/bin")
+    | prepend ($env.HOME | path join ".bun/bin")
+    | prepend ($env.HOME | path join ".nix-profile/bin")
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
+    | append '/usr/local/lib/*'
 )
 
 $env.STARSHIP_CONFIG = $env.HOME | path join ".config/starship.toml"
