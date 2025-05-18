@@ -105,6 +105,58 @@ $env.LS_COLORS = (
     "*=38;2;201;199;205"           # Default: light gray (#C9C7CD)
 )
 
+
+let dark_theme = {
+    # --- base elements ---
+    separator: "#54546D"                     # table borders (wave gray)
+    leading_trailing_space_bg: { attr: "n" } # spaces without background
+    header: "#7E9CD8_bold"                   # headers (wave blue + bold)
+    empty: "#957FB8"                         # empty elements (wave purple)
+    bool: "#D27E99"                          # booleans (wave pink)
+    int: "#54546D"                           # integers (wave gray)
+    filesize: "#6A9589"                      # file sizes (wave teal)
+    duration: "#98BB6C"                      # duration (wave green)
+    date: "#E6C384"                          # dates (wave beige)
+    range: "#54546D"                         # ranges (wave gray)
+    float: "#DCA561"                         # floats (wave orange)
+    string: "#54546D"                        # general text (wave gray)
+    nothing: "#7E9CD8"                       # null values (wave blue)
+    binary: "#6A9589"                        # binaries (wave teal)
+    cellpath: "#98BB6C"                      # cell paths (wave green)
+    row_index: "#7E9CD8_bold"                # row indices (wave blue + bold)
+    record: "#957FB8"                        # records (wave purple)
+    list: "#54546D"                          # lists (wave gray)
+    block: "#957FB8_bold"                    # blocks (wave purple + bold)
+    hints: "#98BB6C"                         # hints (wave green)
+    search_result: { fg: "#1F1F28", bg: "#E46876" } # search result (wave red background)
+
+    # --- syntax elements/commands ---
+    shape_and: "#957FB8_bold"                # AND operator (wave purple + bold)
+    shape_binary: "#6A9589_bold"             # binaries (wave teal + bold)
+    shape_block: "#7E9CD8"                   # blocks (wave blue)
+    shape_bool: "#D27E99"                    # booleans (wave pink)
+    shape_closure: "#DCA561"                 # closures (wave orange)
+    shape_custom: "#6A9589"                  # custom commands (wave teal)
+    shape_datetime: "#E6C384_bold"           # dates (wave beige + bold)
+    shape_directory: "#7E9CD8"               # directories (wave blue)
+    shape_external: "#6A9589"                # external commands (wave teal)
+    shape_externalarg: "#957FB8_bold"        # external arguments (wave purple + bold)
+    shape_filepath: "#98BB6C"                # file paths (wave green)
+    shape_flag: "#7E9CD8_bold"               # flags (wave blue + bold)
+    shape_float: "#DCA561"                   # floats (wave orange)
+    shape_garbage: { fg: "#1F1F28", bg: "#DCA561", attr: "b" } # error (wave orange background)
+    shape_globpattern: "#6A9589_bold"        # glob patterns (wave teal + bold)
+    shape_int: "#957FB8"                     # integers (wave purple)
+    shape_internalcall: "#6A9589_bold"       # internal calls (wave teal + bold)
+    shape_keyword: "#7E9CD8"                 # keywords (wave blue)
+    shape_literal: "#E6C384"                 # literals (wave beige)
+    shape_operator: "#E46876"                # operators (wave red)
+    shape_or: "#D27E99_bold"                 # OR operator (wave pink + bold)
+    shape_pipe: "#6A9589"                    # pipes (wave teal)
+    shape_string: "#98BB6C"                  # strings (wave green)
+    shape_variable: "#DCA561"                # variables (wave orange)
+}
+
 let light_theme = {
     # color for nushell primitives
     separator: dark_gray
@@ -939,7 +991,6 @@ def fzfnvim [] {
  source ~/.zoxide.nu
  source ~/.cache/carapace/init.nu
  source ~/.local/share/atuin/init.nu
- source ~/catppuccin_mocha.nu
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
