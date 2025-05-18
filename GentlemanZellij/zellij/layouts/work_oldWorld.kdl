@@ -33,7 +33,7 @@ layout {
 
                 datetime        "#[fg=#C9C7CD,bold] {format} "  
                 datetime_format "%A, %d %b %Y %H:%M"
-                datetime_timezone "Europe/Berlin"
+                datetime_timezone "America/Santo_Domingo"
             }
         }
         children
