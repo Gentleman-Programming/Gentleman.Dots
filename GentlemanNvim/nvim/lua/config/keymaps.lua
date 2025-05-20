@@ -4,6 +4,10 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Map CapsLock to Escape in normal, insert, and visual modes
+vim.api.nvim_set_keymap("i", "<CapsLock>", "<ESC>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<CapsLock>", "<ESC>", { noremap = true, silent = true })
+
 -- Position cursor at the middle of the screen after scrolling half page
 vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
 vim.keymap.set("n", "<C-u>", "<C-u>zz") -- Scroll up half a page and center the cursor
