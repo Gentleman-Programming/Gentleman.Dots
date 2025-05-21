@@ -5,8 +5,7 @@
 -- Add any additional keymaps here
 
 -- Map CapsLock to Escape in normal, insert, and visual modes
-vim.api.nvim_set_keymap("i", "<CapsLock>", "<ESC>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<CapsLock>", "<ESC>", { noremap = true, silent = true })
+vim.keymap.set({ "i", "v" }, "<CapsLock>", "<ESC>", { noremap = true, silent = true })
 
 -- Position cursor at the middle of the screen after scrolling half page
 vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
@@ -38,6 +37,7 @@ vim.keymap.set("n", "<leader>oo", "<cmd>Obsidian Open<CR>", { desc = "Open in Ob
 vim.keymap.set("n", "<leader>ob", "<cmd>ObsidianBacklinks<CR>", { desc = "Show ObsidianBacklinks" })
 vim.keymap.set("n", "<leader>ol", "<cmd>ObsidianLinks<CR>", { desc = "Show ObsidianLinks" })
 vim.keymap.set("n", "<leader>on", "<cmd>ObsidianNew<CR>", { desc = "Create New Note" })
+vim.keymap.set("n", "<leader>of", "<cmd>ObsidianNewFromTemplate<CR>", { desc = "Create New Note from Template" })
 vim.keymap.set("n", "<leader>os", "<cmd>ObsidianSearch<CR>", { desc = "Search Obsidian" })
 vim.keymap.set("n", "<leader>oq", "<cmd>ObsidianQuickSwitch<CR>", { desc = "Quick Switch" })
 
