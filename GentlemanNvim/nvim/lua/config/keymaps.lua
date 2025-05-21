@@ -5,7 +5,7 @@
 -- Add any additional keymaps here
 
 -- Map CapsLock to Escape in normal, insert, and visual modes
-vim.keymap.set({ "i", "v" }, "<CapsLock>", "<ESC>", { noremap = true, silent = true })
+-- vim.keymap.set({ "i", "v" }, "<CapsLock>", "<ESC>", { noremap = true, silent = true })
 
 -- Position cursor at the middle of the screen after scrolling half page
 vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
