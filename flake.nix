@@ -57,7 +57,6 @@
                   fzf
                   unstablePkgs.neovim
                   nodejs
-                  lazygit
                   bun
                   cargo
                   go
