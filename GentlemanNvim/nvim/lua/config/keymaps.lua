@@ -71,23 +71,45 @@ vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
 
 -- Redefine Ctrl+s to save with the custom function
 vim.api.nvim_set_keymap("n", "<C-s>", ":lua SaveFile()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-s>", "<Esc>:lua SaveFile()<CR>a", { noremap = true, silent = true })
 
--- Custom save function
+-- Enhanced custom save function
 function SaveFile()
-  -- Check if a buffer with a file is open
-  if vim.fn.empty(vim.fn.expand("%:t")) == 1 then
-    vim.notify("No file to save", vim.log.levels.WARN)
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local filename = vim.fn.expand("%:t") -- Only the file name
+
+  -- If it's a new buffer or terminal
+  if bufname == "" or bufname:match("^term://") then
+    vim.ui.input({
+      prompt = "Save as: ",
+      default = vim.fn.getcwd() .. "/", 
+    }, function(input)
+      if input and input ~= "" then
+        -- Escape path
+        local escaped = vim.fn.fnameescape(input)
+        local ok, err = pcall(function()
+          vim.cmd("silent! write " .. escaped)
+        end)
+        if ok then
+          vim.notify("File saved as: " .. input, vim.log.levels.INFO)
+        else
+          vim.notify("Error saving: " .. err, vim.log.levels.ERROR)
+        end
+      else
+        vim.notify("Save cancelled", vim.log.levels.WARN)
+      end
+    end)
     return
   end
 
-  local filename = vim.fn.expand("%:t") -- Get only the filename
-  local success, err = pcall(function()
-    vim.cmd("silent! write") -- Try to save the file without showing the default message
+  -- Save existing file
+  local ok, err = pcall(function()
+    vim.cmd("silent! write")
   end)
-
-  if success then
-    vim.notify(filename .. " Saved!") -- Show only the custom message if successful
+  if ok then
+    vim.notify(filename ~= "" and (filename .. " saved!") or "File saved!", vim.log.levels.INFO)
   else
-    vim.notify("Error: " .. err, vim.log.levels.ERROR) -- Show the error message if it fails
+    vim.notify("Error saving: " .. err, vim.log.levels.ERROR)
   end
 end
+
