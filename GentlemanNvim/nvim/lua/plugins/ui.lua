@@ -257,7 +257,7 @@ return {
             { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
             { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
             { icon = " ", key = "m", desc = "Mason", action = ":Mason" },
-            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+         --   { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
       },
