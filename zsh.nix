@@ -79,16 +79,6 @@
           eval "$($BREW_BIN/brew shellenv)"
         fi
       fi
-
-      # --------------------------
-      # 7) LS configuration 
-      # --------------------------
-      export LS_COLORS="di=38;5;67:ow=48;5;60:ex=38;5;132:ln=38;5;144:*.tar=38;5;180:*.zip=38;5;180:*.jpg=38;5;175:*.png=38;5;175:*.mp3=38;5;175:*.wav=38;5;175:*.txt=38;5;223:*.sh=38;5;132"
-      if [[ "$(uname)" == "Darwin" ]]; then
-        alias ls='ls --color=auto'
-      else
-        alias ls='gls --color=auto'
-      fi
     '';
   };
 }
