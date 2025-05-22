@@ -44,6 +44,7 @@ Add:
 
 ```
 extra-experimental-features = flakes nix-command
+build-users-group = nixbld
 ```
 
 _(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
@@ -67,8 +68,11 @@ e:
 
 ```bash
 # In /etc/nix/nix.conf:
-   experimental-features = nix-command flakes
-   sudo systemctl enable --now nix-daemon.service
+extra-experimental-features = flakes nix-command
+build-users-group = nixbld
+
+# Then execute
+sudo systemctl enable --now nix-daemon.service
 ```
 
 ### 3. Prepare the `flake.nix` File
