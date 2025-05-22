@@ -261,6 +261,7 @@ keybinds clear-defaults=true {
     }
 }
 
+// pane_frames false
 // Plugin aliases - can be used to change the implementation of Zellij
 // changing these requires a restart to take effect
 plugins {
@@ -311,20 +312,6 @@ themes {
         white "#8D909D"
     } 
 
-    kanagawa_wave {
-        fg "#DCD7BA"
-        bg "#1F1F28"
-        red "#C34043"
-        green "#76946A"
-        yellow "#C0A36E"
-        blue "#7E9CD8"
-        magenta "#957FB8"
-        cyan "#6A9589"
-        orange "#FFA066"
-        black "#1F1F28"
-        white "#DCD7BA"
-    }
-
     everforest {
         fg "#d3c6aa"
         bg "#282828"
@@ -368,21 +355,22 @@ themes {
     }
 
     oldWorld {
-      fg "#C9C7CD"        // na: main text (light gray)
-      bg "#000000"        // bl: dark background (almost black)
-      red "#EA83A5"       // ia: intense pink
-      green "#90B99F"     // va: soft green
-      yellow "#E6B99D"    // ca: beige (replaces yellow)
-      blue "#85B5BA"      // va: blue-green
-      magenta "#92A2D5"   // ca: lavender blue
-      cyan "#85B5BA"      // va: blue-green
-      orange "#F5A191"    // ca: light peach
-      black "#000000"     // bl: dark background (almost black)
-      white "#C9C7CD"     // na: light text (light gray)
+      fg "#CDD6F4"        // Text (Catppuccin: "text")
+      bg "#1E1E2E"        // Background (Catppuccin: "base")
+      red "#F38BA8"       // Red (Catppuccin: "red")
+      green "#A6E3A1"     // Green (Catppuccin: "green")
+      yellow "#F9E2AF"    // Yellow (Catppuccin: "yellow")
+      blue "#89B4FA"      // Blue (Catppuccin: "blue")
+      magenta "#F5C2E7"   // Pink (Catppuccin: "pink")
+      cyan "#94E2D5"      // Teal (Catppuccin: "teal")
+      orange "#FAB387"    // Peach (Catppuccin: "peach")
+      black "#181825"     // Darker base (Catppuccin: "mantle")
+      white "#BAC2DE"     // Subtext (Catppuccin: "subtext1")
     }
 }
 
-theme "kanagawa_wave"
+theme "oldWorld"
+// theme "nvim"
 
 // Choose the base input mode of zellij.
 // Default: normal
@@ -401,7 +389,8 @@ default_mode "locked"
 // The name of the default layout to load on startup
 // Default: "work_oldWorld"
 // 
-default_layout "work_kanagawa"
+default_layout "nvim"
+// default_layout "work_oldWorld"
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)
@@ -427,7 +416,7 @@ default_layout "work_kanagawa"
 //   - true (default, enabled)
 //   - false
 // 
-// pane_frames false
+pane_frames false
  
 // When attaching to an existing session with other users,
 // should the session be mirrored (true)
