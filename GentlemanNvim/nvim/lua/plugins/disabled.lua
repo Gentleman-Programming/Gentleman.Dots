@@ -17,10 +17,10 @@ return {
   -- },
   {
     "yetone/avante.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    enabled = false,
+    enabled = true,
   },
 }
