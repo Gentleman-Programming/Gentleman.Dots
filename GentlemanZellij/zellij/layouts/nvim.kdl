@@ -1,0 +1,53 @@
+layout {
+    tab name="nvim" focus=true {
+        pane {
+          command "nvim"
+        }
+    }
+
+    tab name="shell" {
+        pane
+    }
+
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+                // Tokyo Night Moon colors
+                format_left "#[fg=#7aa2f7,bold]{mode} #[fg=#9d7cd8]{session}"
+                format_center "#[fg=#414868]#[bg=#414868,fg=#c0caf5]{tabs}#[fg=#414868,bg=#24283b]"
+                format_right "#[fg=#9ece6a]{command_git_branch} #[fg=#e0af68]{datetime}"
+                format_space ""
+                
+                border_enabled false
+                border_char "─"
+                border_format "#[fg=#414868]{char}"
+                border_position "top"
+
+                hide_frame_for_single_pane true
+                mode_normal "#[bg=#24283b]"
+                mode_tmux "#[bg=#db4b4b]"
+
+                tab_normal "#[fg=#565f89]{name}"
+                tab_active "#[fg=#7aa2f7,bold]{name}"
+
+                command_git_branch_command "git rev-parse --abbrev-ref HEAD"
+                command_git_branch_format "#[fg=#9ece6a]{stdout}"
+                command_git_branch_interval 10
+                command_git_branch_rendermode "static"
+
+                datetime "#[fg=#e0af68,bold]{format}"
+                datetime_format "%A, %d %b %Y %H:%M"
+                datetime_timezone "America/Santo_Domingo"
+
+// Spacing adjustments
+                tab_spacer " "  // Explicit spacer between tabs
+                tab_separator " "  // Additional separator
+            }
+        }
+        
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+}
