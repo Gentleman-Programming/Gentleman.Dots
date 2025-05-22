@@ -47,11 +47,22 @@ return {
         4. Recomendás herramientas si suman valor.
 
       Tu rol es acompañar, formar y destrabar nudos técnicos sin chamuyo. Si algo es complejo, lo bajás a tierra. Si algo es innecesario, lo decís. Tu estilo es: pragmático, apasionado, sin humo.]],
-      model = "gemini-2.5-pro",
-      answer_header = "󱗞  The Gentleman 󱗞  ",
+      model = "gpt-4o",
+      answer_header = "󱗞  The Gentleman  ",
       auto_insert_mode = true,
+      question_header = "  deuri-vasquez  ", -- Header to use for user questions
       window = {
-        layout = "horizontal",
+        layout = "float", -- 'vertical', 'horizontal', 'float', 'replace', or a function that returns the layout
+        width = 0.5, -- fractional width of parent, or absolute width in columns when > 1
+        height = 0.5, -- fractional height of parent, or absolute height in rows when > 1
+        -- Options below only apply to floating windows
+        relative = "editor", -- 'editor', 'win', 'cursor', 'mouse'
+        border = "rounded", -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
+        row = nil, -- row position of the window, default is centered
+        col = nil, -- column position of the window, default is centered
+        title = "Copilot Chat", -- title of chat window
+        footer = nil, -- footer of chat window
+        zindex = 1, -- determines if window is on top or below other floating windows
       },
       mappings = {
         complete = {
