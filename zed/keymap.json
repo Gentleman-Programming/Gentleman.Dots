@@ -44,6 +44,12 @@
     }
   },
   {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "g s a": ["vim::PushAddSurrounds", {}]
+    }
+  },
+  {
     "context": "Editor && vim_mode == visual && !VimWaiting",
     "bindings": {
       "space a i": "assistant::InlineAssist"
