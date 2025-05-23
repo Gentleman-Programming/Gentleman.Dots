@@ -35,7 +35,8 @@
       "space a i": "assistant::InlineAssist",
       "space a d": "agent::OpenAgentDiff",
       "space a t": "agent::ToggleFocus",
-      "space t": "terminal_panel::ToggleFocus"
+      "space t": "terminal_panel::ToggleFocus",
+      "space u n": "workspace::ClearAllNotifications"
     }
   },
   {
