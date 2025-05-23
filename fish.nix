@@ -58,6 +58,22 @@
     alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
     alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
 
+    ##  yazi
+
+    function ya_zed
+       set tmp (mktemp -t "yazi-chooser.XXXXXXXXXX")
+       yazi --chooser-file $tmp $argv
+
+       if test -s $tmp
+           set opened_file (head -n 1 -- $tmp)
+           if test -n "$opened_file"
+               zed -- "$opened_file"
+           end
+       end
+
+       rm -f -- $tmp
+    end
+
 ## everforest
 #set -l foreground d3c6aa
 #set -l selection 2d4f67

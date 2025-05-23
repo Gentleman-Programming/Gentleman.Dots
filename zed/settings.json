@@ -1,4 +1,8 @@
 {
+  "terminal": {
+    "shell": "system",
+    "line_height": { "custom": 1.25 }
+  },
   "project_panel": {
     "dock": "left"
   },
@@ -18,10 +22,10 @@
   "vim": {
     "toggle_relative_line_numbers": true
   },
-  "ui_font_size": 16,
-  "buffer_font_size": null,
-  "ui_font_family": "Iosevka Nerd Font",
-  "buffer_font_family": "Iosevka Nerd Font",
+  "ui_font_size": 18,
+  "buffer_font_size": 18,
+  "ui_font_family": "IosevkaTerm Nerd Font",
+  "buffer_font_family": "IosevkaTerm Nerd Font",
   "theme": {
     "mode": "system",
     "light": "One Light",

@@ -1,56 +1,72 @@
-if status is-interactive
-    # Commands to run in interactive sessions can go here
+    if status is-interactive
+        # Commands to run in interactive sessions can go here
 
-    # Install Fisher if not installed
-    if not functions -q fisher
-        curl -sL https://git.io/fisher | source
-        fisher install jorgebucaran/fisher
+        # Install Fisher if not installed
+        if not functions -q fisher
+            curl -sL https://git.io/fisher | source
+            fisher install jorgebucaran/fisher
+        end
+
+        # Set Catppuccin Mocha as default theme
+        # fish_config theme choose "Catppuccin Mocha"
     end
 
-    # Set Catppuccin Mocha as default theme
-    # fish_config theme choose "Catppuccin Mocha"
-end
+    if test (uname) = Darwin
+        # macOS
+        set BREW_BIN /opt/homebrew/bin/brew
+    else
+        # Linux
+        set BREW_BIN /home/linuxbrew/.linuxbrew/bin/brew
+    end
 
-if test (uname) = Darwin
-    # macOS
-    set BREW_BIN /opt/homebrew/bin/brew
-else
-    # Linux
-    set BREW_BIN /home/linuxbrew/.linuxbrew/bin/brew
-end
+    set -x PATH $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $PATH /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/*
 
-set -x PATH $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $PATH /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/*
+    eval ($BREW_BIN shellenv)
 
-eval ($BREW_BIN shellenv)
+    starship init fish | source
+    zoxide init fish | source
+    atuin init fish | source
+    fzf --fish | source
 
-starship init fish | source
-zoxide init fish | source
-atuin init fish | source
-fzf --fish | source
+    set -x PATH $HOME/.cargo/bin $PATH
+    set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
 
-set -x PATH $HOME/.cargo/bin $PATH
-set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
-
-if not test -d ~/.config/fish/completions
-    mkdir -p ~/.config/fish/completions
-end
-
-if not test -f ~/.config/fish/completions/.initialized
     if not test -d ~/.config/fish/completions
         mkdir -p ~/.config/fish/completions
     end
-    carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
-    touch ~/.config/fish/completions/.initialized
+
+    if not test -f ~/.config/fish/completions/.initialized
+        if not test -d ~/.config/fish/completions
+            mkdir -p ~/.config/fish/completions
+        end
+        carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
+        touch ~/.config/fish/completions/.initialized
+    end
+
+    carapace _carapace | source
+
+    set -g fish_greeting ""
+
+## alias
+
+    alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
+    alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+
+##  yazi
+
+function ya_zed
+   set tmp (mktemp -t "yazi-chooser.XXXXXXXXXX")
+   yazi --chooser-file $tmp $argv
+
+   if test -s $tmp
+       set opened_file (head -n 1 -- $tmp)
+       if test -n "$opened_file"
+           zed -- "$opened_file"
+       end
+   end
+
+   rm -f -- $tmp
 end
-
-carapace _carapace | source
-
-set -g fish_greeting ""
-
-
-alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
-alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
-
 ## everforest
 #set -l foreground d3c6aa
 #set -l selection 2d4f67
@@ -127,36 +143,36 @@ alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")
 # Kanagawa Fish shell theme
 # A template was taken and modified from Tokyonight:
 # https://github.com/folke/tokyonight.nvim/blob/main/extras/fish_tokyonight_night.fish
-set -l foreground DCD7BA normal
-set -l selection 2D4F67 brcyan
-set -l comment 727169 brblack
-set -l red C34043 red
-set -l orange FF9E64 brred
-set -l yellow C0A36E yellow
-set -l green 76946A green
-set -l purple 957FB8 magenta
-set -l cyan 7AA89F cyan
-set -l pink D27E99 brmagenta
+    set -l foreground DCD7BA normal
+    set -l selection 2D4F67 brcyan
+    set -l comment 727169 brblack
+    set -l red C34043 red
+    set -l orange FF9E64 brred
+    set -l yellow C0A36E yellow
+    set -l green 76946A green
+    set -l purple 957FB8 magenta
+    set -l cyan 7AA89F cyan
+    set -l pink D27E99 brmagenta
 
 # Syntax Highlighting Colors
-set -g fish_color_normal $foreground
-set -g fish_color_command $cyan
-set -g fish_color_keyword $pink
-set -g fish_color_quote $yellow
-set -g fish_color_redirection $foreground
-set -g fish_color_end $orange
-set -g fish_color_error $red
-set -g fish_color_param $purple
-set -g fish_color_comment $comment
-set -g fish_color_selection --background=$selection
-set -g fish_color_search_match --background=$selection
-set -g fish_color_operator $green
-set -g fish_color_escape $pink
-set -g fish_color_autosuggestion $comment
+    set -g fish_color_normal $foreground
+    set -g fish_color_command $cyan
+    set -g fish_color_keyword $pink
+    set -g fish_color_quote $yellow
+    set -g fish_color_redirection $foreground
+    set -g fish_color_end $orange
+    set -g fish_color_error $red
+    set -g fish_color_param $purple
+    set -g fish_color_comment $comment
+    set -g fish_color_selection --background=$selection
+    set -g fish_color_search_match --background=$selection
+    set -g fish_color_operator $green
+    set -g fish_color_escape $pink
+    set -g fish_color_autosuggestion $comment
 
 # Completion Pager Colors
-set -g fish_pager_color_progress $comment
-set -g fish_pager_color_prefix $cyan
-set -g fish_pager_color_completion $foreground
-set -g fish_pager_color_description $comment
-clear
+    set -g fish_pager_color_progress $comment
+    set -g fish_pager_color_prefix $cyan
+    set -g fish_pager_color_completion $foreground
+    set -g fish_pager_color_description $comment
+    clear

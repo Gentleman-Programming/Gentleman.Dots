@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  home.activation.copyGhostty = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.copyZed = lib.hm.dag.entryAfter ["writeBoundary"] ''
     echo "Copying Zed configuration..."
     rm -rf "$HOME/.config/zed"
 

@@ -25,7 +25,7 @@
       autoload -Uz compinit
       # Use a directory in .cache or as you prefer
       compinit -d "$${XDG_CACHE_HOME:-$${HOME}/.cache}/zsh/zcompdump-$${ZSH_VERSION}"
-      
+
       # --------------------------
       # 2) FZF
       # --------------------------
@@ -52,6 +52,22 @@
       eval "$(zoxide init zsh)"
       eval "$(atuin init zsh)"
       eval "$(starship init zsh)"
+
+      ya_zed() {
+          local tmp
+          tmp=$(mktemp -t "yazi-chooser.XXXXXXXXXX")
+          yazi --chooser-file "$tmp" "$@"
+
+          if [[ -s "$tmp" ]]; then
+              local opened_file
+              opened_file=$(head -n 1 "$tmp")
+              if [[ -n "$opened_file" ]]; then
+                  zed -- "$opened_file"
+              fi
+          fi
+
+          rm "$tmp"
+      }
 
       # --------------------------
       # 5) Final cleanup

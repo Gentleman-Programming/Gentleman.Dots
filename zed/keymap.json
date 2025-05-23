@@ -11,7 +11,8 @@
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
-      "ctrl-l": "workspace::ActivatePaneRight"
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "space b q": "pane::CloseInactiveItems"
     }
   },
   {
@@ -29,14 +30,17 @@
       "space e": "project_panel::ToggleFocus",
       "space g": "git_panel::ToggleFocus",
       "space o": "outline_panel::ToggleFocus",
-      "alt d": "pane::SplitDown",
-      "alt v": "pane::SplitRight",
       "space space": "file_finder::Toggle",
       "space a i": "assistant::InlineAssist",
       "space a d": "agent::OpenAgentDiff",
       "space a t": "agent::ToggleFocus",
       "space t": "terminal_panel::ToggleFocus",
-      "space u n": "workspace::ClearAllNotifications"
+      "space u n": "workspace::ClearAllNotifications",
+      "space g g": [
+        "task::Spawn",
+        { "task_name": "Lazygit", "reveal_target": "center" }
+      ],
+      "-": ["task::Spawn", { "task_name": "Yazi", "reveal_target": "center" }]
     }
   },
   {
@@ -49,7 +53,8 @@
     "context": "Terminal",
     "bindings": {
       "ctrl_k": "workspace::ToggleBottomDock",
-      "cmd-f": "workspace::ToggleZoom"
+      "cmd-f": "workspace::ToggleZoom",
+      "cmd-n": "workspace::NewTerminal"
     }
   }
 ]

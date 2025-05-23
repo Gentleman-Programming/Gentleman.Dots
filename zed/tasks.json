@@ -1,0 +1,19 @@
+[
+  {
+    "label": "Lazygit",
+    "command": "lazygit -p $ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "on_success",
+    "target": "center"
+  },
+  {
+    "label": "Yazi",
+    "command": "ya_zed",
+    "args": ["$ZED_FILE"],
+    "hide": "always",
+    "allow_concurrent_runs": true,
+    "use_new_terminal": true
+  }
+]

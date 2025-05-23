@@ -12,7 +12,7 @@
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
-    let 
+    let
       unstablePkgs = import nixpkgs-unstable {
         system = "aarch64-darwin";  # Make sure this matches your system
         config.allowUnfree = true;
@@ -71,6 +71,7 @@
                   coreutils
                   bat
                   lazygit
+                  yazi
 
                   # ─── Nerd Fonts ───
                   nerd-fonts.iosevka-term

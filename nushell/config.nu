@@ -9,7 +9,7 @@
 
 
 # Sakura Theme
- 
+
 # let dark_theme = {
 #     # --- base elements ---
 #     separator: "#C9C7CD"                     # table borders (light gray)
@@ -981,11 +981,25 @@ $env.config = {
 }
 
 def fzfbat [] {
-  fzf --preview "bat --theme=gruvbox-dark --color=always {}" 
+  fzf --preview "bat --theme=gruvbox-dark --color=always {}"
 }
 
 def fzfnvim [] {
   nvim (fzf --preview "bat --theme=gruvbox-dark --color=always {}")
+}
+
+def ya_zed [...args] {
+    let tmp = (mktemp -t "yazi-chooser.XXXXXXXXXX")
+    ^yazi --chooser-file $tmp ...$args
+
+    if (open $tmp | is-empty | not) {
+        let opened_file = (open $tmp | lines | get 0)
+        if ($opened_file | is-empty | not) {
+            ^zed -- $opened_file
+        }
+    }
+
+    rm $tmp
 }
 
  source ~/.zoxide.nu
@@ -996,4 +1010,4 @@ def fzfnvim [] {
 
 # if "ZELLIJ" not-in ($env | columns) {
 #   run-external zellij
-# } 
+# }
