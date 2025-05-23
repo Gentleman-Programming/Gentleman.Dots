@@ -1,0 +1,26 @@
+{
+  "project_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "model_parameters": [],
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-4.1"
+    },
+    "version": "2"
+  },
+  "vim_mode": true,
+  "vim": {
+    "toggle_relative_line_numbers": true
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": null,
+  "ui_font_family": "Iosevka Nerd Font",
+  "buffer_font_family": "Iosevka Nerd Font",
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Kanagawa"
+  }
+}
