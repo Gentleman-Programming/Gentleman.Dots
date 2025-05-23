@@ -5,20 +5,36 @@ return {
     lazy = false,
     version = false, -- set this if you want to always pull the latest change
     opts = {
-      ---@alias Provider "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
-      provider = "copilot", -- Recommend using Claude
+      ---@alias avante.Mode "agentic" | "legacy"
+      mode = "agentic", -- agentic | legacy
+      ---@alias avante.ProviderName "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
+      provider = "gemini", -- Recommend using Claude
+      ---@type AvanteSupportedProvider
       copilot = {
-        model = "claude-3.7-sonnet", -- o1-preview | o1-mini | claude-3.7-sonnet
+        model = "gpt-4o", -- o1-preview | o1-mini | claude-3.7-sonnet
+      },
+      ---@type AvanteSupportedProvider
+      gemini = {
+        endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
+        model = "gemini-2.0-flash",
+        timeout = 30000, -- Timeout in milliseconds
+        temperature = 0,
+        max_tokens = 8192,
       },
       cursor_applying_provider = "copilot", -- In this example, use Groq for applying, but you can also use any provider you want.
       auto_suggestions_provider = "copilot", -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
       behaviour = {
-        auto_suggestions = false, -- Experimental stage
+        auto_suggestions = true, -- Experimental stage
         auto_set_highlight_group = true,
         auto_set_keymaps = true,
         auto_apply_diff_after_generation = false,
         support_paste_from_clipboard = false,
         enable_cursor_planning_mode = true, -- enable cursor planning mode!
+        enable_token_counting = false, -- Whether to enable token counting. Default to true.
+      },
+      suggestion = {
+        debounce = 400,
+        throttle = 400,
       },
       -- File selector configuration
       --- @alias FileSelectorProvider "native" | "fzf" | "mini.pick" | "snacks" | "telescope" | string
@@ -61,22 +77,25 @@ return {
       hints = { enabled = false },
       windows = {
         ---@type "right" | "left" | "top" | "bottom" | "smart"
-        position = "smart", -- the position of the sidebar
+        position = "right", -- the position of the sidebar
         wrap = true, -- similar to vim.o.wrap
         width = 30, -- default % based on available width
         sidebar_header = {
           enabled = true, -- true, false to enable/disable the header
           align = "center", -- left, center, right for title
-          rounded = false,
+          rounded = true, -- true, false to enable/disable rounded corners
         },
         input = {
+          rounded = true, -- true, false to enable/disable rounded corners
           prefix = "> ",
           height = 8, -- Height of the input window in vertical layout
         },
         edit = {
+          border = "rounded", -- Border style for the edit window
           start_insert = true, -- Start insert mode when opening the edit window
         },
         ask = {
+          border = "rounded", -- Border style for the ask window
           floating = false, -- Open the 'AvanteAsk' prompt in a floating window
           start_insert = true, -- Start insert mode when opening the ask window
           ---@type "ours" | "theirs"
@@ -114,7 +133,7 @@ return {
         3. Dás ejemplos o snippets si aplican
         4. Recomendás herramientas si suman valor.
 
-      Tu rol es acompañar, formar y destrabar nudos técnicos sin chamuyo. Si algo es complejo, lo bajás a tierra. Si algo es innecesario, lo decís. Tu estilo es: pragmático, apasionado, sin humo.]],  
+      Tu rol es acompañar, formar y destrabar nudos técnicos sin chamuyo. Si algo es complejo, lo bajás a tierra. Si algo es innecesario, lo decís. Tu estilo es: pragmático, apasionado, sin humo.]],
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     build = "make",
