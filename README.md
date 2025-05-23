@@ -28,7 +28,7 @@ You can choose between automatic and manual installation methods depending on yo
 The **automatic installation script** is the quickest and easiest way to set up your development environment. This script handles all the heavy lifting, but remember that you **must install the font** mentioned below before running it. The script is designed for macOS, Linux, and WSL systems. If you’re on Windows, you’ll need to follow the manual steps first before attempting to run this script.
 
 ```bash
-curl -O https://raw.githubusercontent.com/deuriib/Config.LazyVim/refs/heads/main/install-linux-mac.sh
+curl -O https://raw.githubusercontent.com/deuriib/nvim-dots/refs/heads/main/install-linux-mac.sh
 
 sudo chmod +x install-linux-mac.sh
 bash ./install-linux-mac.sh
@@ -41,7 +41,7 @@ Welcome to the Gentleman.Dots manual configuration guide! This document will wal
 **_Clone the repo before continuing!!!_**
 
 ```bash
-git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
+git clone git@github.com:deuriib/nvim-dots.git
 cd Gentleman.Dots
 ```
 
