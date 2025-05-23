@@ -1,6 +1,6 @@
 # nvim-dots
 
-<img width="1917" alt="image" src="https://github.com/user-attachments/assets/cac40da9-b3e6-4d99-998f-c002383b6048" />
+<img width="1917" alt="image" src="./Screenshot 2025-05-23 072941.png" />
 
 ## Description
 
