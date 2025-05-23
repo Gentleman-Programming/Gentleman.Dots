@@ -57,8 +57,14 @@ return {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
-      preset = "classic",
-      win = { border = "single" },
+      preset = "helix",
+      win = {
+        border = "single",
+        zindex = 1000,
+      },
+      layout = {
+        spacing = 6,
+      },
     },
   },
 
@@ -84,14 +90,15 @@ return {
     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
     opts = {
       options = {
-        theme = "kanagawa", -- Set the theme for lualine
+        theme = "catppuccin", -- Set the theme for lualine
         icons_enabled = true, -- Enable icons in the statusline
+        section_separators = { left = "", right = "" }, -- Set the section separators
       },
       sections = {
         lualine_a = {
           {
             "mode", -- Display the current mode
-            icon = "󱗞", -- Set the icon for the mode
+            icon = " ", -- Set the icon for the mode
           },
         },
       },
@@ -234,16 +241,17 @@ return {
         },
         preset = {
           header = [[
-
-          
+                                                           
+                                                           
+                                                           
+                                                           
 ██    ██  █████  ███████  ██████  ██    ██ ███████ ███████ 
 ██    ██ ██   ██ ██      ██    ██ ██    ██ ██         ███  
 ██    ██ ███████ ███████ ██    ██ ██    ██ █████     ███   
  ██  ██  ██   ██      ██ ██ ▄▄ ██ ██    ██ ██       ███    
   ████   ██   ██ ███████  ██████   ██████  ███████ ███████ 
                              ▀▀                            
-
-          
+                                                           
 ]],
           -- stylua: ignore
           ---@type snacks.dashboard.Item[]
@@ -257,7 +265,7 @@ return {
             { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
             { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
             { icon = " ", key = "m", desc = "Mason", action = ":Mason" },
-         --   { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
       },
