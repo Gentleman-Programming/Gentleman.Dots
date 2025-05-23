@@ -42,7 +42,7 @@ Welcome to the Gentleman.Dots manual configuration guide! This document will wal
 
 ```bash
 git clone git@github.com:deuriib/nvim-dots.git
-cd Gentleman.Dots
+cd nvim-dots
 ```
 
 ---
