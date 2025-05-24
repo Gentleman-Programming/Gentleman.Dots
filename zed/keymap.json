@@ -21,7 +21,19 @@
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
-      "ctrl-l": "workspace::ActivatePaneRight"
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-g s": "git::StageAndNext",
+      "ctrl-g r": "git::Restore",
+      "ctrl-g u": "git::UnstageAndNext",
+      "ctrl-g a": "git::StageAll",
+      "ctrl-g u a": "git::UnstageAll",
+      "ctrl-g c": "git::Commit",
+      "ctrl-g p": "git::Push",
+      "ctrl-g m": "git::GenerateCommitMessage",
+      "ctrl-g l": "git::Pull",
+      "ctrl-g d d": "git::Diff",
+      "ctrl-g d a": "git::Amend",
+      "ctrl-g d b": "git::Blame"
     }
   },
   {

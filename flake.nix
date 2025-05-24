@@ -72,6 +72,7 @@
                   bat
                   lazygit
                   yazi
+                  unstablePkgs.television
 
                   # ─── Nerd Fonts ───
                   nerd-fonts.iosevka-term
