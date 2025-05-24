@@ -3,161 +3,147 @@ return {
     "yetone/avante.nvim",
     event = "VeryLazy",
     lazy = false,
-    version = false, -- set this if you want to always pull the latest change
-    opts = {
-      ---@alias avante.Mode "agentic" | "legacy"
-      mode = "agentic", -- agentic | legacy
-      ---@alias avante.ProviderName "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
-      provider = "gemini", -- Recommend using Claude
-      ---@type AvanteSupportedProvider
-      copilot = {
-        model = "gpt-4o", -- o1-preview | o1-mini | claude-3.7-sonnet
-      },
-      ---@type AvanteSupportedProvider
-      gemini = {
-        endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
-        model = "gemini-2.0-flash",
-        timeout = 30000, -- Timeout in milliseconds
-        temperature = 0,
-        max_tokens = 8192,
-      },
-      cursor_applying_provider = "copilot", -- In this example, use Groq for applying, but you can also use any provider you want.
-      auto_suggestions_provider = "copilot", -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
-      behaviour = {
-        auto_suggestions = true, -- Experimental stage
-        auto_set_highlight_group = true,
-        auto_set_keymaps = true,
-        auto_apply_diff_after_generation = false,
-        support_paste_from_clipboard = false,
-        enable_cursor_planning_mode = true, -- enable cursor planning mode!
-        enable_token_counting = false, -- Whether to enable token counting. Default to true.
-      },
-      suggestion = {
-        debounce = 400,
-        throttle = 400,
-      },
-      -- File selector configuration
-      --- @alias FileSelectorProvider "native" | "fzf" | "mini.pick" | "snacks" | "telescope" | string
-      file_selector = {
-        provider = "snacks", -- Avoid native provider issues
-        provider_opts = {},
-      },
-      mappings = {
-        --- @class AvanteConflictMappings
-        diff = {
-          ours = "co",
-          theirs = "ct",
-          all_theirs = "ca",
-          both = "cb",
-          cursor = "cc",
-          next = "]x",
-          prev = "[x",
+    version = false,
+    build = "make",
+    opts = function()
+      return {
+        mode = "agentic",
+        provider = "gemini",
+        copilot = {
+          model = "gpt-4o",
+        },
+        gemini = {
+          endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
+          model = "gemini-2.0-flash",
+          timeout = 30000,
+          temperature = 0,
+          max_tokens = 8192,
+        },
+        vendors = {
+          groq = {
+            __inherited_from = "openai",
+            api_key_name = "GROQ_API_KEY",
+            endpoint = "https://api.groq.com/openai/v1/",
+            model = "meta-llama/llama-4-maverick-17b-128e-instruct",
+            max_tokens = 8192,
+            temperature = 0,
+          },
+          deepseek = {
+            __inherited_from = "openai",
+            api_key_name = "DEEPSEEK_API_KEY",
+            endpoint = "https://api.deepseek.com",
+            model = "deepseek-chat",
+          },
+        },
+        cursor_applying_provider = "groq",
+        auto_suggestions_provider = "gemini",
+        behaviour = {
+          auto_suggestions = true,
+          auto_set_highlight_group = true,
+          auto_set_keymaps = true,
+          auto_apply_diff_after_generation = false,
+          support_paste_from_clipboard = false,
+          enable_cursor_planning_mode = true,
+          enable_token_counting = false,
         },
         suggestion = {
-          accept = "<M-l>",
-          next = "<M-]>",
-          prev = "<M-[>",
-          dismiss = "<C-]>",
+          debounce = 400,
+          throttle = 400,
         },
-        jump = {
-          next = "]]",
-          prev = "[[",
+        file_selector = {
+          provider = "snacks",
+          provider_opts = {},
         },
-        submit = {
-          normal = "<CR>",
-          insert = "<C-s>",
+        mappings = {
+          diff = {
+            ours = "co",
+            theirs = "ct",
+            all_theirs = "ca",
+            both = "cb",
+            cursor = "cc",
+            next = "]x",
+            prev = "[x",
+          },
+          suggestion = {
+            accept = "<M-l>",
+            next = "<M-]>",
+            prev = "<M-[>",
+            dismiss = "<C-]>",
+          },
+          jump = {
+            next = "]]",
+            prev = "[[",
+          },
+          submit = {
+            normal = "<CR>",
+            insert = "<C-s>",
+          },
+          sidebar = {
+            apply_all = "A",
+            apply_cursor = "a",
+            switch_windows = "<Tab>",
+            reverse_switch_windows = "<S-Tab>",
+          },
         },
-        sidebar = {
-          apply_all = "A",
-          apply_cursor = "a",
-          switch_windows = "<Tab>",
-          reverse_switch_windows = "<S-Tab>",
+        windows = {
+          position = "right",
+          wrap = true,
+          width = 30,
+          sidebar_header = {
+            enabled = true,
+            align = "center",
+            rounded = true,
+          },
+          input = {
+            rounded = true,
+            prefix = "> ",
+            height = 8,
+          },
+          edit = {
+            border = "rounded",
+            start_insert = true,
+          },
+          ask = {
+            border = "rounded",
+            floating = false,
+            start_insert = true,
+            focus_on_apply = "ours",
+          },
         },
-      },
-      hints = { enabled = false },
-      windows = {
-        ---@type "right" | "left" | "top" | "bottom" | "smart"
-        position = "right", -- the position of the sidebar
-        wrap = true, -- similar to vim.o.wrap
-        width = 30, -- default % based on available width
-        sidebar_header = {
-          enabled = true, -- true, false to enable/disable the header
-          align = "center", -- left, center, right for title
-          rounded = true, -- true, false to enable/disable rounded corners
+        highlights = {
+          diff = {
+            current = "DiffText",
+            incoming = "DiffAdd",
+          },
         },
-        input = {
-          rounded = true, -- true, false to enable/disable rounded corners
-          prefix = "> ",
-          height = 8, -- Height of the input window in vertical layout
-        },
-        edit = {
-          border = "rounded", -- Border style for the edit window
-          start_insert = true, -- Start insert mode when opening the edit window
-        },
-        ask = {
-          border = "rounded", -- Border style for the ask window
-          floating = false, -- Open the 'AvanteAsk' prompt in a floating window
-          start_insert = true, -- Start insert mode when opening the ask window
-          ---@type "ours" | "theirs"
-          focus_on_apply = "ours", -- which diff to focus after applying
-        },
-      },
-      highlights = {
-        ---@type AvanteConflictHighlights
         diff = {
-          current = "DiffText",
-          incoming = "DiffAdd",
+          autojump = true,
+          list_opener = "copen",
+          override_timeoutlen = 500,
         },
-      },
-      --- @class AvanteConflictUserConfig
-      diff = {
-        autojump = true,
-        ---@type string | fun(): any
-        list_opener = "copen",
-        --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
-        --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
-        --- Disable by setting to -1.
-        override_timeoutlen = 500,
-      },
-      system_prompt = [[
-      Sos un clon de Gentleman Programming, un arquitecto frontend argentino con un enfoque técnico pero relajado. Tu estilo es claro, directo y con un toque de humor inteligente. Estás especializado en Angular y React, con obsesión por la arquitectura limpia, hexagonal y scalable, y fanático del patrón contenedor-presentacional, modularización, atomic design y defensive programming.
+        system_prompt = [[
+Sos un clon de Gentleman Programming, un arquitecto frontend argentino con un enfoque técnico pero relajado. Tu estilo es claro, directo y con un toque de humor inteligente. Especializado en Angular y React, fanático de la arquitectura limpia, hexagonal, el patrón contenedor-presentacional, atomic design y buenas prácticas.
 
-      Te dirigís a desarrolladores intermedios y avanzados, explicás conceptos complejos de forma clara y práctica, sin vueltas, con ejemplos útiles. Usás analogías del mundo de la construcción para ilustrar ideas difíciles. Tus charlas mezclan técnica con introspección, liderazgo y enseñanza. Tenés experiencia en mentoría, creación de contenido y comunidades tech.
-
-      Hablas en tono argentino, natural y accesible. Usás expresiones como “buenas acá estamos”, “dale que va”, “acá la posta es esta”, pero sin caer en clichés forzados. Valorás las buenas prácticas, el testing, la productividad con herramientas como LazyVim, Tmux, Zellij y OBS, y la exploración de nuevas herramientas sin perder el foco.
-
-      A la hora de responder:
-
-        1. Identificás el problema técnico del usuario.
-        2. Proponés una solución concreta con fundamentos.
-        3. Dás ejemplos o snippets si aplican
-        4. Recomendás herramientas si suman valor.
-
-      Tu rol es acompañar, formar y destrabar nudos técnicos sin chamuyo. Si algo es complejo, lo bajás a tierra. Si algo es innecesario, lo decís. Tu estilo es: pragmático, apasionado, sin humo.]],
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+Apuntás a devs intermedios y avanzados. Bajás lo complejo a tierra. Hablás en tono argentino, accesible y sin humo. Valorás productividad, testing y herramientas como LazyVim, Tmux, Zellij y OBS. Enseñás, liderás y acompañás en lo técnico con claridad y pasión.
+]],
+      }
+    end,
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "stevearc/dressing.nvim",
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "nvim-tree/nvim-web-devicons",
       {
-        -- support for image pasting
         "HakonHarnes/img-clip.nvim",
         event = "VeryLazy",
         opts = {
-          -- recommended settings
           default = {
             embed_image_as_base64 = false,
             prompt_for_file_name = false,
             drag_and_drop = {
               insert_mode = true,
             },
-            -- required for Windows users
             use_absolute_path = true,
           },
         },
