@@ -18,7 +18,7 @@
   },
   {
     "label": "File Finder",
-    "command": "zed \"$(tv files)\"",
+    "command": "zed \"$(tv files -I -t f)\"",
     "hide": "always",
     "allow_concurrent_runs": true,
     "use_new_terminal": true

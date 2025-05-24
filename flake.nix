@@ -28,6 +28,7 @@
               ./nushell.nix  # Nushell configuration
               ./ghostty.nix  # Ghostty configuration
               ./zed.nix  # Zed configuration
+              ./television.nix  # Television configuration
               ./wezterm.nix  # WezTerm configuration
               # ./zellij.nix  # Zellij configuration (commented out)
               ./fish.nix  # Fish shell configuration

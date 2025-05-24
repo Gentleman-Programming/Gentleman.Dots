@@ -1,0 +1,176 @@
+# CONFIGURATION FILE LOCATION ON YOUR SYSTEM:
+# -------------------------------------------
+# Defaults:
+# ---------
+#  Linux:   `$HOME/.config/television/config.toml`
+#  macOS:   `$HOME/.config/television/config.toml`
+#  Windows: `%APPDATA%\television\config.toml`
+#
+# XDG dirs:
+# ---------
+# You may use XDG_CONFIG_HOME if set on your system.
+# In that case, television will expect the configuration file to be in:
+# `$XDG_CONFIG_HOME/television/config.toml`
+#
+
+# General settings
+# ----------------------------------------------------------------------------
+frame_rate = 60 # DEPRECATED: this option is no longer used
+tick_rate = 50
+
+[ui]
+# Whether to use nerd font icons in the UI
+# This option requires a font patched with Nerd Font in order to properly
+# display glyphs (see https://www.nerdfonts.com/ for more information)
+use_nerd_font_icons = false
+# How much space to allocate for the UI (in percentage of the screen)
+# ┌───────────────────────────────────────┐
+# │                                       │
+# │            Terminal screen            │
+# │    ┌─────────────────────────────┐    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │       Television UI         │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    └─────────────────────────────┘    │
+# │                                       │
+# │                                       │
+# └───────────────────────────────────────┘
+ui_scale = 100
+# Whether to show the top help bar in the UI by default
+# This option can be toggled with the (default) `ctrl-g` keybinding
+show_help_bar = false
+# Whether to show the preview panel in the UI by default
+# This option can be toggled with the (default) `ctrl-o` keybinding
+show_preview_panel = true
+# Where to place the input bar in the UI (top or bottom)
+input_bar_position = "top"
+# DEPRECATED: title is now always displayed at the top as part of the border
+# Where to place the preview title in the UI (top or bottom)
+# preview_title_position = "top"
+# The theme to use for the UI
+# A list of builtin themes can be found in the `themes` directory of the television
+# repository. You may also create your own theme by creating a new file in a `themes`
+# directory in your configuration directory (see the `config.toml` location above).
+theme = "default"
+
+# Previewers settings
+# ----------------------------------------------------------------------------
+[previewers.file]
+# The theme to use for syntax highlighting.
+# Bulitin syntax highlighting uses the same syntax highlighting engine as bat.
+# To get a list of your currently available themes, run `bat --list-themes`
+# Note that setting the BAT_THEME environment variable will override this setting.
+theme = "TwoDark"
+
+# Keybindings
+# ----------------------------------------------------------------------------
+#
+# Channel mode
+# ------------------------
+[keybindings]
+# Quit the application
+quit = ["esc", "ctrl-c"]
+# Scrolling through entries
+select_next_entry = ["down", "ctrl-n", "ctrl-j"]
+select_prev_entry = ["up", "ctrl-p", "ctrl-k"]
+select_next_page = "pagedown"
+select_prev_page = "pageup"
+# Scrolling the preview pane
+scroll_preview_half_page_down = "ctrl-d"
+scroll_preview_half_page_up = "ctrl-u"
+# Add entry to selection and move to the next entry
+toggle_selection_down = "tab"
+# Add entry to selection and move to the previous entry
+toggle_selection_up = "backtab"
+# Confirm selection
+confirm_selection = "enter"
+# Copy the selected entry to the clipboard
+copy_entry_to_clipboard = "ctrl-y"
+# Toggle the remote control mode
+toggle_remote_control = "ctrl-r"
+# Toggle the send to channel mode
+toggle_send_to_channel = "ctrl-s"
+# Toggle the help bar
+toggle_help = "ctrl-g"
+# Toggle the preview panel
+toggle_preview = "ctrl-o"
+
+
+# Shell integration
+# ----------------------------------------------------------------------------
+#
+# The shell integration feature allows you to use television as a picker for
+# your shell commands (as well as your shell history with <CTRL-R>).
+# E.g. typing `git checkout <CTRL-T>` will open television with a list of
+# branches to choose from.
+
+[shell_integration]
+# This specifies the default fallback channel if no other channel is matched.
+fallback_channel = "files"
+
+[shell_integration.channel_triggers]
+# Add your channel triggers here. Each key is a channel that will be triggered
+# by the corresponding commands.
+# Example: say you want the following commands to trigger the following channels
+# when pressing <CTRL-T>:
+#          `git checkout`  should trigger the `git-branches` channel
+#          `ls`            should trigger the `dirs` channel
+#          `cat` and `cp`  should trigger the `files` channel
+#
+# You would add the following to your configuration file:
+# ```
+# [shell_integration.channel_triggers]
+# "git-branches" = ["git checkout"]
+# "dirs" = ["ls"]
+# "files" = ["cat", "cp"]
+# ```
+"alias" = ["alias", "unalias"]
+"env" = ["export", "unset"]
+"dirs" = ["cd", "ls", "rmdir"]
+"files" = [
+  "cat",
+  "less",
+  "head",
+  "tail",
+  "vim",
+  "nano",
+  "bat",
+  "cp",
+  "mv",
+  "rm",
+  "touch",
+  "chmod",
+  "chown",
+  "ln",
+  "tar",
+  "zip",
+  "unzip",
+  "gzip",
+  "gunzip",
+  "xz",
+]
+"git-diff" = ["git add", "git restore"]
+"git-branch" = [
+  "git checkout",
+  "git branch",
+  "git merge",
+  "git rebase",
+  "git pull",
+  "git push",
+]
+"docker-images" = ["docker run"]
+"git-repos" = ["nvim", "code", "hx", "git clone"]
+
+
+[shell_integration.keybindings]
+# controls which key binding should trigger tv
+# for shell autocomplete
+"smart_autocomplete" = "ctrl-t"
+# controls which keybinding should trigger tv
+# for command history
+"command_history" = "ctrl-r"
