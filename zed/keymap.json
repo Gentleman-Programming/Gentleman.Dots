@@ -12,7 +12,7 @@
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-l": "workspace::ActivatePaneRight",
-      "space b q": "pane::CloseInactiveItems"
+      "ctrl-alt-a": "workspace::AddFolderToProject"
     }
   },
   {
@@ -36,6 +36,7 @@
       "space a t": "agent::ToggleFocus",
       "space t": "terminal_panel::ToggleFocus",
       "space u n": "workspace::ClearAllNotifications",
+      "space b q": "pane::CloseInactiveItems",
       "space g g": [
         "task::Spawn",
         { "task_name": "Lazygit", "reveal_target": "center" }

@@ -989,17 +989,21 @@ def fzfnvim [] {
 }
 
 def ya_zed [...args] {
-    let tmp = (mktemp -t "yazi-chooser.XXXXXXXXXX")
-    ^yazi --chooser-file $tmp ...$args
+    let tmp = (mktemp -t "yazi-chooser.XXXXXXXXXX" | str trim)
+    yazi --chooser-file $tmp $args
 
-    if (open $tmp | is-empty | not) {
+    if (ls $tmp | get size | into int) > 0 {
         let opened_file = (open $tmp | lines | get 0)
-        if ($opened_file | is-empty | not) {
-            ^zed -- $opened_file
+        if $opened_file != "" {
+            if (ls $opened_file | get type | get 0) == "dir" {
+                zed --add-folder $opened_file
+            } else {
+                zed -- $opened_file
+            }
         }
     }
 
-    rm $tmp
+    rm -f $tmp
 }
 
  source ~/.zoxide.nu

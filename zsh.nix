@@ -54,19 +54,23 @@
       eval "$(starship init zsh)"
 
       ya_zed() {
-          local tmp
-          tmp=$(mktemp -t "yazi-chooser.XXXXXXXXXX")
-          yazi --chooser-file "$tmp" "$@"
+        tmp=$(mktemp -t "yazi-chooser.XXXXXXXXXX")
+        yazi --chooser-file "$tmp" "$@"
 
-          if [[ -s "$tmp" ]]; then
-              local opened_file
-              opened_file=$(head -n 1 "$tmp")
-              if [[ -n "$opened_file" ]]; then
-                  zed -- "$opened_file"
-              fi
+        if [[ -s "$tmp" ]]; then
+          opened_file=$(head -n 1 -- "$tmp")
+          if [[ -n "$opened_file" ]]; then
+            if [[ -d "$opened_file" ]]; then
+              # Es una carpeta, la agregamos al workspace
+              zed --add-folder "$opened_file"
+            else
+              # Es un archivo, lo abrimos normalmente
+              zed -- "$opened_file"
+            fi
           fi
+        fi
 
-          rm "$tmp"
+        rm -f -- "$tmp"
       }
 
       # --------------------------
