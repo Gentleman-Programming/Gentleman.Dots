@@ -53,7 +53,15 @@
         "task::Spawn",
         { "task_name": "Lazygit", "reveal_target": "center" }
       ],
-      "-": ["task::Spawn", { "task_name": "Yazi", "reveal_target": "center" }]
+      "-": ["task::Spawn", { "task_name": "Yazi", "reveal_target": "center" }],
+      "space f f": [
+        "task::Spawn",
+        { "task_name": "File Finder", "reveal_target": "center" }
+      ],
+      "space s g": [
+        "task::Spawn",
+        { "task_name": "Find in Files", "reveal_target": "center" }
+      ]
     }
   },
   {
