@@ -1,3 +1,9 @@
+# Files
+[[cable_channel]]
+name = "files"
+source_command = "fd -I -t f"
+preview_command = ":files:"
+
 # GIT
 [[cable_channel]]
 name = "git-diff"
