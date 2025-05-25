@@ -27,7 +27,7 @@
     "toggle_relative_line_numbers": true
   },
   "ui_font_size": 16,
-  "buffer_font_size": null,
+  "buffer_font_size": 16,
   "agent_font_size": 16,
   "ui_font_family": "IosevkaTerm Nerd Font",
   "buffer_font_family": "IosevkaTerm Nerd Font",
