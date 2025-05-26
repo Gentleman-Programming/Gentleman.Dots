@@ -17,8 +17,8 @@
     "use_new_terminal": true
   },
   {
-    "label": "File Finder",
-    "command": "zed \"$(tv files -I -t f)\"",
+    "label": "Find in Files",
+    "command": "zed \"$(tv text)\"",
     "hide": "always",
     "allow_concurrent_runs": true,
     "use_new_terminal": true
