@@ -12,8 +12,8 @@
   {
     "context": "Editor",
     "bindings": {
-      "ctrl-[": "pane::ActivateNextItem",
-      "ctrl-]": "pane::ActivatePreviousItem",
+      "ctrl-]": "pane::ActivateNextItem",
+      "ctrl-[": "pane::ActivatePreviousItem",
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
