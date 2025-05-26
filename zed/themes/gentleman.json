@@ -7,7 +7,6 @@
       "name": "Gentleman Kanagawa",
       "appearance": "dark",
       "style": {
-        "background.appearance": "blurred",
         "border": "#E0C15A55", // dorado más vivo
         "border.variant": "#FFE06655", // dorado cálido intenso apagado
         "border.focused": "#FFE06655", // dorado brillante (foco) apagado
@@ -383,7 +382,6 @@
       "name": "Gentleman Sakura Night",
       "appearance": "dark",
       "style": {
-        "background.appearance": "blurred",
         "border": "#FFB2D7BB", // rosa sakura suave semi-transparente
         "border.variant": "#7CB1DDBB", // azul claro sakura suave
         "border.focused": "#FFB2D7EE", // rosa más vivo (foco)
@@ -759,7 +757,6 @@
       "name": "Gentleman Sakura Night Sober",
       "appearance": "dark",
       "style": {
-        "background.appearance": "blurred",
         "border": "#D4A9BCBB", // rosa palo suave, apagado
         "border.variant": "#80A9CDBB", // azul suave, menos saturado
         "border.focused": "#D4A9BCEE", // rosa foco sutil
