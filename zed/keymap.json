@@ -1,11 +1,5 @@
 [
   {
-    "context": "Editor",
-    "bindings": {
-      "ctrl-s": "workspace::Save"
-    }
-  },
-  {
     "context": "Workspace",
     "bindings": {
       "ctrl-h": "workspace::ActivatePaneLeft",
@@ -18,6 +12,8 @@
   {
     "context": "Editor",
     "bindings": {
+      "ctrl-[": "pane::ActivateNextItem",
+      "ctrl-]": "pane::ActivatePreviousItem",
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
@@ -33,7 +29,8 @@
       "ctrl-g l": "git::Pull",
       "ctrl-g d d": "git::Diff",
       "ctrl-g d a": "git::Amend",
-      "ctrl-g d b": "git::Blame"
+      "ctrl-g d b": "git::Blame",
+      "ctrl-s": "workspace::Save"
     }
   },
   {
@@ -61,7 +58,8 @@
       "space s g": [
         "task::Spawn",
         { "task_name": "Find in Files", "reveal_target": "center" }
-      ]
+      ],
+      "space tab a": "tab_switcher::ToggleAll"
     }
   },
   {
