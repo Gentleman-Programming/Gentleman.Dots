@@ -63,6 +63,7 @@
                   cargo
                   go
                   nil
+                  unstablePkgs.nixd
                   unstablePkgs.goose-cli
 
                   # ─── Compilers and system utilities ───
