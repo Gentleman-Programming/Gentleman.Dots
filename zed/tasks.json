@@ -17,14 +17,7 @@
     "use_new_terminal": true
   },
   {
-    "label": "Find in Files",
-    "command": "zed \"$(tv text)\"",
-    "hide": "always",
-    "allow_concurrent_runs": true,
-    "use_new_terminal": true
-  },
-  {
-    "label": "Find in Files",
+    "label": "File Finder",
     "command": "zed \"$(tv text)\"",
     "hide": "always",
     "allow_concurrent_runs": true,
