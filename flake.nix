@@ -37,8 +37,8 @@
               ./zsh.nix  # Zsh configuration
               {
                 # Personal data
-                home.username = "anua";  # Replace with your username
-                home.homeDirectory = "/Users/anua/";  # Replace with your home directory
+                home.username = "YourUser";  # Replace with your username
+                home.homeDirectory = "/Users/YourUser/";  # Replace with your home directory
                 home.stateVersion = "24.11";  # State version
 
                 home.packages = with pkgs; [
@@ -74,7 +74,7 @@
                   bat
                   lazygit
                   yazi
-                  unstablePkgs.television
+                  television
 
                   # ─── Nerd Fonts ───
                   nerd-fonts.iosevka-term
