@@ -55,6 +55,10 @@
         "task::Spawn",
         { "task_name": "File Finder", "reveal_target": "center" }
       ],
+      "space f d": [
+        "task::Spawn",
+        { "task_name": "Find Directories", "reveal_target": "center" }
+      ],
       "space s g": [
         "task::Spawn",
         { "task_name": "Find in Files", "reveal_target": "center" }

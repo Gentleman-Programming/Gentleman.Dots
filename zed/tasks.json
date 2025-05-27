@@ -29,5 +29,12 @@
     "hide": "always",
     "allow_concurrent_runs": true,
     "use_new_terminal": true
+  },
+  {
+    "label": "Find Directories",
+    "command": "zed --add \"$(tv dirs)\"",
+    "hide": "always",
+    "allow_concurrent_runs": true,
+    "use_new_terminal": true
   }
 ]
