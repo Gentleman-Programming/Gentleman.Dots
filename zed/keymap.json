@@ -81,5 +81,11 @@
       "cmd-f": "workspace::ToggleZoom",
       "cmd-n": "workspace::NewTerminal"
     }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "ctrl-r": "project_panel::RemoveFromProject"
+    }
   }
 ]

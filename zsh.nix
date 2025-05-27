@@ -60,10 +60,10 @@
           if [[ -n "$opened_file" ]]; then
             if [[ -d "$opened_file" ]]; then
               # Es una carpeta, la agregamos al workspace
-              zed --add-folder "$opened_file"
+              zed --add "$opened_file"
             else
               # Es un archivo, lo abrimos normalmente
-              zed -- "$opened_file"
+              zed --add "$opened_file"
             fi
           fi
         fi

@@ -996,9 +996,9 @@ def ya_zed [...args] {
         let opened_file = (open $tmp | lines | get 0)
         if $opened_file != "" {
             if (ls $opened_file | get type | get 0) == "dir" {
-                zed --add-folder $opened_file
+                zed --add $opened_file
             } else {
-                zed -- $opened_file
+                zed --add $opened_file
             }
         }
     }
