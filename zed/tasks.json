@@ -39,7 +39,7 @@
   },
   {
     "label": "Obsidian",
-    "command": "zed --add \"$(tv ~/.config/obsidian)\"",
+    "command": "cd ~/.config/obsidian & zed --add \"$(tv files)\"",
     "hide": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": true
