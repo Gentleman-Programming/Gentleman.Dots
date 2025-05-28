@@ -63,6 +63,10 @@
         "task::Spawn",
         { "task_name": "Find in Files", "reveal_target": "center" }
       ],
+      "space o s": [
+        "task::Spawn",
+        { "task_name": "Obsidian", "reveal_target": "center" }
+      ],
       "space tab a": "tab_switcher::ToggleAll"
     }
   },

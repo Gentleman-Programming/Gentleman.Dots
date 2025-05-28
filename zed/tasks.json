@@ -36,5 +36,12 @@
     "hide": "always",
     "allow_concurrent_runs": true,
     "use_new_terminal": true
+  },
+  {
+    "label": "Obsidian",
+    "command": "zed --add \"$(tv ~/.config/obsidian)\"",
+    "hide": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": true
   }
 ]
