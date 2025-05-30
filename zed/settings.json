@@ -8,7 +8,8 @@
     "line_height": { "custom": 1.25 }
   },
   "project_panel": {
-    "dock": "left"
+    "dock": "left",
+    "indent_size": 12
   },
   "agent": {
     "inline_assistant_model": {
