@@ -16,11 +16,11 @@ return {
   --   enabled = false,
   -- },
   {
-    "yetone/avante.nvim",
-    enabled = true,
+    "CopilotC-Nvim/CopilotChat.nvim",
+    enabled = false, -- Disable CopilotChat.nvim plugin
   },
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    enabled = true,
+    "voldikss/vim-floaterm",
+    enabled = false,
   },
 }
