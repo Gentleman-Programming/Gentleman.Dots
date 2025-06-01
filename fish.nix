@@ -156,15 +156,15 @@
       #set -g fish_pager_color_description $comment
       #
       set -l foreground F3F6F9 normal
-      set -l selection 263356 brcyan
-      set -l comment 8BA7C1 brblack
-      set -l red FF6F99 red
-      set -l orange DEBA87 brred
-      set -l yellow FFF6A1 yellow
-      set -l green D7FFEA green
-      set -l purple B3E6FFFF magenta
-      set -l cyan 96D8F6 cyan
-      set -l pink FF89B5 brmagenta
+      set -l selection 263356 normal
+      set -l comment 8394A3 brblack
+      set -l red CB7C94 red
+      set -l orange DEBA87 orange
+      set -l yellow FFE066 yellow
+      set -l green B7CC85 green
+      set -l purple A3B5D6 purple
+      set -l cyan 7AA89F cyan
+      set -l pink FF8DD7 magenta
 
       # Syntax Highlighting Colors
       set -g fish_color_normal $foreground
