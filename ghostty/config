@@ -1,6 +1,28 @@
 background-opacity = 0.95
 background-blur-radius = 20
 
+palette = 0=#1a2033
+palette = 1=#ff6f99
+palette = 2=#b4e7c7
+palette = 3=#ffff00
+palette = 4=#7cb1dd
+palette = 5=#ffb2d7
+palette = 6=#96d8f6
+palette = 7=#f3f6f9
+palette = 8=#8ba7c1
+palette = 9=#ff89b5
+palette = 10=#d7ffea
+palette = 11=#fff6a1
+palette = 12=#b3e6ff
+palette = 13=#ffd7f2
+palette = 14=#cbf0ff
+palette = 15=#ffffff
+background = 121725
+foreground = f3f6f9
+cursor-color = f3f6f9
+selection-background = ffb2d7
+selection-foreground = 1a2033
+
 font-family = IosevkaTerm NF
 #font-size = 16
 font-size = 24
