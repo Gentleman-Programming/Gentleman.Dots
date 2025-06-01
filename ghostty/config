@@ -17,7 +17,7 @@ palette = 12=#b3e6ff
 palette = 13=#ffd7f2
 palette = 14=#cbf0ff
 palette = 15=#ffffff
-background = 121725
+background = 06080f
 foreground = f3f6f9
 cursor-color = f3f6f9
 selection-background = ffb2d7
@@ -63,25 +63,3 @@ keybind = cmd+k=clear_screen
 
 # Use it by writing 'nvim' first and then the keybinding to open the file with nvim
 keybind = alt+s=write_screen_file:paste
-
-palette = 0=#27272a
-palette = 1=#ea83a5
-palette = 2=#90b99f
-palette = 3=#e6b99d
-palette = 4=#9ca2cf
-palette = 5=#aca1cf
-palette = 6=#85b5ba
-palette = 7=#c9c7cd
-palette = 8=#353539
-palette = 9=#ED96B3
-palette = 10=#a7c8b3
-palette = 11=#eac5ae
-palette = 12=#acb1d7
-palette = 13=#b7aed5
-palette = 14=#97c0c4
-palette = 15=#d3d1d7
-background = 161617
-foreground = c9c7cd
-cursor-color = c9c7cd
-selection-background = 3C3B3E
-selection-foreground = c9c7cd
