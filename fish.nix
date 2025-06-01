@@ -155,20 +155,16 @@
       #set -g fish_pager_color_completion $foreground
       #set -g fish_pager_color_description $comment
       #
-      #
-      # Kanagawa Fish shell theme
-      # A template was taken and modified from Tokyonight:
-      # https://github.com/folke/tokyonight.nvim/blob/main/extras/fish_tokyonight_night.fish
-      set -l foreground DCD7BA normal
-      set -l selection 2D4F67 brcyan
-      set -l comment 727169 brblack
-      set -l red C34043 red
-      set -l orange FF9E64 brred
-      set -l yellow C0A36E yellow
-      set -l green 76946A green
-      set -l purple 957FB8 magenta
-      set -l cyan 7AA89F cyan
-      set -l pink D27E99 brmagenta
+      set -l foreground F3F6F9 normal
+      set -l selection 263356 brcyan
+      set -l comment 8BA7C1 brblack
+      set -l red FF6F99 red
+      set -l orange DEBA87 brred
+      set -l yellow FFF6A1 yellow
+      set -l green D7FFEA green
+      set -l purple B3E6FFFF magenta
+      set -l cyan 96D8F6 cyan
+      set -l pink FF89B5 brmagenta
 
       # Syntax Highlighting Colors
       set -g fish_color_normal $foreground
@@ -191,6 +187,7 @@
       set -g fish_pager_color_prefix $cyan
       set -g fish_pager_color_completion $foreground
       set -g fish_pager_color_description $comment
+
       clear
     '';
 
