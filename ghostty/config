@@ -23,8 +23,8 @@ selection-background = 263356
 selection-foreground = f3f6f9
 
 font-family = IosevkaTerm NF
-#font-size = 16
-font-size = 24
+font-size = 16
+#font-size = 24
 window-padding-color = extend
 window-step-resize = true
 window-padding-balance = true
