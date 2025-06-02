@@ -121,8 +121,8 @@ alt-2 = 'workspace work'
 alt-3 = 'workspace development'
 alt-4 = 'workspace others'
 alt-5 = 'workspace stream'
-# alt-6 = 'workspace 6'
-# alt-7 = 'workspace 7'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
 # alt-8 = 'workspace 8'
 # alt-9 = 'workspace 9'
 # alt-a = 'workspace A' # In your config, you can drop workspace bindings that you don't need
@@ -221,6 +221,8 @@ work = "main"
 development = "main"
 others = "main"
 stream = "main"
+6 = "Elgato Prom."
+7 = "ARZOPA"
 
 [[on-window-detected]]
 if.app-id = "com.mitchellh.ghostty"
