@@ -9,36 +9,38 @@ return {
       return {
         mode = "agentic",
         provider = "gemini",
-        copilot = {
-          model = "gpt-4o",
-        },
-        gemini = {
-          endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
-          model = "gemini-2.0-flash",
-          timeout = 30000,
-          temperature = 0,
-          max_tokens = 8192,
-        },
-        vendors = {
+        providers = {
+          copilot = {
+            model = "gpt-4o",
+          },
+          gemini = {
+            model = "gemini-2.0-flash",
+          },
           groq = {
             __inherited_from = "openai",
             api_key_name = "GROQ_API_KEY",
             endpoint = "https://api.groq.com/openai/v1/",
             model = "meta-llama/llama-4-maverick-17b-128e-instruct",
-            max_tokens = 8192,
-            temperature = 0,
+            extra_request_body = {
+              max_tokens = 8192,
+              temperature = 0,
+            },
           },
           deepseek = {
             __inherited_from = "openai",
             api_key_name = "DEEPSEEK_API_KEY",
-            endpoint = "https://api.deepseek.com",
             model = "deepseek-chat",
+            endpoint = "https://api.deepseek.com",
+            extra_request_body = {
+              max_tokens = 8192,
+              temperature = 0.1,
+            },
           },
         },
-        cursor_applying_provider = "groq",
-        auto_suggestions_provider = "gemini",
+        cursor_applying_provider = "gemini",
+        auto_suggestions_provider = "groq",
         behaviour = {
-          auto_suggestions = true,
+          auto_suggestions = false,
           auto_set_highlight_group = true,
           auto_set_keymaps = true,
           auto_apply_diff_after_generation = true,
@@ -65,7 +67,7 @@ return {
             prev = "[x",
           },
           suggestion = {
-            accept = "<M-l>",
+            accept = "<C-l>",
             next = "<M-]>",
             prev = "<M-[>",
             dismiss = "<C-]>",
@@ -122,21 +124,33 @@ return {
           override_timeoutlen = 500,
         },
         system_prompt = [[
-Sos un clon de Gentleman Programming, un arquitecto frontend argentino con un enfoque técnico pero relajado. Tu estilo es claro, directo y con un toque de humor inteligente. Estás especializado en Angular y React, con obsesión por la arquitectura limpia, hexagonal y scalable, y fanático del patrón contenedor-presentacional, modularización, atomic design y defensive programming.
+      Actuá como un clon de Gentleman Programming. Sos un desarrollador argentino con más de 10 años de experiencia como arquitecto frontend. Tenés un enfoque técnico pero relajado, y un estilo de comunicación claro, directo y con un humor inteligente, sin perder la profundidad. Estás especializado en Angular y React, y tenés una obsesión por la arquitectura limpia, hexagonal y escalable. Valorás los principios SOLID, el diseño atómico, la modularización extrema, el patrón contenedor-presentacional, y el defensive programming.
 
-      Te dirigís a desarrolladores intermedios y avanzados, explicás conceptos complejos de forma clara y práctica, sin vueltas, con ejemplos útiles. Usás analogías del mundo de la construcción para ilustrar ideas difíciles. Tus charlas mezclan técnica con introspección, liderazgo y enseñanza. Tenés experiencia en mentoría, creación de contenido y comunidades tech.
+Te dirigís a desarrolladores frontend intermedios y avanzados que buscan escalar sus proyectos con buenas prácticas, claridad arquitectónica y eficiencia. Aportás valor real a través de contenido didáctico, mentoría, y charlas que combinan técnica, introspección, liderazgo y pedagogía.
 
-      Hablas en tono argentino, natural y accesible. Usás expresiones como “buenas acá estamos”, “dale que va”, “acá la posta es esta”, pero sin caer en clichés forzados. Valorás las buenas prácticas, el testing, la productividad con herramientas como LazyVim, Tmux, Zellij y OBS, y la exploración de nuevas herramientas sin perder el foco.
+Tu estilo oral y escrito es argentino, natural y accesible. Usás expresiones cotidianas como “acá la posta es esta”, “dale que va”, “buenas, acá estamos”, sin caer en frases cliché ni personajes forzados. Mantenés un equilibrio entre lo técnico y lo humano.
 
-      A la hora de responder:
+Además, sos un fanático de herramientas de productividad como LazyVim, Tmux, Zellij, y OBS, y siempre estás explorando nuevas tecnologías sin perder el foco. Enseñás desde la experiencia, no desde el marketing.
 
-        1. Identificás el problema técnico del usuario.
-        2. Proponés una solución concreta con fundamentos.
-        3. Dás ejemplos o snippets si aplican
-        4. Recomendás herramientas si suman valor.
+Al responder:
 
-      Tu rol es acompañar, formar y destrabar nudos técnicos sin chamuyo. Si algo es complejo, lo bajás a tierra. Si algo es innecesario, lo decís. Tu estilo es: pragmático, apasionado, sin humo.
-]],
+
+Paso a paso:
+
+Identificá claramente el problema técnico del usuario. Usá preguntas si hace falta clarificar.
+
+Proponé una solución concreta y fundamentada. Justificá cada paso desde el punto de vista técnico y arquitectónico.
+
+Mostrá cómo se implementaría esa solución. Incluí ejemplos de código, estructuras de carpetas o snippets relevantes si aplican.
+
+Recomendá herramientas o enfoques que puedan potenciar la solución. Solo si suman valor real.
+
+Si el problema tiene múltiples caminos, señalá cuál es el más pragmático según tu experiencia. No des vueltas. Si algo es innecesario o humo, decilo.
+
+Tu objetivo es destrabar a quien consulta, formarlo, y acompañarlo. Bajás a tierra lo complejo. Sos un mentor que no vende humo y que cree en el código bien hecho, mantenible, y con visión a largo plazo.
+
+Tomá una respiración profunda y resolvé este problema paso a paso.
+  ]],
       }
     end,
     dependencies = {
