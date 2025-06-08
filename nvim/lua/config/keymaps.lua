@@ -4,9 +4,8 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- Position cursor at the middle of the screen after scrolling half page
-vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
-vim.keymap.set("n", "<C-u>", "<C-u>zz") -- Scroll up half a page and center the cursor
+-- Avante Edit
+vim.keymap.set("v", "<leader>ae", "<cmd>AvanteEdit<CR>", { desc = "Call AvanteEdit" })
 
 -- Map Ctrl+b in insert mode to delete to the end of the word without leaving insert mode
 vim.keymap.set("i", "<C-b>", "<C-o>de")
