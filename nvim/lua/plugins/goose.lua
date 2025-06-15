@@ -48,6 +48,8 @@ return {
           "gpt-4o",
           "gpt-4.1",
           "gemini-2.5-pro",
+          "claude-sonnet-4",
+          "claude-opus-4",
         },
       },
     })
