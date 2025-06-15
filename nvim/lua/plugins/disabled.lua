@@ -17,7 +17,7 @@ return {
   -- },
   {
     "yetone/avante.nvim",
-    enabled = true,
+    enabled = false,
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
@@ -25,11 +25,11 @@ return {
   },
   {
     "olimorris/codecompanion.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "azorng/goose.nvim",
-    enabled = true,
+    enabled = false,
   },
   {
     "tris203/precognition.nvim",
