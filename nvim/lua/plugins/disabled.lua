@@ -25,11 +25,11 @@ return {
   },
   {
     "olimorris/codecompanion.nvim",
-    enabled = true,
+    enabled = false,
   },
   {
     "azorng/goose.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "tris203/precognition.nvim",
