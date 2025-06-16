@@ -87,7 +87,7 @@
     # Special script for Zed integration
     (writeShellScriptBin "oil-zed" ''
       #!/usr/bin/env bash
-      # oil-zed: Launch Oil.nvim with Zed integration using full config
+      # oil-zed: Launch Oil.nvim with Zed integration using minimal config
       # Usage: oil-zed [directory]
       #
       # This script opens Oil configured to open files in Zed when selected
@@ -106,27 +106,24 @@
           exit 1
       fi
 
-      # Use full nvim config but disable problematic plugins
-      NVIM_CONFIG="$HOME/.config/nvim"
+      # Use minimal nvim config to avoid plugin conflicts
+      OIL_MINIMAL_DIR="$HOME/.config/nvim-oil-minimal"
 
-      # Check if oil.nvim is available in the config
-      if [[ ! -f "$NVIM_CONFIG/init.lua" ]] && [[ ! -f "$NVIM_CONFIG/lua/plugins/oil.lua" ]]; then
-          echo "Error: Oil.nvim configuration not found in $NVIM_CONFIG" >&2
-          echo "Make sure you have oil.nvim installed in your Neovim configuration" >&2
+      # Check if minimal config exists
+      if [[ ! -f "$OIL_MINIMAL_DIR/init.lua" ]]; then
+          echo "Error: Minimal Oil.nvim configuration not found at $OIL_MINIMAL_DIR" >&2
+          echo "Run 'home-manager switch' to ensure the minimal config is installed" >&2
           exit 1
       fi
 
-      # Launch Neovim with full config but disable problematic plugins for Zed context
+      # Launch Neovim with minimal config and Zed integration
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
-          --cmd "lua vim.g.disable_obsidian = true" \
-          --cmd "lua vim.g.disable_copilot = true" \
-          --cmd "lua vim.g.oil_open_in_zed = true" \
-          --cmd "lua function ZedOilOpen() local oil = require('oil'); local entry = oil.get_cursor_entry(); local dir = oil.get_current_dir(); if entry and entry.type == 'file' and dir then vim.fn.jobstart({'zed', dir .. entry.name}, {detach = true}); vim.cmd('qa!'); else require('oil.actions').select.callback(); end end" \
+          -u "$OIL_MINIMAL_DIR/init.lua" \
+          -c "lua vim.g.oil_open_in_zed = true" \
           -c "lua require('oil').open('$DIR')" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <CR> :lua ZedOilOpen()<CR>"
+          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
 
     (writeShellScriptBin "ocd" ''
@@ -178,7 +175,7 @@
 
     (writeShellScriptBin "oil-float" ''
       #!/usr/bin/env bash
-      # oil-float: Launch Oil.nvim in floating window mode with full config
+      # oil-float: Launch Oil.nvim in floating window mode with minimal config
       # Usage: oil-float [directory]
       #
       # This script opens Oil.nvim in a floating window for quick file browsing
@@ -197,27 +194,24 @@
           exit 1
       fi
 
-      # Use full nvim config but disable problematic plugins
-      NVIM_CONFIG="$HOME/.config/nvim"
+      # Use minimal nvim config to avoid plugin conflicts
+      OIL_MINIMAL_DIR="$HOME/.config/nvim-oil-minimal"
 
-      # Check if oil.nvim is available in the config
-      if [[ ! -f "$NVIM_CONFIG/init.lua" ]] && [[ ! -f "$NVIM_CONFIG/lua/plugins/oil.lua" ]]; then
-          echo "Error: Oil.nvim configuration not found in $NVIM_CONFIG" >&2
-          echo "Make sure you have oil.nvim installed in your Neovim configuration" >&2
+      # Check if minimal config exists
+      if [[ ! -f "$OIL_MINIMAL_DIR/init.lua" ]]; then
+          echo "Error: Minimal Oil.nvim configuration not found at $OIL_MINIMAL_DIR" >&2
+          echo "Run 'home-manager switch' to ensure the minimal config is installed" >&2
           exit 1
       fi
 
-      # Launch Neovim with full config but disable problematic plugins for Zed context
+      # Launch Neovim with minimal config and Oil in floating mode
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
-          --cmd "lua vim.g.disable_obsidian = true" \
-          --cmd "lua vim.g.disable_copilot = true" \
-          --cmd "lua vim.g.oil_open_in_zed = true" \
-          --cmd "lua function ZedOilOpen() local oil = require('oil'); local entry = oil.get_cursor_entry(); local dir = oil.get_current_dir(); if entry and entry.type == 'file' and dir then vim.fn.jobstart({'zed', dir .. entry.name}, {detach = true}); vim.cmd('qa!'); else require('oil.actions').select.callback(); end end" \
+          -u "$OIL_MINIMAL_DIR/init.lua" \
+          -c "lua vim.g.oil_open_in_zed = true" \
           -c "lua require('oil').open_float('$DIR')" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <CR> :lua ZedOilOpen()<CR>"
+          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
 
     # Zed-specific helper scripts
