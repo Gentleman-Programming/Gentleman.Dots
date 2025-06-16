@@ -75,8 +75,8 @@ vim.g.loaded_xmlformat = 1
 
 -- Minimal settings
 vim.opt.termguicolors = true
-vim.opt.number = false
-vim.opt.relativenumber = false
+vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.signcolumn = "no"
 vim.opt.laststatus = 0
 vim.opt.cmdheight = 1
