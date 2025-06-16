@@ -121,10 +121,12 @@
           --cmd "set noswapfile" \
           --cmd "lua vim.g.disable_obsidian = true" \
           --cmd "lua vim.g.disable_copilot = true" \
-          -c "lua vim.g.oil_open_in_zed = true" \
+          --cmd "lua vim.g.oil_open_in_zed = true" \
+          --cmd "lua function ZedOilOpen() local oil = require('oil'); local entry = oil.get_cursor_entry(); local dir = oil.get_current_dir(); if entry and entry.type == 'file' and dir then vim.fn.jobstart({'zed', dir .. entry.name}, {detach = true}); vim.cmd('qa!'); else require('oil.actions').select.callback(); end end" \
           -c "lua require('oil').open('$DIR')" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
+          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>" \
+          -c "autocmd FileType oil nnoremap <buffer><silent> <CR> :lua ZedOilOpen()<CR>"
     '')
 
     (writeShellScriptBin "ocd" ''
@@ -210,10 +212,12 @@
           --cmd "set noswapfile" \
           --cmd "lua vim.g.disable_obsidian = true" \
           --cmd "lua vim.g.disable_copilot = true" \
-          -c "lua vim.g.oil_open_in_zed = true" \
+          --cmd "lua vim.g.oil_open_in_zed = true" \
+          --cmd "lua function ZedOilOpen() local oil = require('oil'); local entry = oil.get_cursor_entry(); local dir = oil.get_current_dir(); if entry and entry.type == 'file' and dir then vim.fn.jobstart({'zed', dir .. entry.name}, {detach = true}); vim.cmd('qa!'); else require('oil.actions').select.callback(); end end" \
           -c "lua require('oil').open_float('$DIR')" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
-          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
+          -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>" \
+          -c "autocmd FileType oil nnoremap <buffer><silent> <CR> :lua ZedOilOpen()<CR>"
     '')
 
     # Zed-specific helper scripts
