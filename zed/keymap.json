@@ -87,7 +87,14 @@
           "reveal_target": "center"
         }
       ],
-      "space tab a": "tab_switcher::ToggleAll"
+      "space tab a": "tab_switcher::ToggleAll",
+      "space o z": [
+        "task::Spawn",
+        {
+          "task_name": "Oil",
+          "reveal_target": "center"
+        }
+      ]
     }
   },
   {

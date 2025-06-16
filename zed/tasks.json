@@ -10,7 +10,7 @@
   },
   {
     "label": "Oil",
-    "command": "oil-zed $ZED_WORKTREE_ROOT",
+    "command": "bash -c 'oil-zed \"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\"'",
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -19,7 +19,7 @@
   },
   {
     "label": "Oil Float",
-    "command": "oil-float $ZED_WORKTREE_ROOT",
+    "command": "bash -c 'oil-float \"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\"'",
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -28,7 +28,7 @@
   },
   {
     "label": "Oil Simple",
-    "command": "oil-simple $ZED_WORKTREE_ROOT",
+    "command": "bash -c 'oil-simple \"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\"'",
     "use_new_terminal": true,
     "allow_concurrent_runs": true,
     "reveal": "always",
@@ -70,5 +70,41 @@
     "hide": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": true
+  },
+  {
+    "label": "Debug Zed Vars",
+    "command": "bash -c 'echo \"ZED_FILE: $ZED_FILE\" && echo \"ZED_WORKTREE_ROOT: $ZED_WORKTREE_ROOT\" && echo \"PWD: $PWD\" && echo \"Current dir from ZED_FILE: $(dirname \"$ZED_FILE\" 2>/dev/null || echo \"ZED_FILE not set\")\" && echo \"Press enter to continue...\" && read'",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true,
+    "reveal": "always",
+    "hide": "never",
+    "target": "center"
+  },
+  {
+    "label": "Debug Oil Zed",
+    "command": "bash -c 'TARGET_DIR=\"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\" && echo \"Target directory: $TARGET_DIR\" && echo \"Testing oil-zed...\" && oil-zed --help 2>&1 || echo \"oil-zed failed, trying direct call...\" && which oil-zed && echo \"Press enter to continue...\" && read'",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true,
+    "reveal": "always",
+    "hide": "never",
+    "target": "center"
+  },
+  {
+    "label": "Debug Oil Float",
+    "command": "bash -c 'TARGET_DIR=\"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\" && echo \"Target directory: $TARGET_DIR\" && echo \"Testing oil-float...\" && oil-float --help 2>&1 || echo \"oil-float failed, trying direct call...\" && which oil-float && echo \"Press enter to continue...\" && read'",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true,
+    "reveal": "always",
+    "hide": "never",
+    "target": "center"
+  },
+  {
+    "label": "Debug Step by Step",
+    "command": "bash -c 'echo \"ZED_FILE: $ZED_FILE\" && echo \"Step 1: dirname of ZED_FILE\" && STEP1=$(dirname \"$ZED_FILE\" 2>/dev/null) && echo \"STEP1 result: $STEP1\" && echo \"Step 2: fallback check\" && STEP2=\"$STEP1\" && if [ -z \"$STEP2\" ]; then STEP2=\"$ZED_WORKTREE_ROOT\"; fi && echo \"STEP2 result: $STEP2\" && echo \"Step 3: calling oil-zed with: $STEP2\" && echo \"Press enter to continue...\" && read'",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true,
+    "reveal": "always",
+    "hide": "never",
+    "target": "center"
   }
 ]
