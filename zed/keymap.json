@@ -38,7 +38,7 @@
     "bindings": {
       "space e": "project_panel::ToggleFocus",
       "space g": "git_panel::ToggleFocus",
-      "space o": "outline_panel::ToggleFocus",
+      "space l": "outline_panel::ToggleFocus",
       "space d": "diagnostics::Deploy",
       "space space": "file_finder::Toggle",
       "space a i": "assistant::InlineAssist",
@@ -52,7 +52,6 @@
         "task::Spawn",
         { "task_name": "Lazygit", "reveal_target": "center" }
       ],
-      "-": ["task::Spawn", { "task_name": "Yazi", "reveal_target": "center" }],
       "space f f": [
         "task::Spawn",
         { "task_name": "File Finder", "reveal_target": "center" }
@@ -65,9 +64,28 @@
         "task::Spawn",
         { "task_name": "Find in Files", "reveal_target": "center" }
       ],
-      "space o s": [
+      "space o b": [
         "task::Spawn",
         { "task_name": "Obsidian", "reveal_target": "center" }
+      ],
+      "space y": [
+        "task::Spawn",
+        { "task_name": "Yazi", "reveal_target": "center" }
+      ],
+      "-": ["task::Spawn", { "task_name": "Oil", "reveal_target": "center" }],
+      "space o f": [
+        "task::Spawn",
+        {
+          "task_name": "Oil Float",
+          "reveal_target": "center"
+        }
+      ],
+      "space o s": [
+        "task::Spawn",
+        {
+          "task_name": "Oil Simple",
+          "reveal_target": "center"
+        }
       ],
       "space tab a": "tab_switcher::ToggleAll"
     }

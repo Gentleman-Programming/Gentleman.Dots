@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# oil: Launch Neovim with Oil.nvim for quick file exploration
+# Usage: oil [directory]
+#
+# This script opens Neovim directly in Oil mode for quick file management
+# Press 'q' or ':qa' to exit back to terminal
+
+set -euo pipefail
+
+# Default to current directory if no argument provided
+DIR="${1:-.}"
+
+# Resolve to absolute path
+DIR=$(realpath "$DIR")
+
+# Check if directory exists
+if [[ ! -d "$DIR" ]]; then
+    echo "Error: Directory '$DIR' does not exist" >&2
+    exit 1
+fi
+
+# Use existing nvim config or fallback to a minimal one
+NVIM_CONFIG="${NVIM_OIL_CONFIG:-$HOME/.config/nvim}"
+
+# Check if oil.nvim is available in the config
+if [[ ! -f "$NVIM_CONFIG/init.lua" ]] && [[ ! -f "$NVIM_CONFIG/lua/plugins/oil.lua" ]]; then
+    echo "Error: Oil.nvim configuration not found in $NVIM_CONFIG" >&2
+    echo "Make sure you have oil.nvim installed in your Neovim configuration" >&2
+    exit 1
+fi
+
+# Launch Neovim with Oil
+# - Open the specified directory in Oil
+# - Set up a convenient quit mapping for oil buffers
+# - Disable swap files for this session
+exec nvim \
+    --cmd "set noswapfile" \
+    -c "lua require('oil').open('$DIR')" \
+    -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
+    -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"

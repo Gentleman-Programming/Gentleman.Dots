@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# ocd: Change directory and launch Oil.nvim
+# Usage: ocd [directory]
+#
+# This script combines 'cd' and 'oil' - it changes to the specified directory
+# and then launches Oil.nvim for file exploration in that location
+
+set -euo pipefail
+
+# Default to current directory if no argument provided
+DIR="${1:-.}"
+
+# Resolve to absolute path
+DIR=$(realpath "$DIR")
+
+# Check if directory exists
+if [[ ! -d "$DIR" ]]; then
+    echo "Error: Directory '$DIR' does not exist" >&2
+    exit 1
+fi
+
+# Change to the directory
+cd "$DIR"
+
+# Display current location
+echo "Changed to: $(pwd)"
+
+# Use existing nvim config
+NVIM_CONFIG="${NVIM_OIL_CONFIG:-$HOME/.config/nvim}"
+
+# Check if oil.nvim is available in the config
+if [[ ! -f "$NVIM_CONFIG/init.lua" ]] && [[ ! -f "$NVIM_CONFIG/lua/plugins/oil.lua" ]]; then
+    echo "Error: Oil.nvim configuration not found in $NVIM_CONFIG" >&2
+    echo "Make sure you have oil.nvim installed in your Neovim configuration" >&2
+    exit 1
+fi
+
+# Launch Neovim with Oil in the new directory
+# - Open the current directory in Oil
+# - Set up convenient quit mappings
+# - Disable swap files for this session
+exec nvim \
+    --cmd "set noswapfile" \
+    -c "lua require('oil').open('.')" \
+    -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
+    -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"

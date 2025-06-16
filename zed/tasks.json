@@ -9,12 +9,39 @@
     "target": "center"
   },
   {
-    "label": "Yazi",
-    "command": "ya_zed",
-    "args": ["$ZED_FILE"],
-    "hide": "always",
+    "label": "Oil",
+    "command": "oil-zed $ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "on_success",
+    "target": "center"
+  },
+  {
+    "label": "Oil Float",
+    "command": "oil-float $ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "on_success",
+    "target": "center"
+  },
+  {
+    "label": "Oil Simple",
+    "command": "oil-simple $ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
     "allow_concurrent_runs": true,
-    "use_new_terminal": true
+    "reveal": "always",
+    "hide": "on_success"
+  },
+  {
+    "label": "Yazi",
+    "command": "ya_zed $ZED_FILE",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "on_success",
+    "target": "center"
   },
   {
     "label": "File Finder",
@@ -39,7 +66,7 @@
   },
   {
     "label": "Obsidian",
-    "command": "cd ~/.config/obsidian & zed --add \"$(tv files)\"",
+    "command": "cd ~/.config/obsidian && zed --add \"$(tv files)\"",
     "hide": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": true

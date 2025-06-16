@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# oil-minimal: Launch Neovim with minimal Oil.nvim configuration
+# Usage: oil-minimal [directory]
+#
+# This script uses a minimal, standalone Neovim configuration optimized for Oil.nvim
+# It's faster to start and focused purely on file management
+# Press 'q' or ':qa' to exit back to terminal
+
+set -euo pipefail
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Path to minimal nvim config
+NVIM_MINIMAL_CONFIG="$DOTFILES_DIR/nvim-oil-minimal"
+
+# Default to current directory if no argument provided
+DIR="${1:-.}"
+
+# Resolve to absolute path
+DIR=$(realpath "$DIR")
+
+# Check if directory exists
+if [[ ! -d "$DIR" ]]; then
+    echo "Error: Directory '$DIR' does not exist" >&2
+    exit 1
+fi
+
+# Check if minimal config exists
+if [[ ! -f "$NVIM_MINIMAL_CONFIG/init.lua" ]]; then
+    echo "Error: Minimal Oil.nvim configuration not found at $NVIM_MINIMAL_CONFIG" >&2
+    echo "Make sure the nvim-oil-minimal directory exists with init.lua" >&2
+    exit 1
+fi
+
+# Set environment variable to use minimal config
+export NVIM_APPNAME="nvim-oil-minimal"
+
+# Display info
+echo "🛢️  Opening Oil.nvim in: $DIR"
+echo "📁  Using minimal config: $NVIM_MINIMAL_CONFIG"
+
+# Launch Neovim with minimal config
+# - Use the minimal configuration
+# - Open the specified directory
+# - Disable swap files for this session
+exec nvim \
+    --cmd "set noswapfile" \
+    -u "$NVIM_MINIMAL_CONFIG/init.lua" \
+    "$DIR"

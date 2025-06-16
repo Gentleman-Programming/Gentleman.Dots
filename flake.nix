@@ -35,6 +35,7 @@
               ./starship.nix  # Starship prompt configuration
               ./nvim.nix  # Neovim configuration
               ./zsh.nix  # Zsh configuration
+              ./oil-scripts.nix  # Oil.nvim scripts configuration
               {
                 # Personal data
                 home.username = "YourUser";  # Replace with your username
