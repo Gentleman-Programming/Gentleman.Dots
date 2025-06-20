@@ -44,6 +44,10 @@ vim.keymap.set("n", "<leader>of", "<cmd>ObsidianNewFromTemplate<CR>", { desc = "
 vim.keymap.set("n", "<leader>os", "<cmd>ObsidianSearch<CR>", { desc = "Search Obsidian" })
 vim.keymap.set("n", "<leader>oq", "<cmd>ObsidianQuickSwitch<CR>", { desc = "Quick Switch" })
 
+------- MOVE SELECTED ELEMENTS IN VISUAL MODE --------
+vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected down" }) -- Move selected text down
+vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected up" }) -- Move selected text up
+
 ----- OIL -----
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
@@ -66,8 +70,8 @@ vim.api.nvim_set_keymap("n", "<A-k>", "<Nop>", { noremap = true, silent = true }
 -- Disable key mappings in visual block mode
 vim.api.nvim_set_keymap("x", "<A-j>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("x", "<A-k>", "<Nop>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "J", "<Nop>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("x", "J", "<Nop>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
 
 -- Redefine Ctrl+s to save with the custom function
 vim.api.nvim_set_keymap("n", "<C-s>", ":lua SaveFile()<CR>", { noremap = true, silent = true })
