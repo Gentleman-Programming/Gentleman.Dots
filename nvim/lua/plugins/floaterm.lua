@@ -19,10 +19,12 @@ return {
     -- Terminal mode mappings
     { "<Esc><Esc>", "<C-\\><C-n>", mode = "t", desc = "Switch to Normal mode" },
     { "<C-_>", "<cmd>FloatermToggle<cr>", mode = "t", desc = "Hide Terminal" },
+    { "<M-f>", "<cmd>FloatermToggle<cr>", mode = "t", desc = "Toggle Terminal" },
+
 
     -- Normal mode mappings in terminal
     { "i", "i", mode = "n", buffer = true, desc = "Enter Insert mode" },
-    { "q", "<cmd>FloatermToggle<cr>", mode = "n", buffer = true, desc = "Quit Terminal" },
+    --{ "q", "<cmd>FloatermToggle<cr>", mode = "n", buffer = true, desc = "Quit Terminal" },
   },
   config = function()
     -- Window appearance
