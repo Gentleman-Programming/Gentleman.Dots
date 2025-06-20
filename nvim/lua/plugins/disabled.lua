@@ -21,6 +21,6 @@ return {
   },
   {
     "voldikss/vim-floaterm",
-    enabled = false,
+    enabled = true,
   },
 }
