@@ -17,7 +17,7 @@ return {
   -- },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    enabled = false, -- Disable CopilotChat.nvim plugin
+    enabled = true, -- Disable CopilotChat.nvim plugin
   },
   {
     "voldikss/vim-floaterm",

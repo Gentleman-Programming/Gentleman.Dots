@@ -90,7 +90,7 @@ return {
     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
     opts = {
       options = {
-        theme = "catppuccin", -- Set the theme for lualine
+        theme = "catppuccin-mocha", -- Set the theme for lualine
         icons_enabled = true, -- Enable icons in the statusline
         section_separators = { left = "", right = "" }, -- Set the section separators
       },
