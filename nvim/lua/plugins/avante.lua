@@ -9,18 +9,18 @@ return {
       provider = "copilot", -- Recommend using Claude
       providers = {
         copilot = {
-          model = "claude-3.7-sonnet", -- o1-preview | o1-mini | claude-3.7-sonnet
+          model = "claude-sonnet-4",
         },
       },
       cursor_applying_provider = "copilot", -- In this example, use Groq for applying, but you can also use any provider you want.
       auto_suggestions_provider = "copilot", -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
       behaviour = {
-        auto_suggestions = false, -- Experimental stage
+        auto_suggestions = false, -- Disabled as requested
         auto_set_highlight_group = true,
-        auto_set_keymaps = false,
+        auto_set_keymaps = true,
         auto_apply_diff_after_generation = false,
         support_paste_from_clipboard = false,
-        enable_cursor_planning_mode = true, -- enable cursor planning mode!
+        enable_cursor_planning_mode = false, -- Disabled as requested
       },
       -- File selector configuration
       --- @alias FileSelectorProvider "native" | "fzf" | "mini.pick" | "snacks" | "telescope" | string
