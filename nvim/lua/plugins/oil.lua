@@ -56,30 +56,6 @@ return {
       ["<C-l>"] = function()
         vim.cmd("wincmd l")
       end,
-      -- ["yp"] = {
-      --   function()
-      --     local oil = require("oil")
-      --     local entry = oil.get_cursor_entry()
-      --     local dir = oil.get_current_dir()
-      --     if entry and dir then
-      --       local full_path = dir .. entry.name
-      --       vim.fn.setreg("+", full_path)
-      --       vim.notify("Copied path: " .. full_path)
-      --     end
-      --   end,
-      --   desc = "Yank file path to clipboard",
-      -- },
-      -- ["yn"] = {
-      --   function()
-      --     local oil = require("oil")
-      --     local entry = oil.get_cursor_entry()
-      --     if entry then
-      --       vim.fn.setreg("+", entry.name)
-      --       vim.notify("Copied filename: " .. entry.name)
-      --     end
-      --   end,
-      --   desc = "Yank filename to clipboard",
-      -- },
       -- Quick quit
       ["q"] = "actions.close",
       -- Paste copied file with p
