@@ -58,8 +58,6 @@ return {
       end,
       -- Quick quit
       ["q"] = "actions.close",
-      -- Paste copied file with p
-      ["p"] = "actions.paste",
     },
 
     -- Set to false to disable all of the above keymaps
