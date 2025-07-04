@@ -8,10 +8,10 @@ return {
     opts = function()
       return {
         mode = "agentic",
-        provider = "gemini",
+        provider = "copilot",
         providers = {
           copilot = {
-            model = "gpt-4o",
+            model = "gpt-4.1",
           },
           gemini = {
             model = "gemini-2.0-flash",
@@ -36,6 +36,10 @@ return {
               temperature = 0.1,
             },
           },
+        },
+        web_search_engine = {
+          provider = "google", -- tavily, serpapi, searchapi, google, kagi, brave, or searxng
+          proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
         },
         cursor_applying_provider = "copilot",
         auto_suggestions_provider = "copilot",
