@@ -20,15 +20,11 @@ vim.keymap.set({ "i", "n", "v" }, "<C-c>", [[<C-\><C-n>]])
 -- Screen Keys
 vim.keymap.set({ "n" }, "<leader>uk", "<cmd>Screenkey<CR>")
 
------ Tmux Navigation ------
-local nvim_tmux_nav = require("nvim-tmux-navigation")
-
-vim.keymap.set("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft) -- Navigate to the left pane
-vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown) -- Navigate to the bottom pane
-vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp) -- Navigate to the top pane
-vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight) -- Navigate to the right pane
-vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive) -- Navigate to the last active pane
-vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext) -- Navigate to the next pane
+-- disable arrow keys in normal mode
+vim.keymap.set("n", "<Up>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<Down>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<Left>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<Right>", "<Nop>", { noremap = true, silent = true })
 
 ----- OBSIDIAN -----
 vim.keymap.set("n", "<leader>oc", "<cmd>ObsidianCheck<CR>", { desc = "Obsidian Check Checkbox" })
@@ -86,7 +82,7 @@ function SaveFile()
   if bufname == "" or bufname:match("^term://") then
     vim.ui.input({
       prompt = "Save as: ",
-      default = vim.fn.getcwd() .. "/", 
+      default = vim.fn.getcwd() .. "/",
     }, function(input)
       if input and input ~= "" then
         -- Escape path
@@ -116,4 +112,3 @@ function SaveFile()
     vim.notify("Error saving: " .. err, vim.log.levels.ERROR)
   end
 end
-

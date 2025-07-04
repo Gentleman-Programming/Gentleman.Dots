@@ -103,7 +103,7 @@ return {
       "LazyVim/LazyVim",
       opts = {
         -- Set the default color scheme
-        colorscheme = "kanagawa",
+        colorscheme = "catppuccin", -- Use catppuccin as the default colorscheme
       },
     },
   },
