@@ -248,11 +248,11 @@ clone_repository_with_progress() {
 
 # Step 1: Clone the Repository
 echo -e "${YELLOW}Step 1: Clone the Repository${NC}"
-if [ -d "Config.LazyVim" ]; then
+if [ -d "nvim-dots" ]; then
   echo -e "${GREEN}Repository already cloned. Overwriting...${NC}"
-  rm -rf "Config.LazyVim"
+  rm -rf "nvim-dots"
 fi
-clone_repository_with_progress "https://github.com/deuriib/Config.LazyVim.git" "Config.LazyVim" 20
+clone_repository_with_progress "https://github.com/deuriib/nvim-dots.git" "nvim-dots" 20
 cd Config.LazyVim || exit
 
 # Install Homebrew if not installed
@@ -664,13 +664,13 @@ if [ "$install_nvim" = "Yes" ]; then
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"
   run_command "mkdir -p ~/.config/nvim"
-  run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
+  run_command "cp -r nvim/* ~/.config/nvim/"
 
   echo -e "${YELLOW}Configuring Obsidian...${NC}"
   obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
 
   if [ -f "$obsidian_config_file" ]; then
-    update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
+    update_or_replace "$obsidian_config_file" "/vaults/notes/path" "path = '$OBSIDIAN_PATH'"
   else
     echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
   fi
@@ -680,7 +680,7 @@ fi
 sudo chown -R $(whoami) $(brew --prefix)/*
 echo -e "${YELLOW}Cleaning up...${NC}"
 cd ..
-run_command "rm -rf Gentleman.Dots"
+run_command "rm -rf nvim-dots"
 
 if [ "$shell_choice" = "nushell" ]; then
   shell_choice="nu"
