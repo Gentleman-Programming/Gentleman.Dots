@@ -25,7 +25,7 @@
           set BREW_BIN /home/linuxbrew/.linuxbrew/bin/brew
       end
 
-      set -x PATH $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $PATH /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/*
+      set -x PATH $HOME/.opencode/bin $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $PATH /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/*
 
       eval ($BREW_BIN shellenv)
 
@@ -60,6 +60,7 @@
 
       alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
       alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+      alias opencode-config='nvim ~/.opencode.json'
 
       ##  yazi
 

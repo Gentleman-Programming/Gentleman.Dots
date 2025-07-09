@@ -28,10 +28,6 @@ return {
     enabled = false,
   },
   {
-    "azorng/goose.nvim",
-    enabled = false,
-  },
-  {
     "tris203/precognition.nvim",
     enabled = false,
   },

@@ -36,6 +36,7 @@
               ./nvim.nix  # Neovim configuration
               ./zsh.nix  # Zsh configuration
               ./oil-scripts.nix  # Oil.nvim scripts configuration
+              ./opencode.nix  # OpenCode AI assistant configuration
               {
                 # Personal data
                 home.username = "YourUser";  # Replace with your username
@@ -65,7 +66,7 @@
                   go
                   nil
                   unstablePkgs.nixd
-                  unstablePkgs.goose-cli
+
 
                   # ─── Compilers and system utilities ───
                   gcc

@@ -102,6 +102,7 @@ $env.PATH = (
     $env.PATH
     | split row (char esep)
     | prepend '/opt/homebrew/bin'
+    | prepend ($env.HOME | path join ".opencode/bin")
     | prepend ($env.HOME | path join ".volta/bin")
     | prepend ($env.HOME | path join ".bun/bin")
     | prepend ($env.HOME | path join ".nix-profile/bin")

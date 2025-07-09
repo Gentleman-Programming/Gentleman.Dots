@@ -83,7 +83,7 @@
       # --------------------------
       if [[ -o login ]]; then
         # PATHS and Variables
-        export PATH="$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*"
+        export PATH="$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*"
 
         # macOS vs Linux distinction
         if [[ "$(uname)" == "Darwin" ]]; then

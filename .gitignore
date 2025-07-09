@@ -1,0 +1,26 @@
+# Nix build outputs
+result
+result-*
+
+# Nix garbage collection links
+.gcroots
+
+# Home Manager backup files
+backup
+
+# OpenCode directory
+.opencode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
