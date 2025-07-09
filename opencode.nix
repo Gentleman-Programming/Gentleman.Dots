@@ -34,21 +34,38 @@
       OPENCODE_DIR="$HOME/.opencode"
       OPENCODE_BIN="$OPENCODE_DIR/bin/opencode"
 
-      echo "🚀 Installing latest OpenCode..."
-
       # Set PATH to include all required tools
       export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
-      # Always install/update to latest version
-      echo "Installing latest OpenCode version..."
-      curl -fsSL https://opencode.ai/install | bash 
-
-      if [ -f "$OPENCODE_BIN" ]; then
-        INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null || echo "unknown")
-        echo "✅ OpenCode v$INSTALLED_VERSION installed successfully!"
+      # Check if OpenCode is already installed and working
+      if [ -f "$OPENCODE_BIN" ] && "$OPENCODE_BIN" --version &>/dev/null; then
+        INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
+        echo "✅ OpenCode already installed: $INSTALLED_VERSION"
+        read -p "Do you want to reinstall/update? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          echo "Skipping OpenCode installation"
+        else
+          echo "🚀 Reinstalling OpenCode..."
+          curl -fsSL https://opencode.ai/install | bash 
+          if [ -f "$OPENCODE_BIN" ]; then
+            INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
+            echo "✅ OpenCode v$INSTALLED_VERSION installed successfully!"
+          else
+            echo "❌ OpenCode installation failed"
+            exit 1
+          fi
+        fi
       else
-        echo "❌ OpenCode installation failed"
-        exit 1
+        echo "🚀 Installing latest OpenCode..."
+        curl -fsSL https://opencode.ai/install | bash 
+        if [ -f "$OPENCODE_BIN" ]; then
+          INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
+          echo "✅ OpenCode v$INSTALLED_VERSION installed successfully!"
+        else
+          echo "❌ OpenCode installation failed"
+          exit 1
+        fi
       fi
 
       # Install GitHub Copilot extension if not present
@@ -73,20 +90,23 @@
     OPENCODE_DIR="$HOME/.opencode"
     OPENCODE_BIN="$OPENCODE_DIR/bin/opencode"
 
-    echo "🚀 Installing latest OpenCode..."
-
     # Set PATH to include all required tools
     export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
-    # Always install/update to latest version
-    echo "Installing latest OpenCode version..."
-    curl -fsSL https://opencode.ai/install | bash 
-
-    if [ -f "$OPENCODE_BIN" ]; then
-      INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null || echo "unknown")
-      echo "✅ OpenCode v$INSTALLED_VERSION installed successfully!"
+    # Check if OpenCode is already installed and working
+    if [ -f "$OPENCODE_BIN" ] && "$OPENCODE_BIN" --version &>/dev/null; then
+      INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
+      echo "✅ OpenCode already installed: $INSTALLED_VERSION"
     else
-      echo "❌ OpenCode installation failed"
+      echo "🚀 Installing latest OpenCode..."
+      curl -fsSL https://opencode.ai/install | bash 
+
+      if [ -f "$OPENCODE_BIN" ]; then
+        INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
+        echo "✅ OpenCode v$INSTALLED_VERSION installed successfully!"
+      else
+        echo "❌ OpenCode installation failed"
+      fi
     fi
 
     # Install GitHub Copilot extension if not present
