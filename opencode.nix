@@ -9,6 +9,7 @@
     pkgs.gnutar
     pkgs.gzip
     pkgs.coreutils
+    pkgs.unzip
   ];
 
   # Setup GitHub CLI
@@ -36,11 +37,11 @@
       echo "🚀 Installing latest OpenCode..."
 
       # Set PATH to include all required tools
-      export PATH="${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
+      export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
       # Always install/update to latest version
       echo "Installing latest OpenCode version..."
-      curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+      curl -fsSL https://opencode.ai/install | bash 
 
       if [ -f "$OPENCODE_BIN" ]; then
         INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null || echo "unknown")
@@ -58,52 +59,6 @@
       else
         echo "✅ GitHub Copilot extension already installed"
       fi
-
-      # Create default config if it doesn't exist
-      if [ ! -f ~/.opencode.json ]; then
-        echo "📝 Creating default OpenCode configuration..."
-        cat > ~/.opencode.json << 'EOF'
-{
-  "providers": {
-    "copilot": {
-      "disabled": false
-    }
-  },
-  "agents": {
-    "coder": {
-      "model": "copilot.claude-sonnet-4",
-      "maxTokens": 16000,
-      "reasoningEffort": ""
-    },
-    "task": {
-      "model": "copilot.claude-sonnet-4",
-      "maxTokens": 5000,
-      "reasoningEffort": ""
-    },
-    "title": {
-      "model": "copilot.gpt-4o-mini",
-      "maxTokens": 80,
-      "reasoningEffort": ""
-    }
-  },
-  "tui": {
-    "theme": "catppuccin"
-  },
-  "shell": {
-    "path": "${pkgs.fish}/bin/fish",
-    "args": ["-l"]
-  },
-  "autoCompact": true,
-  "debug": false
-}
-EOF
-        echo "✅ Default configuration created at ~/.opencode.json"
-        echo "📖 You can edit the configuration with: opencode-config"
-        echo "🤖 Available models: copilot.claude-sonnet-4, copilot.claude-3.5-sonnet, copilot.gpt-4o, copilot.gpt-4o-mini, copilot.gpt-4"
-      else
-        echo "✅ OpenCode configuration already exists at ~/.opencode.json"
-      fi
-
       echo ""
       echo "🎉 OpenCode setup complete!"
       echo "Usage: opencode | opencode-config | gh auth status"
@@ -121,11 +76,11 @@ EOF
     echo "🚀 Installing latest OpenCode..."
 
     # Set PATH to include all required tools
-    export PATH="${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
+    export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
     # Always install/update to latest version
     echo "Installing latest OpenCode version..."
-    curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+    curl -fsSL https://opencode.ai/install | bash 
 
     if [ -f "$OPENCODE_BIN" ]; then
       INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null || echo "unknown")
@@ -142,52 +97,6 @@ EOF
     else
       echo "✅ GitHub Copilot extension already installed"
     fi
-
-    # Create default config if it doesn't exist
-    if [ ! -f ~/.opencode.json ]; then
-      echo "📝 Creating default OpenCode configuration..."
-      cat > ~/.opencode.json << 'EOF'
-{
-  "providers": {
-    "copilot": {
-      "disabled": false
-    }
-  },
-  "agents": {
-    "coder": {
-      "model": "copilot.claude-sonnet-4",
-      "maxTokens": 16000,
-      "reasoningEffort": ""
-    },
-    "task": {
-      "model": "copilot.claude-sonnet-4",
-      "maxTokens": 5000,
-      "reasoningEffort": ""
-    },
-    "title": {
-      "model": "copilot.gpt-4o-mini",
-      "maxTokens": 80,
-      "reasoningEffort": ""
-    }
-  },
-  "tui": {
-    "theme": "catppuccin"
-  },
-  "shell": {
-    "path": "${pkgs.fish}/bin/fish",
-    "args": ["-l"]
-  },
-  "autoCompact": true,
-  "debug": false
-}
-EOF
-      echo "✅ Default configuration created at ~/.opencode.json"
-      echo "📖 You can edit the configuration with: opencode-config"
-      echo "🤖 Available models: copilot.claude-sonnet-4, copilot.claude-3.5-sonnet, copilot.gpt-4o, copilot.gpt-4o-mini, copilot.gpt-4"
-    else
-      echo "✅ OpenCode configuration already exists at ~/.opencode.json"
-    fi
-
     echo ""
     echo "🎉 OpenCode setup complete!"
     echo "Usage: opencode | opencode-config | gh auth status"
