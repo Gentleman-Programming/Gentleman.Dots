@@ -31,6 +31,7 @@
               ./television.nix  # Television configuration
               ./wezterm.nix  # WezTerm configuration
               # ./zellij.nix  # Zellij configuration (commented out)
+              ./tmux.nix  # Tmux configuration
               ./fish.nix  # Fish shell configuration
               ./starship.nix  # Starship prompt configuration
               ./nvim.nix  # Neovim configuration
@@ -46,6 +47,7 @@
                 home.packages = with pkgs; [
                   # ─── Terminals and utilities ───
                   # zellij
+                  tmux
                   fish
                   zsh
                   nushell
@@ -73,6 +75,7 @@
                   fd
                   ripgrep
                   coreutils
+                  unzip
                   bat
                   lazygit
                   yazi

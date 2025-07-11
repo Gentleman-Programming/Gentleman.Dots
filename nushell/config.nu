@@ -1012,6 +1012,13 @@ def ya_zed [...args] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-# if "ZELLIJ" not-in ($env | columns) {
-#   run-external zellij
-# }
+let MULTIPLEXER = "tmux" 
+let MULTIPLEXER_ENV_PREFIX = "TMUX"
+
+def start_multiplexer [] {
+  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+    run-external $MULTIPLEXER
+  }
+}
+
+start_multiplexer

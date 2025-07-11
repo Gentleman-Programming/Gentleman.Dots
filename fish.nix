@@ -29,6 +29,9 @@
 
       eval ($BREW_BIN shellenv)
 
+      if not set -q TMUX
+          tmux
+      end
       starship init fish | source
       zoxide init fish | source
       atuin init fish | source

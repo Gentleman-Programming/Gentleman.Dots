@@ -97,6 +97,18 @@
           eval "$($BREW_BIN/brew shellenv)"
         fi
       fi
+
+    WM_VAR="/$TMUX"
+    # change with ZELLIJ
+    WM_CMD="tmux"
+    # change with zellij
+
+    function start_if_needed() {
+        if [[ $- == *i* ]] && [[ -z "\$\{WM_VAR#/\}" ]] && [[ -t 1 ]]; then
+            exec $WM_CMD
+        fi
+    }
+    start_if_needed
     '';
   };
 }
