@@ -1,4 +1,13 @@
+{ pkgs, ... }:
+
 {
+  # Instalar TPM (Tmux Plugin Manager)
+  home.activation.installTpm = ''
+    if [ ! -d ~/.tmux/plugins/tpm ]; then
+      ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    fi
+  '';
+
   home.file = {
     ".config/tmux/tmux.conf" = {
       text = ''
