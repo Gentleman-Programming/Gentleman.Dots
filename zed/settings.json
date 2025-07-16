@@ -25,9 +25,8 @@
     "model_parameters": [],
     "default_model": {
       "provider": "copilot_chat",
-      "model": "claude-4-sonnet"
-    },
-    "version": "2"
+      "model": "claude-sonnet-4"
+    }
   },
   "vim_mode": true,
   "vim": {

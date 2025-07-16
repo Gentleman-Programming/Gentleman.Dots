@@ -64,6 +64,9 @@ set -g mouse on
 # Status bar position
 set -g status-position top
 
+# Kill all sessions except current
+bind K confirm-before -p "Kill all other sessions? (y/n)" "kill-session -a"
+
 # Fix index
 set -g base-index 1
 setw -g pane-base-index 1
