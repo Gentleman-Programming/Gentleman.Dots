@@ -74,7 +74,7 @@ require("lazy").setup({
     -- Coding plugins
     { import = "lazyvim.plugins.extras.coding.mini-surround" },
     { import = "lazyvim.plugins.extras.editor.mini-diff" },
-    { import = "lazyvim.plugins.extras.coding.nvim-cmp" },
+    { import = "lazyvim.plugins.extras.coding.blink" },
 
     -- Utility plugins
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },

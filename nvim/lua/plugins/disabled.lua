@@ -2,10 +2,6 @@
 
 return {
   {
-    "saghen/blink.cmp",
-    enabled = false,
-  },
-  {
     -- Plugin: bufferline.nvim
     -- URL: https://github.com/akinsho/bufferline.nvim
     -- Description: A snazzy buffer line (with tabpage integration) for Neovim.
