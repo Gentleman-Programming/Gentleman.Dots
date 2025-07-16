@@ -1012,11 +1012,11 @@ def ya_zed [...args] {
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-let MULTIPLEXER = "tmux" 
+let MULTIPLEXER = "tmux"
 let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
 def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) and "ZED_TERMINAL" not-in ($env | columns) {
     run-external $MULTIPLEXER
   }
 }

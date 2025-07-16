@@ -29,7 +29,7 @@
 
       eval ($BREW_BIN shellenv)
 
-      if not set -q TMUX
+      if not set -q TMUX; and not set -q ZED_TERMINAL
           tmux
       end
       starship init fish | source

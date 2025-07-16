@@ -104,7 +104,7 @@
     # change with zellij
 
     function start_if_needed() {
-        if [[ $- == *i* ]] && [[ -z "\$\{WM_VAR#/\}" ]] && [[ -t 1 ]]; then
+        if [[ $- == *i* ]] && [[ -z "\$\{WM_VAR#/\}" ]] && [[ -t 1 ]] && [[ -z "$ZED_TERMINAL" ]]; then
             exec $WM_CMD
         fi
     }

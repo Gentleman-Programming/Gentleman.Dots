@@ -8,6 +8,9 @@
   },
   "terminal": {
     "shell": "system",
+    "env": {
+      "ZED_TERMINAL": "1"
+    },
     "line_height": { "custom": 1.25 }
   },
   "project_panel": {
