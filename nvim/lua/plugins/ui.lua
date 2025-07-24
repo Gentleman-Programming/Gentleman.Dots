@@ -206,6 +206,10 @@ return {
       notifier = {},
       image = {},
       picker = {
+        exclude = {
+          ".git",
+          "node_modules",
+        },
         matcher = {
           fuzzy = true,
           smartcase = true,
