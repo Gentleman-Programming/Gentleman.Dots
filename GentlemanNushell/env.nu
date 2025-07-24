@@ -104,8 +104,10 @@ $env.PATH = (
     | prepend '/home/linuxbrew/.linuxbrew/bin'
 # For Mac |'/opt/homebrew/bin'
     | prepend ($env.HOME | path join ".volta/bin")
+    | prepend ($env.HOME | path join ".opencode/bin")
     | prepend ($env.HOME | path join ".bun/bin")
     | prepend ($env.HOME | path join ".nix-profile/bin")
+    | prepend '/nix/var/nix/profiles/default/bin'
     | append '/usr/local/bin'
     | append ($env.HOME | path join ".config")
     | append ($env.HOME | path join ".cargo/bin")
