@@ -2,6 +2,10 @@ return {
   "obsidian-nvim/obsidian.nvim",
   version = "*", -- recommended, use latest release instead of latest commit
   lazy = false,
+  enabled = function()
+    -- Disable Obsidian when running from Oil Simple (to avoid path issues in Zed context)
+    return not vim.g.disable_obsidian
+  end,
   dependencies = {
     -- Required.
     "nvim-lua/plenary.nvim",
@@ -10,11 +14,11 @@ return {
     workspaces = {
       {
         name = "GentlemanNotes", -- Name of the workspace
-        path = "/your/notes/path", -- Path to the notes directory
+        path = os.getenv("HOME") .. "/.config/obsidian", -- Path to the notes directory
       },
     },
     completition = {
-      blink = true,
+      cmp = true,
     },
     picker = {
       -- Set your preferred picker. Can be one of 'telescope.nvim', 'fzf-lua', 'mini.pick' or 'snacks.pick'.

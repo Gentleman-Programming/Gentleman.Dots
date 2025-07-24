@@ -1,5 +1,13 @@
 -- This file contains the configuration for setting up the lazy.nvim plugin manager in Neovim.
 
+-- Node.js configuration - always use latest stable version
+vim.g.node_host_prog = vim.fn.exepath("node") or "/usr/local/bin/node"
+-- Ensure we're using a recent Node version for LSPs and plugins
+if vim.fn.executable("node") == 1 then
+  local node_version = vim.fn.system("node --version"):gsub("\n", "")
+  print("Using Node.js version: " .. node_version)
+end
+
 -- Spell-checking
 vim.opt.spell = true -- activa spell checker
 vim.opt.spelllang = { "en" }
@@ -9,9 +17,10 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 -- Check if the lazy.nvim plugin is not already installed
 if not vim.loop.fs_stat(lazypath) then
-  -- Bootstrap lazy.nvim by cloning the repository
-  -- stylua: ignore
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+    -- Bootstrap lazy.nvim by cloning the repository
+    -- stylua: ignore
+    vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+        lazypath })
 end
 
 -- Prepend the lazy.nvim path to the runtime path
@@ -33,6 +42,40 @@ if vim.fn.has("wsl") == 1 then
   }
 end
 
+-- FIX for Angular inline template highlighting
+
+-- helper to get the smallest named TSNode at (row, col)
+-- local function get_node_at_pos(bufnr, row, col)
+--   return vim.treesitter.get_node({ bufnr = bufnr, pos = { row, col } })
+-- end
+--
+-- -- override highlight handler
+-- local orig = vim.lsp.handlers["textDocument/documentHighlight"]
+-- vim.lsp.handlers["textDocument/documentHighlight"] = function(err, result, ctx, cfg)
+--   if not result or vim.tbl_isempty(result) then
+--     return orig(err, result, ctx, cfg)
+--   end
+--
+--   local bufnr = ctx.bufnr
+--   local filtered = {}
+--   for _, h in ipairs(result) do
+--     local s = h.range.start
+--     local node = get_node_at_pos(bufnr, s.line, s.character)
+--     local in_tpl = false
+--     while node do
+--       if node:type() == "template_string" then
+--         in_tpl = true
+--         break
+--       end
+--       node = node:parent()
+--     end
+--     if not in_tpl then
+--       table.insert(filtered, h)
+--     end
+--   end
+--   return orig(err, filtered, ctx, cfg)
+-- end
+
 -- Setup lazy.nvim with the specified configuration
 require("lazy").setup({
   spec = {
@@ -42,7 +85,7 @@ require("lazy").setup({
     -- Editor plugins
     { import = "lazyvim.plugins.extras.editor.harpoon2" },
     { import = "lazyvim.plugins.extras.editor.mini-files" },
-    { import = "lazyvim.plugins.extras.editor.snacks_explorer" },
+    -- { import = "lazyvim.plugins.extras.editor.snacks_explorer" },
     { import = "lazyvim.plugins.extras.editor.snacks_picker" },
 
     -- Formatting plugins
@@ -65,6 +108,7 @@ require("lazy").setup({
     -- Coding plugins
     { import = "lazyvim.plugins.extras.coding.mini-surround" },
     { import = "lazyvim.plugins.extras.editor.mini-diff" },
+    { import = "lazyvim.plugins.extras.coding.blink" },
 
     -- Utility plugins
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
