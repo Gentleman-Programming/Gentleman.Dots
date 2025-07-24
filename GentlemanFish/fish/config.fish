@@ -52,6 +52,9 @@ carapace _carapace | source
 
 set -g fish_greeting ""
 
+# Enable vi mode
+fish_vi_key_bindings
+
 ## alias
 if test (uname) = Darwin
     alias ls='ls --color=auto'
