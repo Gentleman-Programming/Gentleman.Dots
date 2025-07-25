@@ -42,40 +42,6 @@ if vim.fn.has("wsl") == 1 then
   }
 end
 
--- FIX for Angular inline template highlighting
-
--- helper to get the smallest named TSNode at (row, col)
-local function get_node_at_pos(bufnr, row, col)
-  return vim.treesitter.get_node({ bufnr = bufnr, pos = { row, col } })
-end
-
--- override highlight handler
-local orig = vim.lsp.handlers["textDocument/documentHighlight"]
-vim.lsp.handlers["textDocument/documentHighlight"] = function(err, result, ctx, cfg)
-  if not result or vim.tbl_isempty(result) then
-    return orig(err, result, ctx, cfg)
-  end
-
-  local bufnr = ctx.bufnr
-  local filtered = {}
-  for _, h in ipairs(result) do
-    local s = h.range.start
-    local node = get_node_at_pos(bufnr, s.line, s.character)
-    local in_tpl = false
-    while node do
-      if node:type() == "template_string" then
-        in_tpl = true
-        break
-      end
-      node = node:parent()
-    end
-    if not in_tpl then
-      table.insert(filtered, h)
-    end
-  end
-  return orig(err, filtered, ctx, cfg)
-end
-
 -- Setup lazy.nvim with the specified configuration
 require("lazy").setup({
   spec = {
