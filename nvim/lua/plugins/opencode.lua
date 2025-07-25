@@ -25,11 +25,11 @@ return {
       },
       ui = {
         floating = true, -- Use floating windows for input and output
-        window_width = 0.40, -- Width as percentage of editor width
+        window_width = 0.55, -- Width as percentage of editor width
         input_height = 0.15, -- Input height as percentage of window height
         fullscreen = false, -- Start in fullscreen mode (default: false)
         layout = "center", -- Options: "center" or "right"
-        floating_height = 0.8, -- Height as percentage of editor height for "center" layout
+        floating_height = 1, -- Height as percentage of editor height for "center" layout
         display_model = true, -- Display model name on top winbar
         window_highlight = "Normal:OpencodeBackground,FloatBorder:OpencodeBorder", -- Highlight group for the opencode window
         output = {
