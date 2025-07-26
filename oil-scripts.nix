@@ -343,17 +343,15 @@
     '';
   };
 
-  programs.nushell = {
-    enable = true;
-    extraConfig = ''
-      # Asegurar que nix-profile esté en PATH
-      $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.HOME)/.nix-profile/bin")
+  # Extend Nushell configuration with Oil aliases
+  programs.nushell.extraConfig = ''
+    # Asegurar que nix-profile esté en PATH
+    $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.HOME)/.nix-profile/bin")
 
-      # Alias para Oil
-      alias o = oil
-      alias oo = oil .
-      alias of = oil-float
-      alias oz = oil-zed
-    '';
-  };
+    # Alias para Oil
+    alias o = oil
+    alias oo = oil .
+    alias of = oil-float
+    alias oz = oil-zed
+  '';
 }
