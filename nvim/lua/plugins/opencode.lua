@@ -21,15 +21,12 @@ return {
           diff_revert_this_last_prompt = "<leader>art", -- Revert current file changes since the last opencode prompt
           diff_revert_all = "<leader>arA", -- Revert all file changes since the last opencode session
           diff_revert_this = "<leader>arT", -- Revert current file changes since the last opencode session
+          switch_position = "<leader>ax", -- Switch between positions
         },
       },
       ui = {
-        floating = true, -- Use floating windows for input and output
-        window_width = 0.55, -- Width as percentage of editor width
-        input_height = 0.15, -- Input height as percentage of window height
         fullscreen = false, -- Start in fullscreen mode (default: false)
-        layout = "center", -- Options: "center" or "right"
-        floating_height = 1, -- Height as percentage of editor height for "center" layout
+        position = "left",
         display_model = true, -- Display model name on top winbar
         window_highlight = "Normal:OpencodeBackground,FloatBorder:OpencodeBorder", -- Highlight group for the opencode window
         output = {
