@@ -34,6 +34,9 @@
       OPENCODE_DIR="$HOME/.opencode"
       OPENCODE_BIN="$OPENCODE_DIR/bin/opencode"
 
+      # Create required cache directories
+      mkdir -p "$HOME/.cache/nvim/opencode"
+
       # Set PATH to include all required tools
       export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
@@ -89,6 +92,9 @@
 
     OPENCODE_DIR="$HOME/.opencode"
     OPENCODE_BIN="$OPENCODE_DIR/bin/opencode"
+
+    # Create required cache directories
+    mkdir -p "$HOME/.cache/nvim/opencode"
 
     # Set PATH to include all required tools
     export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
