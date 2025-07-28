@@ -12,7 +12,7 @@
 
     # Install Gemini CLI globally via bun
     echo "📦 Installing Gemini CLI..."
-    ${pkgs.bun}/bin/bun install -g "@gemini-cli"
+    ${pkgs.bun}/bin/bun install -g "@google/gemini-cli"
     echo "✅ Gemini CLI installed!"
     echo ""
     echo "🎉 Gemini CLI setup complete!"
