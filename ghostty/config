@@ -1,6 +1,9 @@
 background-opacity = 0.95
 background-blur-radius = 20
 
+gtk-tabs-location = hidden
+window-decoration = false
+
 palette = 1=#cb7c94
 palette = 2=#b7cc85
 palette = 3=#ffe066
