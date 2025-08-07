@@ -20,6 +20,10 @@ return {
     enabled = false,
   },
   {
+    "sudo-tee/opencode.nvim",
+    enabled = false,
+  },
+  {
     "olimorris/codecompanion.nvim",
     enabled = false,
   },
