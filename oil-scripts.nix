@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 {
   home.packages = with pkgs; [
-    # Scripts para Oil.nvim
+    # Oil.nvim helper scripts
     (writeShellScriptBin "oil" ''
       #!/usr/bin/env bash
       # oil: Launch Neovim with Oil.nvim using full LazyVim config
@@ -257,7 +257,7 @@
       exec ocd "$DIR"
     '')
 
-    # Script dinámico para Oil en directorio del archivo actual
+    # Dynamic script: open Oil in the current file's directory
     (writeShellScriptBin "oil-file-dir" ''
       #!/usr/bin/env bash
       # oil-file-dir: Open Oil in the directory of the current file
@@ -276,7 +276,7 @@
       exec oil-zed "$DIR"
     '')
 
-    # Script dinámico para Oil Float en directorio del archivo actual
+    # Dynamic script: open Oil Float in the current file's directory
     (writeShellScriptBin "oil-float-file-dir" ''
       #!/usr/bin/env bash
       # oil-float-file-dir: Open Oil Float in the directory of the current file
@@ -296,23 +296,23 @@
     '')
   ];
 
-  # Copiar la configuración mínima de Oil
+  # Copy minimal Oil configuration
   home.activation.copyOilMinimal = lib.hm.dag.entryAfter ["writeBoundary"] ''
     echo "Copying Oil minimal configuration..."
 
-    # Crear directorio para la configuración mínima
+    # Create directory for minimal configuration
     OIL_MINIMAL_DIR="$HOME/.config/nvim-oil-minimal"
     rm -rf "$OIL_MINIMAL_DIR"
     mkdir -p "$OIL_MINIMAL_DIR"
 
-    # Copiar configuración mínima
+    # Copy minimal configuration
     cp -r ${toString ./nvim-oil-minimal}/* "$OIL_MINIMAL_DIR/" 2>/dev/null || true
     chmod -R u+w "$OIL_MINIMAL_DIR" 2>/dev/null || true
 
     echo "Oil minimal configuration copied to $OIL_MINIMAL_DIR"
   '';
 
-  # Configuración de shells para asegurar que los scripts estén en PATH
+  # Shell configuration to ensure scripts are in PATH
   programs.fish = {
     enable = true;
     shellAliases = {
@@ -322,7 +322,7 @@
       "oz" = "oil-zed";
     };
     shellInit = ''
-      # Asegurar que nix-profile esté en PATH
+      # Ensure nix-profile bin is in PATH
       if not contains ~/.nix-profile/bin $PATH
         set -gx PATH ~/.nix-profile/bin $PATH
       end
@@ -338,17 +338,17 @@
       "oz" = "oil-zed";
     };
     initExtra = ''
-      # Asegurar que nix-profile esté en PATH
+      # Ensure nix-profile bin is in PATH
       export PATH="$HOME/.nix-profile/bin:$PATH"
     '';
   };
 
   # Extend Nushell configuration with Oil aliases
   programs.nushell.extraConfig = ''
-    # Asegurar que nix-profile esté en PATH
+    # Ensure nix-profile bin is in PATH
     $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.HOME)/.nix-profile/bin")
 
-    # Alias para Oil
+    # Aliases for Oil
     alias o = oil
     alias oo = oil .
     alias of = oil-float
