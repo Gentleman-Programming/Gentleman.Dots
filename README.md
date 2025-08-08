@@ -19,6 +19,8 @@ This repository contains customized configurations for a complete development en
 
 You can choose between automatic and manual installation methods depending on your preference and operating system.
 
+**Want the bleeding edge?** If you want access to the latest configuration that I use in my daily workflow, visit: https://github.com/Gentleman-Programming/Gentleman.Dots/tree/nix-migration
+
 **Important:** Windows users **must** follow the manual installation instructions before running the script.
 
 ## Installation (Automatic Recommended!)
