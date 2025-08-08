@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Install GitHub CLI and tools for Copilot authentication and OpenCode installation

@@ -38,6 +38,7 @@
               ./zsh.nix  # Zsh configuration
               ./oil-scripts.nix  # Oil.nvim scripts configuration
               ./opencode.nix  # OpenCode AI assistant configuration
+              ./claude.nix  # Claude Code CLI configuration
               {
                 # Personal data
                 home.username = "YourUser";  # Replace with your username
