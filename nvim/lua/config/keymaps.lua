@@ -61,6 +61,101 @@ vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
 -- Redefine Ctrl+s to save with the custom function
 vim.api.nvim_set_keymap("n", "<C-s>", ":lua SaveFile()<CR>", { noremap = true, silent = true })
 
+-- Grep keybinding fix for normal mode
+vim.keymap.set("n", "<leader>sg", function()
+  if pcall(require, "snacks") then
+    require("snacks").picker.grep()
+  else
+    vim.notify("Snacks picker not available, trying fzf-lua", vim.log.levels.WARN)
+    if pcall(require, "fzf-lua") then
+      require("fzf-lua").live_grep()
+    else
+      vim.notify("No grep picker available", vim.log.levels.ERROR)
+    end
+  end
+end, { desc = "Grep (Root Dir)" })
+
+-- Grep keybinding for visual mode - search selected text
+vim.keymap.set("v", "<leader>sg", function()
+  -- Get the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+  if #lines == 0 then
+    return
+  end
+
+  -- Handle single line selection
+  if #lines == 1 then
+    lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
+  else
+    -- Handle multi-line selection
+    lines[1] = string.sub(lines[1], start_pos[3])
+    lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+  end
+
+  local selected_text = table.concat(lines, "\n")
+
+  -- Escape special characters for grep
+  selected_text = vim.fn.escape(selected_text, "\\.*[]^$()+?{}")
+
+  -- Use the selected text for grep
+  if pcall(require, "snacks") then
+    require("snacks").picker.grep({ search = selected_text })
+  elseif pcall(require, "fzf-lua") then
+    require("fzf-lua").live_grep({ search = selected_text })
+  else
+    vim.notify("No grep picker available", vim.log.levels.ERROR)
+  end
+end, { desc = "Grep Selected Text" })
+
+-- Grep keybinding for visual mode with G - search selected text at root level
+vim.keymap.set("v", "<leader>sG", function()
+  -- Get git root or fallback to cwd
+  local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
+  local root = vim.v.shell_error == 0 and git_root ~= "" and git_root or vim.fn.getcwd()
+
+  -- Get the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+  if #lines == 0 then
+    return
+  end
+
+  -- Handle single line selection
+  if #lines == 1 then
+    lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
+  else
+    -- Handle multi-line selection
+    lines[1] = string.sub(lines[1], start_pos[3])
+    lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+  end
+
+  local selected_text = table.concat(lines, "\n")
+
+  -- Escape special characters for grep
+  selected_text = vim.fn.escape(selected_text, "\\.*[]^$()+?{}")
+
+  -- Use the selected text for grep at root level
+  if pcall(require, "snacks") then
+    require("snacks").picker.grep({ search = selected_text, cwd = root })
+  elseif pcall(require, "fzf-lua") then
+    require("fzf-lua").live_grep({ search = selected_text, cwd = root })
+  else
+    vim.notify("No grep picker available", vim.log.levels.ERROR)
+  end
+end, { desc = "Grep Selected Text (Root Dir)" })
+
+-- Delete all marks
+vim.keymap.set("n", "<leader>md", function()
+  vim.cmd("delmarks!")
+  vim.cmd("delmarks A-Z0-9")
+  vim.notify("All marks deleted")
+end, { desc = "Delete all marks" })
+
 -- Custom save function
 function SaveFile()
   -- Check if a buffer with a file is open

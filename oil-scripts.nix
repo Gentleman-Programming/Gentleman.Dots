@@ -36,9 +36,10 @@
 
 
       # Launch Neovim with full config and Oil
+      cd "$DIR"
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
-          -c "lua require('oil').open('$DIR')" \
+          -c "lua require('oil').open()" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
           -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
@@ -75,11 +76,12 @@
       fi
 
       # Launch Neovim with full config but disable problematic plugins for Zed context
+      cd "$DIR"
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
           --cmd "lua vim.g.disable_obsidian = true" \
           --cmd "lua vim.g.disable_copilot = true" \
-          -c "lua require('oil').open('$DIR')" \
+          -c "lua require('oil').open()" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
           -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
@@ -117,11 +119,12 @@
       fi
 
       # Launch Neovim with minimal config and Zed integration
+      cd "$DIR"
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
           -u "$OIL_MINIMAL_DIR/init.lua" \
           -c "lua vim.g.oil_open_in_zed = true" \
-          -c "lua require('oil').open('$DIR')" \
+          -c "lua require('oil').open()" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
           -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
@@ -205,11 +208,12 @@
       fi
 
       # Launch Neovim with minimal config and Oil in floating mode
+      cd "$DIR"
       exec ${pkgs.neovim}/bin/nvim \
           --cmd "set noswapfile" \
           -u "$OIL_MINIMAL_DIR/init.lua" \
           -c "lua vim.g.oil_open_in_zed = true" \
-          -c "lua require('oil').open_float('$DIR')" \
+          -c "lua require('oil').open_float()" \
           -c "autocmd FileType oil nnoremap <buffer><silent> q :qa!<CR>" \
           -c "autocmd FileType oil nnoremap <buffer><silent> <Esc> :qa!<CR>"
     '')
