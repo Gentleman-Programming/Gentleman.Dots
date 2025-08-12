@@ -43,19 +43,6 @@ return {
       ["gx"] = "actions.open_external",
       ["g."] = "actions.toggle_hidden",
       ["g\\"] = "actions.toggle_trash",
-      -- Window navigation without conflicts
-      ["<C-h>"] = function()
-        vim.cmd("wincmd h")
-      end,
-      ["<C-j>"] = function()
-        vim.cmd("wincmd j")
-      end,
-      ["<C-k>"] = function()
-        vim.cmd("wincmd k")
-      end,
-      ["<C-l>"] = function()
-        vim.cmd("wincmd l")
-      end,
       -- Quick quit
       ["q"] = "actions.close",
     },
