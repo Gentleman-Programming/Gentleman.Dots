@@ -617,7 +617,7 @@ You're done! You have manually configured your development environment following
 
 ## AI Configuration for Neovim
 
-This configuration includes several AI assistants integrated with Neovim. By default, **all AI plugins are disabled** to let you choose which one to use.
+This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant, while all other AI plugins are disabled.
 
 ### Available AI Assistants
 
@@ -627,17 +627,27 @@ The configuration includes support for the following AI tools:
 - **CopilotChat.nvim** - GitHub Copilot chat interface
 - **OpenCode.nvim** - OpenCode AI integration
 - **CodeCompanion.nvim** - Multi-AI provider support
-- **Claude Code.nvim** - Claude AI integration
+- **Claude Code.nvim** - Claude AI integration *(enabled by default)*
 - **Gemini.nvim** - Google Gemini integration
 
-### How to Enable AI Plugins
+### How to Switch AI Plugins
+
+**Claude Code is already enabled by default.** To switch to a different AI assistant:
 
 1. **Navigate to the disabled plugins file:**
    ```bash
    nvim ~/.config/nvim/lua/plugins/disabled.lua
    ```
 
-2. **Choose your preferred AI assistant** by changing `enabled = false` to `enabled = true` for the plugin you want to use:
+2. **Disable Claude Code** by changing `enabled = true` to `enabled = false`:
+   ```lua
+   {
+     "greggh/claude-code.nvim",
+     enabled = false,  -- Disable Claude Code
+   },
+   ```
+
+3. **Enable your preferred AI assistant** by changing `enabled = false` to `enabled = true`:
 
    ```lua
    {
@@ -646,7 +656,7 @@ The configuration includes support for the following AI tools:
    },
    ```
 
-3. **Save the file** and restart Neovim.
+4. **Save the file** and restart Neovim.
 
 ### Important Notes
 
