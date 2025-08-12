@@ -121,9 +121,12 @@ Modify the parameters in your `flake.nix` file as follows:
 
 ### 4. Run the Installation
 
-Once you're in the repo directory and have made the above changes, run:
+Once you have cloned the repository and are **inside its directory**, run the following command.
+
+**⚠️ Important:** You must be in the root of this project directory for the command to work, as it uses `.` to find the `flake.nix` file.
 
 ```bash
+# Make sure you are in the Gentleman.Dots directory before running!
 nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
 ```
 
@@ -377,6 +380,8 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
    - Change `home.homeDirectory = "/home/YourUsername"`
 
 7. **Run Home Manager:**
+
+   **⚠️ Important:** Make sure you are in the `Gentleman.Dots` directory (cloned in step 5) before running this command.
 
    ```bash
    nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
