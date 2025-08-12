@@ -32,10 +32,12 @@ sh <(curl -L https://nixos.org/nix/install)
 
 ### 2. Configure Nix to Use Extra Experimental Features
 
-To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), open the configuration file and add the following line:
+To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), create/edit the configuration file:
 
 ```bash
-# Use any available text editor (nano, vi, vim, or your preferred editor)
+# For daemon installation (default on macOS/Linux)
+# The file may not exist, create it if needed
+sudo mkdir -p /etc/nix
 sudo nano /etc/nix/nix.conf
 # Or: sudo vi /etc/nix/nix.conf
 ```
@@ -336,6 +338,8 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
 2. **Enable flakes in Nix:**
 
    ```bash
+   # For non-daemon installation (WSL uses --no-daemon)
+   # Create the config directory and file
    mkdir -p ~/.config/nix
    echo "extra-experimental-features = flakes nix-command" >> ~/.config/nix/nix.conf
    ```
