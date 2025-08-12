@@ -6,7 +6,7 @@
 
 This repository contains customized configurations for a complete development environment, including:
 
-- Neovim
+- Neovim, with LSP, autocompletion, and integrated AI assistants (Claude, Gemini)
 - Fish
 - Zsh
 - **Nushell**
@@ -16,6 +16,7 @@ This repository contains customized configurations for a complete development en
   - Alacritty
   - WezTerm
   - Kitty
+  - Ghostty
 
 You can choose between automatic and manual installation methods depending on your preference and operating system.
 
@@ -49,7 +50,8 @@ cd Gentleman.Dots
 
 ---
 
-### For Windows
+<details>
+<summary>For Windows</summary>
 
 **Important:** Windows users must follow these manual installation steps before running the automated script.
 
@@ -174,10 +176,12 @@ choco install win32yank
 ```
 
 **Note:** `win32yank` is required for clipboard integration in Neovim when using WSL.
+</details>
 
 ---
 
-### For Linux, Arch Linux, macOS, and WSL
+<details>
+<summary>For Linux, Arch Linux, macOS, and WSL</summary>
 
 #### Prerequisites
 
@@ -607,3 +611,4 @@ You're done! You have manually configured your development environment following
 **Note:** If you encounter any problems during configuration, consult the official documentation of the tools or seek help online.
 
 **Happy coding!**
+</details>
