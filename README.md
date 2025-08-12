@@ -20,7 +20,9 @@ This repository contains customized configurations for a complete development en
 
 You can choose between automatic and manual installation methods depending on your preference and operating system.
 
-**Want the bleeding edge?** If you want access to the latest configuration that I use in my daily workflow, visit: https://github.com/Gentleman-Programming/Gentleman.Dots/tree/nix-migration
+**Want the bleeding edge?** If you want access to the latest experimental features that I use in my daily workflow (macOS only), check out the `nix-migration` branch: https://github.com/Gentleman-Programming/Gentleman.Dots/tree/nix-migration
+
+This branch contains cutting-edge configurations that eventually make their way to `main` once they're stable and tested. If you can't wait for the stable release and want the absolute latest features, this branch is incredible - just keep in mind it's macOS-focused and may have occasional instabilities.
 
 **Important:** Windows users **must** follow the manual installation instructions before running the script.
 
