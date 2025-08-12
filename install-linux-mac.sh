@@ -687,20 +687,18 @@ if [ "$install_nvim" = "Yes" ]; then
   run_command "$HOME/.volta/bin/volta install node@latest"
   run_command "$HOME/.volta/bin/volta install npm@latest"
   
-  install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit"
+  # Install Claude Code
+  echo -e "${YELLOW}Installing Claude Code...${NC}"
+  run_command "brew install --cask claude-code"
+  # Disable auto-updater to use brew for updates instead
+  run_command "claude config set -g autoUpdates false || true"
+  
+  install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit gemini-cli"
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"
   run_command "mkdir -p ~/.config/nvim"
   run_command "cp -r GentlemanNvim/nvim/* ~/.config/nvim/"
 
-  echo -e "${YELLOW}Configuring Obsidian...${NC}"
-  obsidian_config_file="$HOME/.config/nvim/lua/plugins/obsidian.lua"
-
-  if [ -f "$obsidian_config_file" ]; then
-    update_or_replace "$obsidian_config_file" "/your/notes/path" "path = '$OBSIDIAN_PATH'"
-  else
-    echo -e "${RED}Obsidian configuration file not found at $obsidian_config_file. Please check your setup.${NC}"
-  fi
 fi
 
 # Clean up: Remove the cloned repository

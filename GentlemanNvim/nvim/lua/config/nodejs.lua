@@ -1,14 +1,50 @@
 -- Node.js configuration for Neovim
--- This ensures Neovim always uses Node.js from Nix, bypassing Volta and other PATH manipulations
+-- This ensures Neovim uses the correct Node.js version
 
 local M = {}
 
--- Function to force Node.js from Nix for Neovim (bypassing Volta/PATH issues)
+-- Function to setup Node.js for Neovim (Volta first, then Nix, then fallbacks)
 local function setup_nodejs()
-    -- Force use of Nix-managed Node.js - hardcoded path to bypass PATH issues
-    local nix_node_path = vim.fn.expand("~/.nix-profile/bin/node")
+    -- Try Volta first
+    local volta_node_path = vim.fn.expand("~/.volta/bin/node")
+    
+    if vim.fn.executable(volta_node_path) == 1 then
+        local version_output = vim.fn.system(volta_node_path .. " --version 2>/dev/null")
+        if vim.v.shell_error == 0 then
+            local version = version_output:gsub("\n", ""):gsub("v", "")
+            local major_version = tonumber(version:match("^(%d+)"))
 
-    -- Always try Nix first, don't rely on PATH detection
+            if major_version and major_version >= 18 then
+                -- Set the Node.js host program
+                vim.g.node_host_prog = volta_node_path
+
+                -- Set npm path from Volta too
+                local volta_npm_path = vim.fn.expand("~/.volta/bin/npm")
+                if vim.fn.executable(volta_npm_path) == 1 then
+                    vim.g.npm_host_prog = volta_npm_path
+                end
+
+                -- Add Volta to PATH
+                local volta_bin_dir = vim.fn.expand("~/.volta/bin")
+                local current_path = vim.env.PATH or ""
+                -- Remove any existing volta entries and add at the beginning
+                current_path = current_path:gsub(volta_bin_dir .. ":", "")
+                current_path = current_path:gsub(":" .. volta_bin_dir, "")
+                vim.env.PATH = volta_bin_dir .. ":" .. current_path
+
+                if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
+                    print("✓ Node.js for Neovim: " .. volta_node_path .. " (v" .. version .. ")")
+                    print("  Using Volta-managed Node.js")
+                end
+
+                return true, version
+            end
+        end
+    end
+    
+    -- Try Nix as second option
+    local nix_node_path = vim.fn.expand("~/.nix-profile/bin/node")
+    
     if vim.fn.executable(nix_node_path) == 1 then
         local version_output = vim.fn.system(nix_node_path .. " --version 2>/dev/null")
         if vim.v.shell_error == 0 then
@@ -35,7 +71,7 @@ local function setup_nodejs()
 
                 if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
                     print("✓ Node.js for Neovim: " .. nix_node_path .. " (v" .. version .. ")")
-                    print("  Using Nix-managed Node.js (forced, bypassing Volta)")
+                    print("  Using Nix-managed Node.js")
                 end
 
                 return true, version
@@ -66,7 +102,7 @@ local function setup_nodejs()
 
                     vim.notify(
                         "⚠️  Using fallback Node.js " .. version .. " from " .. path ..
-                        "\nConsider installing Node.js via Nix for better isolation.",
+                        "\nConsider installing Node.js via Volta for better version management.",
                         vim.log.levels.WARN
                     )
 
@@ -77,7 +113,7 @@ local function setup_nodejs()
     end
 
     vim.notify(
-        "⚠️  Node.js 18+ not found! Some plugins may not work correctly.\nInstall Node.js via Nix: 'nix profile install nixpkgs#nodejs'",
+        "⚠️  Node.js not found! Some plugins may not work correctly.\nInstall Node.js via Volta: 'volta install node@latest'",
         vim.log.levels.ERROR
     )
     return false, nil
@@ -152,8 +188,7 @@ function M.info()
     else
         print("Source: System/Fallback")
         if vim.g.node_host_prog:match("%.volta/") then
-            print("⚠️  Warning: Using Volta Node.js - this may cause issues")
-            print("   Consider using Nix: nix profile install nixpkgs#nodejs")
+            print("✓ Using Volta-managed Node.js")
         end
     end
 
