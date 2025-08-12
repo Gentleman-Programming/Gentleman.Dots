@@ -612,3 +612,63 @@ You're done! You have manually configured your development environment following
 
 **Happy coding!**
 </details>
+
+---
+
+## AI Configuration for Neovim
+
+This configuration includes several AI assistants integrated with Neovim. By default, **all AI plugins are disabled** to let you choose which one to use.
+
+### Available AI Assistants
+
+The configuration includes support for the following AI tools:
+
+- **Avante.nvim** - AI-powered coding assistant
+- **CopilotChat.nvim** - GitHub Copilot chat interface
+- **OpenCode.nvim** - OpenCode AI integration
+- **CodeCompanion.nvim** - Multi-AI provider support
+- **Claude Code.nvim** - Claude AI integration
+- **Gemini.nvim** - Google Gemini integration
+
+### How to Enable AI Plugins
+
+1. **Navigate to the disabled plugins file:**
+   ```bash
+   nvim ~/.config/nvim/lua/plugins/disabled.lua
+   ```
+
+2. **Choose your preferred AI assistant** by changing `enabled = false` to `enabled = true` for the plugin you want to use:
+
+   ```lua
+   {
+     "yetone/avante.nvim",
+     enabled = true,  -- Change to true to enable
+   },
+   ```
+
+3. **Save the file** and restart Neovim.
+
+### Important Notes
+
+- **Only enable ONE AI plugin at a time** to avoid conflicts and keybinding issues
+- **Required CLI tools** are automatically installed by the script:
+  - Claude Code CLI (`brew install --cask claude-code`)
+  - OpenCode CLI (`curl -fsSL https://opencode.ai/install | bash`)
+  - Gemini CLI (`brew install gemini-cli`)
+- **API keys may be required** for some services - check each plugin's documentation
+- **Node.js 18+** is required for most AI plugins (automatically handled by the configuration)
+
+### Switching Between AI Assistants
+
+To switch from one AI assistant to another:
+
+1. Set your current AI plugin to `enabled = false`
+2. Set your desired AI plugin to `enabled = true`
+3. Restart Neovim
+
+### Recommended AI Assistants
+
+- **For beginners:** Start with **CodeCompanion.nvim** - supports multiple AI providers
+- **For Claude users:** Use **Claude Code.nvim** with the Claude Code CLI
+- **For GitHub Copilot users:** Use **CopilotChat.nvim**
+- **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI

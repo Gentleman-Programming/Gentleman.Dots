@@ -687,6 +687,10 @@ if [ "$install_nvim" = "Yes" ]; then
   # Disable auto-updater to use brew for updates instead
   run_command "claude config set -g autoUpdates false || true"
   
+  # Install OpenCode
+  echo -e "${YELLOW}Installing OpenCode...${NC}"
+  run_command "curl -fsSL https://opencode.ai/install | bash"
+  
   install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit gemini-cli"
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"

@@ -49,10 +49,18 @@ local function setup_nodejs()
     if node_path ~= "" then
         local version_output = vim.fn.system(node_path .. " --version 2>/dev/null")
         if vim.v.shell_error == 0 then
-            local version = version_output:gsub("\n", ""):gsub("v", "")
-            local major_version = tonumber(version:match("^(%d+)"))
+            -- Clean version string: remove newlines, ANSI escape codes, and 'v' prefix
+            local version = version_output
+                :gsub("\r", "")         -- Remove carriage returns
+                :gsub("\n", "")         -- Remove newlines
+                :gsub("\27%[[%d;]*%a", "") -- Remove ANSI escape sequences
+                :gsub("^v", "")         -- Remove 'v' prefix
+                :match("(%d+%.%d+%.%d+)") -- Extract version number pattern
+            
+            if version then
+                local major_version = tonumber(version:match("^(%d+)"))
 
-            if major_version and major_version >= 18 then
+                if major_version and major_version >= 18 then
                 -- Set the Node.js host program
                 vim.g.node_host_prog = node_path
 
@@ -79,28 +87,36 @@ local function setup_nodejs()
                     end
                 end
 
-                return true, version
-            else
-                -- Provide specific upgrade instructions based on the detected manager
-                local upgrade_msg = "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).\n\n"
-                
-                if node_path:match("/homebrew/") then
-                    upgrade_msg = upgrade_msg .. "To upgrade with Homebrew:\n  brew upgrade node"
-                elseif node_path:match("%.volta/") then
-                    upgrade_msg = upgrade_msg .. "To upgrade with Volta:\n  volta install node@latest"
-                elseif node_path:match("%.nvm/") then
-                    upgrade_msg = upgrade_msg .. "To upgrade with NVM:\n  nvm install --lts\n  nvm alias default lts/*"
-                elseif node_path:match("%.nix%-profile/") then
-                    upgrade_msg = upgrade_msg .. "To upgrade with Nix:\n  nix profile upgrade nixpkgs#nodejs"
+                    return true, version
                 else
-                    upgrade_msg = upgrade_msg .. "Please upgrade Node.js to v18 or higher using your package manager."
+                    -- Provide specific upgrade instructions based on the detected manager
+                    local upgrade_msg = "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).\n\n"
+                    
+                    if node_path:match("/homebrew/") then
+                        upgrade_msg = upgrade_msg .. "To upgrade with Homebrew:\n  brew upgrade node"
+                    elseif node_path:match("%.volta/") then
+                        upgrade_msg = upgrade_msg .. "To upgrade with Volta:\n  volta install node@latest"
+                    elseif node_path:match("%.nvm/") then
+                        upgrade_msg = upgrade_msg .. "To upgrade with NVM:\n  nvm install --lts\n  nvm alias default lts/*"
+                    elseif node_path:match("%.nix%-profile/") then
+                        upgrade_msg = upgrade_msg .. "To upgrade with Nix:\n  nix profile upgrade nixpkgs#nodejs"
+                    else
+                        upgrade_msg = upgrade_msg .. "Please upgrade Node.js to v18 or higher using your package manager."
+                    end
+                    
+                    upgrade_msg = upgrade_msg .. "\n\nNote: Neovim uses the SYSTEM Node.js, not project-specific versions."
+                    
+                    vim.notify(upgrade_msg, vim.log.levels.WARN)
+                    vim.g.node_host_prog = node_path
+                    return true, version
                 end
-                
-                upgrade_msg = upgrade_msg .. "\n\nNote: Neovim uses the SYSTEM Node.js, not project-specific versions."
-                
-                vim.notify(upgrade_msg, vim.log.levels.WARN)
-                vim.g.node_host_prog = node_path
-                return true, version
+            else
+                -- Handle case where version parsing failed
+                vim.notify(
+                    "⚠️  Could not parse Node.js version from: " .. version_output .. "\nPlease ensure Node.js is properly installed.",
+                    vim.log.levels.ERROR
+                )
+                return false, nil
             end
         end
     end
