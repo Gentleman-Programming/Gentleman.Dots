@@ -672,7 +672,22 @@ if [ "$install_nvim" = "Yes" ]; then
   ensure_directory_exists "$OBSIDIAN_PATH" "true"
   mkdir -p "$OBSIDIAN_PATH/templates"
 
-  install_dependencies_with_progress "brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit"
+  # Install Volta for Node.js version management
+  echo -e "${YELLOW}Installing Volta for Node.js management...${NC}"
+  if ! command -v volta &>/dev/null; then
+    run_command "curl https://get.volta.sh | bash"
+    run_command "source ~/.bashrc || source ~/.zshrc || source ~/.config/fish/config.fish || true"
+    run_command "export PATH=\"$HOME/.volta/bin:\$PATH\""
+  else
+    echo -e "${GREEN}Volta is already installed.${NC}"
+  fi
+  
+  # Install latest stable Node.js with Volta
+  echo -e "${YELLOW}Installing latest stable Node.js with Volta...${NC}"
+  run_command "$HOME/.volta/bin/volta install node@latest"
+  run_command "$HOME/.volta/bin/volta install npm@latest"
+  
+  install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit"
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"
   run_command "mkdir -p ~/.config/nvim"
