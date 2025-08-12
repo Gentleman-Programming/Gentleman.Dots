@@ -4,8 +4,6 @@
 
 ---
 
-# Gentleman.Dots
-
 ## Description
 
 This repository contains customized configurations for a complete development environment, including:
@@ -37,7 +35,9 @@ sh <(curl -L https://nixos.org/nix/install)
 To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), open the configuration file and add the following line:
 
 ```bash
-sudo nvim /etc/nix/nix.conf
+# Use any available text editor (nano, vi, vim, or your preferred editor)
+sudo nano /etc/nix/nix.conf
+# Or: sudo vi /etc/nix/nix.conf
 ```
 
 Add:
@@ -49,29 +49,23 @@ build-users-group = nixbld
 
 _(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
 
-### 1.1. Archalinux
+### 2.1. Arch Linux Specific Instructions
 
-### 1.1. Install Nix and enable flakes on Arch Linux
+#### 2.1.1. Install Nix on Arch Linux
 
 ```bash
 sudo pacman -S nix
 ```
 
-#### 1.1.1 If it doesn't work
+#### 2.1.2. Alternative installation method
 
 Download the file with `curl --proto '=https' --tlsv1.2 -sSfL https://nixos.org/nix/install -o nix-install.sh`, view it: `less ./nix-install.sh`, and run the script `./nix-install.sh --daemon` to start Nix installation.
 
-### 1.2 Configure Nix to Use Extra Experimental Features
+#### 2.1.3. Enable Nix daemon on Arch Linux
 
-To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), open the configuration file and add the following lin
-e:
+After configuring `/etc/nix/nix.conf` as shown in step 2 above, enable the Nix daemon:
 
 ```bash
-# In /etc/nix/nix.conf:
-extra-experimental-features = flakes nix-command
-build-users-group = nixbld
-
-# Then execute
 sudo systemctl enable --now nix-daemon.service
 ```
 
@@ -211,13 +205,6 @@ sudo chsh -s "$shellPath" "$USER"
 
 ## Manual Installation for Windows
 
-### Clone the Repository
-
-```bash
-git clone git@github.com:Gentleman-Programming/Gentleman.Dots.git
-cd Gentleman.Dots
-```
-
 #### 1. Install WSL
 
 WSL (Windows Subsystem for Linux) lets you run Linux on Windows. Install and set it to version 2:
@@ -258,7 +245,16 @@ Choose and install one of the following:
 - **Alacritty:** [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases). Make sure `alacritty.exe` is in your `PATH`.
 - **WezTerm:** [Download and Install](https://wezfurlong.org/wezterm/installation.html). Also, set the `HOME` environment variable to point to `C:\Users\your-username`.
 
-#### 5. Transfer Emulator Configurations
+#### 5. Clone the Repository
+
+Clone the repository to get the configuration files. Open PowerShell and run:
+
+```powershell
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+cd Gentleman.Dots
+```
+
+#### 6. Transfer Emulator Configurations
 
 Using PowerShell:
 
@@ -282,7 +278,7 @@ Copy-Item -Path .wezterm.lua -Destination $HOME
 
 _If WezTerm doesn’t pick up the configuration, create a folder `C:\Users\your-username\.config\wezterm` and place `.wezterm.lua` there._
 
-#### 6. Install Chocolatey and win32yank
+#### 7. Install Chocolatey and win32yank
 
 **Chocolatey** is a Windows package manager.
 
@@ -304,7 +300,7 @@ choco install win32yank
 
 _win32yank is needed for clipboard integration in Neovim when using WSL._
 
-#### 7. Launch and Update Your Linux Distribution
+#### 8. Launch and Update Your Linux Distribution
 
 Open your installed Linux distribution (WSL) and run the appropriate update commands:
 
@@ -327,7 +323,7 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
   sudo dnf upgrade --refresh
   ```
 
-#### 8. Configure Nix and Home Manager in WSL
+#### 9. Configure Nix and Home Manager in WSL
 
 **⚠️ IMPORTANT FOR WSL USERS: Follow these steps to use Nix with Home Manager in WSL:**
 
@@ -341,7 +337,7 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
 
    ```bash
    mkdir -p ~/.config/nix
-   echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+   echo "extra-experimental-features = flakes nix-command" >> ~/.config/nix/nix.conf
    ```
 
 3. **Source Nix in your current shell:**
