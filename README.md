@@ -71,53 +71,19 @@ After configuring `/etc/nix/nix.conf` as shown in step 2 above, enable the Nix d
 sudo systemctl enable --now nix-daemon.service
 ```
 
-### 3. Prepare the `flake.nix` File
+### 3. Prepare Your System
 
-Before running the next command, you need to make a few changes in the `flake.nix` file to match your environment. **Make sure to update the `system` field with your system's value**. Below are the possible values:
+**No need to edit `flake.nix` for system configuration!** The flake now automatically provides configurations for all systems.
 
-- **"aarch64-darwin"**  
-  _Architecture: Apple Silicon (M1, M2, M3, etc.)._  
-  _Operating System: macOS._
+You only need to update your username in `flake.nix`:
+- Change `home.username = "anua";` to your actual username
+- The home directory is automatically set based on your system
 
-- **"x86_64-darwin"**  
-  _Architecture: Intel (older Macs)._  
-  _Operating System: macOS._
-
-- **"x86_64-linux"**  
-  _Architecture: 64-bit Intel/AMD._  
-  _Operating System: Linux._
-
-- **"aarch64-linux"**  
-  _Architecture: 64-bit ARM (e.g., Raspberry Pi 4, ARM servers)._  
-  _Operating System: Linux._
-
-- **"i686-linux"**  
-  _Architecture: 32-bit Intel/AMD (obsolete)._  
-  _Operating System: Linux._
-
-- **"riscv64-linux"**  
-  _Architecture: 64-bit RISC-V._  
-  _Operating System: Linux (experimental)._
-
-- **"x86_64-freebsd"**  
-  _Architecture: 64-bit Intel/AMD._  
-  _Operating System: FreeBSD._
-
-Modify the parameters in your `flake.nix` file as follows:
-
-- Change the line `home.username = "YourUser";` to reflect your machine's username.
-
-- Install your terminal emulator, configs will we already applied:
+- Install your terminal emulator, configs will be already applied:
   - Wezterm: <https://wezterm.org/installation.html>
   - Ghostty: <https://ghostty.org/download> _Remember to reload Ghostty's Config inside the terminal_**(shift + command + ,)**
 
-- Modify `home.homeDirectory` accordingly:
-  - On macOS: `/Users/YourUser`
-  - On Linux: `/home/YourUser`
-
 - If you want my `aerospace` tile windows manager configuration you can copy the one inside `./aerospace/.aerospace.toml` into your `$HOME` path
-
-- **Don't forget to update the `system` field** (currently set to `"aarch64-darwin"`) with the appropriate value from the list above.
 
 ### 4. Run the Installation
 
@@ -132,56 +98,36 @@ nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backu
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-### 5. Important: Configure PATH for WSL/Linux
+### 5. Verify Installation
 
-**⚠️ For WSL and Linux users: After running Home Manager, you MUST configure your PATH to find the installed programs.**
+**For macOS users: PATH is configured automatically!**
 
-Home Manager installs programs in `~/.nix-profile/bin`, but this path is not automatically added to your shell's PATH. Add the following to your shell configuration:
-
-To determine your current shell, run:
+**For WSL/Linux users: PATH is mostly automatic, but verify it works:**
 
 ```bash
-echo $SHELL
+hash -r  # Refresh command cache
+which fish   # Should show path to fish
+which nvim   # Should show path to nvim
+which nu     # Should show path to nu
 ```
 
-Then, follow the instructions for your specific shell.
-
-**For your current shell (temporary):**
-
-```bash
-export PATH="$HOME/.nix-profile/bin:$PATH"
-```
-
-**THEN make it permanent, add to your shell's config file:**
+**If commands are not found on WSL/Linux, manually add to your shell config:**
 
 - **Bash** (`~/.bashrc`):
-
   ```bash
-  echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
+  echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.bashrc
+  echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.bashrc
+  echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
   source ~/.bashrc
   ```
 
 - **Zsh** (`~/.zshrc`):
-
   ```bash
-  echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.zshrc
+  echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.zshrc
+  echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.zshrc
+  echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.zshrc
   source ~/.zshrc
   ```
-
-- **Fish** (`~/.config/fish/config.fish`):
-
-  ```bash
-  echo 'set -gx PATH $HOME/.nix-profile/bin $PATH' >> ~/.config/fish/config.fish
-  source ~/.config/fish/config.fish
-  ```
-
-**After configuring PATH, verify the installation:**
-
-```bash
-which fish   # Should show: /home/YourUser/.nix-profile/bin/fish
-which nvim   # Should show: /home/YourUser/.nix-profile/bin/nvim
-which nu     # Should show: /home/YourUser/.nix-profile/bin/nu
-```
 
 ### 6. Default Shell
 
