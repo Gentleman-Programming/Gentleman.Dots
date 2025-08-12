@@ -6,23 +6,118 @@
 
 ## Description
 
-This repository contains customized configurations for a complete development environment, including:
+This repository provides a complete, declarative development environment configuration using Nix Flakes and Home Manager. Everything is configured through local modules and automatically installs all dependencies.
 
-- Neovim
-- **Nushell**
-- **Fish**
-- **Zsh**
-- Terminal emulators:
-  - **WezTerm**
-  - **Ghostty**
+### 🛠️ Development Tools & Languages
 
-You can now automatically set up your environment using our new Nix Flake approach with Home Manager. This method is fully declarative and reproducible, and it lets you easily override default options. In our flake, all configurations are defined inline in local modules (e.g., `nushell.nix`, etc.), and the flake also installs all the required dependencies (git, curl, rustc, cargo, neovim, etc.).
+- **Languages**: Node.js, Bun, Cargo/Rust, Go, GCC
+- **Package Managers**: Volta (Node.js), Cargo, Bun
+- **Build Tools**: Nil (Nix LSP), Nixd (Nix language server)
+- **Utilities**: jq, bash, fd, ripgrep, coreutils, unzip, bat, yazi
+
+### 🐚 Shell Configurations
+
+- **Fish Shell**: Complete configuration with 400+ command completions
+- **Nushell**: Modern shell with custom config and environment setup
+- **Zsh**: Traditional shell with modern enhancements
+- **Starship**: Cross-shell prompt with custom configuration
+
+### 🖥️ Terminal Emulators
+
+- **Ghostty**: Modern GPU-accelerated terminal with custom themes
+- **WezTerm**: Feature-rich terminal with Lua configuration
+- **Tmux**: Terminal multiplexer with custom key bindings
+- **Zellij**: Modern terminal workspace (optional - see customization)
+
+### ⚡ Development Environment
+
+- **Neovim**: Fully configured IDE with LazyVim, AI assistants, and 40+ plugins
+- **Zed**: Modern code editor with custom themes and settings
+- **Git & GitHub CLI**: Pre-configured version control
+- **Lazy Git**: Terminal UI for Git operations
+
+### 🤖 AI Integrations
+
+- **Claude Code CLI**: Integrated AI coding assistant
+- **OpenCode**: AI assistant integration
+- **Gemini CLI**: Google's AI assistant (optional - see customization)
+- **Multiple AI providers**: Support for various AI coding assistants
+
+### 🔧 System Utilities
+
+- **Television**: Modern file navigator and system monitor
+- **Zoxide**: Smart directory jumping
+- **Atuin**: Enhanced shell history
+- **Carapace**: Universal shell completions
+- **FZF**: Fuzzy finder integration
+- **Aerospace**: Tiling window manager configuration (optional)
+
+### 📝 Development Workflow
+
+- **Oil.nvim**: Custom file navigation scripts
+- **Custom Scripts**: Productivity-enhancing shell scripts
+- **Nerd Fonts**: Iosevka Term for consistent typography
+- **Declarative Configuration**: Everything version-controlled and reproducible
+
+The flake automatically handles system-specific configurations, installs all dependencies, and sets up your complete development environment with a single command.
 
 ---
 
-## Previous Steps
+## Features Overview
 
-## Installation Steps (for macOS/Linux/WSL)
+### 🎯 What You Get
+
+- **Zero Configuration**: Everything works out of the box
+- **Declarative**: Version-controlled, reproducible environment
+- **Modern Toolchain**: Latest development tools and utilities
+- **AI-Enhanced**: Multiple AI coding assistants integrated
+- **Shell Agnostic**: Fish, Nushell, and Zsh all configured
+- **Terminal Flexibility**: Multiple terminal emulators supported
+- **macOS Optimized**: Specifically tuned for macOS workflows
+
+### 🔧 Technical Stack
+
+| Category            | Tools                                     |
+| ------------------- | ----------------------------------------- |
+| **Package Manager** | Nix with Flakes + Home Manager            |
+| **Shells**          | Fish, Nushell, Zsh with Starship prompt   |
+| **Terminals**       | Ghostty, WezTerm, Tmux, Zellij (optional) |
+| **Editor**          | Neovim (LazyVim) + Zed                    |
+| **Languages**       | Node.js, Rust, Go, with Volta management  |
+| **AI Tools**        | Claude Code, OpenCode, Gemini (opt.), multiple providers |
+| **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
+| **Development**     | Git, GitHub CLI, Lazy Git                 |
+
+### 📁 Project Structure
+
+```
+.
+├── flake.nix              # Main Nix flake configuration
+├── README.md               # This file
+├── fish.nix               # Fish shell configuration
+├── nushell.nix            # Nushell configuration
+├── zsh.nix                # Zsh configuration
+├── starship.nix           # Starship prompt configuration
+├── nvim.nix               # Neovim configuration
+├── ghostty.nix            # Ghostty terminal configuration
+├── wezterm.nix            # WezTerm configuration
+├── tmux.nix               # Tmux configuration
+├── zed.nix                # Zed editor configuration
+├── claude.nix             # Claude Code CLI configuration
+├── opencode.nix           # OpenCode AI configuration
+├── gemini.nix             # Gemini CLI configuration (optional)
+├── television.nix         # Television file navigator
+├── zellij.nix             # Zellij terminal workspace (optional)
+├── oil-scripts.nix        # Custom Oil.nvim scripts
+├── fish/                  # Fish completions and configs
+├── nvim/                  # Neovim plugins and settings
+├── ghostty/               # Ghostty themes and config
+├── zed/                   # Zed themes and settings
+├── scripts/               # Custom utility scripts
+└── aerospace/             # Aerospace window manager config
+```
+
+## Installation Steps (for macOS)
 
 ### 1. Install the Nix Package Manager
 
@@ -35,7 +130,7 @@ sh <(curl -L https://nixos.org/nix/install)
 To enable the experimental features for flakes and the new `nix-command` (needed for our declarative setup), create/edit the configuration file:
 
 ```bash
-# For daemon installation (default on macOS/Linux)
+# For daemon installation (default on macOS)
 # The file may not exist, create it if needed
 sudo mkdir -p /etc/nix
 sudo nano /etc/nix/nix.conf
@@ -51,106 +146,73 @@ build-users-group = nixbld
 
 _(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
 
-### 2.1. Arch Linux Specific Instructions
-
-#### 2.1.1. Install Nix on Arch Linux
-
-```bash
-sudo pacman -S nix
-```
-
-#### 2.1.2. Alternative installation method
-
-Download the file with `curl --proto '=https' --tlsv1.2 -sSfL https://nixos.org/nix/install -o nix-install.sh`, view it: `less ./nix-install.sh`, and run the script `./nix-install.sh --daemon` to start Nix installation.
-
-#### 2.1.3. Enable Nix daemon on Arch Linux
-
-After configuring `/etc/nix/nix.conf` as shown in step 2 above, enable the Nix daemon:
-
-```bash
-sudo systemctl enable --now nix-daemon.service
-```
-
 ### 3. Prepare Your System
 
-**No need to edit `flake.nix` for system configuration!** The flake now automatically provides configurations for all systems.
+**No need to edit `flake.nix` for system configuration!** The flake supports both Intel and Apple Silicon Macs.
 
 You only need to update your username in `flake.nix`:
+
 - Change `home.username = "YourUser";` to your actual username
-- The home directory is automatically set based on your system
+- The home directory is automatically set to `/Users/YourUser`
 
-- Install your terminal emulator, configs will be already applied:
-  - Wezterm: <https://wezterm.org/installation.html>
-  - Ghostty: <https://ghostty.org/download> _Remember to reload Ghostty's Config inside the terminal_**(shift + command + ,)**
+### 4. Install Terminal Emulators (Optional)
 
-- If you want my `aerospace` tile windows manager configuration you can copy the one inside `./aerospace/.aerospace.toml` into your `$HOME` path
+Configurations are automatically applied. Choose your preferred terminal:
 
-### 4. Run the Installation
+- **Ghostty** (Recommended): <https://ghostty.org/download>
+  - Reload config with **Shift + Cmd + ,**
+  - Modern GPU-accelerated with custom themes
+  - Optimized for performance
+
+- **WezTerm**: <https://wezterm.org/installation.html>
+  - Feature-rich with Lua configuration
+  - Cross-platform compatibility
+  - Advanced customization options
+
+### 5. Optional: Aerospace Window Manager
+
+For tiling window management, copy the Aerospace configuration:
+
+```bash
+cp ./aerospace/.aerospace.toml ~/
+```
+
+Aerospace provides:
+
+- Automatic window tiling
+- Workspace management
+- Keyboard-driven navigation
+- macOS-native integration
+
+### 6. Run the Installation
 
 Once you have cloned the repository and are **inside its directory**, run the command for your system.
 
 **⚠️ Important:** You must be in the root of this project directory for the command to work, as it uses `.` to find the `flake.nix` file.
 
-**Choose the command for your system:**
+**Choose the command for your Mac:**
 
-- **macOS with Apple Silicon (M1/M2/M3)**:
+- **Apple Silicon Macs (M1/M2/M3/M4)**:
+
   ```bash
   nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-arm -b backup
   ```
 
-- **macOS with Intel**:
+- **Intel Macs**:
+
   ```bash
   nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-intel -b backup
   ```
 
-- **Linux/WSL (64-bit)**:
-  ```bash
-  nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-x64 -b backup
-  ```
-
-- **Linux ARM (Raspberry Pi, etc.)**:
-  ```bash
-  nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-arm -b backup
-  ```
-
 _(These commands apply the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-### 5. Verify Installation
+### 7. Verify Installation
 
-**For macOS users: PATH is configured automatically!**
+**PATH is configured automatically on macOS!**
 
-**For WSL/Linux users: PATH is mostly automatic, but verify it works:**
-
-```bash
-hash -r  # Refresh command cache
-which fish   # Should show path to fish
-which nvim   # Should show path to nvim
-which nu     # Should show path to nu
-```
-
-**If commands are not found on WSL/Linux, manually add to your shell config:**
-
-- **Bash** (`~/.bashrc`):
-  ```bash
-  echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.bashrc
-  echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.bashrc
-  echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
-  source ~/.bashrc
-  ```
-
-- **Zsh** (`~/.zshrc`):
-  ```bash
-  echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.zshrc
-  echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.zshrc
-  echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.zshrc
-  source ~/.zshrc
-  ```
-
-### 6. Default Shell
+### 8. Default Shell
 
 Now run the following script to add `Nushell`, `Fish` or `Zsh` to your list of available shells and select it as the default one:
-
-**Note:** For WSL/Linux users, first verify the actual path with `which fish` (or `which nu`, `which zsh`) and use that path instead if different.
 
 **Fish:**
 
@@ -181,234 +243,239 @@ sudo chsh -s "$shellPath" "$USER"
 
 ---
 
-## Manual Installation for Windows
+## Configuration Details
 
-#### 1. Install WSL
+### 🔧 How It Works
 
-WSL (Windows Subsystem for Linux) lets you run Linux on Windows. Install and set it to version 2:
+- **Declarative Setup**: All configurations are defined in Nix modules
+- **Automatic Deployment**: Files are copied to correct macOS locations
+- **Dependency Management**: All tools and dependencies installed automatically
+- **Version Pinning**: Reproducible builds with locked versions
+- **System Integration**: Proper PATH configuration and shell integration
 
-```powershell
-wsl --install
-wsl --set-default-version 2
+### 📍 File Locations
+
+Configurations are automatically deployed to:
+
+| Tool           | Location                                 |
+| -------------- | ---------------------------------------- |
+| **Nushell**    | `~/Library/Application Support/nushell/` |
+| **Fish**       | `~/.config/fish/`                        |
+| **Ghostty**    | `~/.config/ghostty/`                     |
+| **WezTerm**    | `~/.wezterm.lua`                         |
+| **Neovim**     | `~/.config/nvim/`                        |
+| **Zed**        | `~/Library/Application Support/Zed/`     |
+| **Starship**   | `~/.config/starship.toml`                |
+| **Tmux**       | `~/.config/tmux/`                        |
+| **Zellij**     | `~/.config/zellij/` (optional)           |
+| **Television** | `~/.config/television/`                  |
+
+### 🚀 Performance Features
+
+- **Shell Completions**: 400+ Fish completions for better productivity
+- **Smart History**: Atuin for enhanced command history across shells
+- **Fuzzy Finding**: FZF integration for quick file/command finding
+- **Directory Navigation**: Zoxide for intelligent directory jumping
+- **File Management**: Yazi and Television for modern file browsing
+- **Git Workflow**: Lazy Git for streamlined version control
+
+### 🤖 AI Development Features
+
+- **Claude Code Integration**: Native AI coding assistant
+- **Multiple AI Providers**: Support for various AI services
+- **Context-Aware**: AI tools integrated with your development workflow
+- **Productivity Focused**: AI assistants configured for maximum productivity
+
+### 🎨 Theming & Customization
+
+- **Consistent Themes**: Catppuccin and custom themes across all tools
+- **Nerd Font Support**: Iosevka Term for perfect icon rendering
+- **GPU Acceleration**: Modern terminals with hardware acceleration
+- **Custom Key Bindings**: Vim-like navigation across all tools
+
+## Troubleshooting
+
+### Common Issues
+
+**Command not found after installation:**
+
+```bash
+hash -r  # Refresh command cache
+source ~/.zshrc  # or ~/.bashrc
 ```
 
-#### 2. Install a Linux Distribution
+**Nix installation issues:**
 
-For example, install Ubuntu:
+- Ensure `/etc/nix/nix.conf` has experimental features enabled
+- Restart terminal after Nix installation
+- Check that you're in the project directory when running commands
 
-```powershell
-wsl --install -d Ubuntu
-```
+**Terminal not picking up themes:**
 
-List available distributions:
+- For Ghostty: Use **Shift + Cmd + ,** to reload config
+- For WezTerm: Restart the terminal
+- Verify config files are in correct locations
 
-```powershell
-wsl --list --online
-```
+### Customization
 
-Then install your preferred distribution:
+**Adding your own configurations:**
 
-```powershell
-wsl --install -d <distribution-name>
-```
+1. Edit the relevant `.nix` files
+2. Run the installation command again
+3. Changes are applied automatically
 
-#### 3. Install the Iosevka Term Nerd Font
+**Managing versions:**
 
-This font is required by our terminal emulators. Download it from the [Nerd Fonts GitHub](https://github.com/ryanoasis/nerd-fonts) or its official site. Then extract and install the font files (right-click each file and select **"Install for all users"**).
+- Update `flake.lock` with: `nix flake update`
+- Pin specific package versions in the flake
 
-#### 4. Install a Terminal Emulator
+**Enabling Optional Configurations:**
 
-Choose and install one of the following:
+Some configurations are commented out by default. To enable them:
 
-- **Alacritty:** [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases). Make sure `alacritty.exe` is in your `PATH`.
-- **WezTerm:** [Download and Install](https://wezfurlong.org/wezterm/installation.html). Also, set the `HOME` environment variable to point to `C:\Users\your-username`.
-
-#### 5. Clone the Repository
-
-Clone the repository to get the configuration files. Open PowerShell and run:
-
-```powershell
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
-cd Gentleman.Dots
-```
-
-#### 6. Transfer Emulator Configurations
-
-Using PowerShell:
-
-**Alacritty:**
-
-```powershell
-mkdir $env:APPDATA\alacritty
-Copy-Item -Path alacritty.toml -Destination $env:APPDATA\alacritty\alacritty.toml
-
-# In alacritty.toml, uncomment and set:
-#[shell]
-#program = "wsl.exe"
-#args = ["--cd", "~"]
-```
-
-**WezTerm:**
-
-```powershell
-Copy-Item -Path .wezterm.lua -Destination $HOME
-```
-
-_If WezTerm doesn’t pick up the configuration, create a folder `C:\Users\your-username\.config\wezterm` and place `.wezterm.lua` there._
-
-#### 7. Install Chocolatey and win32yank
-
-**Chocolatey** is a Windows package manager.
-
-**Install Chocolatey:**
-
-Open PowerShell as Administrator and run:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; `
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
-iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
-```
-
-**Install win32yank:**
-
-```powershell
-choco install win32yank
-```
-
-_win32yank is needed for clipboard integration in Neovim when using WSL._
-
-#### 8. Launch and Update Your Linux Distribution
-
-Open your installed Linux distribution (WSL) and run the appropriate update commands:
-
-- **For Ubuntu/Debian:**
-
-  ```bash
-  sudo apt-get update
-  sudo apt-get upgrade
-  ```
-
-- **For Arch Linux:**
-
-  ```bash
-  sudo pacman -Syu
-  ```
-
-- **For Fedora:**
-
-  ```bash
-  sudo dnf upgrade --refresh
-  ```
-
-#### 9. Configure Nix and Home Manager in WSL
-
-**⚠️ IMPORTANT FOR WSL USERS: Follow these steps to use Nix with Home Manager in WSL:**
-
-1. **Install Nix in WSL:**
-
+1. **Zellij Terminal Workspace:**
    ```bash
-   sh <(curl -L https://nixos.org/nix/install) --no-daemon
+   # Edit flake.nix and uncomment the Zellij line
+   sed -i '' 's|# ./zellij.nix|./zellij.nix|' flake.nix
+   
+   # Re-run the installation
+   nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-arm -b backup
+   ```
+   
+   Features:
+   - Modern terminal multiplexer alternative to tmux
+   - Vim-like keybindings with custom themes
+   - Plugin system with status bar and session management
+   - Custom layouts and workspace management
+
+   **Additional Configuration Required:**
+   After enabling Zellij, you need to update shell configurations to use Zellij instead of tmux:
+
+   **Fish Shell (`~/.config/fish/config.fish`):**
+   ```fish
+   # Change line ~31 from:
+   if not set -q TMUX; and not set -q ZED_TERMINAL
+       tmux
+   
+   # To:
+   if not set -q ZELLIJ; and not set -q ZED_TERMINAL
+       zellij
    ```
 
-2. **Enable flakes in Nix:**
-
+   **Zsh Shell (`~/.zshrc`):**
    ```bash
-   # For non-daemon installation (WSL uses --no-daemon)
-   # Create the config directory and file
-   mkdir -p ~/.config/nix
-   echo "extra-experimental-features = flakes nix-command" >> ~/.config/nix/nix.conf
+   # Change lines ~100-102 from:
+   WM_VAR="/$TMUX"
+   WM_CMD="tmux"
+   
+   # To:
+   WM_VAR="/$ZELLIJ"
+   WM_CMD="zellij"
    ```
 
-3. **Source Nix in your current shell:**
-
-   ```bash
-   . ~/.nix-profile/etc/profile.d/nix.sh
+   **Nushell (`~/.config/nushell/config.nu`):**
+   ```nu
+   # Change lines ~1015-1016 from:
+   let MULTIPLEXER = "tmux"
+   let MULTIPLEXER_ENV_PREFIX = "TMUX"
+   
+   # To:
+   let MULTIPLEXER = "zellij"
+   let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
    ```
 
-4. **Add Nix to your shell configuration permanently:**
-
-   For Bash (`~/.bashrc`):
-
+2. **Gemini CLI Integration:**
    ```bash
-   echo '. ~/.nix-profile/etc/profile.d/nix.sh' >> ~/.bashrc
+   # Edit flake.nix and add Gemini module
+   # Add './gemini.nix' to the modules list in flake.nix
+   
+   # Re-run the installation
+   nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-arm -b backup
+   ```
+   
+   Features:
+   - Google's AI assistant CLI tool
+   - Integrated via Bun package manager
+   - Direct access with `gemini` command
+   - Perfect for AI-powered development workflows
+
+## AI Configuration for Neovim
+
+This configuration includes support for the following AI tools:
+
+- **Avante.nvim** - AI-powered coding assistant
+- **CopilotChat.nvim** - GitHub Copilot chat interface
+- **OpenCode.nvim** - OpenCode AI integration
+- **CodeCompanion.nvim** - Multi-AI provider support
+- **Claude Code.nvim** - Claude AI integration *(enabled by default)*
+- **Gemini.nvim** - Google Gemini integration
+
+### How to Switch AI Plugins
+
+**Claude Code is already enabled by default.** To switch to a different AI assistant:
+
+1. **Navigate to the disabled plugins file:**
+   ```bash
+   nvim ~/.config/nvim/lua/plugins/disabled.lua
    ```
 
-   For Zsh (`~/.zshrc`):
-
-   ```bash
-   echo '. ~/.nix-profile/etc/profile.d/nix.sh' >> ~/.zshrc
+2. **Disable Claude Code** by changing `enabled = true` to `enabled = false`:
+   ```lua
+   {
+     "greggh/claude-code.nvim",
+     enabled = false,  -- Disable Claude Code
+   },
    ```
 
-5. **Clone and configure the repository:**
+3. **Enable your preferred AI assistant** by changing `enabled = false` to `enabled = true`:
 
-   ```bash
-   git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
-   cd Gentleman.Dots
+   ```lua
+   {
+     "yetone/avante.nvim",
+     enabled = true,  -- Change to true to enable
+   },
    ```
 
-6. **Edit `flake.nix` with your WSL configuration:**
-   - Change `home.username = "YourUser"` to your actual username
-   - The home directory will be automatically set to `/home/YourUser`
+4. **Save the file** and restart Neovim.
 
-7. **Run Home Manager with the Linux configuration:**
+### Important Notes
 
-   **⚠️ Important:** Make sure you are in the `Gentleman.Dots` directory (cloned in step 5) before running this command.
+- **Only enable ONE AI plugin at a time** to avoid conflicts and keybinding issues
+- **Required CLI tools** are automatically installed by the script:
+  - Claude Code CLI (`brew install --cask claude-code`)
+  - OpenCode CLI (`curl -fsSL https://opencode.ai/install | bash`)
+  - Gemini CLI (`brew install gemini-cli`)
+- **API keys may be required** for some services - check each plugin's documentation
+- **Node.js 18+** is required for most AI plugins (automatically handled by the configuration)
 
-   ```bash
-   nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-x64 -b backup
-   ```
+### Switching Between AI Assistants
 
-8. **Configure PATH for the installed programs:**
+To switch from one AI assistant to another:
 
-   **For WSL, the PATH configuration is now automatic!** But if needed, add these to your shell config:
+1. Set your current AI plugin to `enabled = false`
+2. Set your desired AI plugin to `enabled = true`
+3. Restart Neovim
 
-   ```bash
-   # For Bash (~/.bashrc)
-   echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.bashrc
-   echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.bashrc
-   echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
-   source ~/.bashrc
-   ```
+### Recommended AI Assistants
 
-9. **Verify the installation:**
+- **For beginners:** Start with **CodeCompanion.nvim** - supports multiple AI providers
+- **For Claude users:** Use **Claude Code.nvim** with the Claude Code CLI
+- **For GitHub Copilot users:** Use **CopilotChat.nvim**
+- **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI
 
-   ```bash
-   hash -r  # Refresh command cache
-   which fish   # Should show path to fish
-   which nvim   # Should show path to nvim
-   which nu     # Should show path to nu
-   ```
+## Contributing
 
-   **Note:** In WSL, binaries might be in `~/.local/state/nix/profiles/home-manager/bin/` or `~/.nix-profile/bin/`
+Contributions welcome! Please:
 
-10. **Set your default shell (optional):**
+1. Fork the repository
+2. Create a feature branch
+3. Test your changes thoroughly
+4. Submit a pull request
 
-    ```bash
-    # For Fish
-    sudo sh -c "echo '$HOME/.nix-profile/bin/fish' >> /etc/shells"
-    chsh -s "$HOME/.nix-profile/bin/fish"
+For questions or issues, open a GitHub issue.
 
-    # For Nushell
-    sudo sh -c "echo '$HOME/.nix-profile/bin/nu' >> /etc/shells"
-    chsh -s "$HOME/.nix-profile/bin/nu"
-    ```
+---
 
-## Summary
+**Happy coding!** 🚀
 
-- **Local Configuration Files:**  
-  All configurations are defined inline in local modules (e.g., `fish.nix`, `nushell.nix`, etc.) and are deployed automatically to system-specific locations. For example, the Nushell configuration is copied to:
-  - **macOS:** `~/Library/Application Support/nushell`
-  - **Linux/WSL:** `~/.config/nushell`
-
-- **Dependencies & Automatic Replacements:**  
-  The flake installs all necessary dependencies (git, curl, rustc, cargo, tmux, etc.) and performs placeholder replacements in configuration files.
-
-- **Windows Users:**  
-  Must install and configure WSL, manually install the Iosevka Term Nerd Font, set up Alacritty or WezTerm, install Chocolatey with win32yank, and finally launch and update the Linux distribution.
-
-For any questions or further customizations, please open an issue or submit a pull request.
-
-**Happy coding!**
-
-— Gentleman
+— Gentleman Programming

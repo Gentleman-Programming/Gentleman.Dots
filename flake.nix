@@ -13,8 +13,8 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, flake-utils, ... }:
     let
-      # Support multiple systems
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      # Support macOS systems only
+      supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
       
       # Function to create home configuration for a specific system
       mkHomeConfiguration = system:
@@ -55,11 +55,7 @@
             {
               # Personal data
               home.username = "YourUser";  # Replace with your username
-              home.homeDirectory = 
-                if pkgs.stdenv.isDarwin then
-                  "/Users/YourUser"  # macOS home directory
-                else
-                  "/home/YourUser";  # Linux/WSL home directory
+              home.homeDirectory = "/Users/YourUser";  # macOS home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
@@ -114,13 +110,6 @@
               programs.home-manager.enable = true;
               # Note: tmux is configured via home.file in tmux.nix, not programs.tmux
 
-              # WSL/Linux specific: ensure PATH includes both nix-profile and home-manager profile
-              home.sessionPath = 
-                if pkgs.stdenv.isLinux then [
-                  "$HOME/.nix-profile/bin"
-                  "$HOME/.local/state/nix/profiles/home-manager/bin"
-                ] else [];
-
               # Allow unfree packages
               nixpkgs.config.allowUnfree = true;
             }
@@ -130,13 +119,11 @@
     {
       # Home Manager configurations for each system
       homeConfigurations = {
-        # System-specific configurations
+        # macOS system configurations
         "gentleman-macos-intel" = mkHomeConfiguration "x86_64-darwin";
         "gentleman-macos-arm" = mkHomeConfiguration "aarch64-darwin";
-        "gentleman-linux-x64" = mkHomeConfiguration "x86_64-linux";
-        "gentleman-linux-arm" = mkHomeConfiguration "aarch64-linux";
         
-        # Backwards compatibility - default to macOS ARM
+        # Default to Apple Silicon
         "gentleman" = mkHomeConfiguration "aarch64-darwin";
       };
     };
