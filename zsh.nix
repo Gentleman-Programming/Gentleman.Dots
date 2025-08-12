@@ -1,6 +1,5 @@
 {
   programs.zsh = {
-    enable = true;
     # Enable completions
     enableCompletion = false;
 

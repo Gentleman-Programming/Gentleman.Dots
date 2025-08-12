@@ -4,7 +4,6 @@ let
 in {
   # Use programs.nushell instead of home.file to avoid conflicts
   programs.nushell = {
-    enable = true;
     configFile.source = ./nushell/config.nu;
     envFile.source = ./nushell/env.nu;
   };

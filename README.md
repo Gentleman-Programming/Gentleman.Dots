@@ -383,32 +383,39 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
    ```
 
 6. **Edit `flake.nix` with your WSL configuration:**
-   - Change `system = "x86_64-linux"` (for most WSL installations)
    - Change `home.username = "YourUsername"`
-   - Change `home.homeDirectory = "/home/YourUsername"`
+   - The home directory will be automatically set to `/home/YourUsername`
 
-7. **Run Home Manager:**
+7. **Run Home Manager with the Linux configuration:**
 
    **⚠️ Important:** Make sure you are in the `Gentleman.Dots` directory (cloned in step 5) before running this command.
 
    ```bash
-   nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
+   nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-x64 -b backup
    ```
 
 8. **Configure PATH for the installed programs:**
 
+   **For WSL, the PATH configuration is now automatic!** But if needed, add these to your shell config:
+
    ```bash
-   echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
+   # For Bash (~/.bashrc)
+   echo '. "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> ~/.bashrc
+   echo '[ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ] && . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"' >> ~/.bashrc
+   echo 'export PATH="$HOME/.local/state/nix/profiles/home-manager/bin:$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
    source ~/.bashrc
    ```
 
 9. **Verify the installation:**
 
    ```bash
-   which fish   # Should show: /home/YourUser/.nix-profile/bin/fish
-   which nvim   # Should show: /home/YourUser/.nix-profile/bin/nvim
-   which nu     # Should show: /home/YourUser/.nix-profile/bin/nu
+   hash -r  # Refresh command cache
+   which fish   # Should show path to fish
+   which nvim   # Should show path to nvim
+   which nu     # Should show path to nu
    ```
+
+   **Note:** In WSL, binaries might be in `~/.local/state/nix/profiles/home-manager/bin/` or `~/.nix-profile/bin/`
 
 10. **Set your default shell (optional):**
 
