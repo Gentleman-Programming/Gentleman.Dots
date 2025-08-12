@@ -61,20 +61,6 @@ vim.api.nvim_set_keymap("x", "K", "<Nop>", { noremap = true, silent = true })
 -- Redefine Ctrl+s to save with the custom function
 vim.api.nvim_set_keymap("n", "<C-s>", ":lua SaveFile()<CR>", { noremap = true, silent = true })
 
--- Grep keybinding fix for normal mode
-vim.keymap.set("n", "<leader>sg", function()
-  if pcall(require, "snacks") then
-    require("snacks").picker.grep()
-  else
-    vim.notify("Snacks picker not available, trying fzf-lua", vim.log.levels.WARN)
-    if pcall(require, "fzf-lua") then
-      require("fzf-lua").live_grep()
-    else
-      vim.notify("No grep picker available", vim.log.levels.ERROR)
-    end
-  end
-end, { desc = "Grep (Root Dir)" })
-
 -- Grep keybinding for visual mode - search selected text
 vim.keymap.set("v", "<leader>sg", function()
   -- Get the selected text
