@@ -138,6 +138,12 @@ _(This command applies the configuration defined in the flake, installing all de
 
 Home Manager installs programs in `~/.nix-profile/bin`, but this path is not automatically added to your shell's PATH. Add the following to your shell configuration:
 
+To determine your current shell, run:
+```bash
+echo $SHELL
+```
+Then, follow the instructions for your specific shell.
+
 **For your current shell (temporary):**
 
 ```bash
