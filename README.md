@@ -1,6 +1,6 @@
 # Gentleman.Dots
 
-<img width="3050" height="1694" alt="image" src="https://github.com/user-attachments/assets/30503039-e9d9-4341-8aae-7feec6976034" />
+<img width="2998" height="1649" alt="image" src="https://github.com/user-attachments/assets/c5a1eae2-69de-4ca1-8b4d-9d9b56e4cb5a" />
 
 ## Description
 
