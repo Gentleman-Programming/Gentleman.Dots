@@ -76,7 +76,7 @@ sudo systemctl enable --now nix-daemon.service
 **No need to edit `flake.nix` for system configuration!** The flake now automatically provides configurations for all systems.
 
 You only need to update your username in `flake.nix`:
-- Change `home.username = "anua";` to your actual username
+- Change `home.username = "YourUser";` to your actual username
 - The home directory is automatically set based on your system
 
 - Install your terminal emulator, configs will be already applied:
@@ -87,16 +87,33 @@ You only need to update your username in `flake.nix`:
 
 ### 4. Run the Installation
 
-Once you have cloned the repository and are **inside its directory**, run the following command.
+Once you have cloned the repository and are **inside its directory**, run the command for your system.
 
 **⚠️ Important:** You must be in the root of this project directory for the command to work, as it uses `.` to find the `flake.nix` file.
 
-```bash
-# Make sure you are in the Gentleman.Dots directory before running!
-nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
-```
+**Choose the command for your system:**
 
-_(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
+- **macOS with Apple Silicon (M1/M2/M3)**:
+  ```bash
+  nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-arm -b backup
+  ```
+
+- **macOS with Intel**:
+  ```bash
+  nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-intel -b backup
+  ```
+
+- **Linux/WSL (64-bit)**:
+  ```bash
+  nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-x64 -b backup
+  ```
+
+- **Linux ARM (Raspberry Pi, etc.)**:
+  ```bash
+  nix run github:nix-community/home-manager -- switch --flake .#gentleman-linux-arm -b backup
+  ```
+
+_(These commands apply the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
 ### 5. Verify Installation
 
@@ -132,6 +149,8 @@ which nu     # Should show path to nu
 ### 6. Default Shell
 
 Now run the following script to add `Nushell`, `Fish` or `Zsh` to your list of available shells and select it as the default one:
+
+**Note:** For WSL/Linux users, first verify the actual path with `which fish` (or `which nu`, `which zsh`) and use that path instead if different.
 
 **Fish:**
 
@@ -329,8 +348,8 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
    ```
 
 6. **Edit `flake.nix` with your WSL configuration:**
-   - Change `home.username = "YourUsername"`
-   - The home directory will be automatically set to `/home/YourUsername`
+   - Change `home.username = "YourUser"` to your actual username
+   - The home directory will be automatically set to `/home/YourUser`
 
 7. **Run Home Manager with the Linux configuration:**
 

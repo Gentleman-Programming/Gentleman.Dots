@@ -54,12 +54,12 @@
             ./claude.nix  # Claude Code CLI configuration
             {
               # Personal data
-              home.username = "anua";  # Replace with your username
+              home.username = "YourUser";  # Replace with your username
               home.homeDirectory = 
                 if pkgs.stdenv.isDarwin then
-                  "/Users/anua"  # macOS home directory
+                  "/Users/YourUser"  # macOS home directory
                 else
-                  "/home/anua";  # Linux/WSL home directory
+                  "/home/YourUser";  # Linux/WSL home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
