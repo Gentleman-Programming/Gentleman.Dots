@@ -672,20 +672,14 @@ if [ "$install_nvim" = "Yes" ]; then
   ensure_directory_exists "$OBSIDIAN_PATH" "true"
   mkdir -p "$OBSIDIAN_PATH/templates"
 
-  # Install Volta for Node.js version management
-  echo -e "${YELLOW}Installing Volta for Node.js management...${NC}"
-  if ! command -v volta &>/dev/null; then
-    run_command "curl https://get.volta.sh | bash"
-    run_command "source ~/.bashrc || source ~/.zshrc || source ~/.config/fish/config.fish || true"
-    run_command "export PATH=\"$HOME/.volta/bin:\$PATH\""
+  # Check if Node.js is installed
+  if ! command -v node &>/dev/null; then
+    echo -e "${YELLOW}Node.js is not installed. Installing with Homebrew...${NC}"
+    run_command "brew install node"
   else
-    echo -e "${GREEN}Volta is already installed.${NC}"
+    NODE_VERSION=$(node --version)
+    echo -e "${GREEN}Node.js is already installed: $NODE_VERSION${NC}"
   fi
-  
-  # Install latest stable Node.js with Volta
-  echo -e "${YELLOW}Installing latest stable Node.js with Volta...${NC}"
-  run_command "$HOME/.volta/bin/volta install node@latest"
-  run_command "$HOME/.volta/bin/volta install npm@latest"
   
   # Install Claude Code
   echo -e "${YELLOW}Installing Claude Code...${NC}"

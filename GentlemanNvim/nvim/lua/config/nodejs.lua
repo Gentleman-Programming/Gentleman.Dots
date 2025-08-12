@@ -1,119 +1,112 @@
 -- Node.js configuration for Neovim
--- This ensures Neovim uses the correct Node.js version
+-- This ensures Neovim uses the SYSTEM Node.js, not project-specific versions
+-- This prevents issues when working with old projects that use Node < 18
 
 local M = {}
 
--- Function to setup Node.js for Neovim (Volta first, then Nix, then fallbacks)
-local function setup_nodejs()
-    -- Try Volta first
-    local volta_node_path = vim.fn.expand("~/.volta/bin/node")
+-- Function to get system Node.js path (avoiding project-specific versions)
+local function get_system_node()
+    -- Priority order for system Node.js (avoiding project overrides)
+    local system_paths = {
+        "/opt/homebrew/bin/node",        -- Homebrew on Apple Silicon
+        "/usr/local/bin/node",            -- Homebrew on Intel Mac or standard install
+        vim.fn.expand("~/.volta/bin/node"), -- Volta's global Node
+        vim.fn.expand("~/.nvm/versions/node/*/bin/node"), -- NVM default version
+        vim.fn.expand("~/.nix-profile/bin/node"), -- Nix
+        "/usr/bin/node",                  -- System default
+    }
     
-    if vim.fn.executable(volta_node_path) == 1 then
-        local version_output = vim.fn.system(volta_node_path .. " --version 2>/dev/null")
+    -- First try to find a system Node.js directly
+    for _, path in ipairs(system_paths) do
+        -- Handle glob patterns (for nvm)
+        if path:match("%*") then
+            local expanded = vim.fn.glob(path, false, true)
+            if #expanded > 0 then
+                -- Get the latest version from nvm
+                table.sort(expanded, function(a, b) return a > b end)
+                path = expanded[1]
+            else
+                goto continue
+            end
+        end
+        
+        if vim.fn.executable(path) == 1 then
+            return path
+        end
+        
+        ::continue::
+    end
+    
+    -- Fallback to whatever is in PATH (but warn if it might be project-specific)
+    return vim.fn.exepath("node")
+end
+
+-- Function to setup Node.js for Neovim
+local function setup_nodejs()
+    -- Get system Node.js, avoiding project-specific versions
+    local node_path = get_system_node()
+    
+    if node_path ~= "" then
+        local version_output = vim.fn.system(node_path .. " --version 2>/dev/null")
         if vim.v.shell_error == 0 then
             local version = version_output:gsub("\n", ""):gsub("v", "")
             local major_version = tonumber(version:match("^(%d+)"))
 
             if major_version and major_version >= 18 then
                 -- Set the Node.js host program
-                vim.g.node_host_prog = volta_node_path
+                vim.g.node_host_prog = node_path
 
-                -- Set npm path from Volta too
-                local volta_npm_path = vim.fn.expand("~/.volta/bin/npm")
-                if vim.fn.executable(volta_npm_path) == 1 then
-                    vim.g.npm_host_prog = volta_npm_path
+                -- Set npm path
+                local npm_path = vim.fn.exepath("npm")
+                if npm_path ~= "" then
+                    vim.g.npm_host_prog = npm_path
                 end
-
-                -- Add Volta to PATH
-                local volta_bin_dir = vim.fn.expand("~/.volta/bin")
-                local current_path = vim.env.PATH or ""
-                -- Remove any existing volta entries and add at the beginning
-                current_path = current_path:gsub(volta_bin_dir .. ":", "")
-                current_path = current_path:gsub(":" .. volta_bin_dir, "")
-                vim.env.PATH = volta_bin_dir .. ":" .. current_path
 
                 if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
-                    print("✓ Node.js for Neovim: " .. volta_node_path .. " (v" .. version .. ")")
-                    print("  Using Volta-managed Node.js")
-                end
-
-                return true, version
-            end
-        end
-    end
-    
-    -- Try Nix as second option
-    local nix_node_path = vim.fn.expand("~/.nix-profile/bin/node")
-    
-    if vim.fn.executable(nix_node_path) == 1 then
-        local version_output = vim.fn.system(nix_node_path .. " --version 2>/dev/null")
-        if vim.v.shell_error == 0 then
-            local version = version_output:gsub("\n", ""):gsub("v", "")
-            local major_version = tonumber(version:match("^(%d+)"))
-
-            if major_version and major_version >= 14 then
-                -- Force set the Node.js host program directly
-                vim.g.node_host_prog = nix_node_path
-
-                -- Set npm path from Nix too
-                local nix_npm_path = vim.fn.expand("~/.nix-profile/bin/npm")
-                if vim.fn.executable(nix_npm_path) == 1 then
-                    vim.g.npm_host_prog = nix_npm_path
-                end
-
-                -- Override PATH to prioritize Nix Node.js directory
-                local nix_bin_dir = vim.fn.expand("~/.nix-profile/bin")
-                local current_path = vim.env.PATH or ""
-                -- Remove any existing nix-profile entries and add at the beginning
-                current_path = current_path:gsub(nix_bin_dir .. ":", "")
-                current_path = current_path:gsub(":" .. nix_bin_dir, "")
-                vim.env.PATH = nix_bin_dir .. ":" .. current_path
-
-                if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
-                    print("✓ Node.js for Neovim: " .. nix_node_path .. " (v" .. version .. ")")
-                    print("  Using Nix-managed Node.js")
-                end
-
-                return true, version
-            end
-        end
-    end
-
-    -- Fallback only if Nix Node.js is completely unavailable
-    local fallback_paths = {
-        "/opt/homebrew/bin/node",
-        "/usr/local/bin/node",
-        "/usr/bin/node",
-    }
-
-    for _, path in ipairs(fallback_paths) do
-        if vim.fn.executable(path) == 1 then
-            local version_output = vim.fn.system(path .. " --version 2>/dev/null")
-            if vim.v.shell_error == 0 then
-                local version = version_output:gsub("\n", ""):gsub("v", "")
-                local major_version = tonumber(version:match("^(%d+)"))
-
-                if major_version and major_version >= 18 then
-                    vim.g.node_host_prog = path
-                    local npm_path = path:gsub("/node$", "/npm")
-                    if vim.fn.executable(npm_path) == 1 then
-                        vim.g.npm_host_prog = npm_path
+                    print("✓ Node.js for Neovim: " .. node_path .. " (v" .. version .. ")")
+                    
+                    -- Detect which manager is being used
+                    if node_path:match("%.volta/") then
+                        print("  Using Volta-managed Node.js")
+                    elseif node_path:match("%.nvm/") then
+                        print("  Using NVM-managed Node.js")
+                    elseif node_path:match("%.nix%-profile/") then
+                        print("  Using Nix-managed Node.js")
+                    elseif node_path:match("/homebrew/") then
+                        print("  Using Homebrew-managed Node.js")
+                    else
+                        print("  Using system Node.js")
                     end
-
-                    vim.notify(
-                        "⚠️  Using fallback Node.js " .. version .. " from " .. path ..
-                        "\nConsider installing Node.js via Volta for better version management.",
-                        vim.log.levels.WARN
-                    )
-
-                    return true, version
                 end
+
+                return true, version
+            else
+                -- Provide specific upgrade instructions based on the detected manager
+                local upgrade_msg = "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).\n\n"
+                
+                if node_path:match("/homebrew/") then
+                    upgrade_msg = upgrade_msg .. "To upgrade with Homebrew:\n  brew upgrade node"
+                elseif node_path:match("%.volta/") then
+                    upgrade_msg = upgrade_msg .. "To upgrade with Volta:\n  volta install node@latest"
+                elseif node_path:match("%.nvm/") then
+                    upgrade_msg = upgrade_msg .. "To upgrade with NVM:\n  nvm install --lts\n  nvm alias default lts/*"
+                elseif node_path:match("%.nix%-profile/") then
+                    upgrade_msg = upgrade_msg .. "To upgrade with Nix:\n  nix profile upgrade nixpkgs#nodejs"
+                else
+                    upgrade_msg = upgrade_msg .. "Please upgrade Node.js to v18 or higher using your package manager."
+                end
+                
+                upgrade_msg = upgrade_msg .. "\n\nNote: Neovim uses the SYSTEM Node.js, not project-specific versions."
+                
+                vim.notify(upgrade_msg, vim.log.levels.WARN)
+                vim.g.node_host_prog = node_path
+                return true, version
             end
         end
     end
 
     vim.notify(
-        "⚠️  Node.js not found! Some plugins may not work correctly.\nInstall Node.js via Volta: 'volta install node@latest'",
+        "⚠️  Node.js not found! Some plugins may not work correctly.\nInstall Node.js with:\n  brew install node",
         vim.log.levels.ERROR
     )
     return false, nil
@@ -122,45 +115,42 @@ end
 -- Function to check if we're using a recent Node.js version
 local function check_node_version()
     if not vim.g.node_host_prog then
-        return false
+        return
     end
 
     local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
     if vim.v.shell_error ~= 0 then
-        return false
+        return
     end
 
     local version = version_output:gsub("\n", ""):gsub("v", "")
     local major_version = tonumber(version:match("^(%d+)"))
 
-    if major_version and major_version >= 22 then
-        return true, version
-    elseif major_version and major_version >= 18 then
-        if vim.g.debug_nodejs then
+    if major_version then
+        if major_version >= 18 and major_version < 22 then
+            if vim.g.debug_nodejs then
+                vim.notify(
+                    "ℹ️  Node.js v" .. version .. " works but v22+ is recommended for optimal performance.",
+                    vim.log.levels.INFO
+                )
+            end
+        elseif major_version < 18 then
             vim.notify(
-                "ℹ️  Node.js v" .. version .. " works but v22+ is recommended for optimal performance.",
-                vim.log.levels.INFO
+                "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).",
+                vim.log.levels.WARN
             )
         end
-        return true, version
-    else
-        vim.notify(
-            "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).",
-            vim.log.levels.WARN
-        )
-        return false, version
     end
 end
 
--- Setup function to be called from init.lua
+-- Main setup function
 function M.setup(opts)
     opts = opts or {}
 
-    -- Setup Node.js with forced Nix path
+    -- Setup Node.js
     local success, version = setup_nodejs()
 
     if success and not opts.silent then
-        -- Check version and warn if outdated
         check_node_version()
     end
 
@@ -175,34 +165,33 @@ function M.info()
     end
 
     local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
-    local version = "unknown"
-    if vim.v.shell_error == 0 then
-        version = version_output:gsub("\n", ""):gsub("v", "")
+    if vim.v.shell_error ~= 0 then
+        print("Node.js: Error getting version")
+        return
     end
 
+    local version = version_output:gsub("\n", ""):gsub("v", "")
     print("Node.js for Neovim: " .. vim.g.node_host_prog .. " (v" .. version .. ")")
 
-    local nix_node = vim.fn.expand("~/.nix-profile/bin/node")
-    if vim.g.node_host_prog == nix_node then
-        print("Source: Nix-managed (isolated from project Node.js)")
+    -- Detect source
+    if vim.g.node_host_prog:match("%.volta/") then
+        print("Source: Volta-managed")
+    elseif vim.g.node_host_prog:match("%.nvm/") then
+        print("Source: NVM-managed")
+    elseif vim.g.node_host_prog:match("%.nix%-profile/") then
+        print("Source: Nix-managed")
+    elseif vim.g.node_host_prog:match("/homebrew/") then
+        print("Source: Homebrew-managed")
     else
-        print("Source: System/Fallback")
-        if vim.g.node_host_prog:match("%.volta/") then
-            print("✓ Using Volta-managed Node.js")
-        end
+        print("Source: System")
     end
 
     if vim.g.npm_host_prog then
         print("npm: " .. vim.g.npm_host_prog)
     end
 
-    -- Show PATH priority for debugging
     if vim.g.debug_nodejs then
-        local path_entries = vim.split(vim.env.PATH, ":")
-        print("PATH priority (first 5 entries):")
-        for i = 1, math.min(5, #path_entries) do
-            print("  " .. i .. ": " .. path_entries[i])
-        end
+        print("\nPATH: " .. (vim.env.PATH or "not set"))
     end
 end
 
@@ -223,8 +212,7 @@ vim.api.nvim_create_user_command("NodeDebug", function()
     print("=== Node.js Debug Mode Enabled ===")
     M.setup({ silent = false })
     M.info()
-    print("=== Current PATH ===")
-    print(vim.env.PATH)
+    print("=== End Debug Info ===")
     vim.g.debug_nodejs = false
 end, { desc = "Debug Node.js configuration and PATH" })
 
