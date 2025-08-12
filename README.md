@@ -112,12 +112,10 @@ Modify the parameters in your `flake.nix` file as follows:
 - Change the line `home.username = "YourUser";` to reflect your machine's username.
 
 - Install your terminal emulator, configs will we already applied:
-
   - Wezterm: <https://wezterm.org/installation.html>
   - Ghostty: <https://ghostty.org/download> _Remember to reload Ghostty's Config inside the terminal_**(shift + command + ,)**
 
 - Modify `home.homeDirectory` accordingly:
-
   - On macOS: `/Users/YourUser`
   - On Linux: `/home/YourUser`
 
@@ -135,14 +133,57 @@ nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backu
 
 _(This command applies the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-### 5. Default Shell
+### 5. Important: Configure PATH for WSL/Linux
+
+**⚠️ For WSL and Linux users: After running Home Manager, you MUST configure your PATH to find the installed programs.**
+
+Home Manager installs programs in `~/.nix-profile/bin`, but this path is not automatically added to your shell's PATH. Add the following to your shell configuration:
+
+**For your current shell (temporary):**
+
+```bash
+export PATH="$HOME/.nix-profile/bin:$PATH"
+```
+
+**To make it permanent, add to your shell's config file:**
+
+- **Bash** (`~/.bashrc`):
+
+  ```bash
+  echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
+  source ~/.bashrc
+  ```
+
+- **Zsh** (`~/.zshrc`):
+
+  ```bash
+  echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.zshrc
+  source ~/.zshrc
+  ```
+
+- **Fish** (`~/.config/fish/config.fish`):
+
+  ```bash
+  echo 'set -gx PATH $HOME/.nix-profile/bin $PATH' >> ~/.config/fish/config.fish
+  source ~/.config/fish/config.fish
+  ```
+
+**After configuring PATH, verify the installation:**
+
+```bash
+which fish   # Should show: /home/YourUser/.nix-profile/bin/fish
+which nvim   # Should show: /home/YourUser/.nix-profile/bin/nvim
+which nu     # Should show: /home/YourUser/.nix-profile/bin/nu
+```
+
+### 6. Default Shell
 
 Now run the following script to add `Nushell`, `Fish` or `Zsh` to your list of available shells and select it as the default one:
 
 **Fish:**
 
 ```bash
-shellPath=$(which fish)
+shellPath="$HOME/.nix-profile/bin/fish"
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
@@ -151,7 +192,7 @@ sudo chsh -s "$shellPath" "$USER"
 **Nushell:**
 
 ```bash
-shellPath=$(which nu)
+shellPath="$HOME/.nix-profile/bin/nu"
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
@@ -160,7 +201,7 @@ sudo chsh -s "$shellPath" "$USER"
 **Zsh:**
 
 ```bash
-shellPath=$(which zsh)
+shellPath="$HOME/.nix-profile/bin/zsh"
 
 sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
 sudo chsh -s "$shellPath" "$USER"
@@ -286,11 +327,92 @@ Open your installed Linux distribution (WSL) and run the appropriate update comm
   sudo dnf upgrade --refresh
   ```
 
+#### 8. Configure Nix and Home Manager in WSL
+
+**⚠️ IMPORTANT FOR WSL USERS: Follow these steps to use Nix with Home Manager in WSL:**
+
+1. **Install Nix in WSL:**
+
+   ```bash
+   sh <(curl -L https://nixos.org/nix/install) --no-daemon
+   ```
+
+2. **Enable flakes in Nix:**
+
+   ```bash
+   mkdir -p ~/.config/nix
+   echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+   ```
+
+3. **Source Nix in your current shell:**
+
+   ```bash
+   . ~/.nix-profile/etc/profile.d/nix.sh
+   ```
+
+4. **Add Nix to your shell configuration permanently:**
+
+   For Bash (`~/.bashrc`):
+
+   ```bash
+   echo '. ~/.nix-profile/etc/profile.d/nix.sh' >> ~/.bashrc
+   ```
+
+   For Zsh (`~/.zshrc`):
+
+   ```bash
+   echo '. ~/.nix-profile/etc/profile.d/nix.sh' >> ~/.zshrc
+   ```
+
+5. **Clone and configure the repository:**
+
+   ```bash
+   git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+   cd Gentleman.Dots
+   ```
+
+6. **Edit `flake.nix` with your WSL configuration:**
+   - Change `system = "x86_64-linux"` (for most WSL installations)
+   - Change `home.username = "YourUsername"`
+   - Change `home.homeDirectory = "/home/YourUsername"`
+
+7. **Run Home Manager:**
+
+   ```bash
+   nix run github:nix-community/home-manager -- switch --flake .#gentleman -b backup
+   ```
+
+8. **Configure PATH for the installed programs:**
+
+   ```bash
+   echo 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+9. **Verify the installation:**
+
+   ```bash
+   which fish   # Should show: /home/YourUser/.nix-profile/bin/fish
+   which nvim   # Should show: /home/YourUser/.nix-profile/bin/nvim
+   which nu     # Should show: /home/YourUser/.nix-profile/bin/nu
+   ```
+
+10. **Set your default shell (optional):**
+
+    ```bash
+    # For Fish
+    sudo sh -c "echo '$HOME/.nix-profile/bin/fish' >> /etc/shells"
+    chsh -s "$HOME/.nix-profile/bin/fish"
+
+    # For Nushell
+    sudo sh -c "echo '$HOME/.nix-profile/bin/nu' >> /etc/shells"
+    chsh -s "$HOME/.nix-profile/bin/nu"
+    ```
+
 ## Summary
 
 - **Local Configuration Files:**  
   All configurations are defined inline in local modules (e.g., `fish.nix`, `nushell.nix`, etc.) and are deployed automatically to system-specific locations. For example, the Nushell configuration is copied to:
-
   - **macOS:** `~/Library/Application Support/nushell`
   - **Linux/WSL:** `~/.config/nushell`
 
