@@ -146,7 +146,13 @@ echo $SHELL
 
 Then, follow the instructions for your specific shell.
 
-**To make it permanent, add to your shell's config file:**
+**For your current shell (temporary):**
+
+```bash
+export PATH="$HOME/.nix-profile/bin:$PATH"
+```
+
+**THEN make it permanent, add to your shell's config file:**
 
 - **Bash** (`~/.bashrc`):
 
