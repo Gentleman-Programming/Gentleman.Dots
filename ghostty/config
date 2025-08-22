@@ -28,10 +28,10 @@ window-decoration = false
 #selection-foreground = c8c093
 
 font-family = IosevkaTerm NF
-#font-size = 16
-font-size = 21
+font-size = 14
+#font-size = 20
 window-padding-color = extend
-window-step-resize = true
+window-step-resize = false
 window-padding-balance = true
 
 ### Mac Alt Fix
