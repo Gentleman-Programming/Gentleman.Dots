@@ -33,6 +33,8 @@ font-size = 14
 window-padding-color = extend
 window-step-resize = false
 window-padding-balance = true
+window-height = 100
+window-width = 100
 
 ### Mac Alt Fix
 macos-option-as-alt = left
