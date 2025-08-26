@@ -71,9 +71,6 @@ bind K confirm-before -p "Kill all other sessions? (y/n)" "kill-session -a"
 set -g base-index 1
 setw -g pane-base-index 1
 
-# Fix opencode and gemini cli shift + enter
-set -g extended-keys always
-
 run '~/.tmux/plugins/tpm/tpm'
       '';
     };
