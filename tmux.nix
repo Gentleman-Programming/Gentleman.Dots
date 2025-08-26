@@ -14,8 +14,11 @@
 # Carga TPM
 set -g @plugin 'tmux-plugins/tpm'
 
-# Opciones ya probadas que limpian problemas de TMUX
+# Tested options for TMUX compatibility
 set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# Clipboard management
+set -g @plugin 'tmux-plugins/tmux-yank'
 
 # Tmux Navigation
 set -g @plugin 'christoomey/vim-tmux-navigator'
@@ -73,11 +76,6 @@ setw -g pane-base-index 1
 
 # Fix opencode and gemini cli shift + enter
 set -g extended-keys always
-
-# Fix paste issues
-set -g set-clipboard on
-set -as terminal-features ',*:clipboard'
-bind ] paste-buffer
 
 run '~/.tmux/plugins/tpm/tpm'
       '';
