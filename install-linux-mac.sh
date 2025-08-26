@@ -363,7 +363,6 @@ else
         unzip ~/.local/share/fonts/IosevkaTerm.zip -d ~/.local/share/fonts/
         fc-cache -fv
       elif [ "$os_choice" = "mac" ]; then
-        brew tap homebrew/cask-fonts
         brew install --cask font-iosevka-term-nerd-font
       fi
       echo -e "${GREEN}Iosevka Term Nerd Font installed.${NC}"
