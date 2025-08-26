@@ -71,6 +71,14 @@ bind K confirm-before -p "Kill all other sessions? (y/n)" "kill-session -a"
 set -g base-index 1
 setw -g pane-base-index 1
 
+# Fix opencode and gemini cli shift + enter
+set -g extended-keys always
+
+# Fix paste issues
+set -g set-clipboard on
+set -as terminal-features ',*:clipboard'
+bind ] paste-buffer
+
 run '~/.tmux/plugins/tpm/tpm'
       '';
     };
