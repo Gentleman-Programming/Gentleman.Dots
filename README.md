@@ -184,61 +184,71 @@ Aerospace provides:
 - Keyboard-driven navigation
 - macOS-native integration
 
-### 6. Run the Installation
+### 6. Install Home Manager
+
+Before running the flake configuration, you need to set up Home Manager:
+
+```bash
+# Add home-manager channel
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+
+# Update channels
+nix-channel --update
+
+# Install home-manager
+nix-shell '<home-manager>' -A install
+```
+
+### 7. Run the Installation
 
 Once you have cloned the repository and are **inside its directory**, run the command for your system.
 
 **⚠️ Important:** You must be in the root of this project directory for the command to work, as it uses `.` to find the `flake.nix` file.
 
-**Choose the command for your Mac:**
+**For any Mac (the flake auto-detects your system):**
+
+```bash
+home-manager switch --flake .#gentleman
+```
+
+**Alternative: Specific system configurations:**
 
 - **Apple Silicon Macs (M1/M2/M3/M4)**:
-
   ```bash
-  nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-arm -b backup
+  home-manager switch --flake .#gentleman-macos-arm
   ```
 
 - **Intel Macs**:
-
   ```bash
-  nix run github:nix-community/home-manager -- switch --flake .#gentleman-macos-intel -b backup
+  home-manager switch --flake .#gentleman-macos-intel
   ```
 
 _(These commands apply the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
-### 7. Verify Installation
+### 8. Verify Installation
 
 **PATH is configured automatically on macOS!**
 
-### 8. Default Shell
+### 9. Default Shell
 
 Now run the following script to add `Nushell`, `Fish` or `Zsh` to your list of available shells and select it as the default one:
 
-**Fish:**
+**Fish (Recommended):**
 
 ```bash
-shellPath="$HOME/.nix-profile/bin/fish"
-
-sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
-sudo chsh -s "$shellPath" "$USER"
+shellPath="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish" && sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells" && sudo chsh -s "$shellPath" "$USER"
 ```
 
 **Nushell:**
 
 ```bash
-shellPath="$HOME/.nix-profile/bin/nu"
-
-sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
-sudo chsh -s "$shellPath" "$USER"
+shellPath="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/nu" && sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells" && sudo chsh -s "$shellPath" "$USER"
 ```
 
 **Zsh:**
 
 ```bash
-shellPath="$HOME/.nix-profile/bin/zsh"
-
-sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells"
-sudo chsh -s "$shellPath" "$USER"
+shellPath="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/zsh" && sudo sh -c "grep -Fxq '$shellPath' /etc/shells || echo '$shellPath' >> /etc/shells" && sudo chsh -s "$shellPath" "$USER"
 ```
 
 ---
