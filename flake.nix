@@ -54,8 +54,8 @@
             ./claude.nix  # Claude Code CLI configuration
             {
               # Personal data
-              home.username = "YourUser";  # Replace with your username
-              home.homeDirectory = "/Users/YourUser";  # macOS home directory
+              home.username = "alanbuscaglia";  # Replace with your username
+              home.homeDirectory = "/Users/alanbuscaglia";  # macOS home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
@@ -103,7 +103,7 @@
               programs.neovim.enable = true;
               programs.fish.enable = true;
               programs.nushell.enable = true;
-              programs.starship.enable = true;
+              programs.starship.enable = false;
               programs.zsh.enable = true;
               programs.git.enable = true;
               programs.gh.enable = true;  # GitHub CLI
