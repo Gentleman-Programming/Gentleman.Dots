@@ -86,6 +86,8 @@ ignored_commands=(
     yarn 1
     pnpm 1
     npx 1
+    exit 1
+    z 1
     cd 1
 )
 
