@@ -44,6 +44,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"                                       # This loads nvm
 [ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
 
+eval "$(fzf --zsh)"
+eval "$(zoxide init zsh)"
+eval "$(atuin init zsh)"
+
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_NO_ENV_HINTS=1
 export HOMEBREW_NO_ANALYTICS=1
@@ -67,6 +71,19 @@ function start_if_needed() {
 }
 
 # ~/.zshrc
+
+
+# Función wrapper para cd
+cd() {
+  # Si no hay argumentos, o el argumento es "-",
+  # volvemos al comportamiento original de cd
+  if [ $# -eq 0 ] || [ "$1" = "-" ]; then
+    builtin cd "$@"
+  else
+    # Redireccionamos la llamada a z
+    z "$@"
+  fi
+}
 
 # ---
 # Lógica para auto-renombrar los tabs de Zellij en Zsh.
@@ -153,9 +170,8 @@ export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace _carapace)
 
-eval "$(fzf --zsh)"
-eval "$(zoxide init zsh)"
-eval "$(atuin init zsh)"
+
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
