@@ -1,6 +1,6 @@
 # nvim-dots
 
-<img width="1917" alt="image" src="./Screenshot 2025-05-23 072941.png" />
+<img width="1917" alt="image" src="./nvim-setup.png" />
 
 ## Description
 
@@ -520,7 +520,6 @@ fi
 - **Manual Obsidian Configuration**
 
   To set up your Obsidian vault path in Neovim:
-
   1. **Create the directory for your Obsidian notes** (replace `/path/to/your/notes` with your desired path):
 
      ```bash
