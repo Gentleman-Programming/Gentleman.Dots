@@ -690,7 +690,7 @@ if [ "$install_nvim" = "Yes" ]; then
   echo -e "${YELLOW}Installing OpenCode...${NC}"
   run_command "curl -fsSL https://opencode.ai/install | bash"
   
-  install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit gemini-cli"
+  install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit gemini-cli tree-sitter"
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"
   run_command "mkdir -p ~/.config/nvim"

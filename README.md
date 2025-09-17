@@ -511,7 +511,7 @@ fi
 #### 6. Install NVIM
 
 ```bash
-brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit
+brew install nvim node npm git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter
 mkdir -p ~/.config/nvim
 cp -r GentlemanNvim/nvim/* ~/.config/nvim/
 # update or replace /your/notes/path
