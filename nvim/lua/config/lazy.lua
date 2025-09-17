@@ -27,6 +27,7 @@ end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
 -- Fix copy and paste in WSL (Windows Subsystem for Linux)
+vim.opt.clipboard = "unnamedplus" -- Use the system clipboard for all operations
 if vim.fn.has("wsl") == 1 then
   vim.g.clipboard = {
     name = "win32yank", -- Use win32yank for clipboard operations

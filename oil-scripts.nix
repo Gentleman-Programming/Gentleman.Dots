@@ -341,7 +341,7 @@
       "of" = "oil-float";
       "oz" = "oil-zed";
     };
-    initExtra = ''
+    initContent = ''
       # Ensure nix-profile bin is in PATH
       export PATH="$HOME/.nix-profile/bin:$PATH"
     '';

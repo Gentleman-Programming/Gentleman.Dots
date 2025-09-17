@@ -82,6 +82,8 @@
                 go
                 nil
                 unstablePkgs.nixd
+                unstablePkgs.neovim
+                tree-sitter
 
                 # ─── Compilers and system utilities ───
                 gcc
@@ -100,7 +102,7 @@
 
               # Enable programs explicitly (critical for binaries to appear)
               # All program enables are centralized here
-              programs.neovim.enable = true;
+              programs.neovim.enable = false;
               programs.fish.enable = true;
               programs.nushell.enable = true;
               programs.starship.enable = false;

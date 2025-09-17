@@ -15,7 +15,7 @@
     };
 
     # Extra initialization
-    initExtra = ''
+    initContent = ''
       # --------------------------
       # 1) COMPINIT + CACHE
       # --------------------------
