@@ -79,8 +79,8 @@ mantle = "#06080f"
 crust = "#06080f"
 
 [character]
-success_symbol = "[󱗞](fg:green)"
-error_symbol = "[󱗞](fg:red)"
+success_symbol = "[󱗞 ](fg:green)"
+error_symbol = "[󱗞 ](fg:red)"
 vimcmd_symbol = "[N](bold red)"
 vimcmd_replace_one_symbol = "[R](bold peach)"
 vimcmd_visual_symbol = "[V](bold mauve)"
