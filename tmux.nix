@@ -31,10 +31,10 @@ set -g @plugin 'alexwforsythe/tmux-which-key'
 
 # Floating window
 bind-key -n M-g if-shell -F '#{==:#{session_name},scratch}' {
-detach-client
+  detach-client
 } {
-# open in the same directory of the current pane
-display-popup -d "#{pane_current_path}" -E "tmux new-session -A -s scratch"
+  # open in the same directory of the current pane
+  display-popup -d "#{pane_current_path}" -E "tmux new-session -A -s scratch"
 }
 
 # Tema Kanagawa
@@ -43,13 +43,20 @@ set -g @kanagawa-theme 'Kanagawa'
 set -g @kanagawa-plugins "git cpu-usage ram-usage"
 set -g @kanagawa-ignore-window-colors true
 
-# Fix colors for the terminal
-set -g default-terminal 'tmux-256color'
-set -ga terminal-overrides ",xterm-256color:Tc"
+# --- terminal & key handling ---
+set -g default-terminal "tmux-256color"
+set -ga terminal-overrides ",*:Tc"
+
+# extended key sequences (needed for Shift+Enter, Shift+Tab, etc.)
+set -as terminal-features "*:extkeys"
+set -s extended-keys on
+set -g xterm-keys on
 
 # Modo vim
 set -g mode-keys vi
-if-shell 'uname | grep -q Darwin' 'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"' 'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clip"'
+if-shell 'uname | grep -q Darwin' \
+  'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"' \
+  'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clip"'
 
 # Keymaps
 unbind C-b
@@ -74,9 +81,7 @@ bind K confirm-before -p "Kill all other sessions? (y/n)" "kill-session -a"
 set -g base-index 1
 setw -g pane-base-index 1
 
-# Fix opencode and gemini cli shift + enter
-set -g extended-keys always
-
+# TPM init
 run '~/.tmux/plugins/tpm/tpm'
       '';
     };
