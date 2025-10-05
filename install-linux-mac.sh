@@ -682,9 +682,7 @@ if [ "$install_nvim" = "Yes" ]; then
   
   # Install Claude Code
   echo -e "${YELLOW}Installing Claude Code...${NC}"
-  run_command "brew install --cask claude-code"
-  # Disable auto-updater to use brew for updates instead
-  run_command "claude config set -g autoUpdates false || true"
+  run_command "curl -fsSL https://claude.ai/install.sh | bash"
   
   # Install OpenCode
   echo -e "${YELLOW}Installing OpenCode...${NC}"

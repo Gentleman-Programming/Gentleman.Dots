@@ -101,10 +101,11 @@ $env.EDITOR = "nvim"
 $env.PATH = (
     $env.PATH
     | split row (char esep)
-    | prepend '/home/linuxbrew/.linuxbrew/bin'
-# For Mac |'/opt/homebrew/bin'
-    | prepend ($env.HOME | path join ".volta/bin")
+    | prepend ($env.HOME | path join ".local/bin")
+    | prepend '/opt/homebrew/bin'
+    | prepend ($env.HOME | path join ".local/state/nix/profiles/home-manager/home-path/bin")
     | prepend ($env.HOME | path join ".opencode/bin")
+    | prepend ($env.HOME | path join ".volta/bin")
     | prepend ($env.HOME | path join ".bun/bin")
     | prepend ($env.HOME | path join ".nix-profile/bin")
     | prepend '/nix/var/nix/profiles/default/bin'
