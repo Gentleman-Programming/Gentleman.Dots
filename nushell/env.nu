@@ -101,6 +101,7 @@ $env.EDITOR = "nvim"
 $env.PATH = (
     $env.PATH
     | split row (char esep)
+    | prepend ($env.HOME | path join ".local/bin")
     | prepend '/opt/homebrew/bin'
     | prepend ($env.HOME | path join ".local/state/nix/profiles/home-manager/home-path/bin")
     | prepend ($env.HOME | path join ".opencode/bin")
