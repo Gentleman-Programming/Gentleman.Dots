@@ -47,10 +47,7 @@ set -g @kanagawa-ignore-window-colors true
 set -g default-terminal "tmux-256color"
 set -ga terminal-overrides ",*:Tc"
 
-# extended key sequences (needed for Shift+Enter, Shift+Tab, etc.)
-set -as terminal-features "*:extkeys"
-set -s extended-keys on
-set -g xterm-keys on
+set -s extended-keys off
 
 # Modo vim
 set -g mode-keys vi
