@@ -31,6 +31,11 @@ return {
     "tris203/precognition.nvim",
     enabled = false,
   },
+
+  {
+    "sphamba/smear-cursor.nvim",
+    enabled = false,
+  },
   {
     -- Plugin: claude-code.nvim
     -- URL: https://github.com/greggh/claude-code.nvim

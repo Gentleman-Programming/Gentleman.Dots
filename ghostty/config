@@ -1,4 +1,7 @@
+custom-shader = shaders/cursor_smear_glow.glsl
+
 background-opacity = 0.95
+
 background-blur-radius = 20
 
 gtk-tabs-location = hidden
