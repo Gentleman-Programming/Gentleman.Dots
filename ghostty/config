@@ -1,4 +1,4 @@
-custom-shader = shaders/cursor_smear.glsl
+custom-shader = shaders/cursor_smear_gentleman.glsl
 
 background-opacity = 0.95
 
