@@ -684,3 +684,30 @@ To switch from one AI assistant to another:
 - **For Claude users:** Use **Claude Code.nvim** with the Claude Code CLI
 - **For GitHub Copilot users:** Use **CopilotChat.nvim**
 - **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI
+
+# Installer
+
+## Dependencies
+
+Install essential dependencies.
+
+```bash
+apt install -y build-essential curl file git unzip
+```
+
+Clone this repository and run the following command to install Neovim with the custom configuration:
+
+```bash
+git clone https://github.com/villcabo/marckv.dots.git ~/.marckv.dots
+cd ~/.marckv.dots/installer
+```
+
+Then execute:
+
+```bash
+bash install-dependencies.sh
+```
+
+```bash
+bash install-plugins.sh
+```
