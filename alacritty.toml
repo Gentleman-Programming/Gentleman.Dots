@@ -4,11 +4,11 @@
 # [[colors.indexed_colors]]
 # index = 16
 # color = "#9e97d0" # ca: purple
-#
+# 
 # [[colors.indexed_colors]]
 # index = 17
 # color = "#c58ea7" # ia: pink
-#
+# 
 # [colors.bright]
 # black = "#3f3b3e"   # gr: dark gray
 # blue = "#665E7A"    # vb: dark blue
@@ -18,11 +18,11 @@
 # red = "#c58ea7"     # ia: red
 # white = "#c5a3a9"   # na: white
 # yellow = "#9e97d0"  # ca: yellow (purple)
-#
+# 
 # [colors.cursor]
 # cursor = "#9e97d0" # ca: purple
 # text = "#c5a3a9"   # na: text
-#
+# 
 # [colors.normal]
 # black = "#1c1a1c"   # bl: black background
 # blue = "#665E7A"    # vb: dark blue
@@ -32,11 +32,11 @@
 # red = "#c58ea7"     # ia: red
 # white = "#c5a3a9"   # na: light text
 # yellow = "#9e97d0"  # ca: yellow (purple)
-#
+# 
 # [colors.primary]
 # background = "#1c1a1c" # bl: background
 # foreground = "#786577" # na: text
-#
+# 
 # [colors.selection]
 # background = "#3f3b3e" # gr: gray
 # text = "#c5a3a9"       # na: text
@@ -55,7 +55,7 @@ background = "#223249" # waveBlue2
 text = "#DCD7BA"       # fujiWhite
 
 [colors.normal]
-black = "#1F1F28"   # winterBlue
+black = "#2D4F67"   # winterBlue
 red = "#E46876"     # waveRed
 green = "#98BB6C"   # waveGreen
 yellow = "#DCD478"  # waveYellow
@@ -87,14 +87,19 @@ style = "Block"
 unfocused_hollow = true
 
 [font]
-size = 16
+size = 10
 
 [font.normal]
-family = "IosevkaTerm NF"
+family = "MartianMono NF"
+style = "Medium"
 
 [window]
 option_as_alt = "Both"
 opacity = 0.96
+
+[window.dimensions]
+columns = 150
+lines = 38
 
 [env]
 TERM = "xterm-256color"
