@@ -32,25 +32,23 @@ alt - y : yabai -m space --mirror y-axis
 # Toggle split type for focused window (alt + e)
 alt - e : yabai -m window --toggle split
 
-# Switch to workspace (alt + number) - triggers Mission Control shortcuts
-# Make sure to enable "Switch to Desktop 1-7" in System Settings > Keyboard > Mission Control
-# and set them to Ctrl+1 through Ctrl+7
-alt - 1 : skhd -k "ctrl - 1"
-alt - 2 : skhd -k "ctrl - 2"
-alt - 3 : skhd -k "ctrl - 3"
-alt - 4 : skhd -k "ctrl - 4"
-alt - 5 : skhd -k "ctrl - 5"
-alt - 6 : skhd -k "ctrl - 6"
-alt - 7 : skhd -k "ctrl - 7"
+# Switch to workspace (alt + number) - native yabai space switching (requires SIP partially disabled)
+alt - 1 : yabai -m space --focus 1
+alt - 2 : yabai -m space --focus 2
+alt - 3 : yabai -m space --focus 3
+alt - 4 : yabai -m space --focus 4
+alt - 5 : yabai -m space --focus 5
+alt - 6 : yabai -m space --focus 6
+alt - 7 : yabai -m space --focus 7
 
-# Move window to workspace and follow (alt + shift + number)
-alt + shift - 1 : ~/.config/yabai/move-window-to-space.sh 1
-alt + shift - 2 : ~/.config/yabai/move-window-to-space.sh 2
-alt + shift - 3 : ~/.config/yabai/move-window-to-space.sh 3
-alt + shift - 4 : ~/.config/yabai/move-window-to-space.sh 4
-alt + shift - 5 : ~/.config/yabai/move-window-to-space.sh 5
-alt + shift - 6 : ~/.config/yabai/move-window-to-space.sh 6
-alt + shift - 7 : ~/.config/yabai/move-window-to-space.sh 7
+# Move window to workspace and follow (alt + shift + number) - native command
+alt + shift - 1 : yabai -m window --space 1 --focus
+alt + shift - 2 : yabai -m window --space 2 --focus
+alt + shift - 3 : yabai -m window --space 3 --focus
+alt + shift - 4 : yabai -m window --space 4 --focus
+alt + shift - 5 : yabai -m window --space 5 --focus
+alt + shift - 6 : yabai -m window --space 6 --focus
+alt + shift - 7 : yabai -m window --space 7 --focus
 
 # Fullscreen (alt + shift + f)
 alt + shift - f : yabai -m window --toggle zoom-fullscreen
