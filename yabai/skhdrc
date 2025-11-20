@@ -1,0 +1,82 @@
+# skhd configuration migrated from AeroSpace
+
+# Focus windows (alt + ctrl + hjkl)
+alt + ctrl - h : yabai -m window --focus west
+alt + ctrl - j : yabai -m window --focus south
+alt + ctrl - k : yabai -m window --focus north
+alt + ctrl - l : yabai -m window --focus east
+
+# Move windows (alt + shift + hjkl)
+alt + shift - h : yabai -m window --swap west
+alt + shift - j : yabai -m window --swap south
+alt + shift - k : yabai -m window --swap north
+alt + shift - l : yabai -m window --swap east
+
+# Resize windows (alt + -/=)
+alt - 0x1B : yabai -m window --resize left:-50:0; yabai -m window --resize right:-50:0
+alt - 0x18 : yabai -m window --resize right:50:0; yabai -m window --resize left:50:0
+
+# Resize with arrow keys (more intuitive - alt + arrow keys)
+alt - left : yabai -m window --resize left:-50:0; yabai -m window --resize right:-50:0
+alt - right : yabai -m window --resize right:50:0; yabai -m window --resize left:50:0
+alt - up : yabai -m window --resize top:0:-50; yabai -m window --resize bottom:0:-50
+alt - down : yabai -m window --resize bottom:0:50; yabai -m window --resize top:0:50
+
+# Rotate layout 90/270 degrees (alt + r)
+alt - r : yabai -m space --rotate 90
+
+# Flip layout horizontally/vertically (alt + x/y)
+alt - x : yabai -m space --mirror x-axis
+alt - y : yabai -m space --mirror y-axis
+
+# Toggle split type for focused window (alt + e)
+alt - e : yabai -m window --toggle split
+
+# Switch to workspace (alt + number) - triggers Mission Control shortcuts
+# Make sure to enable "Switch to Desktop 1-7" in System Settings > Keyboard > Mission Control
+# and set them to Ctrl+1 through Ctrl+7
+alt - 1 : skhd -k "ctrl - 1"
+alt - 2 : skhd -k "ctrl - 2"
+alt - 3 : skhd -k "ctrl - 3"
+alt - 4 : skhd -k "ctrl - 4"
+alt - 5 : skhd -k "ctrl - 5"
+alt - 6 : skhd -k "ctrl - 6"
+alt - 7 : skhd -k "ctrl - 7"
+
+# Move window to workspace and follow (alt + shift + number)
+alt + shift - 1 : ~/.config/yabai/move-window-to-space.sh 1
+alt + shift - 2 : ~/.config/yabai/move-window-to-space.sh 2
+alt + shift - 3 : ~/.config/yabai/move-window-to-space.sh 3
+alt + shift - 4 : ~/.config/yabai/move-window-to-space.sh 4
+alt + shift - 5 : ~/.config/yabai/move-window-to-space.sh 5
+alt + shift - 6 : ~/.config/yabai/move-window-to-space.sh 6
+alt + shift - 7 : ~/.config/yabai/move-window-to-space.sh 7
+
+# Fullscreen (alt + shift + f)
+alt + shift - f : yabai -m window --toggle zoom-fullscreen
+
+# Layout switching
+alt - 0x2C : yabai -m space --layout bsp
+alt - 0x2B : yabai -m space --layout stack
+
+# Workspace back and forth (alt + tab)
+alt - tab : yabai -m space --focus recent
+
+# Move workspace to monitor (alt + shift + tab)
+alt + shift - tab : yabai -m window --display next; yabai -m display --focus next
+
+# Special commands (using ctrl+alt+cmd as prefix for "service mode" actions)
+# Reload config
+ctrl + alt + cmd - r : yabai --restart-service; skhd --restart-service
+
+# Balance layout
+ctrl + alt + cmd - b : yabai -m space --balance
+
+# Toggle floating
+ctrl + alt + cmd - f : yabai -m window --toggle float
+
+# Warp windows
+ctrl + alt + cmd - h : yabai -m window --warp west
+ctrl + alt + cmd - j : yabai -m window --warp south
+ctrl + alt + cmd - k : yabai -m window --warp north
+ctrl + alt + cmd - l : yabai -m window --warp east
