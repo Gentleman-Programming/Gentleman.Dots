@@ -30,13 +30,11 @@ gtk-tabs-location = hidden
 #selection-foreground = c8c093
 
 font-family = IosevkaTerm NF
-font-size = 14
+font-size = 16
 #font-size = 20
 window-padding-color = extend
-window-step-resize = false
+window-step-resize = true
 window-padding-balance = true
-window-height = 100
-window-width = 100
 
 ### Mac Alt Fix
 macos-option-as-alt = left
