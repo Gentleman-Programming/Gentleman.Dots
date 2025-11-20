@@ -7,7 +7,7 @@ sudo yabai --load-sa
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
 # global settings - visual enhancements
-yabai -m config mouse_follows_focus          off
+yabai -m config mouse_follows_focus          on
 yabai -m config focus_follows_mouse          off
 yabai -m config window_origin_display        default
 yabai -m config window_placement             second_child
