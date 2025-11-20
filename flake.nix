@@ -112,6 +112,11 @@
               programs.home-manager.enable = true;
               # Note: tmux is configured via home.file in tmux.nix, not programs.tmux
 
+              # Set XDG_CONFIG_HOME to ensure apps use ~/.config
+              home.sessionVariables = {
+                XDG_CONFIG_HOME = "$HOME/.config";
+              };
+
               # Allow unfree packages
               nixpkgs.config.allowUnfree = true;
             }
