@@ -704,7 +704,11 @@ cd ~/.marckv.dots/installer
 
 Install in .config/nvim
 ```bash
-ln -s ~/.marckv.dots/nvim ~/.config/nvim
+# Backup
+mv ~/.config/nvim ~/.config/nvim.backup.$(date +%Y%m%d%H%M%S)
+
+# Create a symbolic link to the new Neovim configuration
+ln -s ~/.marckv.dots/GentlemanNvim/nvim ~/.config/nvim
 ```
 
 Then execute:
