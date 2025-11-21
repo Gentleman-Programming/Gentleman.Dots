@@ -702,6 +702,11 @@ git clone https://github.com/villcabo/marckv.dots.git ~/.marckv.dots
 cd ~/.marckv.dots/installer
 ```
 
+Install in .config/nvim
+```bash
+ln -s ~/.marckv.dots/nvim ~/.config/nvim
+```
+
 Then execute:
 
 ```bash
