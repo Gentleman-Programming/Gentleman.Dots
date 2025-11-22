@@ -28,16 +28,16 @@ NC=$(tput sgr0)
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # ----------------------------------------------------------------------------
 info "Instalando Node.js LTS..."
-"$SCRIPT_DIR/install-node.sh"
+bash "$SCRIPT_DIR/install-node.sh" || { error "Error instalando Node.js"; exit 1; }
 # ----------------------------------------------------------------------------
 info "Instalando Neovim..."
-"$SCRIPT_DIR/install-nvim.sh"
+bash "$SCRIPT_DIR/install-nvim.sh" || { error "Error instalando Neovim"; exit 1; }
 # ----------------------------------------------------------------------------
 info "Instalando Go..."
-"$SCRIPT_DIR/install-go.sh"
+bash "$SCRIPT_DIR/install-go.sh" || { error "Error instalando Go"; exit 1; }
 # ----------------------------------------------------------------------------
 info "Instalando Obsidian..."
-"$SCRIPT_DIR/install-obsidian.sh"
+bash "$SCRIPT_DIR/install-obsidian.sh" || { error "Error instalando Obsidian"; exit 1; }
 # ----------------------------------------------------------------------------
 # === INSTALACIÓN DE AI CLI TOOLS ===
 info "Verificando CLI de Claude Code..."
