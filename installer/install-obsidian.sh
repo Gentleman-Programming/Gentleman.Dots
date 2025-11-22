@@ -57,12 +57,30 @@ get_latest_version() {
 # Función para obtener la versión instalada
 get_installed_version() {
     if [ -f "$OBSIDIAN_APPIMAGE_PATH" ]; then
-        # Intentar obtener versión del AppImage (esto puede ser complicado)
-        # Por simplicidad, asumimos que está instalado si el archivo existe
+        # Para Obsidian, es difícil obtener la versión del AppImage sin ejecutarlo
+        # Retornamos un marcador que indica que está instalado
+        echo "installed"
+        return 0
+    elif command -v obsidian >/dev/null 2>&1; then
+        # Si está instalado vía .deb, también consideramos que está instalado
         echo "installed"
         return 0
     fi
     return 1
+}
+
+# Función para comparar versiones (simplificada para Obsidian)
+compare_versions() {
+    local installed="$1"
+    local latest="$2"
+    
+    # Para Obsidian, siempre sugerimos actualizar si hay una nueva versión disponible
+    # ya que es difícil obtener la versión exacta del AppImage
+    if [ "$installed" = "installed" ] && [ -n "$latest" ]; then
+        return 0  # Sugerir actualización
+    else
+        return 1  # No actualizar
+    fi
 }
 
 # Verificar si Obsidian ya está instalado
@@ -74,18 +92,29 @@ check_existing_installation() {
         # Verificar versión disponible
         info "Verificando actualizaciones disponibles..."
         local latest_version=$(get_latest_version)
+        local installed_version=$(get_installed_version)
         
         if [ $? -eq 0 ] && [ -n "$latest_version" ]; then
             info "Última versión disponible: ${BOLD}$latest_version${NC}"
             
-            echo ""
-            read -p "¿Desea actualizar a la última versión? (Y/n): " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Nn]$ ]]; then
-                info "Actualización cancelada por el usuario"
+            if compare_versions "$installed_version" "$latest_version"; then
+                bold "\n🚀 ¡NUEVA VERSIÓN DISPONIBLE!"
+                info "Se recomienda actualizar para obtener las últimas mejoras y correcciones"
+                warn "Nota: Obsidian se actualizará a la versión más reciente"
+                
+                echo ""
+                read -p "¿Desea actualizar a la última versión? (Y/n): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    info "Actualización cancelada por el usuario"
+                    exit 0
+                fi
+                success "Procediendo con la actualización..."
+            else
+                success "✅ Obsidian está instalado"
+                info "Para verificar actualizaciones, ejecuta este script nuevamente"
                 exit 0
             fi
-            success "Procediendo con la actualización..."
         else
             warn "No se pudo verificar la versión más reciente"
             read -p "¿Desea reinstalar Obsidian de todas formas? (y/N): " -n 1 -r

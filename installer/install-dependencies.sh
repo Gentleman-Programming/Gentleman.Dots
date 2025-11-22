@@ -40,24 +40,28 @@ info "Instalando Obsidian..."
 "$SCRIPT_DIR/install-obsidian.sh"
 # ----------------------------------------------------------------------------
 # === INSTALACIÓN DE AI CLI TOOLS ===
-info "Instalando CLI de Claude Code..."
+info "Verificando CLI de Claude Code..."
 if ! command -v claude-code &>/dev/null; then
+	info "Instalando Claude Code CLI..."
 	CLAUDE_DEB_URL="https://github.com/anthropic-ai/claude-code/releases/latest/download/claude-code_linux_amd64.deb"
 	curl -fsSL -o /tmp/claude-code.deb "$CLAUDE_DEB_URL"
 	apt-get install -y /tmp/claude-code.deb && success "Claude Code CLI instalado."
+	rm -f /tmp/claude-code.deb
 else
 	success "Claude Code CLI ya está instalado."
 fi
 
-info "Instalando CLI de OpenCode..."
+info "Verificando CLI de OpenCode..."
 if ! command -v opencode &>/dev/null; then
+	info "Instalando OpenCode CLI..."
 	curl -fsSL https://opencode.ai/install | bash && success "OpenCode CLI instalado."
 else
 	success "OpenCode CLI ya está instalado."
 fi
 
-info "Instalando Gemini CLI..."
+info "Verificando Gemini CLI..."
 if ! command -v gemini &>/dev/null; then
+	info "Instalando Gemini CLI..."
 	npm install -g @google/gemini-cli && success "Gemini CLI instalado."
 else
 	success "Gemini CLI ya está instalado."

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # === VARIABLES PARAMETRIZABLES ===
-GO_VERSION="1.21.5"
+GO_VERSION="1.23.3"
 GO_ARCH="linux-amd64"
 GO_BASE_URL="https://golang.org/dl/go$GO_VERSION.$GO_ARCH.tar.gz"
 GO_TAR="/tmp/go$GO_VERSION.$GO_ARCH.tar.gz"
@@ -47,9 +47,11 @@ get_latest_version() {
 get_installed_version() {
     if [ -x "$GO_PATH/bin/go" ]; then
         local installed_version
-        installed_version=$($GO_PATH/bin/go version 2>/dev/null | grep -oE 'go[0-9]+\.[0-9]+(\.[0-9]+)?' | sed 's/go//')
-        echo "$installed_version"
-        return 0
+        installed_version=$($GO_PATH/bin/go version 2>/dev/null | awk '{print $3}' | sed 's/go//')
+        if [ -n "$installed_version" ]; then
+            echo "$installed_version"
+            return 0
+        fi
     fi
     return 1
 }
@@ -213,6 +215,31 @@ EOF
     [ $? -eq 0 ] && success "Permisos configurados correctamente" || die "Error al configurar permisos"
 }
 
+# Crear directorios GOPATH para usuarios existentes
+setup_gopath_directories() {
+    info "Configurando directorios GOPATH para usuarios..."
+    
+    # Obtener usuarios del sistema (excluyendo usuarios del sistema)
+    local users=$(getent passwd | grep -E ":[0-9]{4}:" | cut -d: -f1)
+    
+    for user in $users; do
+        local user_home=$(getent passwd "$user" | cut -d: -f6)
+        local gopath_dir="$user_home/go"
+        
+        if [ -d "$user_home" ] && [ "$user_home" != "/root" ]; then
+            info "Configurando GOPATH para usuario: $user"
+            
+            # Crear directorio GOPATH si no existe
+            if [ ! -d "$gopath_dir" ]; then
+                sudo -u "$user" mkdir -p "$gopath_dir"/{src,bin,pkg}
+                [ $? -eq 0 ] && success "Directorio GOPATH creado: $gopath_dir" || warn "No se pudo crear el directorio GOPATH para $user"
+            else
+                success "Directorio GOPATH ya existe: $gopath_dir"
+            fi
+        fi
+    done
+}
+
 # Verificar instalación
 verify_installation() {
     info "Verificando instalación..."
@@ -237,27 +264,39 @@ reload_shell_environment() {
         success "Variables de entorno de Go cargadas."
     fi
     
-    # Verificar que Go esté disponible en el PATH actual
-    if command -v go >/dev/null 2>&1; then
-        local go_version=$(go version)
+    # Verificar que Go esté disponible usando la ruta completa primero
+    if [ -x "$GO_PATH/bin/go" ]; then
+        local go_version=$($GO_PATH/bin/go version 2>/dev/null)
         success "Go está disponible: $go_version"
         
         # Verificar variables de entorno importantes
         if [ -n "$GOROOT" ]; then
             info "GOROOT configurado en: $GOROOT"
+        else
+            export GOROOT="$GO_PATH"
+            info "GOROOT configurado temporalmente en: $GOROOT"
         fi
         
+        # Verificar GOPATH
         if [ -n "$GOPATH" ]; then
             info "GOPATH configurado en: $GOPATH"
         else
-            info "GOPATH se configurará automáticamente en: \$HOME/go"
+            export GOPATH="$HOME/go"
+            info "GOPATH configurado temporalmente en: $GOPATH"
         fi
         
-        # Verificar ruta del ejecutable
-        local go_path=$(which go)
-        info "Ejecutable encontrado en: $go_path"
+        # Actualizar PATH para incluir Go
+        export PATH="$GO_PATH/bin:$PATH"
+        
+        # Verificar que go esté ahora disponible en PATH
+        if command -v go >/dev/null 2>&1; then
+            local go_path=$(which go)
+            info "Ejecutable encontrado en PATH: $go_path"
+        else
+            info "Ejecutable disponible en: $GO_PATH/bin/go"
+        fi
     else
-        warn "Go no está disponible en el PATH actual."
+        warn "Go no está disponible. Problema en la instalación."
         info "Puedes ejecutar: ${YELLOW}${BOLD}source $GO_PROFILE${NC}"
         info "O reinicia tu terminal para aplicar los cambios."
     fi
@@ -270,13 +309,20 @@ show_post_install_info() {
     echo -e "  ${YELLOW}${BOLD}1.${NC} Las variables ya están configuradas globalmente"
     echo -e "  ${YELLOW}${BOLD}2.${NC} Reinicia tu terminal, o ejecuta: ${YELLOW}${BOLD}source $GO_PROFILE${NC}"
     echo -e "  ${YELLOW}${BOLD}3.${NC} Verifica con: ${YELLOW}${BOLD}go version${NC}"
-    echo -e "  ${YELLOW}${BOLD}4.${NC} Tu workspace de Go estará en: ${YELLOW}${BOLD}\$HOME/go${NC}"
+    echo -e "  ${YELLOW}${BOLD}4.${NC} Tu workspace de Go está en: ${YELLOW}${BOLD}\$HOME/go${NC}"
     
     echo
     info "Variables de entorno configuradas:"
     echo -e "  ${BOLD}GOROOT${NC}: $GO_PATH (instalación de Go)"
     echo -e "  ${BOLD}GOPATH${NC}: \$HOME/go (tu workspace)"
     echo -e "  ${BOLD}PATH${NC}: incluye \$GOROOT/bin y \$GOPATH/bin"
+    
+    echo
+    info "Comandos útiles para empezar:"
+    echo -e "  ${BOLD}go version${NC}     - Verificar instalación"
+    echo -e "  ${BOLD}go env${NC}         - Ver todas las variables de entorno"
+    echo -e "  ${BOLD}go mod init${NC}    - Inicializar un nuevo módulo"
+    echo -e "  ${BOLD}go run main.go${NC} - Ejecutar un programa Go"
     
     bold "\n=== INSTALACIÓN COMPLETADA ==="
     success "Go ha sido instalado correctamente para todos los usuarios."
@@ -296,6 +342,7 @@ main() {
     download_go
     install_go
     setup_environment
+    setup_gopath_directories
     verify_installation
     
     # Recargar el entorno para reconocer Go

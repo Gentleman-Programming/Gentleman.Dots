@@ -30,11 +30,113 @@ die() {
     exit 1
 }
 
-install_node() {
-    if command -v node >/dev/null 2>&1 && node --version | grep -q "^v${NODE_VERSION%%.*}"; then
-        success "Node.js $NODE_VERSION ya está instalado."
-        return 0
+# Función para obtener la versión más reciente de Node.js LTS
+get_latest_node_version() {
+    local latest_version
+    latest_version=$(curl -s https://nodejs.org/dist/index.json | grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 | sed 's/v//')
+    
+    if [ -z "$latest_version" ]; then
+        return 1
     fi
+    
+    echo "$latest_version"
+    return 0
+}
+
+# Función para obtener la versión instalada
+get_installed_node_version() {
+    if command -v node >/dev/null 2>&1; then
+        local installed_version
+        installed_version=$(node --version 2>/dev/null | sed 's/v//')
+        if [ -n "$installed_version" ]; then
+            echo "$installed_version"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Función para comparar versiones
+compare_node_versions() {
+    local installed="$1"
+    local latest="$2"
+    
+    # Usar sort -V para comparación de versiones
+    local higher_version=$(printf '%s\n%s\n' "$installed" "$latest" | sort -V | tail -n1)
+    
+    if [ "$higher_version" = "$latest" ] && [ "$installed" != "$latest" ]; then
+        return 0  # Hay una versión más nueva disponible
+    else
+        return 1  # Ya está actualizado
+    fi
+}
+
+# Verificar si Node.js ya está instalado
+check_existing_node_installation() {
+    if command -v node >/dev/null 2>&1 && [ -f "$NODE_PROFILE" ]; then
+        warn "Node.js ya está instalado en el sistema"
+        local current_version=$(node --version)
+        local installed_version=$(get_installed_node_version)
+        info "Versión actual: ${BOLD}$current_version${NC}"
+        
+        # Verificar si hay una nueva versión disponible
+        info "Verificando actualizaciones disponibles..."
+        local latest_version=$(get_latest_node_version)
+        
+        if [ $? -eq 0 ] && [ -n "$latest_version" ]; then
+            info "Última versión disponible: ${BOLD}v$latest_version${NC}"
+            
+            if compare_node_versions "$installed_version" "$latest_version"; then
+                bold "\n🚀 ¡NUEVA VERSIÓN DISPONIBLE!"
+                info "Versión instalada: ${YELLOW}v$installed_version${NC}"
+                info "Versión disponible: ${GREEN}v$latest_version${NC}"
+                warn "Se recomienda actualizar para obtener las últimas mejoras y correcciones"
+                
+                echo ""
+                read -p "¿Desea actualizar a la última versión? (Y/n): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    info "Actualización cancelada por el usuario"
+                    exit 0
+                fi
+                success "Procediendo con la actualización..."
+                # Actualizar variables para usar la última versión
+                NODE_VERSION="$latest_version"
+                NODE_BASE_URL="https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-$NODE_DISTRO.tar.xz"
+                NODE_TAR="/tmp/node-v$NODE_VERSION-$NODE_DISTRO.tar.xz"
+            else
+                success "✅ Ya tienes la versión más reciente instalada"
+                info "No es necesario actualizar"
+                exit 0
+            fi
+        else
+            warn "No se pudo verificar la versión más reciente"
+            read -p "¿Desea reinstalar Node.js de todas formas? (y/N): " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                info "Instalación cancelada por el usuario"
+                exit 0
+            fi
+            warn "Procediendo con la reinstalación..."
+        fi
+    else
+        info "Node.js no está instalado en el sistema"
+        info "Verificando la última versión disponible..."
+        local latest_version=$(get_latest_node_version)
+        
+        if [ $? -eq 0 ] && [ -n "$latest_version" ]; then
+            info "Se instalará la versión más reciente: ${BOLD}${GREEN}v$latest_version${NC}"
+            # Actualizar variables para usar la última versión
+            NODE_VERSION="$latest_version"
+            NODE_BASE_URL="https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-$NODE_DISTRO.tar.xz"
+            NODE_TAR="/tmp/node-v$NODE_VERSION-$NODE_DISTRO.tar.xz"
+        else
+            warn "No se pudo verificar la versión más reciente, se procederá con la versión predefinida: $NODE_VERSION"
+        fi
+    fi
+}
+
+install_node() {
     if [ ! -f "$NODE_TAR" ] || [ ! -s "$NODE_TAR" ]; then
         info "Descargando Node.js $NODE_VERSION en $NODE_TAR..."
         curl -L -o "$NODE_TAR" "$NODE_BASE_URL" || die "No se pudo descargar Node.js."
@@ -93,6 +195,10 @@ reload_shell_environment() {
 }
 
 bold "=== Instalador de Node.js $NODE_VERSION ==="
+
+# Verificar instalación existente
+check_existing_node_installation
+
 install_node
 
 # Recargar el entorno para reconocer Node.js
