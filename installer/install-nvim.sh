@@ -251,16 +251,43 @@ verify_installation() {
     fi
 }
 
+# Recargar el entorno del shell
+reload_shell_environment() {
+    info "Recargando variables de entorno..."
+    
+    # Recargar el perfil de Neovim
+    if [ -f "$PROFILE_PATH" ]; then
+        source "$PROFILE_PATH"
+        success "Variables de entorno de Neovim cargadas."
+    fi
+    
+    # Verificar que Neovim esté disponible en el PATH actual
+    if command -v nvim >/dev/null 2>&1; then
+        local nvim_version=$(nvim --version | head -n1)
+        success "Neovim está disponible: $nvim_version"
+        
+        # Verificar ruta del ejecutable
+        local nvim_path=$(which nvim)
+        info "Ejecutable encontrado en: $nvim_path"
+    else
+        warn "Neovim no está disponible en el PATH actual."
+        info "Puedes ejecutar: ${YELLOW}${BOLD}source $PROFILE_PATH${NC}"
+        info "O reinicia tu terminal para aplicar los cambios."
+    fi
+}
+
 # Mostrar información post-instalación
 show_post_install_info() {
     local installed_version=$(get_installed_version)
     
-    # Mostrar mensaje destacado para recargar el perfil manualmente
-    if [ -f "$PROFILE_PATH" ]; then
-        echo -e "Para usar Neovim de inmediato, ejecuta:${NC} ${YELLOW}${BOLD}source $PROFILE_PATH${NC}"
-    fi
+    echo
+    info "Para usar Neovim en nuevas sesiones de terminal:"
+    echo -e "  ${YELLOW}${BOLD}1.${NC} Las variables ya están configuradas globalmente"
+    echo -e "  ${YELLOW}${BOLD}2.${NC} Reinicia tu terminal, o ejecuta: ${YELLOW}${BOLD}source $PROFILE_PATH${NC}"
+    echo -e "  ${YELLOW}${BOLD}3.${NC} Verifica con: ${YELLOW}${BOLD}nvim --version${NC}"
+    
     bold "\n=== INSTALACIÓN COMPLETADA ==="
-    success "Neovim ha sido instalado correctamente para todos los usuarios. Ya puedes usar 'nvim' en esta terminal."
+    success "Neovim ha sido instalado correctamente para todos los usuarios."
 }
 
 # Función principal
@@ -278,6 +305,10 @@ main() {
     install_neovim
     setup_path
     verify_installation
+    
+    # Recargar el entorno para reconocer Neovim
+    reload_shell_environment
+    
     show_post_install_info
     
     success "\n¡Instalación completada exitosamente!"

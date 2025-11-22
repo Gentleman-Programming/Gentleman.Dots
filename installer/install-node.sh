@@ -66,9 +66,42 @@ install_node() {
     success "Node.js $NODE_VERSION instalado correctamente en $NODE_DIR."
 }
 
+reload_shell_environment() {
+    info "Recargando variables de entorno..."
+    
+    # Recargar el perfil de Node.js
+    if [ -f "$NODE_PROFILE" ]; then
+        source "$NODE_PROFILE"
+        success "Variables de entorno de Node.js cargadas."
+    fi
+    
+    # Verificar que Node.js esté disponible
+    if command -v node >/dev/null 2>&1; then
+        local node_version=$(node --version)
+        success "Node.js está disponible: $node_version"
+        
+        # Verificar npm también
+        if command -v npm >/dev/null 2>&1; then
+            local npm_version=$(npm --version)
+            success "npm está disponible: v$npm_version"
+        fi
+    else
+        warn "Node.js no está disponible en el PATH actual."
+        info "Puedes ejecutar: ${YELLOW}${BOLD}source $NODE_PROFILE${NC}"
+        info "O reinicia tu terminal para aplicar los cambios."
+    fi
+}
+
 bold "=== Instalador de Node.js $NODE_VERSION ==="
 install_node
-if [ -f "$NODE_PROFILE" ]; then
-    echo -e "Para usar Node.js de inmediato, ejecuta:${NC} ${YELLOW}${BOLD}source $NODE_PROFILE${NC}"
-fi
-success "Todo listo: Node.js $NODE_VERSION instalado."
+
+# Recargar el entorno para reconocer Node.js
+reload_shell_environment
+
+echo
+info "Para usar Node.js en nuevas sesiones de terminal:"
+echo -e "  ${YELLOW}${BOLD}1.${NC} Las variables ya están configuradas globalmente"
+echo -e "  ${YELLOW}${BOLD}2.${NC} Reinicia tu terminal, o ejecuta: ${YELLOW}${BOLD}source $NODE_PROFILE${NC}"
+echo -e "  ${YELLOW}${BOLD}3.${NC} Verifica con: ${YELLOW}${BOLD}node --version${NC}"
+
+success "Todo listo: Node.js $NODE_VERSION instalado y configurado."
