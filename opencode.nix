@@ -132,7 +132,6 @@
     text = builtins.toJSON {
       "$schema" = "https://opencode.ai/config.json";
       theme = "system";
-      model = "github-copilot/claude-sonnet-4.5";
       autoupdate = true;
       agent = {
         code-reviewer = {
