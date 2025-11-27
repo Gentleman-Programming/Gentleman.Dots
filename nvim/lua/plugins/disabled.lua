@@ -21,7 +21,7 @@ return {
   },
   {
     "sudo-tee/opencode.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "olimorris/codecompanion.nvim",
@@ -40,7 +40,7 @@ return {
     -- Plugin: claude-code.nvim
     -- URL: https://github.com/greggh/claude-code.nvim
     -- Description: Neovim integration for Claude Code AI assistant
-    "greggh/claude-code.nvim",
-    enabled = true,
+    "coder/claude-code.nvim",
+    enabled = false,
   },
 }
