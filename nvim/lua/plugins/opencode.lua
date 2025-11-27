@@ -1,5 +1,25 @@
 return {
   "sudo-tee/opencode.nvim",
+  keys = {
+    { "<leader>aa", "<cmd>Opencode<cr>", desc = "Toggle OpenCode" },
+    { "<leader>ai", "<cmd>Opencode open input<cr>", desc = "Open input" },
+    { "<leader>aI", "<cmd>Opencode open input_new_session<cr>", desc = "Open input (new session)" },
+    { "<leader>ao", "<cmd>Opencode open output<cr>", desc = "Open output" },
+    { "<leader>at", "<cmd>Opencode toggle focus<cr>", desc = "Toggle focus" },
+    { "<leader>aq", "<cmd>Opencode close<cr>", desc = "Close OpenCode" },
+    { "<leader>af", "<cmd>Opencode toggle zoom<cr>", desc = "Toggle zoom" },
+    { "<leader>as", "<cmd>Opencode session select<cr>", desc = "Select session" },
+    { "<leader>ap", "<cmd>lua require('opencode.api').configure_provider()<cr>", desc = "Configure provider" },
+    { "<leader>ad", "<cmd>Opencode diff open<cr>", desc = "Open diff" },
+    { "<leader>a]", "<cmd>Opencode diff next<cr>", desc = "Next diff" },
+    { "<leader>a[", "<cmd>Opencode diff prev<cr>", desc = "Previous diff" },
+    { "<leader>ac", "<cmd>Opencode diff close<cr>", desc = "Close diff" },
+    { "<leader>ara", "<cmd>Opencode revert all prompt<cr>", desc = "Revert all (last prompt)" },
+    { "<leader>art", "<cmd>Opencode revert this prompt<cr>", desc = "Revert this (last prompt)" },
+    { "<leader>arA", "<cmd>Opencode revert all session<cr>", desc = "Revert all (session)" },
+    { "<leader>arT", "<cmd>Opencode revert this session<cr>", desc = "Revert this (session)" },
+    { "<leader>ax", "<cmd>Opencode swap position<cr>", desc = "Swap position" },
+  },
   config = function()
     -- Track opencode's internal state during resize
     local in_resize = false
@@ -144,28 +164,6 @@ return {
     })
 
     require("opencode").setup({
-      keymap = {
-        global = {
-          toggle = "<leader>aa", -- Open opencode. Close if opened
-          open_input = "<leader>ai", -- Opens and focuses on input window on insert mode
-          open_input_new_session = "<leader>aI", -- Opens and focuses on input window on insert mode. Creates a new session
-          open_output = "<leader>ao", -- Opens and focuses on output window
-          toggle_focus = "<leader>at", -- Toggle focus between opencode and last window
-          close = "<leader>aq", -- Close UI windows
-          toggle_fullscreen = "<leader>af", -- Toggle between normal and fullscreen mode
-          select_session = "<leader>as", -- Select and load a opencode session
-          configure_provider = "<leader>ap", -- Quick provider and model switch from predefined list
-          diff_open = "<leader>ad", -- Opens a diff tab of a modified file since the last opencode prompt
-          diff_next = "<leader>a]", -- Navigate to next file diff
-          diff_prev = "<leader>a[", -- Navigate to previous file diff
-          diff_close = "<leader>ac", -- Close diff view tab and return to normal editing
-          diff_revert_all_last_prompt = "<leader>ara", -- Revert all file changes since the last opencode prompt
-          diff_revert_this_last_prompt = "<leader>art", -- Revert current file changes since the last opencode prompt
-          diff_revert_all = "<leader>arA", -- Revert all file changes since the last opencode session
-          diff_revert_this = "<leader>arT", -- Revert current file changes since the last opencode session
-          switch_position = "<leader>ax", -- Switch between positions
-        },
-      },
       ui = {
         fullscreen = false, -- Start in fullscreen mode (default: false)
         position = "left",
