@@ -13,14 +13,6 @@ return {
       desc = "Toggle OpenCode",
     },
     {
-      "<C-.>",
-      function()
-        require("opencode").toggle()
-      end,
-      mode = { "n", "t" },
-      desc = "Toggle OpenCode",
-    },
-    {
       "<leader>as",
       function()
         require("opencode").select({ submit = true })
