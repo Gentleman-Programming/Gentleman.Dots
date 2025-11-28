@@ -1,8 +1,11 @@
+custom-shader = shaders/cursor_smear_gentleman.glsl
+
 background-opacity = 0.95
+
 background-blur-radius = 20
 
 gtk-tabs-location = hidden
-window-decoration = false
+
 
 #palette = 0=#16161d
 #palette = 1=#c34043
@@ -28,13 +31,11 @@ window-decoration = false
 #selection-foreground = c8c093
 
 font-family = IosevkaTerm NF
-font-size = 14
+font-size = 16
 #font-size = 20
 window-padding-color = extend
-window-step-resize = false
+window-step-resize = true
 window-padding-balance = true
-window-height = 100
-window-width = 100
 
 ### Mac Alt Fix
 macos-option-as-alt = left
@@ -89,3 +90,4 @@ foreground = f3f6f9
 cursor-color = e0c15a
 selection-background = 263356
 selection-foreground = f3f6f9
+keybind = shift+enter=text:\x1b\r
