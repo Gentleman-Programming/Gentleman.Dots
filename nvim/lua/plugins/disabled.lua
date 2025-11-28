@@ -20,7 +20,7 @@ return {
     enabled = false,
   },
   {
-    "sudo-tee/opencode.nvim",
+    "NickvanDyke/opencode.nvim",
     enabled = true,
   },
   {
@@ -40,7 +40,7 @@ return {
     -- Plugin: claude-code.nvim
     -- URL: https://github.com/greggh/claude-code.nvim
     -- Description: Neovim integration for Claude Code AI assistant
-    "coder/claude-code.nvim",
+    "coder/claudecode.nvim",
     enabled = false,
   },
 }
