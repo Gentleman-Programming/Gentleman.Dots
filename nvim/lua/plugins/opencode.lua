@@ -95,7 +95,15 @@ return {
     },
   },
   config = function()
-    vim.g.opencode_opts = {}
+    vim.g.opencode_opts = {
+      provider = {
+        snacks = {
+          win = {
+            position = "left",
+          },
+        },
+      },
+    }
     vim.o.autoread = true
   end,
 }
