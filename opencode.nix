@@ -144,6 +144,13 @@
       "$schema" = "https://opencode.ai/config.json";
       theme = "gentleman";
       autoupdate = true;
+      mcp = {
+        context7 = {
+          type = "remote";
+          url = "https://mcp.context7.com/mcp";
+          enabled = true;
+        };
+      };
       agent = {
         gentleman = {
           description = "Reviews code for best practices and potential issues as the Gentleman";
