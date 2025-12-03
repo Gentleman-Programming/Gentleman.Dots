@@ -37,6 +37,14 @@ return {
       desc = "OpenCode ask with context",
     },
     {
+      "<leader>ab",
+      function()
+        require("opencode").ask("@file ", { submit = true })
+      end,
+      mode = { "n", "x" },
+      desc = "OpenCode ask about buffer",
+    },
+    {
       "<leader>ap",
       function()
         require("opencode").prompt("@this", { submit = true })
