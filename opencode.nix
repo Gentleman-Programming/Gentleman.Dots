@@ -14,6 +14,7 @@
 
   # Setup GitHub CLI
   programs.gh = {
+    enable = true;
     settings = {
       version = "1";
     };
@@ -98,15 +99,25 @@
     # Set PATH to include all required tools
     export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
-    # Copy bundled themes into user config
-    THEMES_SRC="${toString ./opencode}/themes"
-    THEMES_DST="$HOME/.config/opencode/themes"
-    mkdir -p "$THEMES_DST"
-    if [ -d "$THEMES_SRC" ]; then
-      cp -f "$THEMES_SRC"/* "$THEMES_DST" 2>/dev/null || true
-      echo "🎨 Copied OpenCode themes to $THEMES_DST"
+    # Copy bundled config and themes into user config
+    OPENCODE_SRC="${toString ./opencode}"
+    OPENCODE_DST="$HOME/.config/opencode"
+    mkdir -p "$OPENCODE_DST/themes"
+    
+    # Copy main config file
+    if [ -f "$OPENCODE_SRC/opencode.json" ]; then
+      cp -f "$OPENCODE_SRC/opencode.json" "$OPENCODE_DST/" 2>/dev/null || true
+      echo "⚙️ Copied OpenCode config to $OPENCODE_DST"
     else
-      echo "⚠️ Themes source not found: $THEMES_SRC"
+      echo "⚠️ Config source not found: $OPENCODE_SRC/opencode.json"
+    fi
+    
+    # Copy themes
+    if [ -d "$OPENCODE_SRC/themes" ]; then
+      cp -f "$OPENCODE_SRC/themes"/* "$OPENCODE_DST/themes/" 2>/dev/null || true
+      echo "🎨 Copied OpenCode themes to $OPENCODE_DST/themes"
+    else
+      echo "⚠️ Themes source not found: $OPENCODE_SRC/themes"
     fi
 
     # Check if OpenCode is already installed and working
@@ -137,32 +148,6 @@
     echo "🎉 OpenCode setup complete!"
     echo "Usage: opencode | opencode-config | gh auth status"
   '';
-
-  # Create OpenCode configuration file
-  home.file.".config/opencode/opencode.json" = {
-    text = builtins.toJSON {
-      "$schema" = "https://opencode.ai/config.json";
-      theme = "gentleman";
-      autoupdate = true;
-      mcp = {
-        context7 = {
-          type = "remote";
-          url = "https://mcp.context7.com/mcp";
-          enabled = true;
-        };
-      };
-      agent = {
-        gentleman = {
-          description = "Reviews code for best practices and potential issues as the Gentleman";
-          prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como 'buenas acá estamos' o 'dale que va' según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, Zellij, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, có...";
-          tools = {
-            write = true;
-            edit = true;
-          };
-        };
-      };
-    };
-  };
 
   # Add aliases for all configured shells
   programs.fish.shellAliases.opencode-config = "nvim ~/.config/opencode/opencode.json";
