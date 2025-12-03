@@ -41,7 +41,6 @@ This repository provides a complete, declarative development environment configu
 - **Claude Code CLI**: Integrated AI coding assistant
 - **OpenCode**: AI assistant integration
 - **Gemini CLI**: Google's AI assistant (optional)
-- **mgrep**: AI-powered semantic code search
 - **Multiple AI providers**: Support for various AI coding assistants
 
 ### 🔧 System Utilities
@@ -85,7 +84,7 @@ The flake automatically handles system-specific configurations, installs all dep
 | **Terminals**       | Ghostty, WezTerm, Tmux, Zellij (optional) |
 | **Editor**          | Neovim (LazyVim) + Zed                    |
 | **Languages**       | Node.js, Rust, Go, with Volta management  |
-| **AI Tools**        | Claude Code, OpenCode, Gemini (opt.), mgrep, multiple providers |
+| **AI Tools**        | Claude Code, OpenCode, Gemini (opt.), multiple providers |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
 
@@ -409,21 +408,6 @@ Some configurations are commented out by default. To enable them:
    - Integrated via Bun package manager
    - Direct access with `gemini` command
    - Perfect for AI-powered development workflows
-
-3. **mgrep - AI-Powered Semantic Search:**
-   ```bash
-   # Install globally (choose your package manager)
-   npm install -g @mixedbread/mgrep    # or pnpm / bun
-   
-   # Sign in once (required for first use)
-   mgrep login
-   ```
-   
-   Features:
-   - Semantic code search powered by AI
-   - Understands code context and meaning
-   - Fast and intelligent search results
-   - Perfect for large codebases
 
 ## AI Configuration for Neovim
 
