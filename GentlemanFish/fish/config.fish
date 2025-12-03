@@ -54,6 +54,10 @@ set -g fish_greeting ""
 # Enable vi mode
 fish_vi_key_bindings
 
+# Set nvim as default editor for opencode and other tools
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+
 ## alias
 if test (uname) = Darwin
     alias ls='ls --color=auto'

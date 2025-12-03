@@ -8,6 +8,10 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*:$PATH"
 
+# Set nvim as default editor for opencode and other tools
+export EDITOR="nvim"
+export VISUAL="nvim"
+
 if [[ $- == *i* ]]; then
     # Commands to run in interactive sessions can go here
 fi
