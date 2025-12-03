@@ -57,6 +57,10 @@
       # Enable vi mode
       fish_vi_key_bindings
 
+      # Set nvim as default editor for opencode and other tools
+      set -gx EDITOR nvim
+      set -gx VISUAL nvim
+
       ## alias
 
       alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'

@@ -24,7 +24,13 @@
       compinit -d "$${XDG_CACHE_HOME:-$${HOME}/.cache}/zsh/zcompdump-$${ZSH_VERSION}"
 
       # --------------------------
-      # 2) FZF
+      # 2) EDITOR
+      # --------------------------
+      export EDITOR="nvim"
+      export VISUAL="nvim"
+
+      # --------------------------
+      # 3) FZF
       # --------------------------
       export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
       export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"

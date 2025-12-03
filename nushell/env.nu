@@ -97,6 +97,7 @@ $env.NU_PLUGIN_DIRS = [
 # $env.PATH = ($env.PATH | uniq)
 
 $env.EDITOR = "nvim"
+$env.VISUAL = "nvim"
 
 $env.PATH = (
     $env.PATH
