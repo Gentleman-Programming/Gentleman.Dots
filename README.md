@@ -671,6 +671,24 @@ Example - switching from OpenCode to Claude Code:
 - **API keys may be required** for some services - check each plugin's documentation
 - **Node.js 18+** is required for most AI plugins (automatically handled by the configuration)
 
+### Optional: mgrep - AI-Powered Semantic Search
+
+For enhanced code search capabilities using AI, you can install mgrep:
+
+```bash
+# Install globally (choose your package manager)
+npm install -g @mixedbread/mgrep    # or pnpm / bun
+
+# Sign in once (required for first use)
+mgrep login
+```
+
+Features:
+- Semantic code search powered by AI
+- Understands code context and meaning
+- Fast and intelligent search results
+- Perfect for large codebases
+
 ### Recommended AI Assistants
 
 - **For the full Gentleman experience:** Use **OpenCode.nvim** (default) - comes with the custom Gentleman agent that verifies, challenges, and proposes alternatives
