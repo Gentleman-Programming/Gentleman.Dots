@@ -688,6 +688,11 @@ if [ "$install_nvim" = "Yes" ]; then
   echo -e "${YELLOW}Installing OpenCode...${NC}"
   run_command "curl -fsSL https://opencode.ai/install | bash"
   
+  echo -e "${YELLOW}Configuring OpenCode...${NC}"
+  run_command "mkdir -p ~/.config/opencode/themes"
+  run_command "cp GentlemanOpenCode/opencode.json ~/.config/opencode/"
+  run_command "cp GentlemanOpenCode/themes/gentleman.json ~/.config/opencode/themes/"
+  
   install_dependencies_with_progress "brew install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit gemini-cli tree-sitter"
 
   echo -e "${YELLOW}Configuring Neovim...${NC}"

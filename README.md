@@ -619,68 +619,155 @@ You're done! You have manually configured your development environment following
 
 ## AI Configuration for Neovim
 
-This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant, while all other AI plugins are disabled.
+This configuration includes several AI assistants integrated with Neovim. By default, **OpenCode is enabled** as the primary AI assistant with the custom Gentleman agent, while all other AI plugins are disabled.
 
 ### Available AI Assistants
 
 The configuration includes support for the following AI tools:
 
-- **Avante.nvim** - AI-powered coding assistant
-- **CopilotChat.nvim** - GitHub Copilot chat interface
-- **OpenCode.nvim** - OpenCode AI integration
-- **CodeCompanion.nvim** - Multi-AI provider support
-- **Claude Code.nvim** - Claude AI integration *(enabled by default)*
-- **Gemini.nvim** - Google Gemini integration
+| Plugin | Description | Status |
+|--------|-------------|--------|
+| **OpenCode.nvim** | OpenCode AI integration with Gentleman agent | ✅ Enabled by default |
+| **Avante.nvim** | AI-powered coding assistant | Disabled |
+| **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
+| **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
+| **Claude Code.nvim** | Claude AI integration | Disabled |
+| **Gemini.nvim** | Google Gemini integration | Disabled |
 
 ### How to Switch AI Plugins
 
-**Claude Code is already enabled by default.** To switch to a different AI assistant:
+**OpenCode.nvim is enabled by default** with the Gentleman agent configuration. All plugin states are managed in a single file:
 
-1. **Navigate to the disabled plugins file:**
-   ```bash
-   nvim ~/.config/nvim/lua/plugins/disabled.lua
-   ```
+```bash
+nvim ~/.config/nvim/lua/plugins/disabled.lua
+```
 
-2. **Disable Claude Code** by changing `enabled = true` to `enabled = false`:
-   ```lua
-   {
-     "greggh/claude-code.nvim",
-     enabled = false,  -- Disable Claude Code
-   },
-   ```
+This file shows all available AI plugins with their current state. To switch:
 
-3. **Enable your preferred AI assistant** by changing `enabled = false` to `enabled = true`:
+1. **Find the plugin you want to disable** and set `enabled = false`
+2. **Find the plugin you want to enable** and set `enabled = true`
+3. **Save and restart Neovim**
 
-   ```lua
-   {
-     "yetone/avante.nvim",
-     enabled = true,  -- Change to true to enable
-   },
-   ```
+Example - switching from OpenCode to Claude Code:
 
-4. **Save the file** and restart Neovim.
+```lua
+{
+  "NickvanDyke/opencode.nvim",
+  enabled = false,  -- Disable OpenCode
+},
+{
+  "coder/claudecode.nvim",
+  enabled = true,   -- Enable Claude Code
+},
+```
 
 ### Important Notes
 
 - **Only enable ONE AI plugin at a time** to avoid conflicts and keybinding issues
 - **Required CLI tools** are automatically installed by the script:
-  - Claude Code CLI (`brew install --cask claude-code`)
   - OpenCode CLI (`curl -fsSL https://opencode.ai/install | bash`)
+  - Claude Code CLI (`curl -fsSL https://claude.ai/install.sh | bash`)
   - Gemini CLI (`brew install gemini-cli`)
 - **API keys may be required** for some services - check each plugin's documentation
 - **Node.js 18+** is required for most AI plugins (automatically handled by the configuration)
 
-### Switching Between AI Assistants
-
-To switch from one AI assistant to another:
-
-1. Set your current AI plugin to `enabled = false`
-2. Set your desired AI plugin to `enabled = true`
-3. Restart Neovim
-
 ### Recommended AI Assistants
 
-- **For beginners:** Start with **CodeCompanion.nvim** - supports multiple AI providers
+- **For the full Gentleman experience:** Use **OpenCode.nvim** (default) - comes with the custom Gentleman agent that verifies, challenges, and proposes alternatives
 - **For Claude users:** Use **Claude Code.nvim** with the Claude Code CLI
 - **For GitHub Copilot users:** Use **CopilotChat.nvim**
+- **For multi-provider flexibility:** Use **CodeCompanion.nvim** - supports multiple AI providers
 - **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI
+
+---
+
+## OpenCode Configuration
+
+OpenCode is installed automatically with a custom **Gentleman** agent and theme. This agent is designed to be a collaborative partner, not a yes-man.
+
+### Gentleman Agent Philosophy
+
+The Gentleman agent is a Senior Architect persona with 15+ years of experience. Key characteristics:
+
+- **Never a Yes-Man**: Won't say "you're right" without verifying first. Uses "let's check that" or "dejame verificar eso" instead.
+- **Collaborative Partner**: Like Jarvis to Tony Stark - provides data, alternatives, and pushes back when needed.
+- **Proposes Alternatives**: Always presents options with tradeoffs: "Option A does X, Option B does Y..."
+- **Verifies Before Agreeing**: When you challenge a suggestion, it investigates first using available tools.
+- **Bilingual**: Responds in Rioplatense Spanish (Argentina/Uruguay slang) if you write in Spanish, or confrontational English if you write in English.
+
+### Using the Gentleman Agent
+
+To use the Gentleman agent in OpenCode:
+
+1. Open OpenCode in your terminal:
+   ```bash
+   opencode
+   ```
+
+2. Type `/agent` and press Enter
+
+3. Select **gentleman** from the list
+
+That's it! The agent will now respond with the Gentleman personality.
+
+### Default Model
+
+The current default model is determined by OpenCode's configuration. To change it, edit your `opencode.json`:
+
+```bash
+nvim ~/.config/opencode/opencode.json
+```
+
+Add or modify the `model` field:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "gentleman",
+  "model": "anthropic/claude-sonnet-4-20250514",
+  "agent": {
+    "gentleman": {
+      ...
+    }
+  }
+}
+```
+
+#### Available Models
+
+Some popular model options:
+
+| Provider | Model ID |
+|----------|----------|
+| Anthropic | `anthropic/claude-sonnet-4-20250514` |
+| Anthropic | `anthropic/claude-haiku-4-20250514` |
+| OpenAI | `openai/gpt-4o` |
+| OpenAI | `openai/gpt-4o-mini` |
+| Google | `google/gemini-2.0-flash` |
+| Google | `google/gemini-2.5-pro-preview-06-05` |
+
+You can also set a specific model per agent:
+
+```json
+{
+  "agent": {
+    "gentleman": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      ...
+    }
+  }
+}
+```
+
+### OpenCode Theme
+
+The configuration includes a custom **Gentleman** theme with a dark background and Kanagawa-inspired colors. The theme is automatically applied when you run OpenCode.
+
+### MCP Integrations
+
+The Gentleman OpenCode config includes two MCP (Model Context Protocol) integrations:
+
+- **Context7**: Remote MCP for fetching up-to-date documentation
+- **mgrep**: Local semantic search tool for your codebase
+
+These are enabled by default and enhance the agent's ability to verify information and search your code.
