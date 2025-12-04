@@ -27,6 +27,8 @@
 
       eval ($BREW_BIN shellenv)
 
+      set -gx GPG_TTY (tty)
+
       if not set -q TMUX; and not set -q ZED_TERMINAL
           tmux
       end
