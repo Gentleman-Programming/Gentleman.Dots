@@ -8,6 +8,7 @@
   },
   "terminal": {
     "shell": "system",
+    "font_family": "IosevkaTerm Nerd Font",
     "env": {
       "ZED_TERMINAL": "1"
     },
@@ -18,6 +19,7 @@
     "indent_size": 12
   },
   "agent": {
+    "always_allow_tool_actions": true,
     "inline_assistant_model": {
       "provider": "copilot_chat",
       "model": "claude-4-sonnet"
@@ -34,7 +36,7 @@
   },
   "ui_font_size": 16,
   "buffer_font_size": 16,
-  "agent_font_size": 16,
+  "agent_ui_font_size": 16,
   "ui_font_family": "IosevkaTerm Nerd Font",
   "buffer_font_family": "IosevkaTerm Nerd Font",
   "theme": {
