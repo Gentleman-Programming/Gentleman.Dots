@@ -57,7 +57,7 @@
       "space t": "terminal_panel::ToggleFocus",
       "space u n": "workspace::ClearAllNotifications",
       "space u b": "git::Blame",
-      "space b q": "pane::CloseInactiveItems",
+      "space b q": "pane::CloseOtherItems",
       "space g g": [
         "task::Spawn",
         { "task_name": "Lazygit", "reveal_target": "center" }
