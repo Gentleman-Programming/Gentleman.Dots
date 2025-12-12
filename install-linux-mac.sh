@@ -315,7 +315,8 @@ else
       elif [ "$os_choice" = "mac" ]; then
         install_terminal_with_progress "WezTerm" "brew install --cask wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       else
-        install_terminal_with_progress "WezTerm" "brew install wez/wezterm-linuxbrew/wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+        # Ubuntu/Debian - use official linuxbrew tap
+        install_terminal_with_progress "WezTerm" "brew tap wez/wezterm-linuxbrew && brew install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
       mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
