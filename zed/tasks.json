@@ -5,8 +5,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
-    "hide": "on_success",
-    "target": "center"
+    "hide": "on_success"
   },
   {
     "label": "Oil",
@@ -14,8 +13,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
-    "hide": "on_success",
-    "target": "center"
+    "hide": "on_success"
   },
   {
     "label": "Oil Float",
@@ -23,8 +21,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
-    "hide": "on_success",
-    "target": "center"
+    "hide": "on_success"
   },
   {
     "label": "Oil Simple",
@@ -40,8 +37,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
-    "hide": "on_success",
-    "target": "center"
+    "hide": "on_success"
   },
   {
     "label": "File Finder",
@@ -77,8 +73,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": true,
     "reveal": "always",
-    "hide": "never",
-    "target": "center"
+    "hide": "never"
   },
   {
     "label": "Debug Oil Zed",
@@ -86,8 +81,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": true,
     "reveal": "always",
-    "hide": "never",
-    "target": "center"
+    "hide": "never"
   },
   {
     "label": "Debug Oil Float",
@@ -95,8 +89,7 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": true,
     "reveal": "always",
-    "hide": "never",
-    "target": "center"
+    "hide": "never"
   },
   {
     "label": "Debug Step by Step",
@@ -104,7 +97,6 @@
     "use_new_terminal": true,
     "allow_concurrent_runs": true,
     "reveal": "always",
-    "hide": "never",
-    "target": "center"
+    "hide": "never"
   }
 ]
