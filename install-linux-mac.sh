@@ -283,12 +283,15 @@ if is_wsl; then
 else
   if [ "$os_choice" = "linux" ]; then
     if is_arch; then
+      echo -e "${YELLOW}Available for Arch Linux: alacritty, wezterm, ghostty${NC}"
       term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "ghostty" "none")
     else
-      echo -e "${YELLOW}Note: Kitty is not available for Linux.${NC}"
+      echo -e "${YELLOW}Available for Ubuntu/Debian: alacritty, wezterm, ghostty (community package)${NC}"
+      echo -e "${YELLOW}Note: Kitty is not available for Linux via this installer.${NC}"
       term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "ghostty" "none")
     fi
   else
+    echo -e "${YELLOW}Available for macOS: alacritty, wezterm, kitty, ghostty${NC}"
     term_choice=$(select_option "Which terminal emulator do you want to install? " "alacritty" "wezterm" "kitty" "ghostty" "none")
   fi
 
@@ -309,8 +312,10 @@ else
     if ! command -v wezterm &>/dev/null; then
       if is_arch; then
         install_terminal_with_progress "WezTerm" "sudo pacman -S --noconfirm wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+      elif [ "$os_choice" = "mac" ]; then
+        install_terminal_with_progress "WezTerm" "brew install --cask wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       else
-        install_terminal_with_progress "WezTerm" "brew tap wez/wezterm-linuxbrew; brew install wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
+        install_terminal_with_progress "WezTerm" "brew install wez/wezterm-linuxbrew/wezterm" "mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua"
       fi
     else
       mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
@@ -332,13 +337,17 @@ else
   "ghostty")
     if ! command -v ghostty &>/dev/null; then
       if is_arch; then
-        install_terminal_with_progress "Ghostty" "pacman -S ghostty" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
-      else
+        install_terminal_with_progress "Ghostty" "sudo pacman -S --noconfirm ghostty" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
+      elif [ "$os_choice" = "mac" ]; then
         install_terminal_with_progress "Ghostty" "brew install --cask ghostty" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
+      else
+        # Ubuntu/Debian - use community package
+        echo -e "${YELLOW}Installing Ghostty from community repository (ghostty-ubuntu)...${NC}"
+        install_terminal_with_progress "Ghostty" "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)\"" "mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty"
       fi
     else
       mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
-      echo -e "${GREEN}Ghostty is already installed and config migrated, remember to reload your config $(ctrl+shift+,) | $(cmd+shift+,) .${NC}"
+      echo -e "${GREEN}Ghostty is already installed and config migrated, remember to reload your config (ctrl+shift+,) | (cmd+shift+,) .${NC}"
     fi
     ;;
   *)
