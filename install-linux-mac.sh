@@ -133,13 +133,9 @@ install_dependencies() {
   if is_arch; then
     run_command "sudo pacman -Syu --noconfirm"
     run_command "sudo pacman -S --needed --noconfirm base-devel curl file git wget unzip fontconfig"
-    run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-    run_command ". $HOME/.cargo/env"
   else
     run_command "sudo apt-get update"
     run_command "sudo apt-get install -y build-essential curl file git unzip fontconfig"
-    run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-    run_command ". $HOME/.cargo/env"
   fi
 }
 
@@ -228,8 +224,6 @@ else
   else
     run_command "xcode-select --install"
   fi
-  run_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-  run_command ". $HOME/.cargo/env"
 fi
 
 # Function to clone repository with progress bar
@@ -585,10 +579,14 @@ case "$wm_choice" in
   fi
   ;;
 "zellij")
-  if [ "$show_details" = "Yes" ]; then
-    install_window_manager_with_progress "brew uninstall zellij | cargo install zellij"
+  if ! command -v zellij &>/dev/null; then
+    if [ "$show_details" = "Yes" ]; then
+      install_window_manager_with_progress "brew install zellij"
+    else
+      run_command "brew install zellij"
+    fi
   else
-    run_command "cargo install zellij"
+    echo -e "${GREEN}Zellij is already installed.${NC}"
   fi
 
   echo -e "${YELLOW}Configuring Zellij...${NC}"
