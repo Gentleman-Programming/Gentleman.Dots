@@ -1,3 +1,5 @@
+custom-shader = shaders/cursor_smear_gentleman.glsl
+
 background-opacity = 0.95
 background-blur-radius = 20
 
@@ -89,3 +91,4 @@ foreground = f3f6f9
 cursor-color = e0c15a
 selection-background = 263356
 selection-foreground = f3f6f9
+keybind = shift+enter=text:\x1b\r
