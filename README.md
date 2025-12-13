@@ -615,6 +615,31 @@ You're done! You have manually configured your development environment following
 **Happy coding!**
 </details>
 
+## Troubleshooting
+
+### Zellij Copy/Paste Issue on Linux Mint
+
+If you're using Linux Mint with the repo config and have activated wezterm + zellij + fish, you might not be able to copy text from the terminal (neither with mouse nor shortcuts).
+
+#### Solution
+
+In the config file `/home/[username]/.config/zellij/config.kdl`, uncomment these lines:
+
+Change:
+//copy_command "xclip -selection clipboard" // x11
+
+To:
+copy_command "xclip -selection clipboard" // x11
+
+And also change:
+//copy_clipboard "primary"
+
+To:
+copy_clipboard "primary"
+
+Reference: https://zellij.dev/documentation/faq.html#copy--paste-isnt-working-how-can-i-fix-this
+
+
 ---
 
 ## AI Configuration for Neovim
