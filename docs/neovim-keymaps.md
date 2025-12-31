@@ -60,15 +60,24 @@ Edit your filesystem like a buffer
 
 | Keys | Description | Mode |
 |------|-------------|------|
-| `-` | Open Oil (parent directory) | n |
-| `<leader>E` | Open Oil (floating window) | n |
+| `-` | Open Oil (parent dir) | n |
+| `<leader>E` | Open Oil (floating) | n |
 | `<leader>-` | Open Oil in current file's directory | n |
+| `g?` | Show help | n |
 | `<CR>` | Select file/directory | n |
 | `<C-s>` | Open in vertical split | n |
 | `<C-v>` | Open in horizontal split | n |
 | `<C-t>` | Open in new tab | n |
 | `<C-p>` | Preview file | n |
+| `<C-c>` | Close Oil | n |
+| `<C-r>` | Refresh | n |
+| `_` | Open cwd | n |
+| `` ` `` | cd to current directory | n |
+| `~` | :tcd to current directory | n |
+| `gs` | Change sort | n |
+| `gx` | Open external | n |
 | `g.` | Toggle hidden files | n |
+| `g\` | Toggle trash | n |
 | `q` | Close Oil | n |
 
 ---
@@ -166,6 +175,7 @@ Go-to definitions, references, and previews
 | `<leader>cC` | Refresh Codelens | n |
 | `<leader>cr` | Rename Symbol | n |
 | `<leader>cR` | Rename File | n |
+| `<leader>cs` | Symbols Outline | n |
 
 ### Preview Windows (goto-preview)
 
@@ -187,6 +197,7 @@ Git operations from within Neovim
 | Keys | Description | Mode |
 |------|-------------|------|
 | `<leader>gb` | Git Blame (show who changed line) | n |
+| `<leader>go` | Open file/folder in git repo | n |
 | `<leader>gB` | Git Browse | n |
 | `<leader>gc` | Git Commits | n |
 | `<leader>gd` | Git Diff (hunks) | n |
@@ -194,7 +205,6 @@ Git operations from within Neovim
 | `<leader>gg` | Open Lazygit | n |
 | `<leader>gl` | Git Log | n |
 | `<leader>gL` | Git Log (line) | n |
-| `<leader>go` | Open file in git repo (browser) | n |
 | `<leader>gs` | Git Status | n |
 | `<leader>gS` | Git Stash | n |
 
@@ -212,17 +222,9 @@ Git operations from within Neovim
 
 ---
 
-## AI Assistants
+## AI Assistants (Copilot + OpenCode)
 
-AI-powered coding assistance (Avante/Copilot)
-
-| Keys | Description | Mode |
-|------|-------------|------|
-| `<leader>aa` | Toggle Avante (AI sidebar) | n |
-| `<leader>ae` | Edit with AI | n,v |
-| `<leader>ar` | Refresh Avante | n |
-| `<leader>af` | Focus Avante | n |
-| `<leader>at` | Toggle Avante | n |
+AI-powered coding assistance
 
 ### Copilot (Insert Mode)
 
@@ -232,7 +234,23 @@ AI-powered coding assistance (Avante/Copilot)
 | `<C-]>` | Dismiss Copilot suggestion | i |
 | `<M-]>` | Next Copilot suggestion | i |
 | `<M-[>` | Previous Copilot suggestion | i |
-| `<leader>ap` | Copilot Panel | n |
+
+### OpenCode
+
+| Keys | Description | Mode |
+|------|-------------|------|
+| `<leader>aa` | Toggle OpenCode | n |
+| `<leader>as` | OpenCode select | n,x |
+| `<leader>ai` | OpenCode ask | n,x |
+| `<leader>aI` | OpenCode ask with context | n,x |
+| `<leader>ab` | OpenCode ask about buffer | n,x |
+| `<leader>ap` | OpenCode prompt | n,x |
+| `<leader>ape` | OpenCode explain | n,x |
+| `<leader>apf` | OpenCode fix | n,x |
+| `<leader>apd` | OpenCode diagnose | n,x |
+| `<leader>apr` | OpenCode review | n,x |
+| `<leader>apt` | OpenCode test | n,x |
+| `<leader>apo` | OpenCode optimize | n,x |
 
 ---
 
@@ -242,15 +260,47 @@ Note-taking and knowledge management
 
 | Keys | Description | Mode |
 |------|-------------|------|
-| `<leader>on` | New note | n |
-| `<leader>oo` | Open note (search) | n |
-| `<leader>os` | Search in notes | n |
-| `<leader>ot` | Open today's daily note | n |
-| `<leader>ob` | Show backlinks | n |
-| `<leader>ol` | Insert link | n |
-| `gf` | Follow link (in note buffer) | n |
-| `<leader>ch` | Toggle checkbox | n |
-| `<CR>` | Smart action (follow/toggle) | n |
+| `<leader>oc` | Obsidian Check Checkbox | n |
+| `<leader>ot` | Insert Obsidian Template | n |
+| `<leader>oo` | Open in Obsidian App | n |
+| `<leader>ob` | Show Obsidian Backlinks | n |
+| `<leader>ol` | Show Obsidian Links | n |
+| `<leader>on` | Create New Note | n |
+| `<leader>os` | Search Obsidian | n |
+| `<leader>oq` | Quick Switch | n |
+
+---
+
+## Tmux Navigation
+
+Seamless navigation between Neovim and Tmux panes
+
+| Keys | Description | Mode |
+|------|-------------|------|
+| `<C-h>` | Navigate to the left pane | n |
+| `<C-j>` | Navigate to the bottom pane | n |
+| `<C-k>` | Navigate to the top pane | n |
+| `<C-l>` | Navigate to the right pane | n |
+| `<C-\>` | Navigate to last active pane | n |
+| `<C-Space>` | Navigate to next pane | n |
+
+---
+
+## Custom Keymaps
+
+Gentleman.Dots custom keybindings
+
+| Keys | Description | Mode |
+|------|-------------|------|
+| `<C-b>` | Delete to end of word (insert) | i |
+| `<C-c>` | Escape from any mode | i,n,v |
+| `<leader>uk` | Toggle Screenkey | n |
+| `-` | Open Oil (parent directory) | n |
+| `<leader>bq` | Delete other buffers but current | n |
+| `<C-s>` | Save file | n |
+| `<leader>sg` | Grep Selected Text | v |
+| `<leader>sG` | Grep Selected Text (Root Dir) | v |
+| `<leader>md` | Delete all marks | n |
 
 ---
 
@@ -290,10 +340,6 @@ Window navigation and management
 
 | Keys | Description | Mode |
 |------|-------------|------|
-| `<C-h>` | Go to Left Window | n |
-| `<C-j>` | Go to Lower Window | n |
-| `<C-k>` | Go to Upper Window | n |
-| `<C-l>` | Go to Right Window | n |
 | `<leader>w` | Windows menu (which-key) | n |
 | `<leader>wd` | Delete Window | n |
 | `<leader>wm` | Maximize Window | n |
@@ -303,6 +349,8 @@ Window navigation and management
 | `<C-Down>` | Decrease Height | n |
 | `<C-Left>` | Decrease Width | n |
 | `<C-Right>` | Increase Width | n |
+
+> **Note:** Window navigation (`<C-h/j/k/l>`) is handled by Tmux Navigation for seamless pane switching.
 
 ---
 
@@ -409,8 +457,6 @@ Essential keybindings every Neovim user needs
 | `gx` | Open with system app | n |
 | `j` | Down (respects wrapped lines) | n,x |
 | `k` | Up (respects wrapped lines) | n,x |
-| `<A-j>` | Move Line Down | n,i,v |
-| `<A-k>` | Move Line Up | n,i,v |
 
 ---
 
