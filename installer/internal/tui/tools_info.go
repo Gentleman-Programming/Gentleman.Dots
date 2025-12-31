@@ -653,11 +653,15 @@ func GetLazyVimTopics() []LazyVimTopic {
 			Content: []string{
 				"LazyExtras is your ONE-STOP SHOP for adding functionality!",
 				"",
-				"★ THE EASY WAY (recommended):",
+				"★ HOW IT WORKS:",
 				"  1. Open Neovim",
 				"  2. Run :LazyExtras",
 				"  3. Browse categories, press 'x' to toggle any extra",
 				"  4. Restart Neovim - DONE!",
+				"",
+				"That's it! When you press 'x', LazyVim automatically saves",
+				"your selection to ~/.config/nvim/lazyvim.json",
+				"NO manual config files to edit!",
 				"",
 				"Each extra includes EVERYTHING you need:",
 				"• LSP server (auto-completion, go-to-definition)",
@@ -676,37 +680,43 @@ func GetLazyVimTopics() []LazyVimTopic {
 				"• test.*       - Testing frameworks (core, coverage...)",
 				"• dap.*        - Debugging adapters",
 			},
-			CodeExample: `-- :LazyExtras UI is the easiest way!
--- But if you prefer code, add to lua/config/lazy.lua:
+			CodeExample: `-- YOU DON'T NEED TO WRITE ANY CODE!
+-- Just use :LazyExtras and press 'x' on what you want.
 
-spec = {
-  { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-  
-  -- These get added automatically when you use :LazyExtras!
-  { import = "lazyvim.plugins.extras.lang.typescript" },
-  { import = "lazyvim.plugins.extras.lang.go" },
-  { import = "lazyvim.plugins.extras.test.core" },
-  { import = "lazyvim.plugins.extras.ai.copilot" },
-  
-  { import = "plugins" },
-}`,
+-- LazyVim saves your choices automatically to:
+-- ~/.config/nvim/lazyvim.json
+
+-- Example lazyvim.json (auto-generated):
+{
+  "extras": [
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.lang.go", 
+    "lazyvim.plugins.extras.test.core",
+    "lazyvim.plugins.extras.ai.copilot"
+  ]
+}
+
+-- This file persists your extras across config updates!`,
 			Tips: []string{
 				":LazyExtras - Interactive UI to enable/disable extras",
 				"Press 'x' on any extra to toggle it",
-				"Changes apply after restarting Neovim",
-				"No manual config needed - extras handle everything!",
+				"Config saved automatically to lazyvim.json",
+				"No manual editing needed - ever!",
 			},
 		},
 		{
 			Title:       "Adding a New Language",
 			Description: "Use :LazyExtras - it's that simple!",
 			Content: []string{
-				"★ THE EASY WAY (99% of cases):",
+				"★ JUST DO THIS:",
 				"  1. Open Neovim",
 				"  2. Run :LazyExtras",
-				"  3. Search for 'lang.' to see all languages",
+				"  3. Type 'lang' to filter language extras",
 				"  4. Press 'x' on the language you want",
 				"  5. Restart Neovim - DONE!",
+				"",
+				"Your selection is saved to lazyvim.json automatically.",
+				"No config files to edit. No code to write.",
 				"",
 				"Each lang.* extra gives you EVERYTHING:",
 				"• LSP server (auto-completion, diagnostics)",
@@ -717,8 +727,8 @@ spec = {
 				"• Test runner integration (where available)",
 				"",
 				"Popular lang extras:",
-				"• lang.typescript - TS/JS with tsserver",
-				"• lang.python - Python with pyright/ruff",
+				"• lang.typescript - TS/JS with vtsls",
+				"• lang.python - Python with basedpyright/ruff",
 				"• lang.go - Go with gopls",
 				"• lang.rust - Rust with rust-analyzer",
 				"• lang.java - Java with jdtls",
@@ -726,32 +736,24 @@ spec = {
 				"• lang.yaml - YAML with schemas",
 				"• lang.json - JSON with schemas",
 			},
-			CodeExample: `-- RECOMMENDED: Just use :LazyExtras UI!
--- It adds the import automatically to your config.
+			CodeExample: `-- YOU DON'T NEED TO WRITE ANY CODE!
+-- :LazyExtras handles everything automatically.
 
--- ADVANCED: Manual config (only if no extra exists)
--- Create lua/plugins/my-language.lua:
-return {
-  -- TreeSitter parser
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = { ensure_installed = { "my_lang" } },
-  },
-  -- LSP server  
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        my_lsp = {},
-      },
-    },
-  },
-}`,
+-- When you press 'x' on an extra, LazyVim:
+-- 1. Adds it to ~/.config/nvim/lazyvim.json
+-- 2. Installs all required plugins on restart
+-- 3. Configures LSP, formatters, linters automatically
+-- 4. Sets up debugging if available
+
+-- Manual config is ONLY needed if:
+-- - The language has no LazyExtras extra
+-- - You want to override default settings
+-- (99% of users never need manual config)`,
 			Tips: []string{
-				":LazyExtras → search 'lang' → press 'x' → restart",
-				"That's it! No config files to edit!",
+				":LazyExtras → type 'lang' → press 'x' → restart",
+				"That's literally it. No config files!",
 				":LspInfo to verify LSP is working",
-				":Mason to see/manage installed servers",
+				":Mason to see installed language servers",
 			},
 		},
 		{
