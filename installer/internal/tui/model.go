@@ -30,6 +30,14 @@ const (
 	// Keymaps screen
 	ScreenKeymaps
 	ScreenKeymapCategory
+	// Tool Keymaps screens
+	ScreenKeymapsMenu       // Menu to select which tool's keymaps to view
+	ScreenKeymapsTmux       // Tmux keymaps
+	ScreenKeymapsTmuxCat    // Tmux keymap category
+	ScreenKeymapsZellij     // Zellij keymaps
+	ScreenKeymapsZellijCat  // Zellij keymap category
+	ScreenKeymapsGhostty    // Ghostty keymaps
+	ScreenKeymapsGhosttyCat // Ghostty keymap category
 	// LazyVim learn screens
 	ScreenLearnLazyVim
 	ScreenLazyVimTopic
@@ -96,6 +104,16 @@ type Model struct {
 	KeymapCategories []KeymapCategory
 	SelectedCategory int
 	KeymapScroll     int // For scrolling through keymaps
+	// Tool-specific keymaps
+	TmuxKeymapCategories    []KeymapCategory
+	TmuxSelectedCategory    int
+	TmuxKeymapScroll        int
+	ZellijKeymapCategories  []KeymapCategory
+	ZellijSelectedCategory  int
+	ZellijKeymapScroll      int
+	GhosttyKeymapCategories []KeymapCategory
+	GhosttySelectedCategory int
+	GhosttyKeymapScroll     int
 	// LazyVim mode
 	LazyVimTopics        []LazyVimTopic
 	SelectedLazyVimTopic int
@@ -110,29 +128,38 @@ type Model struct {
 // NewModel creates a new Model with initial state
 func NewModel() Model {
 	return Model{
-		Screen:               ScreenWelcome,
-		PrevScreen:           ScreenWelcome,
-		Width:                80,
-		Height:               24,
-		SystemInfo:           system.Detect(),
-		Choices:              UserChoices{},
-		Steps:                []InstallStep{},
-		CurrentStep:          0,
-		Cursor:               0,
-		ShowDetails:          false,
-		LogLines:             []string{},
-		SpinnerFrame:         0,
-		KeymapCategories:     GetNvimKeymaps(),
-		SelectedCategory:     0,
-		KeymapScroll:         0,
-		LazyVimTopics:        GetLazyVimTopics(),
-		SelectedLazyVimTopic: 0,
-		LazyVimScroll:        0,
-		ExistingConfigs:      []string{},
-		AvailableBackups:     []system.BackupInfo{},
-		SelectedBackup:       0,
-		BackupDir:            "",
-		Program:              nil, // Will be set after tea.Program is created
+		Screen:                  ScreenWelcome,
+		PrevScreen:              ScreenWelcome,
+		Width:                   80,
+		Height:                  24,
+		SystemInfo:              system.Detect(),
+		Choices:                 UserChoices{},
+		Steps:                   []InstallStep{},
+		CurrentStep:             0,
+		Cursor:                  0,
+		ShowDetails:             false,
+		LogLines:                []string{},
+		SpinnerFrame:            0,
+		KeymapCategories:        GetNvimKeymaps(),
+		SelectedCategory:        0,
+		KeymapScroll:            0,
+		TmuxKeymapCategories:    GetTmuxKeymaps(),
+		TmuxSelectedCategory:    0,
+		TmuxKeymapScroll:        0,
+		ZellijKeymapCategories:  GetZellijKeymaps(),
+		ZellijSelectedCategory:  0,
+		ZellijKeymapScroll:      0,
+		GhosttyKeymapCategories: GetGhosttyKeymaps(),
+		GhosttySelectedCategory: 0,
+		GhosttyKeymapScroll:     0,
+		LazyVimTopics:           GetLazyVimTopics(),
+		SelectedLazyVimTopic:    0,
+		LazyVimScroll:           0,
+		ExistingConfigs:         []string{},
+		AvailableBackups:        []system.BackupInfo{},
+		SelectedBackup:          0,
+		BackupDir:               "",
+		Program:                 nil, // Will be set after tea.Program is created
 	}
 }
 
@@ -171,7 +198,7 @@ func (m Model) GetCurrentOptions() []string {
 		opts := []string{
 			"🚀 Start Installation",
 			"📚 Learn About Tools",
-			"⌨️  Neovim Keymaps Reference",
+			"⌨️  Keymaps Reference",
 			"📖 LazyVim Guide",
 		}
 		// Add restore option if backups exist
@@ -180,6 +207,8 @@ func (m Model) GetCurrentOptions() []string {
 		}
 		opts = append(opts, "❌ Exit")
 		return opts
+	case ScreenKeymapsMenu:
+		return []string{"Neovim", "Tmux", "Zellij", "Ghostty", "─────────────", "← Back"}
 	case ScreenOSSelect:
 		return []string{"macOS", "Linux"}
 	case ScreenTerminalSelect:
@@ -231,6 +260,30 @@ func (m Model) GetCurrentOptions() []string {
 		}
 		categories[len(m.KeymapCategories)] = "─────────────"
 		categories[len(m.KeymapCategories)+1] = "← Back"
+		return categories
+	case ScreenKeymapsTmux:
+		categories := make([]string, len(m.TmuxKeymapCategories)+2)
+		for i, cat := range m.TmuxKeymapCategories {
+			categories[i] = cat.Name
+		}
+		categories[len(m.TmuxKeymapCategories)] = "─────────────"
+		categories[len(m.TmuxKeymapCategories)+1] = "← Back"
+		return categories
+	case ScreenKeymapsZellij:
+		categories := make([]string, len(m.ZellijKeymapCategories)+2)
+		for i, cat := range m.ZellijKeymapCategories {
+			categories[i] = cat.Name
+		}
+		categories[len(m.ZellijKeymapCategories)] = "─────────────"
+		categories[len(m.ZellijKeymapCategories)+1] = "← Back"
+		return categories
+	case ScreenKeymapsGhostty:
+		categories := make([]string, len(m.GhosttyKeymapCategories)+2)
+		for i, cat := range m.GhosttyKeymapCategories {
+			categories[i] = cat.Name
+		}
+		categories[len(m.GhosttyKeymapCategories)] = "─────────────"
+		categories[len(m.GhosttyKeymapCategories)+1] = "← Back"
 		return categories
 	case ScreenLearnLazyVim:
 		titles := GetLazyVimTopicTitles()
@@ -290,6 +343,29 @@ func (m Model) GetScreenTitle() string {
 			return "⌨️  " + m.KeymapCategories[m.SelectedCategory].Name
 		}
 		return "⌨️  Keymaps"
+	case ScreenKeymapsMenu:
+		return "⌨️  Keymaps Reference"
+	case ScreenKeymapsTmux:
+		return "⌨️  Tmux Keymaps"
+	case ScreenKeymapsTmuxCat:
+		if m.TmuxSelectedCategory < len(m.TmuxKeymapCategories) {
+			return "⌨️  " + m.TmuxKeymapCategories[m.TmuxSelectedCategory].Name
+		}
+		return "⌨️  Tmux Keymaps"
+	case ScreenKeymapsZellij:
+		return "⌨️  Zellij Keymaps"
+	case ScreenKeymapsZellijCat:
+		if m.ZellijSelectedCategory < len(m.ZellijKeymapCategories) {
+			return "⌨️  " + m.ZellijKeymapCategories[m.ZellijSelectedCategory].Name
+		}
+		return "⌨️  Zellij Keymaps"
+	case ScreenKeymapsGhostty:
+		return "⌨️  Ghostty Keymaps"
+	case ScreenKeymapsGhosttyCat:
+		if m.GhosttySelectedCategory < len(m.GhosttyKeymapCategories) {
+			return "⌨️  " + m.GhosttyKeymapCategories[m.GhosttySelectedCategory].Name
+		}
+		return "⌨️  Ghostty Keymaps"
 	case ScreenLearnLazyVim:
 		return "📖 LazyVim Guide"
 	case ScreenLazyVimTopic:

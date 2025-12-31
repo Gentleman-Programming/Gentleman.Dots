@@ -65,6 +65,20 @@ func (m Model) View() string {
 		s.WriteString(m.renderKeymapsMenu())
 	case ScreenKeymapCategory:
 		s.WriteString(m.renderKeymapCategory())
+	case ScreenKeymapsMenu:
+		s.WriteString(m.renderToolKeymapsMenu())
+	case ScreenKeymapsTmux:
+		s.WriteString(m.renderTmuxKeymapsMenu())
+	case ScreenKeymapsTmuxCat:
+		s.WriteString(m.renderTmuxKeymapCategory())
+	case ScreenKeymapsZellij:
+		s.WriteString(m.renderZellijKeymapsMenu())
+	case ScreenKeymapsZellijCat:
+		s.WriteString(m.renderZellijKeymapCategory())
+	case ScreenKeymapsGhostty:
+		s.WriteString(m.renderGhosttyKeymapsMenu())
+	case ScreenKeymapsGhosttyCat:
+		s.WriteString(m.renderGhosttyKeymapCategory())
 	case ScreenLearnLazyVim:
 		s.WriteString(m.renderLazyVimMenu())
 	case ScreenLazyVimTopic:
@@ -485,6 +499,331 @@ func (m Model) renderKeymapCategory() string {
 
 	// Keymaps with scrolling
 	start := m.KeymapScroll
+	end := start + visibleItems
+	if end > len(category.Keymaps) {
+		end = len(category.Keymaps)
+		start = end - visibleItems
+		if start < 0 {
+			start = 0
+		}
+	}
+
+	for i := start; i < end; i++ {
+		km := category.Keymaps[i]
+		s.WriteString(KeyStyle.Render(km.Keys))
+		s.WriteString(MutedStyle.Render(fmt.Sprintf(" %-6s ", km.Mode)))
+		s.WriteString(InfoStyle.Render(km.Description))
+		s.WriteString("\n")
+	}
+
+	// Scroll indicator
+	if len(category.Keymaps) > visibleItems {
+		s.WriteString("\n")
+		scrollInfo := fmt.Sprintf("Showing %d-%d of %d", start+1, end, len(category.Keymaps))
+		s.WriteString(MutedStyle.Render(scrollInfo))
+	}
+
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter/Esc/q] back"))
+
+	return s.String()
+}
+
+// renderToolKeymapsMenu renders the tool selection menu (Neovim, Tmux, Zellij, Ghostty)
+func (m Model) renderToolKeymapsMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a tool to view its keybindings"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+// renderTmuxKeymapsMenu renders the Tmux keymap categories menu
+func (m Model) renderTmuxKeymapsMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a category to view Tmux keybindings"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+// renderTmuxKeymapCategory renders a specific Tmux keymap category
+func (m Model) renderTmuxKeymapCategory() string {
+	var s strings.Builder
+
+	if m.TmuxSelectedCategory >= len(m.TmuxKeymapCategories) {
+		return ErrorStyle.Render("Category not found")
+	}
+
+	category := m.TmuxKeymapCategories[m.TmuxSelectedCategory]
+
+	s.WriteString(TitleStyle.Render(category.Name))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(category.Description))
+	s.WriteString("\n\n")
+
+	// Table header
+	header := fmt.Sprintf("%-20s %-6s %s", "Keys", "Mode", "Description")
+	s.WriteString(SubtitleStyle.Render(header))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n")
+
+	// Calculate visible items
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+	if visibleItems > len(category.Keymaps) {
+		visibleItems = len(category.Keymaps)
+	}
+
+	// Keymaps with scrolling
+	start := m.TmuxKeymapScroll
+	end := start + visibleItems
+	if end > len(category.Keymaps) {
+		end = len(category.Keymaps)
+		start = end - visibleItems
+		if start < 0 {
+			start = 0
+		}
+	}
+
+	for i := start; i < end; i++ {
+		km := category.Keymaps[i]
+		s.WriteString(KeyStyle.Render(km.Keys))
+		s.WriteString(MutedStyle.Render(fmt.Sprintf(" %-6s ", km.Mode)))
+		s.WriteString(InfoStyle.Render(km.Description))
+		s.WriteString("\n")
+	}
+
+	// Scroll indicator
+	if len(category.Keymaps) > visibleItems {
+		s.WriteString("\n")
+		scrollInfo := fmt.Sprintf("Showing %d-%d of %d", start+1, end, len(category.Keymaps))
+		s.WriteString(MutedStyle.Render(scrollInfo))
+	}
+
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter/Esc/q] back"))
+
+	return s.String()
+}
+
+// renderZellijKeymapsMenu renders the Zellij keymap categories menu
+func (m Model) renderZellijKeymapsMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a category to view Zellij keybindings"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+// renderZellijKeymapCategory renders a specific Zellij keymap category
+func (m Model) renderZellijKeymapCategory() string {
+	var s strings.Builder
+
+	if m.ZellijSelectedCategory >= len(m.ZellijKeymapCategories) {
+		return ErrorStyle.Render("Category not found")
+	}
+
+	category := m.ZellijKeymapCategories[m.ZellijSelectedCategory]
+
+	s.WriteString(TitleStyle.Render(category.Name))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(category.Description))
+	s.WriteString("\n\n")
+
+	// Table header
+	header := fmt.Sprintf("%-15s %-8s %s", "Keys", "Mode", "Description")
+	s.WriteString(SubtitleStyle.Render(header))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n")
+
+	// Calculate visible items
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+	if visibleItems > len(category.Keymaps) {
+		visibleItems = len(category.Keymaps)
+	}
+
+	// Keymaps with scrolling
+	start := m.ZellijKeymapScroll
+	end := start + visibleItems
+	if end > len(category.Keymaps) {
+		end = len(category.Keymaps)
+		start = end - visibleItems
+		if start < 0 {
+			start = 0
+		}
+	}
+
+	for i := start; i < end; i++ {
+		km := category.Keymaps[i]
+		s.WriteString(KeyStyle.Render(km.Keys))
+		s.WriteString(MutedStyle.Render(fmt.Sprintf(" %-8s ", km.Mode)))
+		s.WriteString(InfoStyle.Render(km.Description))
+		s.WriteString("\n")
+	}
+
+	// Scroll indicator
+	if len(category.Keymaps) > visibleItems {
+		s.WriteString("\n")
+		scrollInfo := fmt.Sprintf("Showing %d-%d of %d", start+1, end, len(category.Keymaps))
+		s.WriteString(MutedStyle.Render(scrollInfo))
+	}
+
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter/Esc/q] back"))
+
+	return s.String()
+}
+
+// renderGhosttyKeymapsMenu renders the Ghostty keymap categories menu
+func (m Model) renderGhosttyKeymapsMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a category to view Ghostty keybindings"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+// renderGhosttyKeymapCategory renders a specific Ghostty keymap category
+func (m Model) renderGhosttyKeymapCategory() string {
+	var s strings.Builder
+
+	if m.GhosttySelectedCategory >= len(m.GhosttyKeymapCategories) {
+		return ErrorStyle.Render("Category not found")
+	}
+
+	category := m.GhosttyKeymapCategories[m.GhosttySelectedCategory]
+
+	s.WriteString(TitleStyle.Render(category.Name))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(category.Description))
+	s.WriteString("\n\n")
+
+	// Table header
+	header := fmt.Sprintf("%-18s %-6s %s", "Keys", "Mode", "Description")
+	s.WriteString(SubtitleStyle.Render(header))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n")
+
+	// Calculate visible items
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+	if visibleItems > len(category.Keymaps) {
+		visibleItems = len(category.Keymaps)
+	}
+
+	// Keymaps with scrolling
+	start := m.GhosttyKeymapScroll
 	end := start + visibleItems
 	if end > len(category.Keymaps) {
 		end = len(category.Keymaps)

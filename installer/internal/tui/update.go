@@ -145,7 +145,8 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case "q":
 		// q to quit only when not installing and not in content view
-		if m.Screen != ScreenInstalling && m.Screen != ScreenKeymapCategory && m.Screen != ScreenLazyVimTopic {
+		if m.Screen != ScreenInstalling && m.Screen != ScreenKeymapCategory && m.Screen != ScreenLazyVimTopic &&
+			m.Screen != ScreenKeymapsTmuxCat && m.Screen != ScreenKeymapsZellijCat && m.Screen != ScreenKeymapsGhosttyCat {
 			m.Quitting = true
 			return m, tea.Quit
 		}
@@ -153,6 +154,21 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.Screen == ScreenKeymapCategory {
 			m.Screen = ScreenKeymaps
 			m.KeymapScroll = 0
+			return m, nil
+		}
+		if m.Screen == ScreenKeymapsTmuxCat {
+			m.Screen = ScreenKeymapsTmux
+			m.TmuxKeymapScroll = 0
+			return m, nil
+		}
+		if m.Screen == ScreenKeymapsZellijCat {
+			m.Screen = ScreenKeymapsZellij
+			m.ZellijKeymapScroll = 0
+			return m, nil
+		}
+		if m.Screen == ScreenKeymapsGhosttyCat {
+			m.Screen = ScreenKeymapsGhostty
+			m.GhosttyKeymapScroll = 0
 			return m, nil
 		}
 		if m.Screen == ScreenLazyVimTopic {
@@ -197,6 +213,27 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case ScreenKeymapCategory:
 		return m.handleKeymapCategoryKeys(key)
+
+	case ScreenKeymapsMenu:
+		return m.handleToolKeymapsMenuKeys(key)
+
+	case ScreenKeymapsTmux:
+		return m.handleTmuxKeymapsMenuKeys(key)
+
+	case ScreenKeymapsTmuxCat:
+		return m.handleTmuxKeymapCategoryKeys(key)
+
+	case ScreenKeymapsZellij:
+		return m.handleZellijKeymapsMenuKeys(key)
+
+	case ScreenKeymapsZellijCat:
+		return m.handleZellijKeymapCategoryKeys(key)
+
+	case ScreenKeymapsGhostty:
+		return m.handleGhosttyKeymapsMenuKeys(key)
+
+	case ScreenKeymapsGhosttyCat:
+		return m.handleGhosttyKeymapCategoryKeys(key)
 
 	case ScreenLearnLazyVim:
 		return m.handleLazyVimMenuKeys(key)
@@ -248,6 +285,15 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	case ScreenKeymapCategory:
 		m.Screen = ScreenKeymaps
 		m.KeymapScroll = 0
+	case ScreenKeymapsTmuxCat:
+		m.Screen = ScreenKeymapsTmux
+		m.TmuxKeymapScroll = 0
+	case ScreenKeymapsZellijCat:
+		m.Screen = ScreenKeymapsZellij
+		m.ZellijKeymapScroll = 0
+	case ScreenKeymapsGhosttyCat:
+		m.Screen = ScreenKeymapsGhostty
+		m.GhosttyKeymapScroll = 0
 	case ScreenLazyVimTopic:
 		m.Screen = ScreenLearnLazyVim
 		m.LazyVimScroll = 0
@@ -255,7 +301,13 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 		m.Screen = m.PrevScreen
 		m.Cursor = 0
 		m.ViewingTool = ""
-	case ScreenKeymaps, ScreenLearnLazyVim:
+	case ScreenKeymaps:
+		m.Screen = ScreenKeymapsMenu
+		m.Cursor = 0
+	case ScreenKeymapsTmux, ScreenKeymapsZellij, ScreenKeymapsGhostty:
+		m.Screen = ScreenKeymapsMenu
+		m.Cursor = 0
+	case ScreenKeymapsMenu, ScreenLearnLazyVim:
 		m.Screen = m.PrevScreen
 		m.Cursor = 0
 	// Restore screens
@@ -293,8 +345,8 @@ func (m Model) handleMainMenuKeys(key string) (tea.Model, tea.Cmd) {
 			m.Screen = ScreenLearnTerminals
 			m.PrevScreen = ScreenMainMenu
 			m.Cursor = 0
-		case strings.Contains(selected, "Neovim Keymaps"):
-			m.Screen = ScreenKeymaps
+		case strings.Contains(selected, "Keymaps Reference"):
+			m.Screen = ScreenKeymapsMenu
 			m.PrevScreen = ScreenMainMenu
 			m.Cursor = 0
 		case strings.Contains(selected, "LazyVim Guide"):
@@ -622,6 +674,266 @@ func (m Model) handleKeymapCategoryKeys(key string) (tea.Model, tea.Cmd) {
 	case "enter", " ", "q", "esc":
 		m.Screen = ScreenKeymaps
 		m.KeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleToolKeymapsMenuKeys handles the tool selection menu (Neovim, Tmux, Zellij, Ghostty)
+func (m Model) handleToolKeymapsMenuKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		selected := options[m.Cursor]
+		if strings.Contains(selected, "Back") {
+			m.Screen = m.PrevScreen
+			m.Cursor = 0
+			return m, nil
+		}
+		if strings.HasPrefix(selected, "───") {
+			return m, nil
+		}
+
+		// Navigate to specific tool's keymaps
+		switch m.Cursor {
+		case 0: // Neovim
+			m.Screen = ScreenKeymaps
+			m.Cursor = 0
+		case 1: // Tmux
+			m.Screen = ScreenKeymapsTmux
+			m.Cursor = 0
+		case 2: // Zellij
+			m.Screen = ScreenKeymapsZellij
+			m.Cursor = 0
+		case 3: // Ghostty
+			m.Screen = ScreenKeymapsGhostty
+			m.Cursor = 0
+		}
+	}
+
+	return m, nil
+}
+
+// handleTmuxKeymapsMenuKeys handles Tmux keymap category selection
+func (m Model) handleTmuxKeymapsMenuKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		selected := options[m.Cursor]
+		if strings.Contains(selected, "Back") {
+			m.Screen = ScreenKeymapsMenu
+			m.Cursor = 0
+			return m, nil
+		}
+		if strings.HasPrefix(selected, "───") {
+			return m, nil
+		}
+
+		// Select category and show keymaps
+		m.TmuxSelectedCategory = m.Cursor
+		m.Screen = ScreenKeymapsTmuxCat
+		m.TmuxKeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleTmuxKeymapCategoryKeys handles scrolling in Tmux keymap category view
+func (m Model) handleTmuxKeymapCategoryKeys(key string) (tea.Model, tea.Cmd) {
+	category := m.TmuxKeymapCategories[m.TmuxSelectedCategory]
+
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+
+	maxScroll := len(category.Keymaps) - visibleItems
+	if maxScroll < 0 {
+		maxScroll = 0
+	}
+
+	switch key {
+	case "up", "k":
+		if m.TmuxKeymapScroll > 0 {
+			m.TmuxKeymapScroll--
+		}
+	case "down", "j":
+		if m.TmuxKeymapScroll < maxScroll {
+			m.TmuxKeymapScroll++
+		}
+	case "enter", " ", "q", "esc":
+		m.Screen = ScreenKeymapsTmux
+		m.TmuxKeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleZellijKeymapsMenuKeys handles Zellij keymap category selection
+func (m Model) handleZellijKeymapsMenuKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		selected := options[m.Cursor]
+		if strings.Contains(selected, "Back") {
+			m.Screen = ScreenKeymapsMenu
+			m.Cursor = 0
+			return m, nil
+		}
+		if strings.HasPrefix(selected, "───") {
+			return m, nil
+		}
+
+		// Select category and show keymaps
+		m.ZellijSelectedCategory = m.Cursor
+		m.Screen = ScreenKeymapsZellijCat
+		m.ZellijKeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleZellijKeymapCategoryKeys handles scrolling in Zellij keymap category view
+func (m Model) handleZellijKeymapCategoryKeys(key string) (tea.Model, tea.Cmd) {
+	category := m.ZellijKeymapCategories[m.ZellijSelectedCategory]
+
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+
+	maxScroll := len(category.Keymaps) - visibleItems
+	if maxScroll < 0 {
+		maxScroll = 0
+	}
+
+	switch key {
+	case "up", "k":
+		if m.ZellijKeymapScroll > 0 {
+			m.ZellijKeymapScroll--
+		}
+	case "down", "j":
+		if m.ZellijKeymapScroll < maxScroll {
+			m.ZellijKeymapScroll++
+		}
+	case "enter", " ", "q", "esc":
+		m.Screen = ScreenKeymapsZellij
+		m.ZellijKeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleGhosttyKeymapsMenuKeys handles Ghostty keymap category selection
+func (m Model) handleGhosttyKeymapsMenuKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		selected := options[m.Cursor]
+		if strings.Contains(selected, "Back") {
+			m.Screen = ScreenKeymapsMenu
+			m.Cursor = 0
+			return m, nil
+		}
+		if strings.HasPrefix(selected, "───") {
+			return m, nil
+		}
+
+		// Select category and show keymaps
+		m.GhosttySelectedCategory = m.Cursor
+		m.Screen = ScreenKeymapsGhosttyCat
+		m.GhosttyKeymapScroll = 0
+	}
+
+	return m, nil
+}
+
+// handleGhosttyKeymapCategoryKeys handles scrolling in Ghostty keymap category view
+func (m Model) handleGhosttyKeymapCategoryKeys(key string) (tea.Model, tea.Cmd) {
+	category := m.GhosttyKeymapCategories[m.GhosttySelectedCategory]
+
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+
+	maxScroll := len(category.Keymaps) - visibleItems
+	if maxScroll < 0 {
+		maxScroll = 0
+	}
+
+	switch key {
+	case "up", "k":
+		if m.GhosttyKeymapScroll > 0 {
+			m.GhosttyKeymapScroll--
+		}
+	case "down", "j":
+		if m.GhosttyKeymapScroll < maxScroll {
+			m.GhosttyKeymapScroll++
+		}
+	case "enter", " ", "q", "esc":
+		m.Screen = ScreenKeymapsGhostty
+		m.GhosttyKeymapScroll = 0
 	}
 
 	return m, nil
