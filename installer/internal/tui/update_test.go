@@ -120,16 +120,18 @@ func TestHandleBackupConfirmKeys(t *testing.T) {
 		}
 	})
 
-	t.Run("should go to MainMenu on escape", func(t *testing.T) {
+	t.Run("should go to NvimSelect on escape (go back)", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
 		m.Cursor = 0
 
-		result, _ := m.handleBackupConfirmKeys("esc")
+		// Note: ESC is handled by handleEscape(), not handleBackupConfirmKeys()
+		// This tests the handleEscape behavior
+		result, _ := m.handleEscape()
 		newModel := result.(Model)
 
-		if newModel.Screen != ScreenMainMenu {
-			t.Errorf("Expected ScreenMainMenu, got %v", newModel.Screen)
+		if newModel.Screen != ScreenNvimSelect {
+			t.Errorf("Expected ScreenNvimSelect (go back), got %v", newModel.Screen)
 		}
 	})
 }

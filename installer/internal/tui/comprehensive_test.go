@@ -271,7 +271,8 @@ func TestSetupInstallStepsMinimal(t *testing.T) {
 	}
 	m.SetupInstallSteps()
 
-	expectedSteps := []string{"clone", "shell", "cleanup", "setshell"}
+	// Note: setshell step was removed - shell change command is now shown in completion screen
+	expectedSteps := []string{"clone", "shell", "cleanup"}
 	if len(m.Steps) != len(expectedSteps) {
 		t.Errorf("Expected %d steps, got %d", len(expectedSteps), len(m.Steps))
 		for _, s := range m.Steps {
@@ -395,7 +396,8 @@ func TestSetupInstallStepsFullInstall(t *testing.T) {
 	m.ExistingConfigs = []string{"nvim"}
 	m.SetupInstallSteps()
 
-	expectedIDs := []string{"backup", "clone", "homebrew", "xcode", "terminal", "font", "shell", "wm", "nvim", "cleanup", "setshell"}
+	// Note: setshell step was removed - shell change command is now shown in completion screen
+	expectedIDs := []string{"backup", "clone", "homebrew", "xcode", "terminal", "font", "shell", "wm", "nvim", "cleanup"}
 	if len(m.Steps) != len(expectedIDs) {
 		t.Errorf("Expected %d steps, got %d", len(expectedIDs), len(m.Steps))
 	}
@@ -969,8 +971,8 @@ func TestBackupConfirmEscape(t *testing.T) {
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEsc})
 	newModel := result.(Model)
 
-	if newModel.Screen != ScreenMainMenu {
-		t.Errorf("Escape should return to MainMenu, got %v", newModel.Screen)
+	if newModel.Screen != ScreenNvimSelect {
+		t.Errorf("Escape should go back to NvimSelect, got %v", newModel.Screen)
 	}
 }
 

@@ -74,6 +74,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tickMsg:
+		// Animate spinner during installation
+		if m.Screen == ScreenInstalling {
+			m.SpinnerFrame++
+		}
 		// Continue ticking for animations
 		return m, tickCmd()
 
@@ -246,7 +250,11 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	case ScreenKeymaps, ScreenLearnLazyVim:
 		m.Screen = m.PrevScreen
 		m.Cursor = 0
-	case ScreenBackupConfirm, ScreenRestoreBackup, ScreenRestoreConfirm:
+	case ScreenBackupConfirm:
+		// Go back to Nvim selection (not abort)
+		m.Screen = ScreenNvimSelect
+		m.Cursor = 0
+	case ScreenRestoreBackup, ScreenRestoreConfirm:
 		m.Screen = ScreenMainMenu
 		m.Cursor = 0
 	case ScreenMainMenu:
@@ -325,8 +333,58 @@ func (m Model) handleSelectionKeys(key string) (tea.Model, tea.Cmd) {
 			}
 		}
 
+	case "esc", "backspace":
+		// Go back to previous installation step
+		return m.goBackInstallStep()
+
 	case "enter", " ":
 		return m.handleSelection()
+	}
+
+	return m, nil
+}
+
+// goBackInstallStep handles going back during installation wizard
+func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
+	switch m.Screen {
+	case ScreenOSSelect:
+		// Go back to main menu
+		m.Screen = ScreenMainMenu
+		m.Cursor = 0
+		// Reset choices
+		m.Choices = UserChoices{}
+
+	case ScreenTerminalSelect:
+		m.Screen = ScreenOSSelect
+		m.Cursor = 0
+		// Reset terminal choice
+		m.Choices.Terminal = ""
+
+	case ScreenFontSelect:
+		m.Screen = ScreenTerminalSelect
+		m.Cursor = 0
+		// Reset font choice
+		m.Choices.InstallFont = false
+
+	case ScreenShellSelect:
+		// If we skipped font selection (terminal = none), go back to terminal
+		if m.Choices.Terminal == "none" {
+			m.Screen = ScreenTerminalSelect
+		} else {
+			m.Screen = ScreenFontSelect
+		}
+		m.Cursor = 0
+		m.Choices.Shell = ""
+
+	case ScreenWMSelect:
+		m.Screen = ScreenShellSelect
+		m.Cursor = 0
+		m.Choices.WindowMgr = ""
+
+	case ScreenNvimSelect:
+		m.Screen = ScreenWMSelect
+		m.Cursor = 0
+		m.Choices.InstallNvim = false
 	}
 
 	return m, nil
@@ -534,7 +592,14 @@ func (m Model) handleKeymapsMenuKeys(key string) (tea.Model, tea.Cmd) {
 
 func (m Model) handleKeymapCategoryKeys(key string) (tea.Model, tea.Cmd) {
 	category := m.KeymapCategories[m.SelectedCategory]
-	maxScroll := len(category.Keymaps) - 10 // Show 10 keymaps at a time
+
+	// Calculate visible items based on terminal height (same as view)
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+
+	maxScroll := len(category.Keymaps) - visibleItems
 	if maxScroll < 0 {
 		maxScroll = 0
 	}
@@ -596,9 +661,17 @@ func (m Model) handleLazyVimMenuKeys(key string) (tea.Model, tea.Cmd) {
 
 func (m Model) handleLazyVimTopicKeys(key string) (tea.Model, tea.Cmd) {
 	topic := m.LazyVimTopics[m.SelectedLazyVimTopic]
+
+	// Calculate view height based on terminal size (same as view)
+	// Reserve space for: title(1) + description(1) + blank(2) + scroll info(2) + help(2) = 8 lines
+	viewHeight := m.Height - 8
+	if viewHeight < 10 {
+		viewHeight = 10 // Minimum
+	}
+
 	// Calculate content height: content lines + code example lines + tips
 	contentLines := len(topic.Content) + strings.Count(topic.CodeExample, "\n") + len(topic.Tips) + 10
-	maxScroll := contentLines - 15 // View height
+	maxScroll := contentLines - viewHeight
 	if maxScroll < 0 {
 		maxScroll = 0
 	}
@@ -656,12 +729,15 @@ func (m Model) handleBackupConfirmKeys(key string) (tea.Model, tea.Cmd) {
 			m.Screen = ScreenInstalling
 			m.CurrentStep = 0
 			return m, func() tea.Msg { return installStartMsg{} }
-		case 2: // Cancel
+		case 2: // Cancel - abort the entire wizard
 			m.Screen = ScreenMainMenu
 			m.Cursor = 0
+			// Reset choices when canceling
+			m.Choices = UserChoices{}
 		}
-	case "esc":
-		m.Screen = ScreenMainMenu
+	case "esc", "backspace":
+		// Go back to Nvim selection
+		m.Screen = ScreenNvimSelect
 		m.Cursor = 0
 	}
 
