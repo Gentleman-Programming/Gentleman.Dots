@@ -1,0 +1,149 @@
+# AI Configuration for Neovim
+
+This configuration includes several AI assistants integrated with Neovim. By default, **OpenCode is enabled** as the primary AI assistant with the custom Gentleman agent.
+
+## Available AI Assistants
+
+| Plugin | Description | Status |
+|--------|-------------|--------|
+| **OpenCode.nvim** | OpenCode AI integration with Gentleman agent | ✅ Enabled by default |
+| **Avante.nvim** | AI-powered coding assistant | Disabled |
+| **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
+| **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
+| **Claude Code.nvim** | Claude AI integration | Disabled |
+| **Gemini.nvim** | Google Gemini integration | Disabled |
+
+## Switching AI Plugins
+
+All plugin states are managed in a single file:
+
+```bash
+nvim ~/.config/nvim/lua/plugins/disabled.lua
+```
+
+To switch plugins:
+
+1. Find the plugin you want to disable and set `enabled = false`
+2. Find the plugin you want to enable and set `enabled = true`
+3. Save and restart Neovim
+
+**Example - switching from OpenCode to Claude Code:**
+
+```lua
+{
+  "NickvanDyke/opencode.nvim",
+  enabled = false,  -- Disable OpenCode
+},
+{
+  "coder/claudecode.nvim",
+  enabled = true,   -- Enable Claude Code
+},
+```
+
+> **Important:** Only enable ONE AI plugin at a time to avoid conflicts and keybinding issues.
+
+## Required CLI Tools
+
+These are automatically installed by the script:
+
+- **OpenCode CLI**: `curl -fsSL https://opencode.ai/install | bash`
+- **Claude Code CLI**: `curl -fsSL https://claude.ai/install.sh | bash`
+- **Gemini CLI**: `brew install gemini-cli`
+
+API keys may be required for some services - check each plugin's documentation.
+
+## Recommended AI Assistants
+
+| Use Case | Recommended Plugin |
+|----------|-------------------|
+| Full Gentleman experience | **OpenCode.nvim** (default) |
+| Claude users | **Claude Code.nvim** |
+| GitHub Copilot users | **CopilotChat.nvim** |
+| Multi-provider flexibility | **CodeCompanion.nvim** |
+| Google Gemini users | **Gemini.nvim** |
+
+---
+
+## OpenCode Configuration
+
+OpenCode is installed automatically with a custom **Gentleman** agent and theme.
+
+### Gentleman Agent Philosophy
+
+The Gentleman agent is a Senior Architect persona with 15+ years of experience:
+
+- **Never a Yes-Man**: Won't say "you're right" without verifying first
+- **Collaborative Partner**: Like Jarvis to Tony Stark - provides data, alternatives, and pushes back
+- **Proposes Alternatives**: Always presents options with tradeoffs
+- **Verifies Before Agreeing**: Investigates before accepting challenges to suggestions
+- **Bilingual**: Responds in Rioplatense Spanish or confrontational English based on your language
+
+### Using the Gentleman Agent
+
+1. Open OpenCode in your terminal:
+   ```bash
+   opencode
+   ```
+
+2. Type `/agent` and press Enter
+
+3. Select **gentleman** from the list
+
+### Configuring the Default Model
+
+Edit your OpenCode configuration:
+
+```bash
+nvim ~/.config/opencode/opencode.json
+```
+
+Example configuration:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "gentleman",
+  "model": "anthropic/claude-sonnet-4-20250514",
+  "agent": {
+    "gentleman": {
+      ...
+    }
+  }
+}
+```
+
+### Available Models
+
+| Provider | Model ID |
+|----------|----------|
+| Anthropic | `anthropic/claude-sonnet-4-20250514` |
+| Anthropic | `anthropic/claude-haiku-4-20250514` |
+| OpenAI | `openai/gpt-4o` |
+| OpenAI | `openai/gpt-4o-mini` |
+| Google | `google/gemini-2.0-flash` |
+| Google | `google/gemini-2.5-pro-preview-06-05` |
+
+You can also set a specific model per agent:
+
+```json
+{
+  "agent": {
+    "gentleman": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      ...
+    }
+  }
+}
+```
+
+### OpenCode Theme
+
+The configuration includes a custom **Gentleman** theme with a dark background and Kanagawa-inspired colors. The theme is automatically applied when you run OpenCode.
+
+### MCP Integrations
+
+The Gentleman OpenCode config includes MCP (Model Context Protocol) integration:
+
+- **Context7**: Remote MCP for fetching up-to-date documentation
+
+This is enabled by default and enhances the agent's ability to verify information with current docs.

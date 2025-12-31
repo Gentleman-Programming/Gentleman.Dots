@@ -1,0 +1,16 @@
+[?25l[?2004h]2;Gentleman.Dots Installer⚠️  Existing Configs Detected[K
+                             [K
+The following configs will be overwritten:[K
+[K
+  ⚠️  .config/nvim[K
+  ⚠️  .zshrc[K
+  ⚠️  .tmux.conf[K
+[K
+Creating a backup allows you to restore later if needed.[K
+[K
+  ▸ ✅ Install with Backup (recommended)[K
+      ⚠️  Install without Backup[K
+      ❌ Cancel[K
+[K
+                                                 [K
+↑/k up • ↓/j down • [Enter] select • [Esc] cancel[K[15A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

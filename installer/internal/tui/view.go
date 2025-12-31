@@ -1,0 +1,887 @@
+package tui
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+)
+
+const logo = `
+                    ░░░░░░      ░░░░░░                        
+                  ░░░░░░░░░░  ░░░░░░░░░░                      
+                ░░░░░░░░░░░░░░░░░░░░░░░░░░                    
+              ░░░░░░░░░░▒▒▒▒░░▒▒▒▒░░░░░░░░░░                  
+  ░░░░      ░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░        ░░░░    
+▒▒░░      ░░░░░░▒▒▒▒▒▒▒▒▒▒██▒▒██▒▒▒▒▒▒▒▒▒▒░░░░░░        ▒▒░░  
+▒▒░░    ░░░░░░░░▒▒▒▒▒▒▒▒▒▒████▒▒████▒▒▒▒▒▒▒▒▒▒░░░░░░░░  ▒▒░░  
+▒▒▒▒░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒██████▒▒██████▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒
+██▒▒▒▒▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██████▓▓██▒▒██████▒▒▓▓██▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+████▒▒▒▒▒▒████▒▒▒▒██████████  ██████████▒▒▒▒████▒▒▒▒▒▒▒▒██    
+  ████████████████████████      ████████████████████████      
+    ██████████████████              ██████████████████        
+        ██████████                      ██████████            
+`
+
+const gentlemanText = `
+ ██████╗ ███████╗███╗   ██╗████████╗██╗     ███████╗███╗   ███╗ █████╗ ███╗   ██╗
+██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝██║     ██╔════╝████╗ ████║██╔══██╗████╗  ██║
+██║  ███╗█████╗  ██╔██╗ ██║   ██║   ██║     █████╗  ██╔████╔██║███████║██╔██╗ ██║
+██║   ██║██╔══╝  ██║╚██╗██║   ██║   ██║     ██╔══╝  ██║╚██╔╝██║██╔══██║██║╚██╗██║
+╚██████╔╝███████╗██║ ╚████║   ██║   ███████╗███████╗██║ ╚═╝ ██║██║  ██║██║ ╚████║
+ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+                              ██████╗  ██████╗ ████████╗███████╗
+                              ██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝
+                              ██║  ██║██║   ██║   ██║   ███████╗
+                              ██║  ██║██║   ██║   ██║   ╚════██║
+                              ██████╔╝╚██████╔╝   ██║   ███████║
+                              ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝
+`
+
+// View implements tea.Model
+func (m Model) View() string {
+	if m.Quitting {
+		return ""
+	}
+
+	var s strings.Builder
+
+	switch m.Screen {
+	case ScreenWelcome:
+		s.WriteString(m.renderWelcome())
+	case ScreenMainMenu:
+		s.WriteString(m.renderMainMenu())
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+		s.WriteString(m.renderSelection())
+	case ScreenLearnTerminals:
+		s.WriteString(m.renderLearnTerminals())
+	case ScreenLearnShells:
+		s.WriteString(m.renderLearnShells())
+	case ScreenLearnWM:
+		s.WriteString(m.renderLearnWM())
+	case ScreenLearnNvim:
+		s.WriteString(m.renderLearnNvim())
+	case ScreenKeymaps:
+		s.WriteString(m.renderKeymapsMenu())
+	case ScreenKeymapCategory:
+		s.WriteString(m.renderKeymapCategory())
+	case ScreenLearnLazyVim:
+		s.WriteString(m.renderLazyVimMenu())
+	case ScreenLazyVimTopic:
+		s.WriteString(m.renderLazyVimTopic())
+	case ScreenBackupConfirm:
+		s.WriteString(m.renderBackupConfirm())
+	case ScreenRestoreBackup:
+		s.WriteString(m.renderRestoreBackup())
+	case ScreenRestoreConfirm:
+		s.WriteString(m.renderRestoreConfirm())
+	case ScreenInstalling:
+		s.WriteString(m.renderInstalling())
+	case ScreenComplete:
+		s.WriteString(m.renderComplete())
+	case ScreenError:
+		s.WriteString(m.renderError())
+	}
+
+	return s.String()
+}
+
+func (m Model) renderWelcome() string {
+	var s strings.Builder
+
+	// Logo
+	s.WriteString(LogoStyle.Render(logo))
+	s.WriteString("\n")
+	s.WriteString(TitleStyle.Render(gentlemanText))
+	s.WriteString("\n\n")
+
+	// System info
+	info := fmt.Sprintf("Detected: %s", m.SystemInfo.OSName)
+	if m.SystemInfo.IsWSL {
+		info += " (WSL)"
+	}
+	if m.SystemInfo.HasBrew {
+		info += " | Homebrew ✓"
+	}
+	s.WriteString(InfoStyle.Render(info))
+	s.WriteString("\n\n")
+
+	// Instructions
+	s.WriteString(SubtitleStyle.Render("Your terminal environment, configured in minutes."))
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("Press [Enter] to start • [q] to quit"))
+
+	return CenterHorizontally(s.String(), m.Width)
+}
+
+func (m Model) renderMainMenu() string {
+	var s strings.Builder
+
+	// Title
+	s.WriteString(TitleStyle.Render("🎩 Gentleman.Dots"))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("What would you like to do?"))
+	s.WriteString("\n\n")
+
+	// Options
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [q] quit"))
+
+	return s.String()
+}
+
+func (m Model) renderSelection() string {
+	var s strings.Builder
+
+	// Progress indicator
+	s.WriteString(m.renderStepProgress())
+	s.WriteString("\n\n")
+
+	// Title
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(m.GetScreenDescription()))
+	s.WriteString("\n\n")
+
+	// Options
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		// Separator line
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [q] quit"))
+
+	return s.String()
+}
+
+func (m Model) renderStepProgress() string {
+	steps := []string{"OS", "Terminal", "Font", "Shell", "WM", "Nvim"}
+	currentIdx := 0
+
+	switch m.Screen {
+	case ScreenOSSelect:
+		currentIdx = 0
+	case ScreenTerminalSelect:
+		currentIdx = 1
+	case ScreenFontSelect:
+		currentIdx = 2
+	case ScreenShellSelect:
+		currentIdx = 3
+	case ScreenWMSelect:
+		currentIdx = 4
+	case ScreenNvimSelect:
+		currentIdx = 5
+	}
+
+	var parts []string
+	for i, step := range steps {
+		var style lipgloss.Style
+		if i < currentIdx {
+			style = StepDoneStyle
+			parts = append(parts, style.Render("✓ "+step))
+		} else if i == currentIdx {
+			style = StepActiveStyle
+			parts = append(parts, style.Render("● "+step))
+		} else {
+			style = StepPendingStyle
+			parts = append(parts, style.Render("○ "+step))
+		}
+	}
+
+	return strings.Join(parts, MutedStyle.Render(" → "))
+}
+
+func (m Model) renderLearnTerminals() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a terminal to learn more about it"))
+	s.WriteString("\n\n")
+
+	// If viewing a specific tool, show its info
+	if m.ViewingTool != "" {
+		return m.renderToolInfo(GetTerminalInfo(), m.ViewingTool, "terminal")
+	}
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderLearnShells() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a shell to learn more about it"))
+	s.WriteString("\n\n")
+
+	// If viewing a specific tool, show its info
+	if m.ViewingTool != "" {
+		return m.renderToolInfo(GetShellInfo(), m.ViewingTool, "shell")
+	}
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderLearnWM() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a window manager to learn more about it"))
+	s.WriteString("\n\n")
+
+	// If viewing a specific tool, show its info
+	if m.ViewingTool != "" {
+		return m.renderToolInfo(GetWMInfo(), m.ViewingTool, "wm")
+	}
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderLearnNvim() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Explore Neovim features and keybindings"))
+	s.WriteString("\n\n")
+
+	// If viewing features, show Nvim info
+	if m.ViewingTool == "features" {
+		info := GetNvimInfo()
+		return m.renderSingleToolInfo(info)
+	}
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderToolInfo(tools map[string]ToolInfo, toolKey string, category string) string {
+	var s strings.Builder
+
+	info, exists := tools[toolKey]
+	if !exists {
+		s.WriteString(ErrorStyle.Render("Tool not found"))
+		return s.String()
+	}
+
+	return m.renderSingleToolInfo(info)
+}
+
+func (m Model) renderSingleToolInfo(info ToolInfo) string {
+	var s strings.Builder
+
+	// Tool name and description
+	s.WriteString(TitleStyle.Render(info.Name))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(info.Description))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(info.Website))
+	s.WriteString("\n\n")
+
+	// Pros
+	s.WriteString(SuccessStyle.Render("✓ Pros"))
+	s.WriteString("\n")
+	for _, pro := range info.Pros {
+		s.WriteString(InfoStyle.Render("  • " + pro))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+
+	// Cons
+	s.WriteString(WarningStyle.Render("✗ Cons"))
+	s.WriteString("\n")
+	for _, con := range info.Cons {
+		s.WriteString(MutedStyle.Render("  • " + con))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("[Enter/Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderKeymapsMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a category to view keybindings"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+func (m Model) renderKeymapCategory() string {
+	var s strings.Builder
+
+	if m.SelectedCategory >= len(m.KeymapCategories) {
+		return ErrorStyle.Render("Category not found")
+	}
+
+	category := m.KeymapCategories[m.SelectedCategory]
+
+	s.WriteString(TitleStyle.Render(category.Name))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(category.Description))
+	s.WriteString("\n\n")
+
+	// Table header
+	header := fmt.Sprintf("%-15s %-6s %s", "Keys", "Mode", "Description")
+	s.WriteString(SubtitleStyle.Render(header))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n")
+
+	// Keymaps with scrolling
+	start := m.KeymapScroll
+	end := start + 12 // Show 12 keymaps at a time
+	if end > len(category.Keymaps) {
+		end = len(category.Keymaps)
+	}
+
+	for i := start; i < end; i++ {
+		km := category.Keymaps[i]
+		keyStyle := KeyStyle
+		line := fmt.Sprintf("%-15s %-6s %s", km.Keys, km.Mode, km.Description)
+		s.WriteString(keyStyle.Render(km.Keys))
+		s.WriteString(MutedStyle.Render(fmt.Sprintf(" %-6s ", km.Mode)))
+		s.WriteString(InfoStyle.Render(km.Description))
+		s.WriteString("\n")
+		_ = line // Suppress unused warning
+	}
+
+	// Scroll indicator
+	if len(category.Keymaps) > 12 {
+		s.WriteString("\n")
+		scrollInfo := fmt.Sprintf("Showing %d-%d of %d", start+1, end, len(category.Keymaps))
+		s.WriteString(MutedStyle.Render(scrollInfo))
+	}
+
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter/Esc/q] back"))
+
+	return s.String()
+}
+
+func (m Model) renderLazyVimMenu() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Learn how to use and customize LazyVim"))
+	s.WriteString("\n\n")
+
+	// Menu
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc/q] back"))
+
+	return s.String()
+}
+
+func (m Model) renderLazyVimTopic() string {
+	var s strings.Builder
+
+	if m.SelectedLazyVimTopic >= len(m.LazyVimTopics) {
+		return ErrorStyle.Render("Topic not found")
+	}
+
+	topic := m.LazyVimTopics[m.SelectedLazyVimTopic]
+
+	s.WriteString(TitleStyle.Render(topic.Title))
+	s.WriteString("\n")
+	s.WriteString(SubtitleStyle.Render(topic.Description))
+	s.WriteString("\n\n")
+
+	// Build all content
+	var allLines []string
+
+	// Content
+	allLines = append(allLines, topic.Content...)
+	allLines = append(allLines, "") // Empty line
+
+	// Code example
+	if topic.CodeExample != "" {
+		allLines = append(allLines, "📝 Example:")
+		allLines = append(allLines, "")
+		codeLines := strings.Split(topic.CodeExample, "\n")
+		allLines = append(allLines, codeLines...)
+		allLines = append(allLines, "") // Empty line
+	}
+
+	// Tips
+	if len(topic.Tips) > 0 {
+		allLines = append(allLines, "💡 Tips:")
+		for _, tip := range topic.Tips {
+			allLines = append(allLines, "  • "+tip)
+		}
+	}
+
+	// Apply scrolling
+	start := m.LazyVimScroll
+	viewHeight := 18 // Lines visible
+	end := start + viewHeight
+	if end > len(allLines) {
+		end = len(allLines)
+	}
+	if start > len(allLines) {
+		start = 0
+	}
+
+	for i := start; i < end; i++ {
+		line := allLines[i]
+		// Style code lines differently
+		if strings.HasPrefix(line, "--") || strings.HasPrefix(line, "local") ||
+			strings.HasPrefix(line, "return") || strings.HasPrefix(line, "{") ||
+			strings.HasPrefix(line, "}") || strings.HasPrefix(line, "  ") ||
+			strings.HasPrefix(line, "map(") || strings.HasPrefix(line, "vim.") ||
+			strings.HasPrefix(line, "require") {
+			s.WriteString(CodeStyle.Render(line))
+		} else if strings.HasPrefix(line, "📝") || strings.HasPrefix(line, "💡") {
+			s.WriteString(SubtitleStyle.Render(line))
+		} else if strings.HasPrefix(line, "  •") {
+			s.WriteString(InfoStyle.Render(line))
+		} else if strings.HasPrefix(line, "•") {
+			s.WriteString(MutedStyle.Render(line))
+		} else {
+			s.WriteString(InfoStyle.Render(line))
+		}
+		s.WriteString("\n")
+	}
+
+	// Scroll indicator
+	if len(allLines) > viewHeight {
+		s.WriteString("\n")
+		scrollInfo := fmt.Sprintf("Lines %d-%d of %d (↑↓ to scroll, PgUp/PgDn for fast scroll)", start+1, end, len(allLines))
+		s.WriteString(MutedStyle.Render(scrollInfo))
+	}
+
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • PgUp/PgDn • [Enter/Esc/q] back"))
+
+	return s.String()
+}
+
+func (m Model) renderInstalling() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render("🚀 Installing Gentleman.Dots"))
+	s.WriteString("\n\n")
+
+	// Progress steps
+	for i, step := range m.Steps {
+		var icon string
+		var style lipgloss.Style
+
+		switch step.Status {
+		case StatusPending:
+			icon = "○"
+			style = MutedStyle
+		case StatusRunning:
+			icon = "◐"
+			style = WarningStyle
+		case StatusDone:
+			icon = "✓"
+			style = SuccessStyle
+		case StatusFailed:
+			icon = "✗"
+			style = ErrorStyle
+		case StatusSkipped:
+			icon = "⊘"
+			style = MutedStyle
+		}
+
+		line := fmt.Sprintf("%s %s", icon, step.Name)
+		s.WriteString(style.Render(line))
+
+		// Progress bar for running step
+		if step.Status == StatusRunning {
+			s.WriteString(" ")
+			s.WriteString(m.renderProgressBar(step.Progress, 20))
+		}
+
+		s.WriteString("\n")
+
+		// Show current step description
+		if i == m.CurrentStep && step.Status == StatusRunning {
+			s.WriteString(MutedStyle.Render("   " + step.Description))
+			s.WriteString("\n")
+		}
+	}
+
+	// Log output if details enabled
+	if m.ShowDetails && len(m.LogLines) > 0 {
+		s.WriteString("\n")
+		s.WriteString(BoxStyle.Render(strings.Join(m.LogLines[max(0, len(m.LogLines)-10):], "\n")))
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("[d] toggle details"))
+
+	return s.String()
+}
+
+func (m Model) renderProgressBar(progress float64, width int) string {
+	filled := int(progress * float64(width))
+	empty := width - filled
+
+	bar := strings.Repeat("█", filled) + strings.Repeat("░", empty)
+	percentage := fmt.Sprintf(" %3.0f%%", progress*100)
+
+	return InfoStyle.Render(bar) + MutedStyle.Render(percentage)
+}
+
+func (m Model) renderComplete() string {
+	var s strings.Builder
+
+	s.WriteString(SuccessStyle.Render("✨ Installation Complete! ✨"))
+	s.WriteString("\n\n")
+
+	// Summary
+	s.WriteString(TitleStyle.Render("Summary"))
+	s.WriteString("\n")
+
+	items := []string{
+		fmt.Sprintf("OS: %s", m.Choices.OS),
+		fmt.Sprintf("Terminal: %s", m.Choices.Terminal),
+		fmt.Sprintf("Shell: %s", m.Choices.Shell),
+		fmt.Sprintf("Window Manager: %s", m.Choices.WindowMgr),
+	}
+
+	if m.Choices.InstallFont {
+		items = append(items, "Font: Iosevka Term Nerd Font")
+	}
+	if m.Choices.InstallNvim {
+		items = append(items, "Editor: Neovim with Gentleman config")
+	}
+
+	for _, item := range items {
+		s.WriteString(InfoStyle.Render("  • " + item))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(WarningStyle.Render("⚠️  Restart your terminal or run:"))
+	s.WriteString("\n")
+
+	shell := m.Choices.Shell
+	if shell == "nushell" {
+		shell = "nu"
+	}
+	s.WriteString(InfoStyle.Render(fmt.Sprintf("   exec %s", shell)))
+	s.WriteString("\n\n")
+
+	s.WriteString(HelpStyle.Render("Press [Enter] or [q] to exit"))
+
+	return s.String()
+}
+
+func (m Model) renderError() string {
+	var s strings.Builder
+
+	s.WriteString(ErrorStyle.Render("❌ Installation Failed"))
+	s.WriteString("\n\n")
+
+	s.WriteString(MutedStyle.Render("Error:"))
+	s.WriteString("\n")
+	s.WriteString(ErrorStyle.Render(m.ErrorMsg))
+	s.WriteString("\n\n")
+
+	s.WriteString(HelpStyle.Render("[r] retry • [q] quit"))
+
+	return s.String()
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func (m Model) renderBackupConfirm() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("The following configs will be overwritten:"))
+	s.WriteString("\n\n")
+
+	// List existing configs
+	for _, config := range m.ExistingConfigs {
+		s.WriteString(WarningStyle.Render("  ⚠️  " + config))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(InfoStyle.Render("Creating a backup allows you to restore later if needed."))
+	s.WriteString("\n\n")
+
+	// Options
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] cancel"))
+
+	return s.String()
+}
+
+func (m Model) renderRestoreBackup() string {
+	var s strings.Builder
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Select a backup to restore or delete"))
+	s.WriteString("\n\n")
+
+	if len(m.AvailableBackups) == 0 {
+		s.WriteString(MutedStyle.Render("No backups found."))
+		s.WriteString("\n")
+	} else {
+		// List backups
+		for i, backup := range m.AvailableBackups {
+			cursor := "  "
+			style := UnselectedStyle
+			if i == m.Cursor {
+				cursor = "▸ "
+				style = SelectedStyle
+			}
+
+			// Format: timestamp + item count
+			label := fmt.Sprintf("📁 %s (%d items)", backup.Timestamp.Format("2006-01-02 15:04:05"), len(backup.Files))
+			s.WriteString(style.Render(cursor + label))
+			s.WriteString("\n")
+		}
+	}
+
+	// Separator and Back
+	s.WriteString(MutedStyle.Render("─────────────"))
+	s.WriteString("\n")
+
+	backIdx := len(m.AvailableBackups) + 1
+	cursor := "  "
+	style := UnselectedStyle
+	if m.Cursor == backIdx {
+		cursor = "▸ "
+		style = SelectedStyle
+	}
+	s.WriteString(style.Render(cursor + "← Back"))
+	s.WriteString("\n")
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderRestoreConfirm() string {
+	var s strings.Builder
+
+	if m.SelectedBackup >= len(m.AvailableBackups) {
+		return ErrorStyle.Render("No backup selected")
+	}
+
+	backup := m.AvailableBackups[m.SelectedBackup]
+
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Backup from: " + backup.Timestamp.Format("2006-01-02 15:04:05")))
+	s.WriteString("\n\n")
+
+	// List files in backup
+	s.WriteString(SubtitleStyle.Render("Contents:"))
+	s.WriteString("\n")
+	for _, file := range backup.Files {
+		s.WriteString(InfoStyle.Render("  • " + file))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(WarningStyle.Render("⚠️  Restoring will overwrite your current configs!"))
+	s.WriteString("\n\n")
+
+	// Options
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] cancel"))
+
+	return s.String()
+}

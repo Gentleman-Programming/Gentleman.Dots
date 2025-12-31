@@ -65,12 +65,6 @@ require("lazy").setup({
     -- Language support plugins
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.markdown" },
-    { import = "lazyvim.plugins.extras.lang.typescript" },
-    { import = "lazyvim.plugins.extras.lang.angular" },
-    { import = "lazyvim.plugins.extras.lang.astro" },
-    { import = "lazyvim.plugins.extras.lang.go" },
-    { import = "lazyvim.plugins.extras.lang.nix" },
-    { import = "lazyvim.plugins.extras.lang.toml" },
 
     -- Coding plugins
     { import = "lazyvim.plugins.extras.coding.mini-surround" },
