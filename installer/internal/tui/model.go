@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // Screen represents the current screen being displayed
@@ -85,6 +86,10 @@ type Model struct {
 	LogLines    []string
 	TotalTime   float64
 	Quitting    bool
+	// Program reference for sending messages during installation
+	Program *tea.Program
+	// Spinner animation
+	SpinnerFrame int
 	// Learn mode
 	ViewingTool string // Current tool being viewed in learn mode
 	// Keymaps mode
@@ -116,6 +121,7 @@ func NewModel() Model {
 		Cursor:               0,
 		ShowDetails:          false,
 		LogLines:             []string{},
+		SpinnerFrame:         0,
 		KeymapCategories:     GetNvimKeymaps(),
 		SelectedCategory:     0,
 		KeymapScroll:         0,
@@ -126,7 +132,36 @@ func NewModel() Model {
 		AvailableBackups:     []system.BackupInfo{},
 		SelectedBackup:       0,
 		BackupDir:            "",
+		Program:              nil, // Will be set after tea.Program is created
 	}
+}
+
+// SetProgram sets the tea.Program reference for sending messages during installation
+func (m *Model) SetProgram(p *tea.Program) {
+	m.Program = p
+}
+
+// globalProgram holds a reference to the tea.Program for sending logs during installation
+var globalProgram *tea.Program
+
+// SetGlobalProgram sets the global program reference
+func SetGlobalProgram(p *tea.Program) {
+	globalProgram = p
+}
+
+// SendLog sends a log message to the TUI during installation
+func SendLog(stepID string, log string) {
+	if globalProgram != nil {
+		globalProgram.Send(stepProgressMsg{
+			stepID: stepID,
+			log:    log,
+		})
+	}
+}
+
+// SendLogLine is an alias for SendLog for compatibility
+func (m *Model) SendLog(stepID string, log string) {
+	SendLog(stepID, log)
 }
 
 // GetCurrentOptions returns the options for the current screen
@@ -395,15 +430,7 @@ func (m *Model) SetupInstallSteps() {
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "cleanup",
 		Name:        "Cleanup",
-		Description: "Finishing up",
-		Status:      StatusPending,
-	})
-
-	// Set default shell
-	m.Steps = append(m.Steps, InstallStep{
-		ID:          "setshell",
-		Name:        "Set Default Shell",
-		Description: "Configure " + m.Choices.Shell + " as default",
+		Description: "Removing temporary files",
 		Status:      StatusPending,
 	})
 }

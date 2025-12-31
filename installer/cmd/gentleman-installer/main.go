@@ -29,11 +29,13 @@ func main() {
 		}
 	}
 
+	model := tui.NewModel()
 	p := tea.NewProgram(
-		tui.NewModel(),
+		model,
 		tea.WithAltScreen(),
 		tea.WithMouseCellMotion(),
 	)
+	tui.SetGlobalProgram(p)
 
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error running installer: %v\n", err)

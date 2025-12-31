@@ -11,11 +11,42 @@ import (
 	"time"
 )
 
+// ExecError provides detailed error information for command execution
+type ExecError struct {
+	Command  string
+	ExitCode int
+	Stderr   string
+	Stdout   string
+	Wrapped  error
+}
+
+func (e *ExecError) Error() string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("command failed: %s\n", e.Command))
+	sb.WriteString(fmt.Sprintf("exit code: %d\n", e.ExitCode))
+	if e.Stderr != "" {
+		sb.WriteString(fmt.Sprintf("stderr: %s\n", strings.TrimSpace(e.Stderr)))
+	}
+	if e.Stdout != "" && e.Stderr == "" {
+		sb.WriteString(fmt.Sprintf("output: %s\n", strings.TrimSpace(e.Stdout)))
+	}
+	if e.Wrapped != nil {
+		sb.WriteString(fmt.Sprintf("cause: %v", e.Wrapped))
+	}
+	return sb.String()
+}
+
+func (e *ExecError) Unwrap() error {
+	return e.Wrapped
+}
+
 type ExecResult struct {
 	Output   string
+	Stderr   string
 	Error    error
 	ExitCode int
 	Duration time.Duration
+	Command  string
 }
 
 type ExecOptions struct {
@@ -25,14 +56,16 @@ type ExecOptions struct {
 	Timeout    time.Duration
 }
 
-// Run executes a command and returns the result
+// Run executes a command and returns the result with detailed error information
 func Run(command string, opts *ExecOptions) *ExecResult {
 	if opts == nil {
 		opts = &ExecOptions{}
 	}
 
 	start := time.Now()
-	result := &ExecResult{}
+	result := &ExecResult{
+		Command: command,
+	}
 
 	ctx := context.Background()
 	if opts.Timeout > 0 {
@@ -54,31 +87,60 @@ func Run(command string, opts *ExecOptions) *ExecResult {
 		cmd.Env = append(cmd.Env, opts.Env...)
 	}
 
-	var output strings.Builder
+	var stdout, stderr strings.Builder
 
 	if opts.ShowOutput {
 		// Stream output to stdout and capture it
-		stdout, _ := cmd.StdoutPipe()
-		stderr, _ := cmd.StderrPipe()
+		stdoutPipe, _ := cmd.StdoutPipe()
+		stderrPipe, _ := cmd.StderrPipe()
 
 		if err := cmd.Start(); err != nil {
-			result.Error = err
+			result.Error = &ExecError{
+				Command: command,
+				Wrapped: err,
+			}
 			result.Duration = time.Since(start)
 			return result
 		}
 
-		go streamOutput(stdout, &output)
-		go streamOutput(stderr, &output)
+		go streamOutput(stdoutPipe, &stdout)
+		go streamOutput(stderrPipe, &stderr)
 
-		result.Error = cmd.Wait()
+		err := cmd.Wait()
+		if err != nil {
+			result.ExitCode = cmd.ProcessState.ExitCode()
+			result.Error = &ExecError{
+				Command:  command,
+				ExitCode: result.ExitCode,
+				Stdout:   stdout.String(),
+				Stderr:   stderr.String(),
+				Wrapped:  err,
+			}
+		}
 	} else {
-		// Just capture output
-		out, err := cmd.CombinedOutput()
-		output.Write(out)
-		result.Error = err
+		// Capture stdout and stderr separately for better error messages
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+
+		err := cmd.Run()
+		if err != nil {
+			exitCode := 1
+			if cmd.ProcessState != nil {
+				exitCode = cmd.ProcessState.ExitCode()
+			}
+			result.ExitCode = exitCode
+			result.Error = &ExecError{
+				Command:  command,
+				ExitCode: exitCode,
+				Stdout:   stdout.String(),
+				Stderr:   stderr.String(),
+				Wrapped:  err,
+			}
+		}
 	}
 
-	result.Output = output.String()
+	result.Output = stdout.String()
+	result.Stderr = stderr.String()
 	result.Duration = time.Since(start)
 
 	if cmd.ProcessState != nil {
@@ -298,4 +360,128 @@ func RestoreBackup(backupDir string) error {
 // DeleteBackup removes a backup directory
 func DeleteBackup(backupDir string) error {
 	return os.RemoveAll(backupDir)
+}
+
+// LogCallback is a function that receives log lines during command execution
+type LogCallback func(line string)
+
+// RunWithLogs executes a command and streams output to a callback function
+// This allows the TUI to display real-time installation progress
+func RunWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResult {
+	if opts == nil {
+		opts = &ExecOptions{}
+	}
+
+	start := time.Now()
+	result := &ExecResult{
+		Command: command,
+	}
+
+	ctx := context.Background()
+	if opts.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, opts.Timeout)
+		defer cancel()
+	}
+
+	cmd := exec.CommandContext(ctx, "bash", "-c", command)
+
+	if opts.WorkDir != "" {
+		cmd.Dir = opts.WorkDir
+	}
+
+	cmd.Env = os.Environ()
+	if len(opts.Env) > 0 {
+		cmd.Env = append(cmd.Env, opts.Env...)
+	}
+
+	var stdout, stderr strings.Builder
+
+	stdoutPipe, err := cmd.StdoutPipe()
+	if err != nil {
+		result.Error = &ExecError{Command: command, Wrapped: err}
+		result.Duration = time.Since(start)
+		return result
+	}
+
+	stderrPipe, err := cmd.StderrPipe()
+	if err != nil {
+		result.Error = &ExecError{Command: command, Wrapped: err}
+		result.Duration = time.Since(start)
+		return result
+	}
+
+	if err := cmd.Start(); err != nil {
+		result.Error = &ExecError{Command: command, Wrapped: err}
+		result.Duration = time.Since(start)
+		return result
+	}
+
+	// Stream stdout with callback
+	done := make(chan struct{})
+	go func() {
+		scanner := bufio.NewScanner(stdoutPipe)
+		for scanner.Scan() {
+			line := scanner.Text()
+			stdout.WriteString(line + "\n")
+			if onLog != nil {
+				onLog(line)
+			}
+		}
+		done <- struct{}{}
+	}()
+
+	// Stream stderr with callback
+	go func() {
+		scanner := bufio.NewScanner(stderrPipe)
+		for scanner.Scan() {
+			line := scanner.Text()
+			stderr.WriteString(line + "\n")
+			if onLog != nil {
+				onLog(line)
+			}
+		}
+		done <- struct{}{}
+	}()
+
+	// Wait for both streams to complete
+	<-done
+	<-done
+
+	err = cmd.Wait()
+	if err != nil {
+		exitCode := 1
+		if cmd.ProcessState != nil {
+			exitCode = cmd.ProcessState.ExitCode()
+		}
+		result.ExitCode = exitCode
+		result.Error = &ExecError{
+			Command:  command,
+			ExitCode: exitCode,
+			Stdout:   stdout.String(),
+			Stderr:   stderr.String(),
+			Wrapped:  err,
+		}
+	}
+
+	result.Output = stdout.String()
+	result.Stderr = stderr.String()
+	result.Duration = time.Since(start)
+
+	if cmd.ProcessState != nil {
+		result.ExitCode = cmd.ProcessState.ExitCode()
+	}
+
+	return result
+}
+
+// RunBrewWithLogs runs a brew command with log streaming
+func RunBrewWithLogs(args string, opts *ExecOptions, onLog LogCallback) *ExecResult {
+	brewPath := GetBrewPrefix() + "/bin/brew"
+	return RunWithLogs(brewPath+" "+args, opts, onLog)
+}
+
+// RunSudoWithLogs runs a sudo command with log streaming
+func RunSudoWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResult {
+	return RunWithLogs("sudo "+command, opts, onLog)
 }
