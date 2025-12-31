@@ -1,6 +1,4 @@
-[?25l[?2004h]2;Gentleman.Dots Installer✨ Installation Complete! ✨[K
-[K
-Summary[K
+[?25l[?2004h]2;Gentleman.Dots InstallerSummary[K
        [K
   • OS: mac[K
   • Terminal: ghostty[K
@@ -8,8 +6,19 @@ Summary[K
   • Window Manager: tmux[K
   • Editor: Neovim with Gentleman config[K
 [K
-⚠️  Restart your terminal or run:[K
+Next Steps[K
+          [K
+[K
+1. To use your new shell now, run:[K
    exec fish[K
 [K
+2. To make it your default shell, run:[K
+   # Find shell path[K
+   which fish       [K
+   # Add to allowed shells (needs sudo)[K
+   sudo sh -c 'echo $(which fish) >> /etc/shells'[K
+   # Set as default[K
+   chsh -s $(which fish)[K
+[K
                             [K
-Press [Enter] or [q] to exit[K[14A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
+Press [Enter] or [q] to exit[K[23A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

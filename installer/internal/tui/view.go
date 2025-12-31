@@ -177,7 +177,7 @@ func (m Model) renderSelection() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [q] quit"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
 
 	return s.String()
 }
@@ -414,7 +414,7 @@ func (m Model) renderSingleToolInfo(info ToolInfo) string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("[Enter/Esc] back"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back • [q] quit"))
 
 	return s.String()
 }
@@ -813,7 +813,7 @@ func (m Model) renderBackupConfirm() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] cancel"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
 
 	return s.String()
 }

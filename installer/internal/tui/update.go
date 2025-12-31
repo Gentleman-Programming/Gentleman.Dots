@@ -237,6 +237,14 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	switch m.Screen {
+	// Installation wizard screens - go back through the flow
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+		return m.goBackInstallStep()
+	case ScreenBackupConfirm:
+		// Go back to Nvim selection (not abort)
+		m.Screen = ScreenNvimSelect
+		m.Cursor = 0
+	// Content/Learn screens
 	case ScreenKeymapCategory:
 		m.Screen = ScreenKeymaps
 		m.KeymapScroll = 0
@@ -250,13 +258,11 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	case ScreenKeymaps, ScreenLearnLazyVim:
 		m.Screen = m.PrevScreen
 		m.Cursor = 0
-	case ScreenBackupConfirm:
-		// Go back to Nvim selection (not abort)
-		m.Screen = ScreenNvimSelect
-		m.Cursor = 0
+	// Restore screens
 	case ScreenRestoreBackup, ScreenRestoreConfirm:
 		m.Screen = ScreenMainMenu
 		m.Cursor = 0
+	// Main menu - quit
 	case ScreenMainMenu:
 		m.Quitting = true
 		return m, tea.Quit
