@@ -143,3 +143,19 @@ var (
 func CenterHorizontally(text string, width int) string {
 	return lipgloss.NewStyle().Width(width).Align(lipgloss.Center).Render(text)
 }
+
+// CenterVertically centers text vertically within a given height
+func CenterVertically(text string, height int) string {
+	lines := lipgloss.Height(text)
+	if lines >= height {
+		return text
+	}
+
+	topPadding := (height - lines) / 2
+	return lipgloss.NewStyle().PaddingTop(topPadding).Render(text)
+}
+
+// CenterBoth centers text both horizontally and vertically using lipgloss.Place
+func CenterBoth(text string, width, height int) string {
+	return lipgloss.Place(width, height, lipgloss.Center, lipgloss.Center, text)
+}

@@ -30,12 +30,12 @@ const gentlemanText = `
 ██║   ██║██╔══╝  ██║╚██╗██║   ██║   ██║     ██╔══╝  ██║╚██╔╝██║██╔══██║██║╚██╗██║
 ╚██████╔╝███████╗██║ ╚████║   ██║   ███████╗███████╗██║ ╚═╝ ██║██║  ██║██║ ╚████║
  ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                              ██████╗  ██████╗ ████████╗███████╗
-                              ██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝
-                              ██║  ██║██║   ██║   ██║   ███████╗
-                              ██║  ██║██║   ██║   ██║   ╚════██║
-                              ██████╔╝╚██████╔╝   ██║   ███████║
-                              ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝
+                        ██████╗  ██████╗ ████████╗███████╗
+                        ██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝
+                        ██║  ██║██║   ██║   ██║   ███████╗
+                        ██║  ██║██║   ██║   ██║   ╚════██║
+                        ██████╔╝╚██████╔╝   ██║   ███████║
+                        ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝
 `
 
 // View implements tea.Model
@@ -111,7 +111,8 @@ func (m Model) renderWelcome() string {
 	s.WriteString("\n\n")
 	s.WriteString(HelpStyle.Render("Press [Enter] to start • [q] to quit"))
 
-	return CenterHorizontally(s.String(), m.Width)
+	// Center both horizontally and vertically
+	return CenterBoth(s.String(), m.Width, m.Height)
 }
 
 func (m Model) renderMainMenu() string {
@@ -472,26 +473,37 @@ func (m Model) renderKeymapCategory() string {
 	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
 	s.WriteString("\n")
 
+	// Calculate visible items based on terminal height
+	// Reserve space for: title(1) + description(1) + blank(1) + header(1) + separator(1) + scroll info(2) + help(2) = 9 lines
+	visibleItems := m.Height - 9
+	if visibleItems < 5 {
+		visibleItems = 5 // Minimum 5 items
+	}
+	if visibleItems > len(category.Keymaps) {
+		visibleItems = len(category.Keymaps)
+	}
+
 	// Keymaps with scrolling
 	start := m.KeymapScroll
-	end := start + 12 // Show 12 keymaps at a time
+	end := start + visibleItems
 	if end > len(category.Keymaps) {
 		end = len(category.Keymaps)
+		start = end - visibleItems
+		if start < 0 {
+			start = 0
+		}
 	}
 
 	for i := start; i < end; i++ {
 		km := category.Keymaps[i]
-		keyStyle := KeyStyle
-		line := fmt.Sprintf("%-15s %-6s %s", km.Keys, km.Mode, km.Description)
-		s.WriteString(keyStyle.Render(km.Keys))
+		s.WriteString(KeyStyle.Render(km.Keys))
 		s.WriteString(MutedStyle.Render(fmt.Sprintf(" %-6s ", km.Mode)))
 		s.WriteString(InfoStyle.Render(km.Description))
 		s.WriteString("\n")
-		_ = line // Suppress unused warning
 	}
 
 	// Scroll indicator
-	if len(category.Keymaps) > 12 {
+	if len(category.Keymaps) > visibleItems {
 		s.WriteString("\n")
 		scrollInfo := fmt.Sprintf("Showing %d-%d of %d", start+1, end, len(category.Keymaps))
 		s.WriteString(MutedStyle.Render(scrollInfo))
@@ -574,9 +586,15 @@ func (m Model) renderLazyVimTopic() string {
 		}
 	}
 
+	// Calculate view height based on terminal size
+	// Reserve space for: title(1) + description(1) + blank(2) + scroll info(2) + help(2) = 8 lines
+	viewHeight := m.Height - 8
+	if viewHeight < 10 {
+		viewHeight = 10 // Minimum
+	}
+
 	// Apply scrolling
 	start := m.LazyVimScroll
-	viewHeight := 18 // Lines visible
 	end := start + viewHeight
 	if end > len(allLines) {
 		end = len(allLines)
@@ -619,6 +637,9 @@ func (m Model) renderLazyVimTopic() string {
 	return s.String()
 }
 
+// Spinner frames for running steps
+var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+
 func (m Model) renderInstalling() string {
 	var s strings.Builder
 
@@ -635,7 +656,8 @@ func (m Model) renderInstalling() string {
 			icon = "○"
 			style = MutedStyle
 		case StatusRunning:
-			icon = "◐"
+			// Animated spinner
+			icon = spinnerFrames[m.SpinnerFrame%len(spinnerFrames)]
 			style = WarningStyle
 		case StatusDone:
 			icon = "✓"
@@ -650,13 +672,6 @@ func (m Model) renderInstalling() string {
 
 		line := fmt.Sprintf("%s %s", icon, step.Name)
 		s.WriteString(style.Render(line))
-
-		// Progress bar for running step
-		if step.Status == StatusRunning {
-			s.WriteString(" ")
-			s.WriteString(m.renderProgressBar(step.Progress, 20))
-		}
-
 		s.WriteString("\n")
 
 		// Show current step description
@@ -676,16 +691,6 @@ func (m Model) renderInstalling() string {
 	s.WriteString(HelpStyle.Render("[d] toggle details"))
 
 	return s.String()
-}
-
-func (m Model) renderProgressBar(progress float64, width int) string {
-	filled := int(progress * float64(width))
-	empty := width - filled
-
-	bar := strings.Repeat("█", filled) + strings.Repeat("░", empty)
-	percentage := fmt.Sprintf(" %3.0f%%", progress*100)
-
-	return InfoStyle.Render(bar) + MutedStyle.Render(percentage)
 }
 
 func (m Model) renderComplete() string {
@@ -717,15 +722,35 @@ func (m Model) renderComplete() string {
 		s.WriteString("\n")
 	}
 
+	// Shell change instructions
+	shell := m.Choices.Shell
+	shellCmd := shell
+	if shell == "nushell" {
+		shellCmd = "nu"
+	}
+
 	s.WriteString("\n")
-	s.WriteString(WarningStyle.Render("⚠️  Restart your terminal or run:"))
+	s.WriteString(TitleStyle.Render("Next Steps"))
+	s.WriteString("\n\n")
+
+	s.WriteString(InfoStyle.Render("1. To use your new shell now, run:"))
+	s.WriteString("\n")
+	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   exec %s", shellCmd)))
+	s.WriteString("\n\n")
+
+	s.WriteString(InfoStyle.Render("2. To make it your default shell, run:"))
 	s.WriteString("\n")
 
-	shell := m.Choices.Shell
-	if shell == "nushell" {
-		shell = "nu"
-	}
-	s.WriteString(InfoStyle.Render(fmt.Sprintf("   exec %s", shell)))
+	// Show the commands needed to set default shell
+	s.WriteString(MutedStyle.Render(fmt.Sprintf("   # Find shell path\n   which %s", shellCmd)))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("   # Add to allowed shells (needs sudo)"))
+	s.WriteString("\n")
+	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   sudo sh -c 'echo $(which %s) >> /etc/shells'", shellCmd)))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("   # Set as default"))
+	s.WriteString("\n")
+	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   chsh -s $(which %s)", shellCmd)))
 	s.WriteString("\n\n")
 
 	s.WriteString(HelpStyle.Render("Press [Enter] or [q] to exit"))
