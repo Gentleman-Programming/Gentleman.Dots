@@ -9,15 +9,25 @@ if status is-interactive
 end
 
 if test (uname) = Darwin
-    # macOS
-    set BREW_BIN /opt/homebrew/bin/brew
+    # macOS - check for Apple Silicon vs Intel
+    if test -f /opt/homebrew/bin/brew
+        # Apple Silicon (M1/M2/M3)
+        set BREW_BIN /opt/homebrew/bin/brew
+    else if test -f /usr/local/bin/brew
+        # Intel Mac
+        set BREW_BIN /usr/local/bin/brew
+    end
 else
     # Linux
     set BREW_BIN /home/linuxbrew/.linuxbrew/bin/brew
 end
 
 set -x PATH $HOME/.local/bin $HOME/.opencode/bin $HOME/.volta/bin $HOME/.bun/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin /usr/local/bin $HOME/.config $HOME/.cargo/bin /usr/local/lib/* $PATH
-eval ($BREW_BIN shellenv)
+
+# Only eval brew shellenv if brew is installed
+if set -q BREW_BIN; and test -f $BREW_BIN
+    eval ($BREW_BIN shellenv)
+end
 
 if not set -q TMUX
     tmux

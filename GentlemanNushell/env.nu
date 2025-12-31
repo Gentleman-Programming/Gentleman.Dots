@@ -99,11 +99,31 @@ $env.NU_PLUGIN_DIRS = [
 $env.EDITOR = "nvim"
 $env.VISUAL = "nvim"
 
+# Detect Homebrew path based on architecture
+# Apple Silicon: /opt/homebrew/bin
+# Intel Mac: /usr/local/bin
+# Linux: /home/linuxbrew/.linuxbrew/bin
+let brew_path = if (sys host | get name) == "Darwin" {
+    if ("/opt/homebrew/bin/brew" | path exists) {
+        "/opt/homebrew/bin"
+    } else if ("/usr/local/bin/brew" | path exists) {
+        "/usr/local/bin"
+    } else {
+        ""
+    }
+} else {
+    if ("/home/linuxbrew/.linuxbrew/bin/brew" | path exists) {
+        "/home/linuxbrew/.linuxbrew/bin"
+    } else {
+        ""
+    }
+}
+
 $env.PATH = (
     $env.PATH
     | split row (char esep)
     | prepend ($env.HOME | path join ".local/bin")
-    | prepend '/opt/homebrew/bin'
+    | prepend (if $brew_path != "" { $brew_path } else { [] })
     | prepend ($env.HOME | path join ".local/state/nix/profiles/home-manager/home-path/bin")
     | prepend ($env.HOME | path join ".opencode/bin")
     | prepend ($env.HOME | path join ".volta/bin")

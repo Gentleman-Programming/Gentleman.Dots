@@ -24,15 +24,23 @@ else
 fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
-    # macOS
-    BREW_BIN="/opt/homebrew/bin"
+    # macOS - check for Apple Silicon vs Intel
+    if [[ -f "/opt/homebrew/bin/brew" ]]; then
+        # Apple Silicon (M1/M2/M3)
+        BREW_BIN="/opt/homebrew/bin"
+    elif [[ -f "/usr/local/bin/brew" ]]; then
+        # Intel Mac
+        BREW_BIN="/usr/local/bin"
+    fi
 else
     # Linux
     BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
 fi
 
-# Usar la variable BREW_BIN donde se necesite
-eval "$($BREW_BIN/brew shellenv)"
+# Only eval brew shellenv if brew is installed
+if [[ -n "$BREW_BIN" && -f "$BREW_BIN/brew" ]]; then
+    eval "$($BREW_BIN/brew shellenv)"
+fi
 
 source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
