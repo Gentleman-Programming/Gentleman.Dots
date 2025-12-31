@@ -649,93 +649,109 @@ func GetLazyVimTopics() []LazyVimTopic {
 		},
 		{
 			Title:       "LazyExtras: Enable Features",
-			Description: "How to enable optional features in LazyVim",
+			Description: "The EASIEST way to add languages, tools & features",
 			Content: []string{
-				"LazyExtras are optional modules that add functionality.",
-				"They're organized by category: lang, editor, coding, etc.",
+				"LazyExtras is your ONE-STOP SHOP for adding functionality!",
 				"",
-				"To enable an extra, add it to your lazy.lua:",
+				"★ THE EASY WAY (recommended):",
+				"  1. Open Neovim",
+				"  2. Run :LazyExtras",
+				"  3. Browse categories, press 'x' to toggle any extra",
+				"  4. Restart Neovim - DONE!",
 				"",
-				"Categories available:",
-				"• lang.*      - Language support (typescript, go, rust...)",
-				"• editor.*    - Editor features (harpoon, mini-files...)",
-				"• coding.*    - Coding helpers (copilot, snippets...)",
+				"Each extra includes EVERYTHING you need:",
+				"• LSP server (auto-completion, go-to-definition)",
+				"• TreeSitter parser (syntax highlighting)",
+				"• Formatter & Linter integration",
+				"• Debugging support (DAP)",
+				"• Testing support (where applicable)",
+				"",
+				"Categories available in :LazyExtras:",
+				"• lang.*       - Languages (typescript, go, rust, python...)",
+				"• editor.*     - Editor features (harpoon, mini-files...)",
+				"• coding.*     - Coding helpers (copilot, snippets...)",
 				"• formatting.* - Formatters (prettier, biome...)",
-				"• linting.*   - Linters (eslint...)",
-				"• ai.*        - AI assistants (copilot, copilot-chat...)",
+				"• linting.*    - Linters (eslint...)",
+				"• ai.*         - AI assistants (copilot, copilot-chat...)",
+				"• test.*       - Testing frameworks (core, coverage...)",
+				"• dap.*        - Debugging adapters",
 			},
-			CodeExample: `-- In lua/config/lazy.lua, inside require("lazy").setup():
+			CodeExample: `-- :LazyExtras UI is the easiest way!
+-- But if you prefer code, add to lua/config/lazy.lua:
+
 spec = {
   { "LazyVim/LazyVim", import = "lazyvim.plugins" },
   
-  -- Enable extras by importing them:
+  -- These get added automatically when you use :LazyExtras!
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.lang.go" },
-  { import = "lazyvim.plugins.extras.lang.rust" },
-  { import = "lazyvim.plugins.extras.editor.harpoon2" },
+  { import = "lazyvim.plugins.extras.test.core" },
   { import = "lazyvim.plugins.extras.ai.copilot" },
   
-  -- Your plugins
   { import = "plugins" },
 }`,
 			Tips: []string{
-				"Run :LazyExtras to see all available extras with UI",
-				"Press x on an extra to toggle it (installs on next restart)",
-				"Check lazyvim.org/extras for full documentation",
+				":LazyExtras - Interactive UI to enable/disable extras",
+				"Press 'x' on any extra to toggle it",
+				"Changes apply after restarting Neovim",
+				"No manual config needed - extras handle everything!",
 			},
 		},
 		{
 			Title:       "Adding a New Language",
-			Description: "Step-by-step guide to add language support",
+			Description: "Use :LazyExtras - it's that simple!",
 			Content: []string{
-				"LazyVim makes adding language support easy with extras.",
-				"Each lang extra typically includes:",
-				"• LSP server configuration",
-				"• TreeSitter parser for syntax highlighting",
-				"• Formatter integration",
-				"• Linter integration",
-				"• Debugging support (DAP)",
+				"★ THE EASY WAY (99% of cases):",
+				"  1. Open Neovim",
+				"  2. Run :LazyExtras",
+				"  3. Search for 'lang.' to see all languages",
+				"  4. Press 'x' on the language you want",
+				"  5. Restart Neovim - DONE!",
 				"",
-				"Steps to add a language:",
-				"1. Check if an extra exists: :LazyExtras",
-				"2. If yes, enable it in lazy.lua",
-				"3. If no, configure manually (see example)",
+				"Each lang.* extra gives you EVERYTHING:",
+				"• LSP server (auto-completion, diagnostics)",
+				"• TreeSitter (syntax highlighting, text objects)",
+				"• Formatter (auto-format on save)",
+				"• Linter (code quality checks)",
+				"• DAP debugger (where available)",
+				"• Test runner integration (where available)",
+				"",
+				"Popular lang extras:",
+				"• lang.typescript - TS/JS with tsserver",
+				"• lang.python - Python with pyright/ruff",
+				"• lang.go - Go with gopls",
+				"• lang.rust - Rust with rust-analyzer",
+				"• lang.java - Java with jdtls",
+				"• lang.docker - Dockerfile support",
+				"• lang.yaml - YAML with schemas",
+				"• lang.json - JSON with schemas",
 			},
-			CodeExample: `-- Option 1: Use an extra (recommended)
-{ import = "lazyvim.plugins.extras.lang.python" }
+			CodeExample: `-- RECOMMENDED: Just use :LazyExtras UI!
+-- It adds the import automatically to your config.
 
--- Option 2: Manual configuration in lua/plugins/python.lua
+-- ADVANCED: Manual config (only if no extra exists)
+-- Create lua/plugins/my-language.lua:
 return {
-  -- Add TreeSitter parser
+  -- TreeSitter parser
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = { ensure_installed = { "python" } },
+    opts = { ensure_installed = { "my_lang" } },
   },
-  
-  -- Configure LSP
+  -- LSP server  
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        pyright = {}, -- or pylsp, ruff_lsp, etc.
-      },
-    },
-  },
-  
-  -- Add formatter
-  {
-    "stevearc/conform.nvim",
-    opts = {
-      formatters_by_ft = {
-        python = { "black", "isort" },
+        my_lsp = {},
       },
     },
   },
 }`,
 			Tips: []string{
-				"Mason installs LSPs automatically (:Mason to see UI)",
-				"Use :LspInfo to check if LSP is attached",
-				"Use :ConformInfo to check formatter status",
+				":LazyExtras → search 'lang' → press 'x' → restart",
+				"That's it! No config files to edit!",
+				":LspInfo to verify LSP is working",
+				":Mason to see/manage installed servers",
 			},
 		},
 		{
@@ -960,14 +976,17 @@ return {
 			Title:       "Useful Commands",
 			Description: "Essential LazyVim commands to know",
 			Content: []string{
+				"★ MOST IMPORTANT COMMAND:",
+				"• :LazyExtras - Add languages, tools, features!",
+				"  (This is your go-to for adding anything)",
+				"",
 				"Plugin Management:",
-				"• :Lazy - Plugin manager UI",
-				"• :LazyExtras - Enable/disable extras",
-				"• :LazyHealth - Check health",
+				"• :Lazy - Plugin manager UI (update, clean, profile)",
+				"• :LazyHealth - Check plugin health",
 				"",
 				"LSP & Mason:",
-				"• :Mason - LSP/formatter/linter installer",
-				"• :LspInfo - Current LSP status",
+				"• :Mason - LSP/formatter/linter installer UI",
+				"• :LspInfo - See attached LSP servers",
 				"• :LspRestart - Restart LSP servers",
 				"",
 				"Formatting & Linting:",
