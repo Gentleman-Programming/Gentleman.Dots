@@ -149,6 +149,12 @@ var (
 				Background(Success).
 				Bold(true)
 
+	// Visual selection style (like Vim's visual mode)
+	SelectionStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#06080f")).
+			Background(lipgloss.Color("#7aa2f7")).
+			Bold(false)
+
 	// Dimmed code style for parts already passed
 	DimmedCodeStyle = lipgloss.NewStyle().
 			Foreground(TextMuted)

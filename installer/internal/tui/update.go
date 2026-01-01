@@ -138,56 +138,62 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	key := msg.String()
 
-	// Global keys
-	switch key {
-	case "ctrl+c":
+	// ctrl+c always quits immediately (no leader needed)
+	if key == "ctrl+c" {
 		m.Quitting = true
 		return m, tea.Quit
+	}
 
-	case "q":
-		// q to quit only when not installing and not in content view
-		if m.Screen != ScreenInstalling && m.Screen != ScreenKeymapCategory && m.Screen != ScreenLazyVimTopic &&
-			m.Screen != ScreenKeymapsTmuxCat && m.Screen != ScreenKeymapsZellijCat && m.Screen != ScreenKeymapsGhosttyCat {
+	// Leader key mode: <space> activates, next key executes command
+	// Commands: <space>q = quit, <space>d = toggle details
+	if m.LeaderMode {
+		m.LeaderMode = false // Reset leader mode
+		switch key {
+		case "q":
+			// Quit application
+			if m.Screen != ScreenInstalling {
+				m.Quitting = true
+				return m, tea.Quit
+			}
+			return m, nil
+		case "d":
+			// Toggle details during installation
+			if m.Screen == ScreenInstalling {
+				m.ShowDetails = !m.ShowDetails
+			}
+			return m, nil
+		default:
+			// Unknown leader command, ignore
+			return m, nil
+		}
+	}
+
+	// <space> activates leader mode EXCEPT in screens that need space for input
+	// (Trainer screens use space in commands, Welcome screen uses space to continue)
+	if key == " " {
+		// Screens where space should NOT activate leader mode
+		switch m.Screen {
+		case ScreenWelcome:
+			// Welcome screen: space continues to main menu
+			m.Screen = ScreenMainMenu
+			m.Cursor = 0
+			return m, nil
+		case ScreenComplete, ScreenError:
+			// Complete/Error screens: space quits the app
 			m.Quitting = true
 			return m, tea.Quit
-		}
-		// In content views, q goes back
-		if m.Screen == ScreenKeymapCategory {
-			m.Screen = ScreenKeymaps
-			m.KeymapScroll = 0
+		case ScreenTrainerLesson, ScreenTrainerPractice, ScreenTrainerBoss:
+			// Trainer input screens: space is part of the input, pass through
+			// (handled below in screen-specific handlers)
+		default:
+			// All other screens: activate leader mode
+			m.LeaderMode = true
 			return m, nil
 		}
-		if m.Screen == ScreenKeymapsTmuxCat {
-			m.Screen = ScreenKeymapsTmux
-			m.TmuxKeymapScroll = 0
-			return m, nil
-		}
-		if m.Screen == ScreenKeymapsZellijCat {
-			m.Screen = ScreenKeymapsZellij
-			m.ZellijKeymapScroll = 0
-			return m, nil
-		}
-		if m.Screen == ScreenKeymapsGhosttyCat {
-			m.Screen = ScreenKeymapsGhostty
-			m.GhosttyKeymapScroll = 0
-			return m, nil
-		}
-		if m.Screen == ScreenLazyVimTopic {
-			m.Screen = ScreenLearnLazyVim
-			m.LazyVimScroll = 0
-			return m, nil
-		}
-		return m, nil
+	}
 
-	case "d":
-		// Toggle details only during installation
-		if m.Screen == ScreenInstalling {
-			m.ShowDetails = !m.ShowDetails
-		}
-		return m, nil
-
-	case "esc":
-		// ESC goes back from content/learn screens
+	// ESC goes back from content/learn screens (and cancels leader mode implicitly)
+	if key == "esc" {
 		return m.handleEscape()
 	}
 
@@ -195,7 +201,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch m.Screen {
 	case ScreenWelcome:
 		switch key {
-		case "enter", " ":
+		case "enter":
 			m.Screen = ScreenMainMenu
 			m.Cursor = 0
 		}

@@ -111,6 +111,12 @@ func (m Model) View() string {
 		s.WriteString(m.renderTrainerBossResult())
 	}
 
+	// Leader mode indicator
+	if m.LeaderMode {
+		s.WriteString("\n")
+		s.WriteString(WarningStyle.Render("▶ LEADER MODE - Press: q=quit, d=details"))
+	}
+
 	return s.String()
 }
 
@@ -137,7 +143,7 @@ func (m Model) renderWelcome() string {
 	// Instructions
 	s.WriteString(SubtitleStyle.Render("Your terminal environment, configured in minutes."))
 	s.WriteString("\n\n")
-	s.WriteString(HelpStyle.Render("Press [Enter] to start • [q] to quit"))
+	s.WriteString(HelpStyle.Render("Press [Enter] to start • [Space q] to quit"))
 
 	// Center both horizontally and vertically
 	return CenterBoth(s.String(), m.Width, m.Height)
@@ -166,7 +172,7 @@ func (m Model) renderMainMenu() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [q] quit"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Space q] quit"))
 
 	return s.String()
 }
@@ -442,7 +448,7 @@ func (m Model) renderSingleToolInfo(info ToolInfo) string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back • [q] quit"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back • [Space q] quit"))
 
 	return s.String()
 }
@@ -1122,7 +1128,7 @@ func (m Model) renderError() string {
 	s.WriteString(ErrorStyle.Render(m.ErrorMsg))
 	s.WriteString("\n\n")
 
-	s.WriteString(HelpStyle.Render("[r] retry • [q] quit"))
+	s.WriteString(HelpStyle.Render("[r] retry • [Space q] quit"))
 
 	return s.String()
 }
@@ -1402,11 +1408,13 @@ func (m Model) renderTrainerExercise(mode string) string {
 	s.WriteString(InfoStyle.Render("   " + exercise.Mission))
 	s.WriteString("\n\n")
 
-	// Calculate simulated cursor position based on current input
+	// Calculate simulated cursor position and selection based on current input
 	startPos := exercise.CursorPos
-	simPos := trainer.SimulateMotions(startPos, exercise.Code, m.TrainerInput)
+	simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
+	simPos := simResult.Position
+	selection := simResult.Selection
 
-	// Code display with both cursors
+	// Code display with cursors and selection
 	s.WriteString(SubtitleStyle.Render("📝 Code:"))
 	s.WriteString("\n")
 	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
@@ -1416,30 +1424,31 @@ func (m Model) renderTrainerExercise(mode string) string {
 		lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
 		s.WriteString(MutedStyle.Render(lineNumStr))
 
+		// Check if there's an active selection on this line
+		if selection.Active && lineNum == selection.StartLine {
+			s.WriteString(renderLineWithSelection(line, startPos, selection))
+			s.WriteString("\n")
+			continue
+		}
+
 		// Determine which cursors are on this line
 		startOnLine := lineNum == startPos.Line
 		currentOnLine := lineNum == simPos.Line
 		samePosition := startOnLine && currentOnLine && startPos.Col == simPos.Col
 
-		if samePosition && startPos.Col < len(line) {
-			// Both cursors at same position - show start cursor (they haven't moved yet)
-			before := line[:startPos.Col]
-			cursor := string(line[startPos.Col])
-			after := ""
-			if startPos.Col+1 < len(line) {
-				after = line[startPos.Col+1:]
+		// Helper to get cursor character (use space block for empty lines)
+		getCursorChar := func(line string, col int) string {
+			if col < len(line) {
+				return string(line[col])
 			}
-			s.WriteString(CodeStyle.Render(before))
-			s.WriteString(StartCursorStyle.Render(cursor))
-			s.WriteString(CodeStyle.Render(after))
-		} else if startOnLine && currentOnLine {
-			// Both cursors on same line but different positions
-			s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
-		} else if startOnLine {
-			// Only start cursor on this line
+			return " " // Space with background color for empty line cursor
+		}
+
+		if samePosition {
+			// Both cursors at same position - show start cursor (they haven't moved yet)
 			if startPos.Col < len(line) {
 				before := line[:startPos.Col]
-				cursor := string(line[startPos.Col])
+				cursor := getCursorChar(line, startPos.Col)
 				after := ""
 				if startPos.Col+1 < len(line) {
 					after = line[startPos.Col+1:]
@@ -1448,13 +1457,35 @@ func (m Model) renderTrainerExercise(mode string) string {
 				s.WriteString(StartCursorStyle.Render(cursor))
 				s.WriteString(CodeStyle.Render(after))
 			} else {
+				// Cursor at end of line or empty line
 				s.WriteString(CodeStyle.Render(line))
+				s.WriteString(StartCursorStyle.Render(" "))
+			}
+		} else if startOnLine && currentOnLine {
+			// Both cursors on same line but different positions
+			s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
+		} else if startOnLine {
+			// Only start cursor on this line
+			if startPos.Col < len(line) {
+				before := line[:startPos.Col]
+				cursor := getCursorChar(line, startPos.Col)
+				after := ""
+				if startPos.Col+1 < len(line) {
+					after = line[startPos.Col+1:]
+				}
+				s.WriteString(CodeStyle.Render(before))
+				s.WriteString(StartCursorStyle.Render(cursor))
+				s.WriteString(CodeStyle.Render(after))
+			} else {
+				// Cursor at end of line or empty line
+				s.WriteString(CodeStyle.Render(line))
+				s.WriteString(StartCursorStyle.Render(" "))
 			}
 		} else if currentOnLine {
 			// Only current cursor on this line
 			if simPos.Col < len(line) {
 				before := line[:simPos.Col]
-				cursor := string(line[simPos.Col])
+				cursor := getCursorChar(line, simPos.Col)
 				after := ""
 				if simPos.Col+1 < len(line) {
 					after = line[simPos.Col+1:]
@@ -1463,7 +1494,9 @@ func (m Model) renderTrainerExercise(mode string) string {
 				s.WriteString(CurrentCursorStyle.Render(cursor))
 				s.WriteString(CodeStyle.Render(after))
 			} else {
+				// Cursor at end of line or empty line
 				s.WriteString(CodeStyle.Render(line))
+				s.WriteString(CurrentCursorStyle.Render(" "))
 			}
 		} else {
 			// No cursors on this line
@@ -1503,6 +1536,14 @@ func (m Model) renderTrainerExercise(mode string) string {
 func renderLineWithTwoCursors(line string, startCol, currentCol int) string {
 	var result strings.Builder
 
+	// Helper to get cursor character (use space for empty/end of line)
+	getCursorChar := func(col int) string {
+		if col < len(line) {
+			return string(line[col])
+		}
+		return " "
+	}
+
 	// Determine order of cursors
 	firstCol, secondCol := startCol, currentCol
 	firstStyle, secondStyle := StartCursorStyle, CurrentCursorStyle
@@ -1511,30 +1552,97 @@ func renderLineWithTwoCursors(line string, startCol, currentCol int) string {
 		firstStyle, secondStyle = CurrentCursorStyle, StartCursorStyle
 	}
 
+	// Handle empty line case
+	if len(line) == 0 {
+		// Both cursors on empty line at col 0
+		if firstCol == secondCol {
+			result.WriteString(firstStyle.Render(" "))
+		} else {
+			// This shouldn't happen on empty line, but handle it
+			result.WriteString(firstStyle.Render(" "))
+			result.WriteString(secondStyle.Render(" "))
+		}
+		return result.String()
+	}
+
 	// Build the line piece by piece
 	// Part before first cursor
-	if firstCol > 0 {
+	if firstCol > 0 && firstCol <= len(line) {
 		result.WriteString(CodeStyle.Render(line[:firstCol]))
 	}
 
 	// First cursor
-	if firstCol < len(line) {
-		result.WriteString(firstStyle.Render(string(line[firstCol])))
-	}
+	result.WriteString(firstStyle.Render(getCursorChar(firstCol)))
 
 	// Part between cursors (if any)
-	if firstCol+1 < secondCol {
-		result.WriteString(CodeStyle.Render(line[firstCol+1 : secondCol]))
+	if firstCol+1 < secondCol && firstCol+1 < len(line) {
+		endIdx := secondCol
+		if endIdx > len(line) {
+			endIdx = len(line)
+		}
+		if firstCol+1 < endIdx {
+			result.WriteString(CodeStyle.Render(line[firstCol+1 : endIdx]))
+		}
 	}
 
-	// Second cursor
-	if secondCol < len(line) && secondCol > firstCol {
-		result.WriteString(secondStyle.Render(string(line[secondCol])))
+	// Second cursor (only if different position from first)
+	if secondCol > firstCol {
+		result.WriteString(secondStyle.Render(getCursorChar(secondCol)))
 	}
 
 	// Part after second cursor
 	if secondCol+1 < len(line) {
 		result.WriteString(CodeStyle.Render(line[secondCol+1:]))
+	}
+
+	return result.String()
+}
+
+// renderLineWithSelection renders a line with visual selection highlighted
+func renderLineWithSelection(line string, startPos trainer.Position, sel trainer.Selection) string {
+	var result strings.Builder
+
+	if len(line) == 0 {
+		// Empty line with selection
+		result.WriteString(SelectionStyle.Render(" "))
+		return result.String()
+	}
+
+	// Clamp selection bounds to line length
+	selStart := sel.StartCol
+	selEnd := sel.EndCol
+	if selStart < 0 {
+		selStart = 0
+	}
+	if selEnd >= len(line) {
+		selEnd = len(line) - 1
+	}
+	if selEnd < selStart {
+		// Invalid selection, just render the line normally with start cursor
+		if startPos.Col < len(line) {
+			result.WriteString(CodeStyle.Render(line[:startPos.Col]))
+			result.WriteString(StartCursorStyle.Render(string(line[startPos.Col])))
+			if startPos.Col+1 < len(line) {
+				result.WriteString(CodeStyle.Render(line[startPos.Col+1:]))
+			}
+		} else {
+			result.WriteString(CodeStyle.Render(line))
+		}
+		return result.String()
+	}
+
+	// Render: [before selection] [SELECTION] [after selection]
+	if selStart > 0 {
+		result.WriteString(CodeStyle.Render(line[:selStart]))
+	}
+
+	// The selection itself
+	selectedText := line[selStart : selEnd+1]
+	result.WriteString(SelectionStyle.Render(selectedText))
+
+	// After selection
+	if selEnd+1 < len(line) {
+		result.WriteString(CodeStyle.Render(line[selEnd+1:]))
 	}
 
 	return result.String()
@@ -1571,11 +1679,13 @@ func (m Model) renderTrainerBoss() string {
 		s.WriteString(InfoStyle.Render("   " + exercise.Mission))
 		s.WriteString("\n\n")
 
-		// Calculate simulated cursor position based on current input
+		// Calculate simulated cursor position and selection based on current input
 		startPos := exercise.CursorPos
-		simPos := trainer.SimulateMotions(startPos, exercise.Code, m.TrainerInput)
+		simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
+		simPos := simResult.Position
+		selection := simResult.Selection
 
-		// Code display with both cursors
+		// Code display with cursors and selection
 		s.WriteString(SubtitleStyle.Render("📝 Code:"))
 		s.WriteString("\n")
 		s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
@@ -1585,30 +1695,31 @@ func (m Model) renderTrainerBoss() string {
 			lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
 			s.WriteString(MutedStyle.Render(lineNumStr))
 
+			// Check if there's an active selection on this line
+			if selection.Active && lineNum == selection.StartLine {
+				s.WriteString(renderLineWithSelection(line, startPos, selection))
+				s.WriteString("\n")
+				continue
+			}
+
 			// Determine which cursors are on this line
 			startOnLine := lineNum == startPos.Line
 			currentOnLine := lineNum == simPos.Line
 			samePosition := startOnLine && currentOnLine && startPos.Col == simPos.Col
 
-			if samePosition && startPos.Col < len(line) {
-				// Both cursors at same position
-				before := line[:startPos.Col]
-				cursor := string(line[startPos.Col])
-				after := ""
-				if startPos.Col+1 < len(line) {
-					after = line[startPos.Col+1:]
+			// Helper to get cursor character (use space block for empty lines)
+			getCursorChar := func(line string, col int) string {
+				if col < len(line) {
+					return string(line[col])
 				}
-				s.WriteString(CodeStyle.Render(before))
-				s.WriteString(StartCursorStyle.Render(cursor))
-				s.WriteString(CodeStyle.Render(after))
-			} else if startOnLine && currentOnLine {
-				// Both cursors on same line but different positions
-				s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
-			} else if startOnLine {
-				// Only start cursor on this line
+				return " " // Space with background color for empty line cursor
+			}
+
+			if samePosition {
+				// Both cursors at same position
 				if startPos.Col < len(line) {
 					before := line[:startPos.Col]
-					cursor := string(line[startPos.Col])
+					cursor := getCursorChar(line, startPos.Col)
 					after := ""
 					if startPos.Col+1 < len(line) {
 						after = line[startPos.Col+1:]
@@ -1617,13 +1728,35 @@ func (m Model) renderTrainerBoss() string {
 					s.WriteString(StartCursorStyle.Render(cursor))
 					s.WriteString(CodeStyle.Render(after))
 				} else {
+					// Cursor at end of line or empty line
 					s.WriteString(CodeStyle.Render(line))
+					s.WriteString(StartCursorStyle.Render(" "))
+				}
+			} else if startOnLine && currentOnLine {
+				// Both cursors on same line but different positions
+				s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
+			} else if startOnLine {
+				// Only start cursor on this line
+				if startPos.Col < len(line) {
+					before := line[:startPos.Col]
+					cursor := getCursorChar(line, startPos.Col)
+					after := ""
+					if startPos.Col+1 < len(line) {
+						after = line[startPos.Col+1:]
+					}
+					s.WriteString(CodeStyle.Render(before))
+					s.WriteString(StartCursorStyle.Render(cursor))
+					s.WriteString(CodeStyle.Render(after))
+				} else {
+					// Cursor at end of line or empty line
+					s.WriteString(CodeStyle.Render(line))
+					s.WriteString(StartCursorStyle.Render(" "))
 				}
 			} else if currentOnLine {
 				// Only current cursor on this line
 				if simPos.Col < len(line) {
 					before := line[:simPos.Col]
-					cursor := string(line[simPos.Col])
+					cursor := getCursorChar(line, simPos.Col)
 					after := ""
 					if simPos.Col+1 < len(line) {
 						after = line[simPos.Col+1:]
@@ -1632,7 +1765,9 @@ func (m Model) renderTrainerBoss() string {
 					s.WriteString(CurrentCursorStyle.Render(cursor))
 					s.WriteString(CodeStyle.Render(after))
 				} else {
+					// Cursor at end of line or empty line
 					s.WriteString(CodeStyle.Render(line))
+					s.WriteString(CurrentCursorStyle.Render(" "))
 				}
 			} else {
 				// No cursors on this line
@@ -1704,7 +1839,7 @@ func (m Model) renderTrainerResult() string {
 
 	// Help
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("[Enter/Space] continue • [Esc/q] quit"))
+	s.WriteString(HelpStyle.Render("[Enter] continue • [Esc] back"))
 
 	return s.String()
 }

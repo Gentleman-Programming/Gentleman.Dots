@@ -438,51 +438,78 @@ func TestCtrlCAlwaysQuits(t *testing.T) {
 }
 
 func TestQKeyBehavior(t *testing.T) {
-	t.Run("q quits from main menu", func(t *testing.T) {
+	t.Run("space+q quits from main menu", func(t *testing.T) {
+		m := NewModel()
+		m.Screen = ScreenMainMenu
+
+		// First press space to enter leader mode
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
+		newModel := result.(Model)
+
+		if !newModel.LeaderMode {
+			t.Error("space should activate leader mode")
+		}
+
+		// Then press q to quit
+		result, _ = newModel.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		newModel = result.(Model)
+
+		if !newModel.Quitting {
+			t.Error("space+q should quit from main menu")
+		}
+	})
+
+	t.Run("space+q does not quit during installation", func(t *testing.T) {
+		m := NewModel()
+		m.Screen = ScreenInstalling
+
+		// First press space to enter leader mode
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
+		newModel := result.(Model)
+
+		// Then press q
+		result, _ = newModel.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		newModel = result.(Model)
+
+		if newModel.Quitting {
+			t.Error("space+q should not quit during installation")
+		}
+	})
+
+	t.Run("q alone does not quit (passes through to screen handler)", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenMainMenu
 
 		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 		newModel := result.(Model)
 
-		if !newModel.Quitting {
-			t.Error("q should quit from main menu")
-		}
-	})
-
-	t.Run("q does not quit during installation", func(t *testing.T) {
-		m := NewModel()
-		m.Screen = ScreenInstalling
-
-		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
-		newModel := result.(Model)
-
 		if newModel.Quitting {
-			t.Error("q should not quit during installation")
+			t.Error("q alone should not quit (leader key required)")
 		}
 	})
 
-	t.Run("q goes back from keymap category", func(t *testing.T) {
+	t.Run("q goes back from keymap category (via ESC behavior)", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenKeymapCategory
 
-		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		// Use ESC to go back (q no longer works for this)
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEscape})
 		newModel := result.(Model)
 
 		if newModel.Screen != ScreenKeymaps {
-			t.Errorf("q should go back to ScreenKeymaps, got %v", newModel.Screen)
+			t.Errorf("ESC should go back to ScreenKeymaps, got %v", newModel.Screen)
 		}
 	})
 
-	t.Run("q goes back from lazyvim topic", func(t *testing.T) {
+	t.Run("ESC goes back from lazyvim topic", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenLazyVimTopic
 
-		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEscape})
 		newModel := result.(Model)
 
 		if newModel.Screen != ScreenLearnLazyVim {
-			t.Errorf("q should go back to ScreenLearnLazyVim, got %v", newModel.Screen)
+			t.Errorf("ESC should go back to ScreenLearnLazyVim, got %v", newModel.Screen)
 		}
 	})
 }
@@ -1253,11 +1280,11 @@ func TestLazyVimTopicScroll(t *testing.T) {
 }
 
 func TestLazyVimTopicBack(t *testing.T) {
+	// Keys that should go back from LazyVim topic
+	// Note: space now activates leader mode, so it's not a "back" key
 	backKeys := []tea.KeyMsg{
 		{Type: tea.KeyEnter},
 		{Type: tea.KeyEsc},
-		{Type: tea.KeyRunes, Runes: []rune{'q'}},
-		{Type: tea.KeyRunes, Runes: []rune{' '}},
 	}
 
 	for _, key := range backKeys {
@@ -1346,18 +1373,32 @@ func TestInstallingToggleDetails(t *testing.T) {
 	m.Screen = ScreenInstalling
 	m.ShowDetails = false
 
-	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'d'}})
+	// First press space to enter leader mode
+	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
 	newModel := result.(Model)
 
-	if !newModel.ShowDetails {
-		t.Error("d should toggle ShowDetails to true")
+	if !newModel.LeaderMode {
+		t.Error("space should activate leader mode")
 	}
 
+	// Then press d to toggle details
+	result, _ = newModel.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'d'}})
+	newModel = result.(Model)
+
+	if !newModel.ShowDetails {
+		t.Error("space+d should toggle ShowDetails to true")
+	}
+
+	// Press space again for leader mode
+	result, _ = newModel.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
+	newModel = result.(Model)
+
+	// Then press d again
 	result, _ = newModel.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'d'}})
 	newModel = result.(Model)
 
 	if newModel.ShowDetails {
-		t.Error("d should toggle ShowDetails back to false")
+		t.Error("space+d should toggle ShowDetails back to false")
 	}
 }
 

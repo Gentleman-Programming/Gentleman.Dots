@@ -5,6 +5,18 @@ func GetLessons(module ModuleID) []Exercise {
 	switch module {
 	case ModuleHorizontal:
 		return getHorizontalLessons()
+	case ModuleVertical:
+		return getVerticalLessons()
+	case ModuleTextObjects:
+		return getTextObjectsLessons()
+	case ModuleChangeRepeat:
+		return getChangeRepeatLessons()
+	case ModuleSubstitution:
+		return getSubstitutionLessons()
+	case ModuleRegex:
+		return getRegexLessons()
+	case ModuleMacros:
+		return getMacrosLessons()
 	default:
 		return []Exercise{}
 	}
@@ -15,6 +27,18 @@ func GetPracticeExercises(module ModuleID) []Exercise {
 	switch module {
 	case ModuleHorizontal:
 		return getHorizontalPractice()
+	case ModuleVertical:
+		return getVerticalPractice()
+	case ModuleTextObjects:
+		return getTextObjectsPractice()
+	case ModuleChangeRepeat:
+		return getChangeRepeatPractice()
+	case ModuleSubstitution:
+		return getSubstitutionPractice()
+	case ModuleRegex:
+		return getRegexPractice()
+	case ModuleMacros:
+		return getMacrosPractice()
 	default:
 		return []Exercise{}
 	}
@@ -25,6 +49,18 @@ func GetBoss(module ModuleID) *BossExercise {
 	switch module {
 	case ModuleHorizontal:
 		return getHorizontalBoss()
+	case ModuleVertical:
+		return getVerticalBoss()
+	case ModuleTextObjects:
+		return getTextObjectsBoss()
+	case ModuleChangeRepeat:
+		return getChangeRepeatBoss()
+	case ModuleSubstitution:
+		return getSubstitutionBoss()
+	case ModuleRegex:
+		return getRegexBoss()
+	case ModuleMacros:
+		return getMacrosBoss()
 	default:
 		return nil
 	}
@@ -374,6 +410,524 @@ func getHorizontalBoss() *BossExercise {
 					Mission:   "Go back to the start of the line",
 					Solutions: []string{"0", "^"},
 					Optimal:   "0",
+					Points:    50,
+				},
+			},
+		},
+	}
+}
+
+// =============================================================================
+// VERTICAL MODULE EXERCISES
+// =============================================================================
+
+func getVerticalLessons() []Exercise {
+	return []Exercise{
+		// Lesson 1: j - move down
+		{
+			ID:     "vertical_001",
+			Module: ModuleVertical,
+			Level:  1,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"function greet() {",
+				"  console.log('Hello');",
+				"  return true;",
+				"}",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Move down to the console.log line using j",
+			Solutions:   []string{"j"},
+			Optimal:     "j",
+			Hint:        "j moves the cursor down one line",
+			Explanation: "j is the most basic downward motion. Think of j as having a downward hook at the bottom of the letter.",
+			TimeoutSecs: 30,
+			Points:      10,
+		},
+		// Lesson 2: k - move up
+		{
+			ID:     "vertical_002",
+			Module: ModuleVertical,
+			Level:  1,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"function greet() {",
+				"  console.log('Hello');",
+				"  return true;",
+				"}",
+			},
+			CursorPos:   Position{Line: 2, Col: 2},
+			Mission:     "Move up to the console.log line using k",
+			Solutions:   []string{"k"},
+			Optimal:     "k",
+			Hint:        "k moves the cursor up one line",
+			Explanation: "k moves up. Together j and k are your bread and butter for vertical navigation. Think of k as pointing upward.",
+			TimeoutSecs: 30,
+			Points:      10,
+		},
+		// Lesson 3: Multiple j/k with count
+		{
+			ID:     "vertical_003",
+			Module: ModuleVertical,
+			Level:  1,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"const a = 1;",
+				"const b = 2;",
+				"const c = 3;",
+				"const d = 4;",
+				"const e = 5;",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Move down 3 lines to 'const d' using 3j",
+			Solutions:   []string{"3j", "jjj"},
+			Optimal:     "3j",
+			Hint:        "You can prefix any motion with a count: {n}j",
+			Explanation: "{count}j moves down count lines. 3j = jjj but faster to type. This works with any motion!",
+			TimeoutSecs: 30,
+			Points:      15,
+		},
+		// Lesson 4: gg - go to top
+		{
+			ID:     "vertical_004",
+			Module: ModuleVertical,
+			Level:  2,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"// File: utils.js",
+				"function helper() {",
+				"  return 42;",
+				"}",
+				"",
+				"export default helper;",
+			},
+			CursorPos:   Position{Line: 4, Col: 0},
+			Mission:     "Jump to the first line of the file using gg",
+			Solutions:   []string{"gg"},
+			Optimal:     "gg",
+			Hint:        "gg goes to the first line of the file",
+			Explanation: "gg instantly jumps to the top of the file. Essential for navigating large files. You can also use [n]gg to go to line n.",
+			TimeoutSecs: 30,
+			Points:      15,
+		},
+		// Lesson 5: G - go to bottom
+		{
+			ID:     "vertical_005",
+			Module: ModuleVertical,
+			Level:  2,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"// File: utils.js",
+				"function helper() {",
+				"  return 42;",
+				"}",
+				"",
+				"export default helper;",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Jump to the last line of the file using G",
+			Solutions:   []string{"G"},
+			Optimal:     "G",
+			Hint:        "G (capital) goes to the last line",
+			Explanation: "G jumps to the end of the file. Use [n]G to go to a specific line number. gg and G are the vertical equivalent of 0 and $.",
+			TimeoutSecs: 30,
+			Points:      15,
+		},
+		// Lesson 6: [n]G - go to specific line
+		{
+			ID:     "vertical_006",
+			Module: ModuleVertical,
+			Level:  2,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"line 1",
+				"line 2",
+				"line 3",
+				"line 4 - target",
+				"line 5",
+				"line 6",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Jump directly to line 4 using 4G",
+			Solutions:   []string{"4G", "3j"},
+			Optimal:     "4G",
+			Hint:        "[n]G goes to line number n",
+			Explanation: "[n]G is incredibly useful when you know the line number (from errors, linters, etc). Much faster than counting j presses!",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 7: [n]gg - alternative to go to line
+		{
+			ID:     "vertical_007",
+			Module: ModuleVertical,
+			Level:  2,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"line 1",
+				"line 2",
+				"line 3 - target",
+				"line 4",
+				"line 5",
+			},
+			CursorPos:   Position{Line: 4, Col: 0},
+			Mission:     "Jump to line 3 using 3gg",
+			Solutions:   []string{"3gg", "2k"},
+			Optimal:     "3gg",
+			Hint:        "[n]gg also goes to line n, same as [n]G",
+			Explanation: "Both [n]gg and [n]G go to line n. Some prefer gg because it's easier to type. Use whichever feels natural.",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 8: } - next paragraph
+		{
+			ID:     "vertical_008",
+			Module: ModuleVertical,
+			Level:  3,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"function first() {",
+				"  return 1;",
+				"}",
+				"",
+				"function second() {",
+				"  return 2;",
+				"}",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Jump to the blank line between functions using }",
+			Solutions:   []string{"}"},
+			Optimal:     "}",
+			Hint:        "} moves to the next blank line (paragraph boundary)",
+			Explanation: "} jumps forward to the next blank line. In code, this usually means jumping between functions or blocks. Super useful!",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 9: { - previous paragraph
+		{
+			ID:     "vertical_009",
+			Module: ModuleVertical,
+			Level:  3,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"function first() {",
+				"  return 1;",
+				"}",
+				"",
+				"function second() {",
+				"  return 2;",
+				"}",
+			},
+			CursorPos:   Position{Line: 5, Col: 2},
+			Mission:     "Jump back to the blank line using {",
+			Solutions:   []string{"{"},
+			Optimal:     "{",
+			Hint:        "{ moves to the previous blank line",
+			Explanation: "{ jumps backward to the previous blank line. Combined with }, you can quickly navigate between code blocks.",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 10: + move to next line first non-blank
+		{
+			ID:     "vertical_010",
+			Module: ModuleVertical,
+			Level:  3,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"if (condition) {",
+				"    doSomething();",
+				"    doMore();",
+				"}",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Move to the first non-blank character of the next line using +",
+			Solutions:   []string{"+", "j^"},
+			Optimal:     "+",
+			Hint:        "+ moves down and to the first non-blank character",
+			Explanation: "+ is like j followed by ^. It moves to the next line's first non-blank character. Great for navigating indented code.",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 11: - move to previous line first non-blank
+		{
+			ID:     "vertical_011",
+			Module: ModuleVertical,
+			Level:  3,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"if (condition) {",
+				"    doSomething();",
+				"    doMore();",
+				"}",
+			},
+			CursorPos:   Position{Line: 2, Col: 4},
+			Mission:     "Move to the first non-blank character of the previous line using -",
+			Solutions:   []string{"-", "k^"},
+			Optimal:     "-",
+			Hint:        "- moves up and to the first non-blank character",
+			Explanation: "- is like k followed by ^. Moves to previous line's first non-blank. Together + and - help you navigate indented blocks.",
+			TimeoutSecs: 30,
+			Points:      20,
+		},
+		// Lesson 12: Combining j/k with counts efficiently
+		{
+			ID:     "vertical_012",
+			Module: ModuleVertical,
+			Level:  4,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"import React from 'react';",
+				"import { useState } from 'react';",
+				"",
+				"function App() {",
+				"  const [count, setCount] = useState(0);",
+				"",
+				"  return (",
+				"    <div>",
+				"      <button onClick={() => setCount(c => c + 1)}>",
+				"        Count: {count}",
+				"      </button>",
+				"    </div>",
+				"  );",
+				"}",
+				"",
+				"export default App;",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Jump to the 'return' statement (line 7) using 6j",
+			Solutions:   []string{"6j"},
+			Optimal:     "6j",
+			Hint:        "Count the lines or use relative line numbers if enabled",
+			Explanation: "In real editing, enable relative line numbers (:set relativenumber) to easily see counts. Then [n]j becomes natural.",
+			TimeoutSecs: 30,
+			Points:      25,
+		},
+		// Lesson 13: Multiple paragraphs with count
+		{
+			ID:     "vertical_013",
+			Module: ModuleVertical,
+			Level:  4,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"// Block 1",
+				"const a = 1;",
+				"",
+				"// Block 2",
+				"const b = 2;",
+				"",
+				"// Block 3",
+				"const c = 3;",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Jump forward two paragraph boundaries using 2}",
+			Solutions:   []string{"2}"},
+			Optimal:     "2}",
+			Hint:        "You can use counts with } and { too",
+			Explanation: "2} jumps two blank lines forward. This is faster than }} and works great in code with consistent spacing.",
+			TimeoutSecs: 30,
+			Points:      25,
+		},
+		// Lesson 14: Combining vertical and horizontal
+		{
+			ID:     "vertical_014",
+			Module: ModuleVertical,
+			Level:  5,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"const config = {",
+				"  name: 'app',",
+				"  version: '1.0.0',",
+				"  debug: true,",
+				"};",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Navigate to 'debug' using 3j then w",
+			Solutions:   []string{"3jw"},
+			Optimal:     "3jw",
+			Hint:        "You can chain any motions together",
+			Explanation: "Vim motions compose naturally. 3jw = go down 3 lines, then next word. This is the power of modal editing!",
+			TimeoutSecs: 30,
+			Points:      30,
+		},
+		// Lesson 15: Quick file navigation pattern
+		{
+			ID:     "vertical_015",
+			Module: ModuleVertical,
+			Level:  5,
+			Type:   ExerciseLesson,
+			Code: []string{
+				"export function api() {",
+				"  // implementation",
+				"}",
+				"",
+				"export function helper() {",
+				"  // implementation",
+				"}",
+				"",
+				"export function main() {",
+				"  // TARGET: this line",
+				"}",
+			},
+			CursorPos:   Position{Line: 0, Col: 0},
+			Mission:     "Reach the 'TARGET' comment using G then k",
+			Solutions:   []string{"Gk"},
+			Optimal:     "Gk",
+			Hint:        "Sometimes going to the end and moving back is faster",
+			Explanation: "Real Vim mastery is knowing multiple ways and choosing the fastest. Gk = end of file, one line up. Sometimes that's fastest!",
+			TimeoutSecs: 30,
+			Points:      30,
+		},
+	}
+}
+
+func getVerticalPractice() []Exercise {
+	lessons := getVerticalLessons()
+	practice := make([]Exercise, len(lessons))
+
+	for i, ex := range lessons {
+		practice[i] = ex
+		practice[i].Type = ExercisePractice
+		practice[i].ID = "vertical_p" + ex.ID[len("vertical_"):]
+		practice[i].TimeoutSecs = 15
+	}
+
+	return practice
+}
+
+func getVerticalBoss() *BossExercise {
+	return &BossExercise{
+		ID:        "vertical_boss",
+		Module:    ModuleVertical,
+		Name:      "The Code Climber",
+		Lives:     3,
+		BonusTime: 30,
+		Steps: []BossStep{
+			{
+				TimeLimit: 5,
+				Exercise: Exercise{
+					ID:     "vertical_boss_1",
+					Module: ModuleVertical,
+					Level:  5,
+					Type:   ExerciseBoss,
+					Code: []string{
+						"import express from 'express';",
+						"import cors from 'cors';",
+						"import helmet from 'helmet';",
+						"",
+						"const app = express();",
+						"",
+						"app.use(cors());",
+						"app.use(helmet());",
+						"",
+						"app.listen(3000);",
+					},
+					CursorPos: Position{Line: 0, Col: 0},
+					Mission:   "Jump to the blank line after imports",
+					Solutions: []string{"}", "3j"},
+					Optimal:   "}",
+					Points:    50,
+				},
+			},
+			{
+				TimeLimit: 5,
+				Exercise: Exercise{
+					ID:     "vertical_boss_2",
+					Module: ModuleVertical,
+					Level:  5,
+					Type:   ExerciseBoss,
+					Code: []string{
+						"import express from 'express';",
+						"import cors from 'cors';",
+						"import helmet from 'helmet';",
+						"",
+						"const app = express();",
+						"",
+						"app.use(cors());",
+						"app.use(helmet());",
+						"",
+						"app.listen(3000);",
+					},
+					CursorPos: Position{Line: 3, Col: 0},
+					Mission:   "Jump to the last line (app.listen)",
+					Solutions: []string{"G"},
+					Optimal:   "G",
+					Points:    50,
+				},
+			},
+			{
+				TimeLimit: 5,
+				Exercise: Exercise{
+					ID:     "vertical_boss_3",
+					Module: ModuleVertical,
+					Level:  5,
+					Type:   ExerciseBoss,
+					Code: []string{
+						"import express from 'express';",
+						"import cors from 'cors';",
+						"import helmet from 'helmet';",
+						"",
+						"const app = express();",
+						"",
+						"app.use(cors());",
+						"app.use(helmet());",
+						"",
+						"app.listen(3000);",
+					},
+					CursorPos: Position{Line: 9, Col: 0},
+					Mission:   "Jump back to the very first line",
+					Solutions: []string{"gg"},
+					Optimal:   "gg",
+					Points:    50,
+				},
+			},
+			{
+				TimeLimit: 6,
+				Exercise: Exercise{
+					ID:     "vertical_boss_4",
+					Module: ModuleVertical,
+					Level:  5,
+					Type:   ExerciseBoss,
+					Code: []string{
+						"import express from 'express';",
+						"import cors from 'cors';",
+						"import helmet from 'helmet';",
+						"",
+						"const app = express();",
+						"",
+						"app.use(cors());",
+						"app.use(helmet());",
+						"",
+						"app.listen(3000);",
+					},
+					CursorPos: Position{Line: 0, Col: 0},
+					Mission:   "Jump to line 7 (app.use(cors))",
+					Solutions: []string{"7G", "6j", "2}"},
+					Optimal:   "7G",
+					Points:    50,
+				},
+			},
+			{
+				TimeLimit: 6,
+				Exercise: Exercise{
+					ID:     "vertical_boss_5",
+					Module: ModuleVertical,
+					Level:  5,
+					Type:   ExerciseBoss,
+					Code: []string{
+						"import express from 'express';",
+						"import cors from 'cors';",
+						"import helmet from 'helmet';",
+						"",
+						"const app = express();",
+						"",
+						"app.use(cors());",
+						"app.use(helmet());",
+						"",
+						"app.listen(3000);",
+					},
+					CursorPos: Position{Line: 6, Col: 0},
+					Mission:   "Jump back to 'const app' line using {",
+					Solutions: []string{"{k", "2k"},
+					Optimal:   "{k",
 					Points:    50,
 				},
 			},

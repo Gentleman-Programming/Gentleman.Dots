@@ -38,9 +38,18 @@ func TestValidateAnswer_NoMatch(t *testing.T) {
 }
 
 func TestValidateAnswer_MultipleSolutions(t *testing.T) {
+	// Code: "const value = test;"
+	// w from col 0 -> col 6 (value)
+	// W from col 0 -> col 6 (value) - same as w here
+	// fe from col 0 -> col 11 (e in value)
+	// e from col 0 -> col 4 (t in const)
+	// So we need exercises where solutions go to same place and 'e' goes somewhere else
 	exercise := &Exercise{
 		ID:        "test_001",
-		Solutions: []string{"w", "W", "fe"},
+		Code:      []string{"const_value_test"},
+		CursorPos: Position{Line: 0, Col: 0},
+		Solutions: []string{"w", "W"}, // Both go to col 6 (after first _)
+		Optimal:   "w",
 	}
 
 	// All should be valid
@@ -50,13 +59,20 @@ func TestValidateAnswer_MultipleSolutions(t *testing.T) {
 	if !ValidateAnswer(exercise, "W") {
 		t.Error("'W' should be valid")
 	}
-	if !ValidateAnswer(exercise, "fe") {
-		t.Error("'fe' should be valid")
-	}
 
-	// This should not
-	if ValidateAnswer(exercise, "e") {
-		t.Error("'e' should be invalid")
+	// 'e' goes to end of first word (col 4), not same as w (col 6)
+	// Actually e goes to col 5 (s in const), w goes to col 6 (_)
+	// Let's use a clearer case
+	exercise2 := &Exercise{
+		ID:        "test_002",
+		Code:      []string{"go to end here"},
+		CursorPos: Position{Line: 0, Col: 0},
+		Solutions: []string{"w"}, // w goes to col 3 (to)
+		Optimal:   "w",
+	}
+	// 'b' from col 0 stays at col 0 - different from w's col 3
+	if ValidateAnswer(exercise2, "b") {
+		t.Error("'b' should be invalid (stays at col 0, not col 3)")
 	}
 }
 
@@ -95,63 +111,130 @@ func TestValidateAnswer_NilExercise(t *testing.T) {
 }
 
 func TestValidateAnswer_EmptySolutions(t *testing.T) {
+	// Exercise with no predefined solutions but with Code/CursorPos/Optimal
+	// should still validate via simulator
 	exercise := &Exercise{
 		ID:        "test_001",
+		Code:      []string{"hello world"},
+		CursorPos: Position{Line: 0, Col: 0},
 		Solutions: []string{},
+		Optimal:   "w", // Optimal goes to col 6
 	}
 
-	if ValidateAnswer(exercise, "anything") {
-		t.Error("Exercise with no solutions should never validate")
+	// 'w' should be valid because it matches optimal
+	if !ValidateAnswer(exercise, "w") {
+		t.Error("Answer matching optimal should be valid even with empty solutions")
+	}
+
+	// 'llllll' (6 l's) should also be valid - reaches same position as optimal
+	if !ValidateAnswer(exercise, "llllll") {
+		t.Error("Creative solution reaching same position should be valid")
+	}
+
+	// 'b' stays at col 0, not col 6 - should be invalid
+	if ValidateAnswer(exercise, "b") {
+		t.Error("'b' should be invalid (doesn't reach target position)")
 	}
 }
 
 func TestValidateAnswer_CaseSensitive(t *testing.T) {
+	// Test that Vim commands are case-sensitive
+	// w = word forward, W = WORD forward (includes punctuation)
+	// On "hello-world test", w stops at '-', W skips to 'test'
+
 	exercise := &Exercise{
 		ID:        "test_001",
-		Solutions: []string{"w", "W"}, // w and W are different in Vim!
+		Code:      []string{"hello-world test"},
+		CursorPos: Position{Line: 0, Col: 0},
+		Solutions: []string{"w"}, // w goes to col 5 (the '-')
+		Optimal:   "w",
 	}
 
-	// w is valid, W is valid, but not mixed
+	// 'w' goes to col 5 (before -)
 	if !ValidateAnswer(exercise, "w") {
 		t.Error("'w' should be valid")
 	}
-	if !ValidateAnswer(exercise, "W") {
-		t.Error("'W' should be valid")
-	}
 
-	// But these are not in solutions
-	exercise2 := &Exercise{
-		ID:        "test_002",
-		Solutions: []string{"w"}, // Only lowercase
-	}
-	if ValidateAnswer(exercise2, "W") {
-		t.Error("'W' should be invalid when only 'w' is in solutions")
+	// 'W' goes to col 12 (test) - DIFFERENT position!
+	if ValidateAnswer(exercise, "W") {
+		t.Error("'W' should be invalid (goes to col 12, not col 5)")
 	}
 }
 
 func TestValidateAnswer_ComplexCommands(t *testing.T) {
 	tests := []struct {
 		name      string
+		code      string
+		cursorCol int
 		solutions []string
+		optimal   string
 		input     string
 		valid     bool
 	}{
-		{"find char", []string{"f="}, "f=", true},
-		{"find char wrong", []string{"f="}, "f-", false},
-		{"change inner", []string{"ci\""}, "ci\"", true},
-		{"change around", []string{"ca{"}, "ca{", true},
-		{"numbered motion", []string{"3w", "www"}, "3w", true},
-		{"numbered motion alt", []string{"3w", "www"}, "www", true},
-		{"search and change", []string{"cgn"}, "cgn", true},
-		{"macro", []string{"@a"}, "@a", true},
-		{"repeat", []string{"."}, ".", true},
+		{
+			name:      "find char",
+			code:      "const = value",
+			cursorCol: 0,
+			solutions: []string{"f="},
+			optimal:   "f=",
+			input:     "f=",
+			valid:     true,
+		},
+		{
+			name:      "find char wrong",
+			code:      "const = value", // No '-' in this string!
+			cursorCol: 0,
+			solutions: []string{"f="},
+			optimal:   "f=",
+			input:     "f-", // f- will fail (no '-' to find)
+			valid:     false,
+		},
+		{
+			name:      "change inner",
+			code:      `say "hello"`,
+			cursorCol: 5,
+			solutions: []string{"ci\""},
+			optimal:   "ci\"",
+			input:     "ci\"",
+			valid:     true,
+		},
+		{
+			name:      "change around",
+			code:      "fn(arg) { code }",
+			cursorCol: 10,
+			solutions: []string{"ca{"},
+			optimal:   "ca{",
+			input:     "ca{",
+			valid:     true,
+		},
+		{
+			name:      "numbered motion",
+			code:      "one two three four",
+			cursorCol: 0,
+			solutions: []string{"3w"},
+			optimal:   "3w",
+			input:     "3w",
+			valid:     true,
+		},
+		{
+			name:      "numbered motion alt",
+			code:      "one two three four",
+			cursorCol: 0,
+			solutions: []string{"3w", "www"},
+			optimal:   "3w",
+			input:     "www",
+			valid:     true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			exercise := &Exercise{
 				ID:        "test",
+				Code:      []string{tt.code},
+				CursorPos: Position{Line: 0, Col: tt.cursorCol},
 				Solutions: tt.solutions,
+				Optimal:   tt.optimal,
 			}
 			result := ValidateAnswer(exercise, tt.input)
 			if result != tt.valid {

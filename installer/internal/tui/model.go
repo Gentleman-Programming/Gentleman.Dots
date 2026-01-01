@@ -139,6 +139,8 @@ type Model struct {
 	TrainerInput       string               // User's input for current exercise
 	TrainerLastCorrect bool                 // Was last answer correct
 	TrainerMessage     string               // Feedback message to display
+	// Leader key mode (like Vim's <space> leader)
+	LeaderMode bool // True when waiting for next key after <space>
 }
 
 // NewModel creates a new Model with initial state

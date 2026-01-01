@@ -447,18 +447,27 @@ func TestViewRendering(t *testing.T) {
 
 // TestQuitBehavior tests various quit scenarios
 func TestQuitBehavior(t *testing.T) {
-	t.Run("q quits from main menu", func(t *testing.T) {
+	t.Run("space+q quits from main menu", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenMainMenu
 
-		result, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		// First press space to enter leader mode
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
 		newM := result.(Model)
 
+		if !newM.LeaderMode {
+			t.Error("space should activate leader mode")
+		}
+
+		// Then press q to quit
+		result, cmd := newM.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		newM = result.(Model)
+
 		if !newM.Quitting {
-			t.Error("q should set Quitting to true")
+			t.Error("space+q should set Quitting to true")
 		}
 		if cmd == nil {
-			t.Error("q should return quit command")
+			t.Error("space+q should return quit command")
 		}
 	})
 
@@ -466,11 +475,15 @@ func TestQuitBehavior(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenInstalling
 
-		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		// Even with leader mode, q should not quit during installation
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
 		newM := result.(Model)
 
+		result, _ = newM.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+		newM = result.(Model)
+
 		if newM.Quitting {
-			t.Error("q should not quit during installation")
+			t.Error("space+q should not quit during installation")
 		}
 	})
 
