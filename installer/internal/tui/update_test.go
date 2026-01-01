@@ -246,9 +246,9 @@ func TestHandleMainMenuWithRestore(t *testing.T) {
 		m.AvailableBackups = []system.BackupInfo{
 			{Path: "/test/backup1"},
 		}
-		// Options: Start, Learn, Keymaps, LazyVim, Restore, Exit
-		// Restore is at index 4
-		m.Cursor = 4
+		// Options: Start, Learn, Keymaps, LazyVim, Vim Trainer, Restore, Exit
+		// Restore is at index 5
+		m.Cursor = 5
 
 		result, _ := m.handleMainMenuKeys("enter")
 		newModel := result.(Model)
@@ -262,9 +262,9 @@ func TestHandleMainMenuWithRestore(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenMainMenu
 		m.AvailableBackups = []system.BackupInfo{} // No backups
-		// Options without restore: Start, Learn, Keymaps, LazyVim, Exit
-		// Exit is at index 4
-		m.Cursor = 4
+		// Options without restore: Start, Learn, Keymaps, LazyVim, Vim Trainer, Exit
+		// Exit is at index 5
+		m.Cursor = 5
 
 		_, cmd := m.handleMainMenuKeys("enter")
 

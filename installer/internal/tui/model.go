@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
+	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -45,6 +46,13 @@ const (
 	ScreenBackupConfirm
 	ScreenRestoreBackup
 	ScreenRestoreConfirm
+	// Vim Trainer screens
+	ScreenTrainerMenu       // Module selection
+	ScreenTrainerLesson     // Lesson mode
+	ScreenTrainerPractice   // Practice mode
+	ScreenTrainerBoss       // Boss fight
+	ScreenTrainerResult     // Result after exercise
+	ScreenTrainerBossResult // Result after boss fight
 )
 
 // InstallStep represents a single installation step
@@ -123,6 +131,14 @@ type Model struct {
 	AvailableBackups []system.BackupInfo // Available backups for restore
 	SelectedBackup   int                 // Selected backup index
 	BackupDir        string              // Last backup directory created
+	// Vim Trainer mode
+	TrainerStats       *trainer.UserStats   // User's training stats
+	TrainerGameState   *trainer.GameState   // Current game session state
+	TrainerModules     []trainer.ModuleInfo // Available modules
+	TrainerCursor      int                  // Cursor for module selection
+	TrainerInput       string               // User's input for current exercise
+	TrainerLastCorrect bool                 // Was last answer correct
+	TrainerMessage     string               // Feedback message to display
 }
 
 // NewModel creates a new Model with initial state
@@ -160,6 +176,14 @@ func NewModel() Model {
 		SelectedBackup:          0,
 		BackupDir:               "",
 		Program:                 nil, // Will be set after tea.Program is created
+		// Trainer initialization
+		TrainerStats:       nil, // Will be loaded when entering trainer
+		TrainerGameState:   nil,
+		TrainerModules:     trainer.GetAllModules(),
+		TrainerCursor:      0,
+		TrainerInput:       "",
+		TrainerLastCorrect: false,
+		TrainerMessage:     "",
 	}
 }
 
@@ -200,6 +224,7 @@ func (m Model) GetCurrentOptions() []string {
 			"📚 Learn About Tools",
 			"⌨️  Keymaps Reference",
 			"📖 LazyVim Guide",
+			"🎮 Vim Trainer",
 		}
 		// Add restore option if backups exist
 		if len(m.AvailableBackups) > 0 {
@@ -373,6 +398,18 @@ func (m Model) GetScreenTitle() string {
 			return "📖 " + m.LazyVimTopics[m.SelectedLazyVimTopic].Title
 		}
 		return "📖 LazyVim"
+	case ScreenTrainerMenu:
+		return "🎮 Vim Trainer - Module Selection"
+	case ScreenTrainerLesson:
+		return "🎮 Vim Trainer - Lesson"
+	case ScreenTrainerPractice:
+		return "🎮 Vim Trainer - Practice"
+	case ScreenTrainerBoss:
+		return "🎮 Vim Trainer - Boss Fight!"
+	case ScreenTrainerResult:
+		return "🎮 Vim Trainer - Result"
+	case ScreenTrainerBossResult:
+		return "🎮 Vim Trainer - Boss Battle Complete"
 	default:
 		return ""
 	}

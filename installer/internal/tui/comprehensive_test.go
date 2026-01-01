@@ -719,7 +719,7 @@ func TestMainMenuToRestore(t *testing.T) {
 	m.AvailableBackups = []system.BackupInfo{
 		{Path: "/test", Timestamp: time.Now(), Files: []string{"test"}},
 	}
-	m.Cursor = 4 // Restore from Backup (after LazyVim Guide)
+	m.Cursor = 5 // Restore from Backup (after Vim Trainer)
 
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)

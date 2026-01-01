@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -95,6 +96,19 @@ func (m Model) View() string {
 		s.WriteString(m.renderComplete())
 	case ScreenError:
 		s.WriteString(m.renderError())
+	// Trainer screens
+	case ScreenTrainerMenu:
+		s.WriteString(m.renderTrainerMenu())
+	case ScreenTrainerLesson:
+		s.WriteString(m.renderTrainerExercise("Lesson"))
+	case ScreenTrainerPractice:
+		s.WriteString(m.renderTrainerExercise("Practice"))
+	case ScreenTrainerBoss:
+		s.WriteString(m.renderTrainerBoss())
+	case ScreenTrainerResult:
+		s.WriteString(m.renderTrainerResult())
+	case ScreenTrainerBossResult:
+		s.WriteString(m.renderTrainerBossResult())
 	}
 
 	return s.String()
@@ -1246,6 +1260,497 @@ func (m Model) renderRestoreConfirm() string {
 
 	s.WriteString("\n")
 	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] cancel"))
+
+	return s.String()
+}
+
+// ============================================================================
+// Trainer Views
+// ============================================================================
+
+func (m Model) renderTrainerMenu() string {
+	var s strings.Builder
+
+	// Header
+	s.WriteString(TitleStyle.Render("🎮 Vim Mastery Trainer"))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render("Master Vim motions through progressive challenges"))
+	s.WriteString("\n\n")
+
+	// Stats bar
+	if m.TrainerStats != nil {
+		score := fmt.Sprintf("Score: %d", m.TrainerStats.TotalScore)
+		streak := fmt.Sprintf("Streak: %d", m.TrainerStats.CurrentStreak)
+		bosses := fmt.Sprintf("Bosses: %d/7", len(m.TrainerStats.BossesDefeated))
+		s.WriteString(InfoStyle.Render(fmt.Sprintf("📊 %s  |  🔥 %s  |  👑 %s", score, streak, bosses)))
+		s.WriteString("\n\n")
+	}
+
+	// Module list
+	s.WriteString(SubtitleStyle.Render("Select a Module:"))
+	s.WriteString("\n\n")
+
+	for i, module := range m.TrainerModules {
+		isUnlocked := m.TrainerStats != nil && m.TrainerStats.IsModuleUnlocked(module.ID)
+		isBossDefeated := m.TrainerStats != nil && m.TrainerStats.IsBossDefeated(module.ID)
+		isLessonsComplete := m.TrainerStats != nil && m.TrainerStats.IsLessonsComplete(module.ID)
+		isPracticeReady := m.TrainerStats != nil && m.TrainerStats.IsPracticeReady(module.ID)
+		isBossReady := m.TrainerStats != nil && m.TrainerStats.IsBossReady(module.ID)
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.TrainerCursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+
+		// Module name with status indicators
+		status := ""
+		if !isUnlocked {
+			status = "🔒"
+			style = MutedStyle
+		} else if isBossDefeated {
+			status = "👑"
+		} else if isBossReady {
+			status = "⚔️"
+		} else if isPracticeReady {
+			status = "🎯"
+		} else if isLessonsComplete {
+			status = "📚"
+		} else {
+			status = "📖"
+		}
+
+		line := fmt.Sprintf("%s %s %s - %s", status, module.Icon, module.Name, module.Description)
+		s.WriteString(style.Render(cursor + line))
+		s.WriteString("\n")
+
+		// Show progress for selected module
+		if i == m.TrainerCursor && isUnlocked && m.TrainerStats != nil {
+			progress := m.TrainerStats.GetModuleProgress(module.ID)
+			var progressLine string
+			if progress.LessonsTotal > 0 {
+				lessonsPercent := float64(progress.LessonsCompleted) / float64(progress.LessonsTotal) * 100
+				progressLine = fmt.Sprintf("     Lessons: %d/%d (%.0f%%)", progress.LessonsCompleted, progress.LessonsTotal, lessonsPercent)
+			} else {
+				progressLine = "     Lessons: 0/0"
+			}
+			if progress.PracticeAttempts > 0 {
+				progressLine += fmt.Sprintf("  |  Practice: %.0f%%", progress.PracticeAccuracy*100)
+			}
+
+			// Show mastery progress for practice mode
+			if isPracticeReady {
+				practiceStats := trainer.GetPracticeStatsForModule(module.ID, progress)
+				if practiceStats.TotalExercises > 0 {
+					progressLine += fmt.Sprintf("  |  Mastered: %d/%d", practiceStats.MasteredCount, practiceStats.TotalExercises)
+					if practiceStats.PracticeComplete {
+						progressLine += " ✅"
+					}
+				}
+			}
+
+			s.WriteString(MutedStyle.Render(progressLine))
+			s.WriteString("\n")
+		}
+	}
+
+	// Show message if any
+	if m.TrainerMessage != "" {
+		s.WriteString("\n")
+		s.WriteString(WarningStyle.Render(m.TrainerMessage))
+		s.WriteString("\n")
+	}
+
+	// Help
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter/l] lesson • [p] practice • [b] boss • [r] reset • [q/Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderTrainerExercise(mode string) string {
+	var s strings.Builder
+
+	if m.TrainerGameState == nil || m.TrainerGameState.CurrentExercise == nil {
+		s.WriteString(ErrorStyle.Render("No exercise loaded"))
+		return s.String()
+	}
+
+	exercise := m.TrainerGameState.CurrentExercise
+
+	// Header with mode
+	title := fmt.Sprintf("🎮 %s Mode: %s", mode, string(m.TrainerGameState.CurrentModule))
+	s.WriteString(TitleStyle.Render(title))
+	s.WriteString("\n")
+
+	// Progress bar
+	var progressText string
+	if m.TrainerGameState.IsLessonMode {
+		current := m.TrainerGameState.ExerciseIndex + 1
+		total := len(m.TrainerGameState.Exercises)
+		progressText = fmt.Sprintf("Exercise %d of %d", current, total)
+	} else {
+		progressText = fmt.Sprintf("Score: %d | Streak: %d", m.TrainerGameState.SessionScore, m.TrainerGameState.CurrentStreak)
+	}
+	s.WriteString(MutedStyle.Render(progressText))
+	s.WriteString("\n\n")
+
+	// Mission
+	s.WriteString(SubtitleStyle.Render("📋 Mission:"))
+	s.WriteString("\n")
+	s.WriteString(InfoStyle.Render("   " + exercise.Mission))
+	s.WriteString("\n\n")
+
+	// Calculate simulated cursor position based on current input
+	startPos := exercise.CursorPos
+	simPos := trainer.SimulateMotions(startPos, exercise.Code, m.TrainerInput)
+
+	// Code display with both cursors
+	s.WriteString(SubtitleStyle.Render("📝 Code:"))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n")
+
+	for lineNum, line := range exercise.Code {
+		lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
+		s.WriteString(MutedStyle.Render(lineNumStr))
+
+		// Determine which cursors are on this line
+		startOnLine := lineNum == startPos.Line
+		currentOnLine := lineNum == simPos.Line
+		samePosition := startOnLine && currentOnLine && startPos.Col == simPos.Col
+
+		if samePosition && startPos.Col < len(line) {
+			// Both cursors at same position - show start cursor (they haven't moved yet)
+			before := line[:startPos.Col]
+			cursor := string(line[startPos.Col])
+			after := ""
+			if startPos.Col+1 < len(line) {
+				after = line[startPos.Col+1:]
+			}
+			s.WriteString(CodeStyle.Render(before))
+			s.WriteString(StartCursorStyle.Render(cursor))
+			s.WriteString(CodeStyle.Render(after))
+		} else if startOnLine && currentOnLine {
+			// Both cursors on same line but different positions
+			s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
+		} else if startOnLine {
+			// Only start cursor on this line
+			if startPos.Col < len(line) {
+				before := line[:startPos.Col]
+				cursor := string(line[startPos.Col])
+				after := ""
+				if startPos.Col+1 < len(line) {
+					after = line[startPos.Col+1:]
+				}
+				s.WriteString(CodeStyle.Render(before))
+				s.WriteString(StartCursorStyle.Render(cursor))
+				s.WriteString(CodeStyle.Render(after))
+			} else {
+				s.WriteString(CodeStyle.Render(line))
+			}
+		} else if currentOnLine {
+			// Only current cursor on this line
+			if simPos.Col < len(line) {
+				before := line[:simPos.Col]
+				cursor := string(line[simPos.Col])
+				after := ""
+				if simPos.Col+1 < len(line) {
+					after = line[simPos.Col+1:]
+				}
+				s.WriteString(CodeStyle.Render(before))
+				s.WriteString(CurrentCursorStyle.Render(cursor))
+				s.WriteString(CodeStyle.Render(after))
+			} else {
+				s.WriteString(CodeStyle.Render(line))
+			}
+		} else {
+			// No cursors on this line
+			s.WriteString(CodeStyle.Render(line))
+		}
+		s.WriteString("\n")
+	}
+
+	s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+	s.WriteString("\n\n")
+
+	// Input field
+	s.WriteString(SubtitleStyle.Render("⌨️  Your answer:"))
+	s.WriteString("\n")
+	inputDisplay := m.TrainerInput
+	if inputDisplay == "" {
+		inputDisplay = "..."
+	}
+	s.WriteString(BoxStyle.Render(KeyStyle.Render(inputDisplay)))
+	s.WriteString("\n")
+
+	// Show message/hint if any
+	if m.TrainerMessage != "" {
+		s.WriteString("\n")
+		s.WriteString(InfoStyle.Render(m.TrainerMessage))
+		s.WriteString("\n")
+	}
+
+	// Help
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("Type command • [Enter] submit • [Tab] hint • [Backspace] clear • [Esc] quit"))
+
+	return s.String()
+}
+
+// renderLineWithTwoCursors renders a line with both start and current cursor
+func renderLineWithTwoCursors(line string, startCol, currentCol int) string {
+	var result strings.Builder
+
+	// Determine order of cursors
+	firstCol, secondCol := startCol, currentCol
+	firstStyle, secondStyle := StartCursorStyle, CurrentCursorStyle
+	if currentCol < startCol {
+		firstCol, secondCol = currentCol, startCol
+		firstStyle, secondStyle = CurrentCursorStyle, StartCursorStyle
+	}
+
+	// Build the line piece by piece
+	// Part before first cursor
+	if firstCol > 0 {
+		result.WriteString(CodeStyle.Render(line[:firstCol]))
+	}
+
+	// First cursor
+	if firstCol < len(line) {
+		result.WriteString(firstStyle.Render(string(line[firstCol])))
+	}
+
+	// Part between cursors (if any)
+	if firstCol+1 < secondCol {
+		result.WriteString(CodeStyle.Render(line[firstCol+1 : secondCol]))
+	}
+
+	// Second cursor
+	if secondCol < len(line) && secondCol > firstCol {
+		result.WriteString(secondStyle.Render(string(line[secondCol])))
+	}
+
+	// Part after second cursor
+	if secondCol+1 < len(line) {
+		result.WriteString(CodeStyle.Render(line[secondCol+1:]))
+	}
+
+	return result.String()
+}
+
+func (m Model) renderTrainerBoss() string {
+	var s strings.Builder
+
+	if m.TrainerGameState == nil || m.TrainerGameState.CurrentBoss == nil {
+		s.WriteString(ErrorStyle.Render("No boss loaded"))
+		return s.String()
+	}
+
+	boss := m.TrainerGameState.CurrentBoss
+	currentStep := m.TrainerGameState.BossStep
+
+	// Boss header
+	s.WriteString(DangerStyle.Render("⚔️  BOSS FIGHT: " + boss.Name))
+	s.WriteString("\n")
+
+	// Lives and progress
+	lives := strings.Repeat("❤️ ", m.TrainerGameState.BossLives)
+	lostLives := strings.Repeat("🖤 ", boss.Lives-m.TrainerGameState.BossLives)
+	s.WriteString(fmt.Sprintf("Lives: %s%s  |  Step: %d/%d", lives, lostLives, currentStep+1, len(boss.Steps)))
+	s.WriteString("\n\n")
+
+	if currentStep < len(boss.Steps) {
+		step := boss.Steps[currentStep]
+		exercise := &step.Exercise
+
+		// Mission
+		s.WriteString(SubtitleStyle.Render("📋 Challenge:"))
+		s.WriteString("\n")
+		s.WriteString(InfoStyle.Render("   " + exercise.Mission))
+		s.WriteString("\n\n")
+
+		// Calculate simulated cursor position based on current input
+		startPos := exercise.CursorPos
+		simPos := trainer.SimulateMotions(startPos, exercise.Code, m.TrainerInput)
+
+		// Code display with both cursors
+		s.WriteString(SubtitleStyle.Render("📝 Code:"))
+		s.WriteString("\n")
+		s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+		s.WriteString("\n")
+
+		for lineNum, line := range exercise.Code {
+			lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
+			s.WriteString(MutedStyle.Render(lineNumStr))
+
+			// Determine which cursors are on this line
+			startOnLine := lineNum == startPos.Line
+			currentOnLine := lineNum == simPos.Line
+			samePosition := startOnLine && currentOnLine && startPos.Col == simPos.Col
+
+			if samePosition && startPos.Col < len(line) {
+				// Both cursors at same position
+				before := line[:startPos.Col]
+				cursor := string(line[startPos.Col])
+				after := ""
+				if startPos.Col+1 < len(line) {
+					after = line[startPos.Col+1:]
+				}
+				s.WriteString(CodeStyle.Render(before))
+				s.WriteString(StartCursorStyle.Render(cursor))
+				s.WriteString(CodeStyle.Render(after))
+			} else if startOnLine && currentOnLine {
+				// Both cursors on same line but different positions
+				s.WriteString(renderLineWithTwoCursors(line, startPos.Col, simPos.Col))
+			} else if startOnLine {
+				// Only start cursor on this line
+				if startPos.Col < len(line) {
+					before := line[:startPos.Col]
+					cursor := string(line[startPos.Col])
+					after := ""
+					if startPos.Col+1 < len(line) {
+						after = line[startPos.Col+1:]
+					}
+					s.WriteString(CodeStyle.Render(before))
+					s.WriteString(StartCursorStyle.Render(cursor))
+					s.WriteString(CodeStyle.Render(after))
+				} else {
+					s.WriteString(CodeStyle.Render(line))
+				}
+			} else if currentOnLine {
+				// Only current cursor on this line
+				if simPos.Col < len(line) {
+					before := line[:simPos.Col]
+					cursor := string(line[simPos.Col])
+					after := ""
+					if simPos.Col+1 < len(line) {
+						after = line[simPos.Col+1:]
+					}
+					s.WriteString(CodeStyle.Render(before))
+					s.WriteString(CurrentCursorStyle.Render(cursor))
+					s.WriteString(CodeStyle.Render(after))
+				} else {
+					s.WriteString(CodeStyle.Render(line))
+				}
+			} else {
+				// No cursors on this line
+				s.WriteString(CodeStyle.Render(line))
+			}
+			s.WriteString("\n")
+		}
+
+		s.WriteString(MutedStyle.Render(strings.Repeat("─", 60)))
+		s.WriteString("\n\n")
+
+		// Input field
+		s.WriteString(SubtitleStyle.Render("⌨️  Your answer:"))
+		s.WriteString("\n")
+		inputDisplay := m.TrainerInput
+		if inputDisplay == "" {
+			inputDisplay = "..."
+		}
+		s.WriteString(BoxStyle.Render(KeyStyle.Render(inputDisplay)))
+		s.WriteString("\n")
+	}
+
+	// Show message if any
+	if m.TrainerMessage != "" {
+		s.WriteString("\n")
+		s.WriteString(WarningStyle.Render(m.TrainerMessage))
+		s.WriteString("\n")
+	}
+
+	// Help
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("Type command • [Enter] submit • [Esc] forfeit"))
+
+	return s.String()
+}
+
+func (m Model) renderTrainerResult() string {
+	var s strings.Builder
+
+	// Result header
+	if m.TrainerLastCorrect {
+		s.WriteString(SuccessStyle.Render("✨ CORRECT! ✨"))
+	} else {
+		s.WriteString(ErrorStyle.Render("❌ INCORRECT"))
+	}
+	s.WriteString("\n\n")
+
+	// Show message/explanation
+	s.WriteString(InfoStyle.Render(m.TrainerMessage))
+	s.WriteString("\n")
+
+	if m.TrainerGameState != nil && m.TrainerGameState.CurrentExercise != nil {
+		exercise := m.TrainerGameState.CurrentExercise
+		if exercise.Explanation != "" {
+			s.WriteString("\n")
+			s.WriteString(SubtitleStyle.Render("📖 Explanation:"))
+			s.WriteString("\n")
+			s.WriteString(MutedStyle.Render("   " + exercise.Explanation))
+			s.WriteString("\n")
+		}
+	}
+
+	// Score info
+	if m.TrainerGameState != nil {
+		s.WriteString("\n")
+		s.WriteString(MutedStyle.Render(fmt.Sprintf("Session Score: %d  |  Streak: %d", m.TrainerGameState.SessionScore, m.TrainerGameState.CurrentStreak)))
+		s.WriteString("\n")
+	}
+
+	// Help
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("[Enter/Space] continue • [Esc/q] quit"))
+
+	return s.String()
+}
+
+func (m Model) renderTrainerBossResult() string {
+	var s strings.Builder
+
+	// Victory or defeat
+	if m.TrainerLastCorrect {
+		s.WriteString(SuccessStyle.Render("🏆 VICTORY! 🏆"))
+		s.WriteString("\n\n")
+		if m.TrainerGameState != nil && m.TrainerGameState.CurrentBoss != nil {
+			s.WriteString(TitleStyle.Render("You defeated " + m.TrainerGameState.CurrentBoss.Name + "!"))
+			s.WriteString("\n\n")
+			s.WriteString(InfoStyle.Render(fmt.Sprintf("Lives remaining: %s", strings.Repeat("❤️ ", m.TrainerGameState.BossLives))))
+			s.WriteString("\n")
+		}
+		s.WriteString("\n")
+		s.WriteString(SuccessStyle.Render("🎉 +500 bonus points!"))
+		s.WriteString("\n")
+		s.WriteString(SuccessStyle.Render("🔓 Next module unlocked!"))
+	} else {
+		s.WriteString(DangerStyle.Render("💀 DEFEATED 💀"))
+		s.WriteString("\n\n")
+		if m.TrainerGameState != nil && m.TrainerGameState.CurrentBoss != nil {
+			s.WriteString(MutedStyle.Render(m.TrainerGameState.CurrentBoss.Name + " wins this time..."))
+			s.WriteString("\n\n")
+		}
+		s.WriteString(InfoStyle.Render("Keep practicing and try again!"))
+	}
+
+	// Show message
+	if m.TrainerMessage != "" {
+		s.WriteString("\n\n")
+		s.WriteString(MutedStyle.Render(m.TrainerMessage))
+	}
+
+	// Stats
+	if m.TrainerStats != nil {
+		s.WriteString("\n\n")
+		s.WriteString(MutedStyle.Render(fmt.Sprintf("Total Score: %d  |  Bosses Defeated: %d/7", m.TrainerStats.TotalScore, len(m.TrainerStats.BossesDefeated))))
+	}
+
+	// Help
+	s.WriteString("\n\n")
+	s.WriteString(HelpStyle.Render("[Enter/Space/Esc/q] return to menu"))
 
 	return s.String()
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
+	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -250,6 +251,22 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenRestoreConfirm:
 		return m.handleRestoreConfirmKeys(key)
 
+	// Trainer screens
+	case ScreenTrainerMenu:
+		return m.handleTrainerMenuKeys(key)
+
+	case ScreenTrainerLesson, ScreenTrainerPractice:
+		return m.handleTrainerExerciseKeys(key)
+
+	case ScreenTrainerBoss:
+		return m.handleTrainerBossKeys(key)
+
+	case ScreenTrainerResult:
+		return m.handleTrainerResultKeys(key)
+
+	case ScreenTrainerBossResult:
+		return m.handleTrainerBossResultKeys(key)
+
 	case ScreenComplete:
 		switch key {
 		case "enter", " ":
@@ -314,6 +331,25 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	case ScreenRestoreBackup, ScreenRestoreConfirm:
 		m.Screen = ScreenMainMenu
 		m.Cursor = 0
+	// Trainer screens
+	case ScreenTrainerMenu:
+		// Save stats and return to main menu
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenMainMenu
+		m.Cursor = 0
+	case ScreenTrainerLesson, ScreenTrainerPractice, ScreenTrainerBoss:
+		// Return to trainer menu (stats saved in handlers)
+		m.Screen = ScreenTrainerMenu
+		m.TrainerMessage = ""
+	case ScreenTrainerResult, ScreenTrainerBossResult:
+		// Return to trainer menu
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenTrainerMenu
+		m.TrainerMessage = ""
 	// Main menu - quit
 	case ScreenMainMenu:
 		m.Quitting = true
@@ -353,6 +389,18 @@ func (m Model) handleMainMenuKeys(key string) (tea.Model, tea.Cmd) {
 			m.Screen = ScreenLearnLazyVim
 			m.PrevScreen = ScreenMainMenu
 			m.Cursor = 0
+		case strings.Contains(selected, "Vim Trainer"):
+			// Load user stats when entering trainer
+			stats := trainer.LoadStats()
+			if stats == nil {
+				stats = trainer.NewUserStats()
+			}
+			m.TrainerStats = stats
+			m.TrainerGameState = nil
+			m.TrainerCursor = 0
+			m.TrainerInput = ""
+			m.Screen = ScreenTrainerMenu
+			m.PrevScreen = ScreenMainMenu
 		case strings.Contains(selected, "Restore from Backup") && hasRestoreOption:
 			m.Screen = ScreenRestoreBackup
 			m.Cursor = 0
@@ -1168,4 +1216,390 @@ func (m Model) runNextStep() tea.Cmd {
 		err := executeStep(step.ID, &m)
 		return stepCompleteMsg{stepID: step.ID, err: err}
 	}
+}
+
+// ============================================================================
+// Trainer Handlers
+// ============================================================================
+
+// handleTrainerMenuKeys handles module selection in the trainer
+func (m Model) handleTrainerMenuKeys(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "up", "k":
+		if m.TrainerCursor > 0 {
+			m.TrainerCursor--
+		}
+	case "down", "j":
+		if m.TrainerCursor < len(m.TrainerModules)-1 {
+			m.TrainerCursor++
+		}
+	case "enter", " ":
+		// Select module and start lesson
+		module := m.TrainerModules[m.TrainerCursor]
+
+		// Check if module is unlocked
+		if !m.TrainerStats.IsModuleUnlocked(module.ID) {
+			m.TrainerMessage = "🔒 Module locked! Complete previous boss first."
+			return m, nil
+		}
+
+		// Start lessons for the module
+		lessons := trainer.GetLessons(module.ID)
+		if len(lessons) == 0 {
+			m.TrainerMessage = "No lessons available for this module yet."
+			return m, nil
+		}
+
+		// Initialize game state with lesson count
+		m.TrainerGameState = trainer.NewGameStateWithStats(m.TrainerStats)
+		progress := m.TrainerStats.GetModuleProgress(module.ID)
+		progress.LessonsTotal = len(lessons)
+		m.TrainerGameState.StartLesson(module.ID)
+		m.TrainerInput = ""
+		m.TrainerMessage = ""
+		m.Screen = ScreenTrainerLesson
+	case "l":
+		// L key for Lesson mode (if unlocked)
+		if m.TrainerCursor < len(m.TrainerModules) {
+			module := m.TrainerModules[m.TrainerCursor]
+			if m.TrainerStats.IsModuleUnlocked(module.ID) {
+				lessons := trainer.GetLessons(module.ID)
+				if len(lessons) > 0 {
+					m.TrainerGameState = trainer.NewGameStateWithStats(m.TrainerStats)
+					progress := m.TrainerStats.GetModuleProgress(module.ID)
+					progress.LessonsTotal = len(lessons)
+					m.TrainerGameState.StartLesson(module.ID)
+					m.TrainerInput = ""
+					m.TrainerMessage = ""
+					m.Screen = ScreenTrainerLesson
+				}
+			}
+		}
+	case "p":
+		// P key for Practice mode (if ready)
+		if m.TrainerCursor < len(m.TrainerModules) {
+			module := m.TrainerModules[m.TrainerCursor]
+			if m.TrainerStats.IsPracticeReady(module.ID) {
+				// Check if practice is complete
+				progress := m.TrainerStats.GetModuleProgress(module.ID)
+				if progress.IsPracticeComplete(module.ID) {
+					m.TrainerMessage = "🎉 Practice complete! All exercises mastered! Press [r] to reset."
+					return m, nil
+				}
+
+				m.TrainerGameState = trainer.NewGameStateWithStats(m.TrainerStats)
+				m.TrainerGameState.StartPractice(module.ID)
+
+				// Check if we got an exercise (shouldn't fail if not complete, but safety check)
+				if m.TrainerGameState.CurrentExercise == nil {
+					m.TrainerMessage = "🎉 Practice complete! All exercises mastered! Press [r] to reset."
+					return m, nil
+				}
+
+				m.TrainerInput = ""
+				m.TrainerMessage = ""
+				m.Screen = ScreenTrainerPractice
+			} else {
+				m.TrainerMessage = "Complete all lessons first to unlock practice!"
+			}
+		}
+	case "r":
+		// R key to reset practice progress for selected module
+		if m.TrainerCursor < len(m.TrainerModules) {
+			module := m.TrainerModules[m.TrainerCursor]
+			if m.TrainerStats.IsModuleUnlocked(module.ID) {
+				progress := m.TrainerStats.GetModuleProgress(module.ID)
+				progress.ResetModulePractice()
+				trainer.SaveStats(m.TrainerStats)
+				m.TrainerMessage = "🔄 Practice progress reset for " + module.Name + ". Try again!"
+			} else {
+				m.TrainerMessage = "🔒 Module locked. Complete previous boss first."
+			}
+		}
+	case "b":
+		// B key for Boss fight (if ready)
+		if m.TrainerCursor < len(m.TrainerModules) {
+			module := m.TrainerModules[m.TrainerCursor]
+			if m.TrainerStats.IsBossReady(module.ID) {
+				boss := trainer.GetBoss(module.ID)
+				if boss != nil {
+					m.TrainerGameState = trainer.NewGameStateWithStats(m.TrainerStats)
+					m.TrainerGameState.StartBoss(module.ID)
+					m.TrainerInput = ""
+					m.TrainerMessage = ""
+					m.Screen = ScreenTrainerBoss
+				} else {
+					m.TrainerMessage = "Boss not implemented yet!"
+				}
+			} else {
+				m.TrainerMessage = "Complete lessons + 80% practice accuracy to fight boss!"
+			}
+		}
+	case "esc", "q":
+		// Save stats and go back to main menu
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenMainMenu
+		m.Cursor = 0
+	}
+
+	return m, nil
+}
+
+// handleTrainerExerciseKeys handles input during lesson/practice exercises
+func (m Model) handleTrainerExerciseKeys(key string) (tea.Model, tea.Cmd) {
+	if m.TrainerGameState == nil {
+		m.Screen = ScreenTrainerMenu
+		return m, nil
+	}
+
+	exercise := m.TrainerGameState.CurrentExercise
+	if exercise == nil {
+		m.Screen = ScreenTrainerMenu
+		return m, nil
+	}
+
+	switch key {
+	case "esc":
+		// Exit to menu, save progress
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenTrainerMenu
+		m.TrainerMessage = ""
+		return m, nil
+
+	case "backspace":
+		// Remove last character from input
+		if len(m.TrainerInput) > 0 {
+			m.TrainerInput = m.TrainerInput[:len(m.TrainerInput)-1]
+		}
+		return m, nil
+
+	case "enter":
+		// Submit answer
+		if m.TrainerInput == "" {
+			return m, nil
+		}
+
+		// Validate answer using detailed validation
+		validation := trainer.ValidateAnswerDetailed(exercise, m.TrainerInput)
+
+		if validation.IsCorrect {
+			// Record correct answer - time and optimal flag
+			// Using a fixed time of 10 seconds for now (can add actual timing later)
+			m.TrainerGameState.RecordCorrectAnswer(10.0, validation.IsOptimal)
+			m.TrainerLastCorrect = true
+
+			if validation.IsOptimal {
+				m.TrainerMessage = "✨ Perfect! Optimal solution!"
+			} else if validation.IsInSolutions {
+				// Valid predefined solution but not optimal
+				m.TrainerMessage = "✓ Correct! But " + exercise.Optimal + " is more efficient."
+			} else {
+				// Creative solution that works but not in predefined list
+				m.TrainerMessage = "✓ Correct! Creative solution! Optimal: " + exercise.Optimal
+			}
+		} else {
+			m.TrainerGameState.RecordIncorrectAnswer()
+			m.TrainerLastCorrect = false
+			// Show all valid solutions, not just optimal
+			m.TrainerMessage = "✗ Incorrect. Solutions: " + trainer.FormatSolutionsHint(exercise)
+		}
+
+		// Record practice result for intelligent practice system
+		if m.TrainerGameState.IsPracticeMode && exercise.ID != "" {
+			progress := m.TrainerStats.GetModuleProgress(m.TrainerGameState.CurrentModule)
+			progress.RecordPracticeResult(exercise.ID, validation.IsCorrect)
+			trainer.SaveStats(m.TrainerStats)
+		}
+
+		m.Screen = ScreenTrainerResult
+		return m, nil
+
+	case "tab":
+		// Show hint
+		m.TrainerMessage = "💡 Hint: " + exercise.Hint
+		return m, nil
+
+	default:
+		// Add character to input (filter control keys)
+		if len(key) == 1 || key == "ctrl+a" || key == "ctrl+e" || key == "ctrl+w" {
+			// Handle ctrl combinations
+			if strings.HasPrefix(key, "ctrl+") {
+				m.TrainerInput += key
+			} else if len(key) == 1 {
+				m.TrainerInput += key
+			}
+		} else if key == "space" {
+			m.TrainerInput += " "
+		}
+	}
+
+	return m, nil
+}
+
+// handleTrainerBossKeys handles input during boss fights
+func (m Model) handleTrainerBossKeys(key string) (tea.Model, tea.Cmd) {
+	if m.TrainerGameState == nil || m.TrainerGameState.CurrentBoss == nil {
+		m.Screen = ScreenTrainerMenu
+		return m, nil
+	}
+
+	switch key {
+	case "esc":
+		// Forfeit boss fight
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenTrainerMenu
+		m.TrainerMessage = "Boss fight abandoned!"
+		return m, nil
+
+	case "backspace":
+		if len(m.TrainerInput) > 0 {
+			m.TrainerInput = m.TrainerInput[:len(m.TrainerInput)-1]
+		}
+		return m, nil
+
+	case "enter":
+		if m.TrainerInput == "" {
+			return m, nil
+		}
+
+		// Get current boss step
+		boss := m.TrainerGameState.CurrentBoss
+		if m.TrainerGameState.BossStep >= len(boss.Steps) {
+			// Boss complete!
+			m.TrainerGameState.RecordBossVictory()
+			m.TrainerLastCorrect = true
+			m.TrainerMessage = "🏆 VICTORY! You defeated " + boss.Name + "!"
+			m.Screen = ScreenTrainerBossResult
+			return m, nil
+		}
+
+		step := boss.Steps[m.TrainerGameState.BossStep]
+		isCorrect := trainer.ValidateAnswer(&step.Exercise, m.TrainerInput)
+		isOptimal := trainer.IsOptimalAnswer(&step.Exercise, m.TrainerInput)
+
+		if isCorrect {
+			// Move to next step
+			m.TrainerGameState.BossStep++
+			m.TrainerInput = ""
+
+			if m.TrainerGameState.BossStep >= len(boss.Steps) {
+				// Boss defeated!
+				m.TrainerGameState.RecordBossVictory()
+				m.TrainerLastCorrect = true
+				m.TrainerMessage = "🏆 VICTORY! You defeated " + boss.Name + "!"
+				m.Screen = ScreenTrainerBossResult
+			} else {
+				if isOptimal {
+					m.TrainerMessage = "✨ Perfect! Next challenge..."
+				} else {
+					m.TrainerMessage = "✓ Good! (Optimal: " + step.Exercise.Optimal + ") Next..."
+				}
+			}
+		} else {
+			// Lose a life - SHOW THE CORRECT SOLUTION
+			m.TrainerGameState.BossLives--
+			m.TrainerInput = ""
+
+			// Format the solution hint
+			solutionHint := trainer.FormatSolutionsHint(&step.Exercise)
+
+			if m.TrainerGameState.BossLives <= 0 {
+				// Game over - show final solution
+				m.TrainerLastCorrect = false
+				m.TrainerMessage = "💀 DEFEATED! Solution was: " + solutionHint
+				m.Screen = ScreenTrainerBossResult
+			} else {
+				// Still has lives - show solution and remaining lives
+				livesStr := strings.Repeat("❤️", m.TrainerGameState.BossLives)
+				m.TrainerMessage = "✗ Wrong! Was: " + solutionHint + " | Lives: " + livesStr
+			}
+		}
+
+		return m, nil
+
+	default:
+		// Add character to input
+		if len(key) == 1 {
+			m.TrainerInput += key
+		} else if key == "space" {
+			m.TrainerInput += " "
+		} else if strings.HasPrefix(key, "ctrl+") {
+			m.TrainerInput += key
+		}
+	}
+
+	return m, nil
+}
+
+// handleTrainerResultKeys handles the result screen after an exercise
+func (m Model) handleTrainerResultKeys(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "enter", " ":
+		// Continue to next exercise
+		if m.TrainerGameState == nil {
+			m.Screen = ScreenTrainerMenu
+			return m, nil
+		}
+
+		var hasNext bool
+		if m.TrainerGameState.IsPracticeMode {
+			// Use intelligent practice selection
+			hasNext = m.TrainerGameState.NextPracticeExercise()
+		} else {
+			// Lesson mode uses sequential
+			hasNext = m.TrainerGameState.NextExercise()
+		}
+
+		if hasNext {
+			m.TrainerInput = ""
+			m.TrainerMessage = ""
+			if m.TrainerGameState.IsLessonMode {
+				m.Screen = ScreenTrainerLesson
+			} else {
+				m.Screen = ScreenTrainerPractice
+			}
+		} else {
+			// Session complete
+			if m.TrainerStats != nil {
+				trainer.SaveStats(m.TrainerStats)
+			}
+
+			if m.TrainerGameState.IsPracticeMode {
+				m.TrainerMessage = "🎉 All exercises mastered! You're a Vim master! 🏆"
+			} else {
+				m.TrainerMessage = "🎉 Lesson complete! Practice mode unlocked!"
+			}
+			m.Screen = ScreenTrainerMenu
+		}
+
+	case "esc", "q":
+		// Return to menu
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenTrainerMenu
+	}
+
+	return m, nil
+}
+
+// handleTrainerBossResultKeys handles the result screen after a boss fight
+func (m Model) handleTrainerBossResultKeys(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "enter", " ", "esc", "q":
+		// Return to menu
+		if m.TrainerStats != nil {
+			trainer.SaveStats(m.TrainerStats)
+		}
+		m.Screen = ScreenTrainerMenu
+		m.TrainerMessage = ""
+	}
+
+	return m, nil
 }

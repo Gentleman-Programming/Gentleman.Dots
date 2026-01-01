@@ -137,6 +137,21 @@ var (
 	HighlightStyle = lipgloss.NewStyle().
 			Foreground(Accent).
 			Bold(true)
+
+	// Vim Trainer cursor styles
+	StartCursorStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#06080f")).
+				Background(Warning).
+				Bold(true)
+
+	CurrentCursorStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#06080f")).
+				Background(Success).
+				Bold(true)
+
+	// Dimmed code style for parts already passed
+	DimmedCodeStyle = lipgloss.NewStyle().
+			Foreground(TextMuted)
 )
 
 // CenterHorizontally centers text horizontally within a given width
