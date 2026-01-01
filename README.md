@@ -43,6 +43,29 @@ The TUI guides you through selecting your preferred tools and handles all the co
 
 ---
 
+## 🎮 Vim Mastery Trainer
+
+Learn Vim the fun way! The installer includes an interactive RPG-style trainer with:
+
+**7 Complete Modules:**
+- 🔤 **Horizontal Movement** - `w`, `e`, `b`, `f`, `t`, `0`, `$`, `^`
+- ↕️ **Vertical Movement** - `j`, `k`, `G`, `gg`, `{`, `}`
+- 📦 **Text Objects** - `iw`, `aw`, `i"`, `a(`, `it`, `at`
+- ✂️ **Change & Repeat** - `d`, `c`, `dd`, `cc`, `D`, `C`, `x`
+- 🔄 **Substitution** - `r`, `R`, `s`, `S`, `~`, `gu`, `gU`, `J`
+- 🎬 **Macros & Registers** - `qa`, `@a`, `@@`, `"ay`, `"+p`
+- 🔍 **Regex/Search** - `/`, `?`, `n`, `N`, `*`, `#`, `\v`
+
+**Each module includes:**
+- 15 progressive lessons with explanations
+- Practice mode with intelligent exercise selection
+- Boss fight to test your skills
+- XP and progress tracking
+
+Launch it from the main menu: **Vim Mastery Trainer**
+
+---
+
 ## Documentation
 
 ### Installation
