@@ -497,7 +497,10 @@ func TestEscapeKeyBehavior(t *testing.T) {
 		{ScreenLazyVimTopic, ScreenMainMenu, ScreenLearnLazyVim},
 		{ScreenLearnTerminals, ScreenTerminalSelect, ScreenTerminalSelect},
 		{ScreenLearnShells, ScreenShellSelect, ScreenShellSelect},
-		{ScreenKeymaps, ScreenMainMenu, ScreenMainMenu},
+		// ScreenKeymaps now goes to ScreenKeymapsMenu (intermediate menu), not MainMenu
+		{ScreenKeymaps, ScreenMainMenu, ScreenKeymapsMenu},
+		// ScreenKeymapsMenu uses PrevScreen to go back to MainMenu
+		{ScreenKeymapsMenu, ScreenMainMenu, ScreenMainMenu},
 		{ScreenLearnLazyVim, ScreenMainMenu, ScreenMainMenu},
 	}
 
@@ -687,13 +690,13 @@ func TestMainMenuToLearnTools(t *testing.T) {
 func TestMainMenuToKeymaps(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenMainMenu
-	m.Cursor = 2 // Neovim Keymaps
+	m.Cursor = 2 // Keymaps Reference
 
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)
 
-	if newModel.Screen != ScreenKeymaps {
-		t.Errorf("Expected ScreenKeymaps, got %v", newModel.Screen)
+	if newModel.Screen != ScreenKeymapsMenu {
+		t.Errorf("Expected ScreenKeymapsMenu, got %v", newModel.Screen)
 	}
 }
 

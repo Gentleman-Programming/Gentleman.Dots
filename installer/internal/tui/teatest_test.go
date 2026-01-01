@@ -168,18 +168,29 @@ func TestKeymapsE2E(t *testing.T) {
 	tm.Send(tea.KeyMsg{Type: tea.KeyEnter})
 	time.Sleep(50 * time.Millisecond)
 
-	// Should be at Keymaps screen
+	// Should be at KeymapsMenu (tool selection: Neovim, Tmux, Zellij, Ghostty)
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
-		return bytes.Contains(bts, []byte("Harpoon")) ||
-			bytes.Contains(bts, []byte("Keymap")) ||
-			bytes.Contains(bts, []byte("Mini.files"))
+		return bytes.Contains(bts, []byte("Neovim")) ||
+			bytes.Contains(bts, []byte("Tmux")) ||
+			bytes.Contains(bts, []byte("Zellij")) ||
+			bytes.Contains(bts, []byte("Ghostty"))
 	}, teatest.WithCheckInterval(50*time.Millisecond), teatest.WithDuration(2*time.Second))
 
-	// Select first category
+	// Select Neovim (first option) to get to Neovim keymaps categories
 	tm.Send(tea.KeyMsg{Type: tea.KeyEnter})
 	time.Sleep(50 * time.Millisecond)
 
-	// Should show keymaps now
+	// Should be at Neovim Keymaps categories (Harpoon, Mini.files, etc.)
+	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
+		return bytes.Contains(bts, []byte("Harpoon")) ||
+			bytes.Contains(bts, []byte("Mini.files"))
+	}, teatest.WithCheckInterval(50*time.Millisecond), teatest.WithDuration(2*time.Second))
+
+	// Select first category (Harpoon)
+	tm.Send(tea.KeyMsg{Type: tea.KeyEnter})
+	time.Sleep(50 * time.Millisecond)
+
+	// Should show keymaps now with leader key bindings
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
 		return bytes.Contains(bts, []byte("leader")) ||
 			bytes.Contains(bts, []byte("Description")) ||

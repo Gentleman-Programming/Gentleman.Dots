@@ -175,9 +175,9 @@ func TestSetupInstallSteps(t *testing.T) {
 
 		m.SetupInstallSteps()
 
-		// Should have: clone, shell, cleanup, setshell
-		if len(m.Steps) < 4 {
-			t.Errorf("Expected at least 4 steps, got %d", len(m.Steps))
+		// Should have: clone, shell, cleanup
+		if len(m.Steps) < 3 {
+			t.Errorf("Expected at least 3 steps, got %d", len(m.Steps))
 		}
 
 		// First step should be clone
@@ -185,10 +185,10 @@ func TestSetupInstallSteps(t *testing.T) {
 			t.Errorf("First step should be 'clone', got '%s'", m.Steps[0].ID)
 		}
 
-		// Last step should be setshell
+		// Last step should be cleanup
 		lastStep := m.Steps[len(m.Steps)-1]
-		if lastStep.ID != "setshell" {
-			t.Errorf("Last step should be 'setshell', got '%s'", lastStep.ID)
+		if lastStep.ID != "cleanup" {
+			t.Errorf("Last step should be 'cleanup', got '%s'", lastStep.ID)
 		}
 	})
 
@@ -300,7 +300,7 @@ func TestSetupInstallSteps(t *testing.T) {
 
 		m.SetupInstallSteps()
 
-		expectedSteps := []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "cleanup", "setshell"}
+		expectedSteps := []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "cleanup"}
 
 		if len(m.Steps) != len(expectedSteps) {
 			t.Errorf("Expected %d steps, got %d", len(expectedSteps), len(m.Steps))

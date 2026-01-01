@@ -14,18 +14,28 @@ The Gentleman.Dots TUI Installer is a modern, interactive terminal application b
 
 ## Quick Start
 
-### Option 1: Download Pre-built Binary (Recommended)
+### Option 1: Homebrew (Recommended)
 
 ```bash
-# Coming soon - for now use Option 2
+brew install Gentleman-Programming/tap/gentleman-dots
+gentleman.dots
 ```
 
-### Option 2: Run the Installation Script
+### Option 2: Download Pre-built Binary
 
 ```bash
-curl -O https://raw.githubusercontent.com/Gentleman-Programming/Gentleman.Dots/main/install-linux-mac.sh
-chmod +x install-linux-mac.sh
-./install-linux-mac.sh
+# macOS Apple Silicon
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-arm64 -o gentleman.dots
+
+# macOS Intel
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-amd64 -o gentleman.dots
+
+# Linux x86_64
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-linux-amd64 -o gentleman.dots
+
+# Then run
+chmod +x gentleman.dots
+./gentleman.dots
 ```
 
 ### Option 3: Build from Source
@@ -33,8 +43,8 @@ chmod +x install-linux-mac.sh
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots/installer
-go build -o gentleman-installer ./cmd/gentleman-installer
-./gentleman-installer
+go build -o gentleman.dots ./cmd/gentleman-installer
+./gentleman.dots
 ```
 
 ## Screens & Navigation

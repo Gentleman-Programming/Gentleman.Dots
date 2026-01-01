@@ -67,8 +67,6 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallNvim(m)
 	case "cleanup":
 		return stepCleanup(m)
-	case "setshell":
-		return stepSetDefaultShell(m)
 	default:
 		return fmt.Errorf("unknown step: %s", stepID)
 	}
@@ -245,9 +243,12 @@ func stepInstallTerminal(m *Model) error {
 					SendLog(stepID, line)
 				})
 			} else {
+				// Ubuntu/Debian - install software-properties-common first (provides add-apt-repository)
+				SendLog(stepID, "Installing required packages for PPA support...")
+				system.RunSudo("apt-get install -y software-properties-common", nil)
 				system.RunSudo("add-apt-repository -y ppa:aslatter/ppa", nil)
-				system.RunSudo("apt update", nil)
-				result = system.RunSudoWithLogs("apt install -y alacritty", nil, func(line string) {
+				system.RunSudo("apt-get update", nil)
+				result = system.RunSudoWithLogs("apt-get install -y alacritty", nil, func(line string) {
 					SendLog(stepID, line)
 				})
 			}
@@ -727,12 +728,5 @@ func stepCleanup(m *Model) error {
 		return nil
 	}
 	SendLog(stepID, "✓ Cleanup complete")
-	return nil
-}
-
-func stepSetDefaultShell(m *Model) error {
-	// This step no longer executes anything
-	// The command to run will be shown in the completion screen
-	// This avoids needing sudo/admin permissions
 	return nil
 }

@@ -201,10 +201,23 @@ func TestLearnScreensNavigation(t *testing.T) {
 
 // TestKeymapsNavigation tests keymaps screen navigation
 func TestKeymapsNavigation(t *testing.T) {
-	t.Run("can access keymaps from main menu", func(t *testing.T) {
+	t.Run("can access keymaps menu from main menu", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenMainMenu
-		m.Cursor = 2 // Neovim Keymaps Reference
+		m.Cursor = 2 // Keymaps Reference
+
+		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+		m = result.(Model)
+
+		if m.Screen != ScreenKeymapsMenu {
+			t.Fatalf("Expected ScreenKeymapsMenu, got %v", m.Screen)
+		}
+	})
+
+	t.Run("can select Neovim keymaps from menu", func(t *testing.T) {
+		m := NewModel()
+		m.Screen = ScreenKeymapsMenu
+		m.Cursor = 0 // Neovim
 
 		result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
@@ -499,7 +512,7 @@ func TestInstallStepsSetup(t *testing.T) {
 			},
 			sysInfo:       &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true},
 			existConfigs:  []string{},
-			expectedSteps: []string{"clone", "shell", "cleanup", "setshell"},
+			expectedSteps: []string{"clone", "shell", "cleanup"},
 		},
 		{
 			name: "full mac install with backup",
@@ -514,7 +527,7 @@ func TestInstallStepsSetup(t *testing.T) {
 			},
 			sysInfo:       &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true},
 			existConfigs:  []string{"nvim: /test"},
-			expectedSteps: []string{"backup", "clone", "terminal", "font", "shell", "wm", "nvim", "cleanup", "setshell"},
+			expectedSteps: []string{"backup", "clone", "terminal", "font", "shell", "wm", "nvim", "cleanup"},
 		},
 		{
 			name: "linux install without brew",
@@ -529,7 +542,7 @@ func TestInstallStepsSetup(t *testing.T) {
 			},
 			sysInfo:       &system.SystemInfo{OS: system.OSLinux, HasBrew: false},
 			existConfigs:  []string{},
-			expectedSteps: []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "cleanup", "setshell"},
+			expectedSteps: []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "cleanup"},
 		},
 	}
 

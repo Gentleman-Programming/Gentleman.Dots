@@ -13,14 +13,28 @@ A complete development environment configuration including:
 
 ## Quick Start
 
-### Recommended: TUI Installer
-
-The easiest way to get started is with our interactive TUI installer:
+### Option 1: Homebrew (Recommended)
 
 ```bash
-curl -O https://raw.githubusercontent.com/Gentleman-Programming/Gentleman.Dots/main/install-linux-mac.sh
-chmod +x install-linux-mac.sh
-./install-linux-mac.sh
+brew install Gentleman-Programming/tap/gentleman-dots
+gentleman.dots
+```
+
+### Option 2: Direct Download
+
+```bash
+# macOS Apple Silicon
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-arm64 -o gentleman.dots
+
+# macOS Intel
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-amd64 -o gentleman.dots
+
+# Linux x86_64
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-linux-amd64 -o gentleman.dots
+
+# Then run
+chmod +x gentleman.dots
+./gentleman.dots
 ```
 
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
@@ -113,8 +127,7 @@ Gentleman.Dots/
 ├── GentlemanOpenCode/       # OpenCode AI config
 ├── alacritty.toml           # Alacritty config
 ├── .wezterm.lua             # WezTerm config
-├── starship.toml            # Starship prompt config
-└── install-linux-mac.sh     # Installation script
+└── starship.toml            # Starship prompt config
 ```
 
 ---
