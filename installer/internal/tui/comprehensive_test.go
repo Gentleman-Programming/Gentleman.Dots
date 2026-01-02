@@ -1506,7 +1506,7 @@ func TestStepCompleteMessageSuccess(t *testing.T) {
 func TestStepCompleteMessageFailure(t *testing.T) {
 	m := NewModel()
 	m.Steps = []InstallStep{
-		{ID: "step1", Status: StatusRunning},
+		{ID: "step1", Name: "Test Step", Status: StatusRunning},
 	}
 	m.CurrentStep = 0
 
@@ -1520,8 +1520,9 @@ func TestStepCompleteMessageFailure(t *testing.T) {
 	if newModel.Screen != ScreenError {
 		t.Errorf("Should go to Error screen, got %v", newModel.Screen)
 	}
-	if newModel.ErrorMsg != "test error" {
-		t.Errorf("ErrorMsg should be set, got '%s'", newModel.ErrorMsg)
+	expectedMsg := "Step 'Test Step' failed:\ntest error"
+	if newModel.ErrorMsg != expectedMsg {
+		t.Errorf("ErrorMsg should be '%s', got '%s'", expectedMsg, newModel.ErrorMsg)
 	}
 }
 

@@ -21,7 +21,7 @@ func runInteractiveStep(stepID string, m *Model) tea.Cmd {
 	return func() tea.Msg {
 		script, err := getInteractiveScript(stepID, m)
 		if err != nil {
-			return execFinishedMsg{stepID: stepID, err: err}
+			return execFinishedMsg{stepID: stepID, err: fmt.Errorf("failed to get script for %s: %w", stepID, err)}
 		}
 
 		// If no script needed (e.g., already installed), just succeed
@@ -31,7 +31,7 @@ func runInteractiveStep(stepID string, m *Model) tea.Cmd {
 
 		cmd, err := createTempScriptCommand(script)
 		if err != nil {
-			return execFinishedMsg{stepID: stepID, err: err}
+			return execFinishedMsg{stepID: stepID, err: fmt.Errorf("failed to create script for %s: %w", stepID, err)}
 		}
 
 		// Return message that tells Update to use tea.ExecProcess
@@ -231,8 +231,13 @@ func getSetShellScript(m *Model) (string, error) {
 		return "", fmt.Errorf("unknown shell: %s", shell)
 	}
 
+	brewPrefix := system.GetBrewPrefix()
+
 	script := fmt.Sprintf(`#!/bin/bash
 set -e
+
+# Add brew to PATH for this script
+export PATH="%s/bin:$PATH"
 
 SHELL_PATH=$(which %s 2>/dev/null)
 
@@ -267,7 +272,7 @@ echo "   Please log out and log back in for changes to take effect."
 echo ""
 echo "Press Enter to continue..."
 read
-`, shellCmd, shellCmd)
+`, brewPrefix, shellCmd, shellCmd)
 
 	return script, nil
 }

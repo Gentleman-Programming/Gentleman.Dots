@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"time"
@@ -118,7 +119,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.Steps[i].Status = StatusFailed
 					m.Steps[i].Error = msg.err
 					m.Screen = ScreenError
-					m.ErrorMsg = msg.err.Error()
+					// Include step name in error message for clarity
+					m.ErrorMsg = fmt.Sprintf("Step '%s' failed:\n%s", m.Steps[i].Name, msg.err.Error())
 					return m, nil
 				}
 				m.Steps[i].Status = StatusDone
@@ -146,7 +148,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.Steps[i].Status = StatusFailed
 					m.Steps[i].Error = msg.err
 					m.Screen = ScreenError
-					m.ErrorMsg = msg.err.Error()
+					// Include step name in error message for clarity
+					m.ErrorMsg = fmt.Sprintf("Step '%s' failed:\n%s", m.Steps[i].Name, msg.err.Error())
 					return m, nil
 				}
 				m.Steps[i].Status = StatusDone

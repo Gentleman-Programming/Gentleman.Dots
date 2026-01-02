@@ -117,7 +117,9 @@ func (m Model) View() string {
 		s.WriteString(WarningStyle.Render("▶ LEADER MODE - Press: q=quit, d=details"))
 	}
 
-	return s.String()
+	// Apply global padding (top: 1, right: 2, bottom: 0, left: 2)
+	paddedStyle := lipgloss.NewStyle().Padding(1, 2, 0, 2)
+	return paddedStyle.Render(s.String())
 }
 
 func (m Model) renderWelcome() string {
@@ -1047,7 +1049,7 @@ func (m Model) renderInstalling() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("[d] toggle details"))
+	s.WriteString(HelpStyle.Render("[space+d] toggle details"))
 
 	return s.String()
 }
@@ -1128,7 +1130,23 @@ func (m Model) renderError() string {
 	s.WriteString(ErrorStyle.Render(m.ErrorMsg))
 	s.WriteString("\n\n")
 
-	s.WriteString(HelpStyle.Render("[r] retry • [Space q] quit"))
+	// Show last few log lines for context
+	if len(m.LogLines) > 0 {
+		s.WriteString(MutedStyle.Render("Recent logs:"))
+		s.WriteString("\n")
+		// Show last 5 log lines
+		startIdx := len(m.LogLines) - 5
+		if startIdx < 0 {
+			startIdx = 0
+		}
+		for _, line := range m.LogLines[startIdx:] {
+			s.WriteString(InfoStyle.Render("  " + line))
+			s.WriteString("\n")
+		}
+		s.WriteString("\n")
+	}
+
+	s.WriteString(HelpStyle.Render("[r] retry • [space+q] quit"))
 
 	return s.String()
 }

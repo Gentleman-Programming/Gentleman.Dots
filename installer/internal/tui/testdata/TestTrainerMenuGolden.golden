@@ -1,19 +1,20 @@
-[?25l[?2004h]2;Gentleman.Dots Installer🎮 Vim Mastery Trainer[K
-                      [K
-Master Vim motions through progressive challenges[K
-[K
-📊 Score: 0  |  🔥 Streak: 0  |  👑 Bosses: 0/7[K
-[K
-Select a Module:[K
-[K
-  ▸ 📖 🏃 Horizontal Motions - w, W, e, E, b, B, f, F, t, T, ;, ,, 0, $, ^[K
-     Lessons: 0/0[K
-  🔒 📐 Vertical Motions - j, k, gg, G, {, }, H, M, L, ctrl+d/u/f/b[K
-  🔒 🎯 Text Objects - ciw, caw, ci", ca", ci{, ca{, di*, yi*, vi*[K
-  🔒 🔁 Change & Repeat - *, #, n, N, gn, cgn, dgn, .[K
-  🔒 🔄 Substitution - :s, :%s, ranges, flags (g, c, i, I)[K
-  🔒 🔍 Regex & Vimgrep - /, ?, \v, :vimgrep, quickfix[K
-  🔒 🎪 Macros - qa, q, @a, @@, :normal[K
-[K
+[?25l[?2004h]2;Gentleman.Dots Installer                                                                                
+  🎮 Vim Mastery Trainer                                                        
                                                                                 
-↑/k up • ↓/j down • [Enter/l] lesson • [p] practice • [b] boss • [r] reset • [q/[18A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
+  Master Vim motions through progressive challenges                             
+                                                                                
+  📊 Score: 0  |  🔥 Streak: 0  |  👑 Bosses: 0/7                               
+                                                                                
+  Select a Module:                                                              
+                                                                                
+    ▸ 📖 🏃 Horizontal Motions - w, W, e, E, b, B, f, F, t, T, ;, ,, 0, $, ^    
+       Lessons: 0/0                                                             
+    🔒 📐 Vertical Motions - j, k, gg, G, {, }, H, M, L, ctrl+d/u/f/b           
+    🔒 🎯 Text Objects - ciw, caw, ci", ca", ci{, ca{, di*, yi*, vi*            
+    🔒 🔁 Change & Repeat - *, #, n, N, gn, cgn, dgn, .                         
+    🔒 🔄 Substitution - :s, :%s, ranges, flags (g, c, i, I)                    
+    🔒 🔍 Regex & Vimgrep - /, ?, \v, :vimgrep, quickfix                        
+    🔒 🎪 Macros - qa, q, @a, @@, :normal                                       
+                                                                                
+                                                                                
+  ↑/k up • ↓/j down • [Enter/l] lesson • [p] practice • [b] boss • [r] reset • [[19A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
