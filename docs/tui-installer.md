@@ -24,18 +24,21 @@ gentleman.dots
 ### Option 2: Download Pre-built Binary
 
 ```bash
-# macOS Apple Silicon
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-arm64 -o gentleman.dots
+# macOS Apple Silicon (M1/M2/M3)
+curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-darwin-arm64.tar.gz | tar xz
+./gentleman-dots
 
 # macOS Intel
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-amd64 -o gentleman.dots
+curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-darwin-amd64.tar.gz | tar xz
+./gentleman-dots
 
 # Linux x86_64
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-linux-amd64 -o gentleman.dots
+curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-linux-amd64.tar.gz | tar xz
+./gentleman-dots
 
-# Then run
-chmod +x gentleman.dots
-./gentleman.dots
+# Linux ARM64
+curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-linux-arm64.tar.gz | tar xz
+./gentleman-dots
 ```
 
 ### Option 3: Build from Source
@@ -43,8 +46,8 @@ chmod +x gentleman.dots
 ```bash
 git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
 cd Gentleman.Dots/installer
-go build -o gentleman.dots ./cmd/gentleman-installer
-./gentleman.dots
+go build -o gentleman-dots ./cmd/gentleman-installer
+./gentleman-dots
 ```
 
 ## Screens & Navigation
