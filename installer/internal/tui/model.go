@@ -63,6 +63,7 @@ type InstallStep struct {
 	Status      StepStatus
 	Progress    float64
 	Error       error
+	Interactive bool // If true, this step needs terminal control (sudo, chsh, etc)
 }
 
 type StepStatus int
@@ -448,7 +449,7 @@ func (m Model) GetScreenDescription() string {
 func (m *Model) SetupInstallSteps() {
 	m.Steps = []InstallStep{}
 
-	// Backup step if user chose to backup
+	// Backup step if user chose to backup (not interactive - just file copies)
 	if m.Choices.CreateBackup && len(m.ExistingConfigs) > 0 {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "backup",
@@ -458,7 +459,7 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Always clone repo first
+	// Always clone repo first (not interactive - just git clone)
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "clone",
 		Name:        "Clone Repository",
@@ -466,13 +467,14 @@ func (m *Model) SetupInstallSteps() {
 		Status:      StatusPending,
 	})
 
-	// Homebrew
+	// Homebrew (interactive - first install needs password)
 	if !m.SystemInfo.HasBrew {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "homebrew",
 			Name:        "Install Homebrew",
 			Description: "Package manager",
 			Status:      StatusPending,
+			Interactive: true,
 		})
 	}
 
@@ -483,6 +485,7 @@ func (m *Model) SetupInstallSteps() {
 			Name:        "Install Dependencies",
 			Description: "Base packages",
 			Status:      StatusPending,
+			Interactive: true, // Needs sudo
 		})
 	} else if m.Choices.OS == "mac" && !m.SystemInfo.HasXcode {
 		m.Steps = append(m.Steps, InstallStep{
@@ -500,10 +503,11 @@ func (m *Model) SetupInstallSteps() {
 			Name:        "Install " + m.Choices.Terminal,
 			Description: "Terminal emulator",
 			Status:      StatusPending,
+			Interactive: m.Choices.OS == "linux", // Linux needs sudo for pacman/apt
 		})
 	}
 
-	// Font
+	// Font (not interactive - brew doesn't need password after installed)
 	if m.Choices.InstallFont {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "font",
@@ -513,7 +517,7 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Shell
+	// Shell (not interactive - brew doesn't need password)
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "shell",
 		Name:        "Install " + m.Choices.Shell,
@@ -521,7 +525,7 @@ func (m *Model) SetupInstallSteps() {
 		Status:      StatusPending,
 	})
 
-	// Window manager
+	// Window manager (not interactive - brew doesn't need password)
 	if m.Choices.WindowMgr != "none" && m.Choices.WindowMgr != "" {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "wm",
@@ -531,7 +535,7 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Neovim
+	// Neovim (not interactive - brew doesn't need password)
 	if m.Choices.InstallNvim {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "nvim",
@@ -541,7 +545,16 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Cleanup
+	// Set default shell (interactive - chsh needs password)
+	m.Steps = append(m.Steps, InstallStep{
+		ID:          "setshell",
+		Name:        "Set Default Shell",
+		Description: "Configure default shell",
+		Status:      StatusPending,
+		Interactive: true,
+	})
+
+	// Cleanup (not interactive - just file deletion)
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "cleanup",
 		Name:        "Cleanup",

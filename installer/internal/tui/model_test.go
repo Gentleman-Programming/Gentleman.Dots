@@ -300,7 +300,7 @@ func TestSetupInstallSteps(t *testing.T) {
 
 		m.SetupInstallSteps()
 
-		expectedSteps := []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "cleanup"}
+		expectedSteps := []string{"clone", "homebrew", "deps", "terminal", "font", "shell", "wm", "nvim", "setshell", "cleanup"}
 
 		if len(m.Steps) != len(expectedSteps) {
 			t.Errorf("Expected %d steps, got %d", len(expectedSteps), len(m.Steps))

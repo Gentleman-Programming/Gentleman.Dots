@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"os/exec"
 	"strings"
 	"time"
 
@@ -38,6 +39,12 @@ type (
 	// loadBackupsMsg signals to load available backups
 	loadBackupsMsg struct {
 		backups []system.BackupInfo
+	}
+
+	// execFinishedMsg signals an interactive process finished
+	execFinishedMsg struct {
+		stepID string
+		err    error
 	}
 )
 
@@ -130,9 +137,43 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loadBackupsMsg:
 		m.AvailableBackups = msg.backups
 		return m, nil
+
+	case execFinishedMsg:
+		// Interactive process finished (sudo commands, chsh, etc)
+		for i := range m.Steps {
+			if m.Steps[i].ID == msg.stepID {
+				if msg.err != nil {
+					m.Steps[i].Status = StatusFailed
+					m.Steps[i].Error = msg.err
+					m.Screen = ScreenError
+					m.ErrorMsg = msg.err.Error()
+					return m, nil
+				}
+				m.Steps[i].Status = StatusDone
+				m.Steps[i].Progress = 1.0
+				break
+			}
+		}
+		m.CurrentStep++
+		return m, m.runNextStep()
+
+	case needsExecProcessMsg:
+		// This step needs to run with tea.ExecProcess for interactive input
+		return m, tea.ExecProcess(msg.cmd, func(err error) tea.Msg {
+			return execFinishedMsg{stepID: msg.stepID, err: err}
+		})
 	}
 
 	return m, nil
+}
+
+// execInteractiveCmd creates a tea.Cmd that runs an interactive process
+// This suspends the TUI and gives full terminal control to the process
+func execInteractiveCmd(stepID string, name string, args ...string) tea.Cmd {
+	c := exec.Command(name, args...)
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return execFinishedMsg{stepID: stepID, err: err}
+	})
 }
 
 func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -1216,6 +1257,11 @@ func (m Model) runNextStep() tea.Cmd {
 
 	step := &m.Steps[m.CurrentStep]
 	step.Status = StatusRunning
+
+	// Check if this step needs interactive input (sudo, chsh, etc)
+	if step.Interactive {
+		return runInteractiveStep(step.ID, &m)
+	}
 
 	return func() tea.Msg {
 		// Execute the step
