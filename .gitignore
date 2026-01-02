@@ -1,1 +1,4 @@
+# Installer binaries
 installer/gentleman.dots
+installer/gentleman-test
+installer/dist/
