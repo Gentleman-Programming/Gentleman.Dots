@@ -443,7 +443,8 @@ func stepInstallShell(m *Model) error {
 	stepID := "shell"
 
 	// Common dependencies
-	SendLog(stepID, "Creating cache directories...")
+	SendLog(stepID, "Creating required directories...")
+	system.EnsureDir(filepath.Join(homeDir, ".config"))
 	system.EnsureDir(filepath.Join(homeDir, ".cache/starship"))
 	system.EnsureDir(filepath.Join(homeDir, ".cache/carapace"))
 	system.EnsureDir(filepath.Join(homeDir, ".local/share/atuin"))
