@@ -46,6 +46,8 @@ const (
 	ScreenBackupConfirm
 	ScreenRestoreBackup
 	ScreenRestoreConfirm
+	// Warning screens
+	ScreenGhosttyWarning // Warning about Ghostty compatibility on Debian/Ubuntu
 	// Vim Trainer screens
 	ScreenTrainerMenu       // Module selection
 	ScreenTrainerLesson     // Lesson mode
@@ -238,7 +240,14 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenKeymapsMenu:
 		return []string{"Neovim", "Tmux", "Zellij", "Ghostty", "─────────────", "← Back"}
 	case ScreenOSSelect:
-		return []string{"macOS", "Linux"}
+		macLabel := "macOS"
+		linuxLabel := "Linux"
+		if m.SystemInfo.OS == system.OSMac {
+			macLabel = "macOS (detected)"
+		} else if m.SystemInfo.OS == system.OSLinux {
+			linuxLabel = "Linux (detected)"
+		}
+		return []string{macLabel, linuxLabel}
 	case ScreenTerminalSelect:
 		if m.Choices.OS == "mac" {
 			return []string{"Alacritty", "WezTerm", "Kitty", "Ghostty", "None", "─────────────", "ℹ️  Learn about terminals"}
@@ -272,6 +281,12 @@ func (m Model) GetCurrentOptions() []string {
 			"✅ Yes, restore this backup",
 			"🗑️  Delete this backup",
 			"❌ Cancel",
+		}
+	case ScreenGhosttyWarning:
+		return []string{
+			"⚠️  Continue with Ghostty anyway",
+			"🔄 Choose a different terminal",
+			"❌ Cancel installation",
 		}
 	case ScreenLearnTerminals:
 		return []string{"Alacritty", "WezTerm", "Kitty", "Ghostty", "─────────────", "← Back"}
@@ -350,6 +365,8 @@ func (m Model) GetScreenTitle() string {
 		return "🔄 Restore from Backup"
 	case ScreenRestoreConfirm:
 		return "🔄 Confirm Restore"
+	case ScreenGhosttyWarning:
+		return "⚠️  Ghostty Compatibility Warning"
 	case ScreenInstalling:
 		return "Installing..."
 	case ScreenComplete:
@@ -440,6 +457,8 @@ func (m Model) GetScreenDescription() string {
 		return "Terminal multiplexer for managing sessions"
 	case ScreenNvimSelect:
 		return "Includes LSP, TreeSitter, and Gentleman config"
+	case ScreenGhosttyWarning:
+		return "Ghostty installation may fail on Ubuntu/Debian.\nThe installer script only supports certain versions."
 	default:
 		return ""
 	}

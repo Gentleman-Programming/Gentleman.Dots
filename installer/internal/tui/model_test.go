@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
@@ -50,7 +51,10 @@ func TestGetCurrentOptions(t *testing.T) {
 		if len(opts) != 2 {
 			t.Errorf("Expected 2 OS options, got %d", len(opts))
 		}
-		if opts[0] != "macOS" || opts[1] != "Linux" {
+		// One of them should have "(detected)" based on current OS
+		hasMac := strings.Contains(opts[0], "macOS")
+		hasLinux := strings.Contains(opts[1], "Linux")
+		if !hasMac || !hasLinux {
 			t.Errorf("Unexpected OS options: %v", opts)
 		}
 	})

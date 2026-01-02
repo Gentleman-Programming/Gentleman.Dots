@@ -250,7 +250,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenMainMenu:
 		return m.handleMainMenuKeys(key)
 
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
 		return m.handleSelectionKeys(key)
 
 	case ScreenLearnTerminals, ScreenLearnShells, ScreenLearnWM, ScreenLearnNvim:
@@ -341,6 +341,10 @@ func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	// Installation wizard screens - go back through the flow
 	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
 		return m.goBackInstallStep()
+	case ScreenGhosttyWarning:
+		// Go back to terminal selection
+		m.Screen = ScreenTerminalSelect
+		m.Cursor = 0
 	case ScreenBackupConfirm:
 		// Go back to Nvim selection (not abort)
 		m.Screen = ScreenNvimSelect
@@ -423,7 +427,12 @@ func (m Model) handleMainMenuKeys(key string) (tea.Model, tea.Cmd) {
 		switch {
 		case strings.Contains(selected, "Start Installation"):
 			m.Screen = ScreenOSSelect
-			m.Cursor = 0
+			// Pre-select detected OS
+			if m.SystemInfo.OS == system.OSLinux {
+				m.Cursor = 1 // Linux is second option
+			} else {
+				m.Cursor = 0 // macOS is first option (default)
+			}
 		case strings.Contains(selected, "Learn About Tools"):
 			m.Screen = ScreenLearnTerminals
 			m.PrevScreen = ScreenMainMenu
@@ -607,6 +616,14 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 	case ScreenTerminalSelect:
 		term := strings.ToLower(strings.Split(options[m.Cursor], " ")[0])
 		m.Choices.Terminal = term
+
+		// Check if Ghostty on Debian/Ubuntu - show warning
+		if term == "ghostty" && m.Choices.OS == "linux" && m.SystemInfo.OS == system.OSDebian && !system.CommandExists("ghostty") {
+			m.Screen = ScreenGhosttyWarning
+			m.Cursor = 0
+			return m, nil
+		}
+
 		if term != "none" {
 			m.Screen = ScreenFontSelect
 		} else {
@@ -623,6 +640,19 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		m.Choices.Shell = strings.ToLower(options[m.Cursor])
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
+
+	case ScreenGhosttyWarning:
+		switch m.Cursor {
+		case 0: // Continue with Ghostty anyway
+			m.Screen = ScreenFontSelect
+			m.Cursor = 0
+		case 1: // Choose different terminal
+			m.Screen = ScreenTerminalSelect
+			m.Cursor = 0
+		case 2: // Cancel
+			m.Screen = ScreenMainMenu
+			m.Cursor = 0
+		}
 
 	case ScreenWMSelect:
 		m.Choices.WindowMgr = strings.ToLower(options[m.Cursor])
