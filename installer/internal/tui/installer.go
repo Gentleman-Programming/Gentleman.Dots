@@ -409,7 +409,7 @@ func stepInstallFont(m *Model) error {
 	}
 
 	SendLog(stepID, "Downloading Iosevka Term Nerd Font...")
-	result := system.RunWithLogs(fmt.Sprintf("wget -O %s/IosevkaTerm.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip", fontDir), nil, func(line string) {
+	result := system.RunWithLogs(fmt.Sprintf("curl -fsSL -o %s/IosevkaTerm.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip", fontDir), nil, func(line string) {
 		SendLog(stepID, line)
 	})
 	if result.Error != nil {
