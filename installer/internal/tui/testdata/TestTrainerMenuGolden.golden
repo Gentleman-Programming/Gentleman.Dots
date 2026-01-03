@@ -10,11 +10,11 @@
     ▸ 📖 🏃 Horizontal Motions - w, W, e, E, b, B, f, F, t, T, ;, ,, 0, $, ^    
        Lessons: 0/0                                                             
     🔒 📐 Vertical Motions - j, k, gg, G, {, }, H, M, L, ctrl+d/u/f/b           
-    🔒 🎯 Text Objects - ciw, caw, ci", ca", ci{, ca{, di*, yi*, vi*            
-    🔒 🔁 Change & Repeat - *, #, n, N, gn, cgn, dgn, .                         
-    🔒 🔄 Substitution - :s, :%s, ranges, flags (g, c, i, I)                    
-    🔒 🔍 Regex & Vimgrep - /, ?, \v, :vimgrep, quickfix                        
-    🔒 🎪 Macros - qa, q, @a, @@, :normal                                       
+    🔒 🎯 Text Objects - viw, vaw, vi", va", vi{, diw, daw, ci", di{, yiw, yi"  
+    🔒 🔁 Change & Repeat - d, c, dd, D, C, x, *, #, n, N, gn, cgn, dgn, .      
+    🔒 🔄 Substitution - r, R, s, S, ~, gu, gU, J, :s, :%s, flags (g, c, i)     
+    🔒 🔍 Regex & Vimgrep - /, ?, n, N, *, #, \v, :vimgrep, :copen, :cnext      
+    🔒 🎪 Macros - qa, q, @a, @@, :normal, :g/pattern/                          
                                                                                 
                                                                                 
   ↑/k up • ↓/j down • [Enter/l] lesson • [p] practice • [b] boss • [r] reset • [[19A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
