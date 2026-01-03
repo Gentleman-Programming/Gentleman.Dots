@@ -158,11 +158,37 @@ func getTerminalScript(m *Model) (string, error) {
 		} else if m.SystemInfo.OS == system.OSArch {
 			installCmd = `sudo pacman -S --noconfirm alacritty`
 		} else {
-			// Debian/Ubuntu
-			installCmd = `sudo apt-get install -y software-properties-common
-sudo add-apt-repository -y ppa:aslatter/ppa
-sudo apt-get update
-sudo apt-get install -y alacritty`
+			// Debian/Ubuntu: compile from source (PPAs are unreliable)
+			installCmd = `echo "📦 Installing build dependencies..."
+sudo apt-get install -y cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 gzip scdoc git curl
+
+# Install Rust if not present
+if ! command -v cargo &> /dev/null && [ ! -f "$HOME/.cargo/bin/cargo" ]; then
+    echo "🦀 Installing Rust/Cargo toolchain..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    source "$HOME/.cargo/env"
+fi
+
+# Make sure cargo is in PATH
+export PATH="$HOME/.cargo/bin:$PATH"
+
+echo "📥 Cloning Alacritty repository..."
+ALACRITTY_DIR=$(mktemp -d)/alacritty
+git clone https://github.com/alacritty/alacritty.git "$ALACRITTY_DIR"
+
+echo "🔨 Building Alacritty (this may take 5-10 minutes)..."
+cd "$ALACRITTY_DIR"
+cargo build --release
+
+echo "📦 Installing Alacritty binary..."
+sudo cp target/release/alacritty /usr/local/bin/alacritty
+sudo cp extra/linux/Alacritty.desktop /usr/share/applications/ 2>/dev/null || true
+
+echo "🧹 Cleaning up..."
+rm -rf "$ALACRITTY_DIR"
+cd -
+
+echo "✓ Alacritty built and installed from source"`
 		}
 		configCmd = fmt.Sprintf(`mkdir -p "%s/.config/alacritty"
 cp "Gentleman.Dots/alacritty.toml" "%s/.config/alacritty/alacritty.toml"`, homeDir, homeDir)
