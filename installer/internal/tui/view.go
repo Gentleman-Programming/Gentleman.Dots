@@ -8,6 +8,16 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// formatControlChars converts control characters to readable format for display
+func formatControlChars(input string) string {
+	result := input
+	result = strings.ReplaceAll(result, "\x04", "<C-d>")
+	result = strings.ReplaceAll(result, "\x15", "<C-u>")
+	result = strings.ReplaceAll(result, "\x06", "<C-f>")
+	result = strings.ReplaceAll(result, "\x02", "<C-b>")
+	return result
+}
+
 const logo = `
                     ░░░░░░      ░░░░░░                        
                   ░░░░░░░░░░  ░░░░░░░░░░                      
@@ -1091,27 +1101,12 @@ func (m Model) renderComplete() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(TitleStyle.Render("Next Steps"))
+	s.WriteString(TitleStyle.Render("Next Step"))
 	s.WriteString("\n\n")
 
-	s.WriteString(InfoStyle.Render("1. To use your new shell now, run:"))
+	s.WriteString(InfoStyle.Render("To use your new shell now, run:"))
 	s.WriteString("\n")
 	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   exec %s", shellCmd)))
-	s.WriteString("\n\n")
-
-	s.WriteString(InfoStyle.Render("2. To make it your default shell, run:"))
-	s.WriteString("\n")
-
-	// Show the commands needed to set default shell
-	s.WriteString(MutedStyle.Render(fmt.Sprintf("   # Find shell path\n   which %s", shellCmd)))
-	s.WriteString("\n")
-	s.WriteString(MutedStyle.Render("   # Add to allowed shells (needs sudo)"))
-	s.WriteString("\n")
-	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   sudo sh -c 'echo $(which %s) >> /etc/shells'", shellCmd)))
-	s.WriteString("\n")
-	s.WriteString(MutedStyle.Render("   # Set as default"))
-	s.WriteString("\n")
-	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   chsh -s $(which %s)", shellCmd)))
 	s.WriteString("\n\n")
 
 	s.WriteString(HelpStyle.Render("Press [Enter] or [q] to exit"))
@@ -1529,7 +1524,7 @@ func (m Model) renderTrainerExercise(mode string) string {
 	// Input field
 	s.WriteString(SubtitleStyle.Render("⌨️  Your answer:"))
 	s.WriteString("\n")
-	inputDisplay := m.TrainerInput
+	inputDisplay := formatControlChars(m.TrainerInput)
 	if inputDisplay == "" {
 		inputDisplay = "..."
 	}
@@ -1800,7 +1795,7 @@ func (m Model) renderTrainerBoss() string {
 		// Input field
 		s.WriteString(SubtitleStyle.Render("⌨️  Your answer:"))
 		s.WriteString("\n")
-		inputDisplay := m.TrainerInput
+		inputDisplay := formatControlChars(m.TrainerInput)
 		if inputDisplay == "" {
 			inputDisplay = "..."
 		}

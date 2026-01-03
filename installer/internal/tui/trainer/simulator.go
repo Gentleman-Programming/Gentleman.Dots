@@ -323,6 +323,65 @@ func SimulateMotionsWithSelection(start Position, code []string, input string) S
 					}
 				}
 				pos = moveFirstNonBlank(pos, code)
+			case 'H':
+				// H - High: go to top of visible screen (simulated as first line)
+				pos.Line = 0
+				pos = moveFirstNonBlank(pos, code)
+			case 'M':
+				// M - Middle: go to middle of visible screen (simulated as middle line)
+				pos.Line = len(code) / 2
+				if pos.Line >= len(code) {
+					pos.Line = len(code) - 1
+				}
+				pos = moveFirstNonBlank(pos, code)
+			case 'L':
+				// L - Low: go to bottom of visible screen (simulated as last line)
+				pos.Line = len(code) - 1
+				pos = moveFirstNonBlank(pos, code)
+			case '\x04':
+				// Ctrl+d - half page down (simulated as ~half the code length, min 5 lines)
+				halfPage := len(code) / 2
+				if halfPage < 5 {
+					halfPage = 5
+				}
+				pos.Line += halfPage
+				if pos.Line >= len(code) {
+					pos.Line = len(code) - 1
+				}
+				pos.Col = 0
+			case '\x15':
+				// Ctrl+u - half page up (simulated as ~half the code length, min 5 lines)
+				halfPage := len(code) / 2
+				if halfPage < 5 {
+					halfPage = 5
+				}
+				pos.Line -= halfPage
+				if pos.Line < 0 {
+					pos.Line = 0
+				}
+				pos.Col = 0
+			case '\x06':
+				// Ctrl+f - full page forward (simulated as full code length, min 10 lines)
+				fullPage := len(code)
+				if fullPage < 10 {
+					fullPage = 10
+				}
+				pos.Line += fullPage
+				if pos.Line >= len(code) {
+					pos.Line = len(code) - 1
+				}
+				pos.Col = 0
+			case '\x02':
+				// Ctrl+b - full page backward (simulated as full code length, min 10 lines)
+				fullPage := len(code)
+				if fullPage < 10 {
+					fullPage = 10
+				}
+				pos.Line -= fullPage
+				if pos.Line < 0 {
+					pos.Line = 0
+				}
+				pos.Col = 0
 			}
 		}
 	}

@@ -1510,10 +1510,27 @@ func (m Model) handleTrainerExerciseKeys(key string) (tea.Model, tea.Cmd) {
 
 	default:
 		// Add character to input (filter control keys)
-		if len(key) == 1 || key == "ctrl+a" || key == "ctrl+e" || key == "ctrl+w" {
-			// Handle ctrl combinations
+		// Accept single chars and specific ctrl combinations used in Vim
+		validCtrlKeys := map[string]bool{
+			"ctrl+a": true, "ctrl+e": true, "ctrl+w": true,
+			"ctrl+d": true, "ctrl+u": true, "ctrl+f": true, "ctrl+b": true,
+		}
+		if len(key) == 1 || validCtrlKeys[key] {
+			// Handle ctrl combinations - convert to control character
 			if strings.HasPrefix(key, "ctrl+") {
-				m.TrainerInput += key
+				// Convert ctrl+X to actual control character for simulator
+				switch key {
+				case "ctrl+d":
+					m.TrainerInput += "\x04"
+				case "ctrl+u":
+					m.TrainerInput += "\x15"
+				case "ctrl+f":
+					m.TrainerInput += "\x06"
+				case "ctrl+b":
+					m.TrainerInput += "\x02"
+				default:
+					m.TrainerInput += key
+				}
 			} else if len(key) == 1 {
 				m.TrainerInput += key
 			}
@@ -1610,12 +1627,26 @@ func (m Model) handleTrainerBossKeys(key string) (tea.Model, tea.Cmd) {
 
 	default:
 		// Add character to input
+		// Accept single chars and specific ctrl combinations used in Vim
+		validCtrlKeys := map[string]bool{
+			"ctrl+d": true, "ctrl+u": true, "ctrl+f": true, "ctrl+b": true,
+		}
 		if len(key) == 1 {
 			m.TrainerInput += key
 		} else if key == "space" {
 			m.TrainerInput += " "
-		} else if strings.HasPrefix(key, "ctrl+") {
-			m.TrainerInput += key
+		} else if validCtrlKeys[key] {
+			// Convert ctrl+X to actual control character for simulator
+			switch key {
+			case "ctrl+d":
+				m.TrainerInput += "\x04"
+			case "ctrl+u":
+				m.TrainerInput += "\x15"
+			case "ctrl+f":
+				m.TrainerInput += "\x06"
+			case "ctrl+b":
+				m.TrainerInput += "\x02"
+			}
 		}
 	}
 

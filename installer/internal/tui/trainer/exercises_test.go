@@ -694,6 +694,131 @@ func TestGetLessons_Regex_AllHaveRequiredFields(t *testing.T) {
 	}
 }
 
+func TestGetLessons_Regex_OptimalIsInSolutions(t *testing.T) {
+	lessons := GetLessons(ModuleRegex)
+	for i, ex := range lessons {
+		found := false
+		for _, sol := range ex.Solutions {
+			if sol == ex.Optimal {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Lesson %d (%s): Optimal %q not in Solutions %v", i, ex.ID, ex.Optimal, ex.Solutions)
+		}
+	}
+}
+
+func TestGetLessons_Regex_UniqueIDs(t *testing.T) {
+	lessons := GetLessons(ModuleRegex)
+	seen := make(map[string]bool)
+	for _, ex := range lessons {
+		if seen[ex.ID] {
+			t.Errorf("Duplicate lesson ID: %s", ex.ID)
+		}
+		seen[ex.ID] = true
+	}
+}
+
+func TestGetLessons_Regex_CoversBasicSearchCommands(t *testing.T) {
+	lessons := GetLessons(ModuleRegex)
+	allSolutions := make(map[string]bool)
+	for _, ex := range lessons {
+		for _, sol := range ex.Solutions {
+			allSolutions[sol] = true
+		}
+	}
+
+	// Should cover basic search commands
+	requiredCommands := []string{"n", "N", "*", "#"}
+	for _, cmd := range requiredCommands {
+		if !allSolutions[cmd] {
+			t.Errorf("Regex lessons should cover command %q", cmd)
+		}
+	}
+}
+
+func TestGetLessons_Regex_CoversVimgrepAndQuickfix(t *testing.T) {
+	lessons := GetLessons(ModuleRegex)
+
+	hasVimgrep := false
+	hasCopen := false
+	hasCnext := false
+	hasCprev := false
+	hasGrep := false
+	hasCclose := false
+
+	for _, ex := range lessons {
+		for _, sol := range ex.Solutions {
+			if len(sol) >= 8 && sol[:8] == ":vimgrep" {
+				hasVimgrep = true
+			}
+			if len(sol) >= 4 && sol[:4] == ":vim" {
+				hasVimgrep = true
+			}
+			if sol == ":copen" || sol == ":copen\n" || sol == ":cope" || sol == ":cw" || sol == ":cw\n" || sol == ":cwindow" {
+				hasCopen = true
+			}
+			if sol == ":cnext" || sol == ":cnext\n" || sol == ":cn" {
+				hasCnext = true
+			}
+			if sol == ":cprev" || sol == ":cprev\n" || sol == ":cp" {
+				hasCprev = true
+			}
+			if len(sol) >= 5 && sol[:5] == ":grep" {
+				hasGrep = true
+			}
+			if sol == ":cclose" || sol == ":cclose\n" || sol == ":ccl" {
+				hasCclose = true
+			}
+		}
+	}
+
+	if !hasVimgrep {
+		t.Error("Regex lessons should cover :vimgrep command")
+	}
+	if !hasCopen {
+		t.Error("Regex lessons should cover :copen/:cw command")
+	}
+	if !hasCnext {
+		t.Error("Regex lessons should cover :cnext/:cn command")
+	}
+	if !hasCprev {
+		t.Error("Regex lessons should cover :cprev/:cp command")
+	}
+	if !hasGrep {
+		t.Error("Regex lessons should cover :grep command")
+	}
+	if !hasCclose {
+		t.Error("Regex lessons should cover :cclose/:ccl command")
+	}
+}
+
+func TestGetLessons_Regex_HasCorrectCount(t *testing.T) {
+	lessons := GetLessons(ModuleRegex)
+	// After adding vimgrep/quickfix exercises, should have 24 lessons
+	if len(lessons) < 24 {
+		t.Errorf("Regex module should have at least 24 lessons after adding vimgrep/quickfix, got %d", len(lessons))
+	}
+}
+
+func TestGetPracticeExercises_Regex_ReturnsExercises(t *testing.T) {
+	exercises := GetPracticeExercises(ModuleRegex)
+	if len(exercises) == 0 {
+		t.Error("GetPracticeExercises should return exercises for Regex")
+	}
+}
+
+func TestGetPracticeExercises_Regex_AllPracticeType(t *testing.T) {
+	exercises := GetPracticeExercises(ModuleRegex)
+	for i, ex := range exercises {
+		if ex.Type != ExercisePractice {
+			t.Errorf("Practice exercise %d: Type should be Practice, got %s", i, ex.Type)
+		}
+	}
+}
+
 func TestGetBoss_Regex_ReturnsBoss(t *testing.T) {
 	boss := GetBoss(ModuleRegex)
 	if boss == nil {
@@ -705,6 +830,22 @@ func TestGetBoss_Regex_HasCorrectName(t *testing.T) {
 	boss := GetBoss(ModuleRegex)
 	if boss.Name != "The Pattern Hunter" {
 		t.Errorf("Boss name should be 'The Pattern Hunter', got %s", boss.Name)
+	}
+}
+
+func TestGetBoss_Regex_Has5Steps(t *testing.T) {
+	boss := GetBoss(ModuleRegex)
+	if len(boss.Steps) != 5 {
+		t.Errorf("Boss should have 5 steps, got %d", len(boss.Steps))
+	}
+}
+
+func TestGetBoss_Regex_StepsHaveTimeLimits(t *testing.T) {
+	boss := GetBoss(ModuleRegex)
+	for i, step := range boss.Steps {
+		if step.TimeLimit <= 0 {
+			t.Errorf("Boss step %d: TimeLimit should be positive, got %d", i, step.TimeLimit)
+		}
 	}
 }
 
@@ -741,6 +882,129 @@ func TestGetLessons_Macros_AllHaveRequiredFields(t *testing.T) {
 	}
 }
 
+func TestGetLessons_Macros_OptimalIsInSolutions(t *testing.T) {
+	lessons := GetLessons(ModuleMacros)
+	for i, ex := range lessons {
+		found := false
+		for _, sol := range ex.Solutions {
+			if sol == ex.Optimal {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Lesson %d (%s): Optimal %q not in Solutions %v", i, ex.ID, ex.Optimal, ex.Solutions)
+		}
+	}
+}
+
+func TestGetLessons_Macros_UniqueIDs(t *testing.T) {
+	lessons := GetLessons(ModuleMacros)
+	seen := make(map[string]bool)
+	for _, ex := range lessons {
+		if seen[ex.ID] {
+			t.Errorf("Duplicate lesson ID: %s", ex.ID)
+		}
+		seen[ex.ID] = true
+	}
+}
+
+func TestGetLessons_Macros_CoversBasicMacroCommands(t *testing.T) {
+	lessons := GetLessons(ModuleMacros)
+	allSolutions := make(map[string]bool)
+	for _, ex := range lessons {
+		for _, sol := range ex.Solutions {
+			allSolutions[sol] = true
+		}
+	}
+
+	// Should cover basic macro commands
+	requiredCommands := []string{"qa", "q", "@a", "@@"}
+	for _, cmd := range requiredCommands {
+		if !allSolutions[cmd] {
+			t.Errorf("Macros lessons should cover command %q", cmd)
+		}
+	}
+}
+
+func TestGetLessons_Macros_CoversNormalAndGlobalCommands(t *testing.T) {
+	lessons := GetLessons(ModuleMacros)
+
+	hasNormal := false
+	hasNormalWithRange := false
+	hasGlobal := false
+	hasGlobalNormal := false
+	hasInverseGlobal := false
+
+	for _, ex := range lessons {
+		for _, sol := range ex.Solutions {
+			// Check for :normal command
+			if len(sol) >= 7 && sol[:7] == ":normal" {
+				hasNormal = true
+			}
+			if len(sol) >= 5 && sol[:5] == ":norm" {
+				hasNormal = true
+			}
+			// Check for range + normal (like :% normal or :2,4 normal)
+			if len(sol) >= 2 && sol[0] == ':' && (sol[1] == '%' || (sol[1] >= '0' && sol[1] <= '9')) {
+				hasNormalWithRange = true
+			}
+			// Check for :g/pattern/
+			if len(sol) >= 3 && sol[:3] == ":g/" {
+				hasGlobal = true
+			}
+			// Check for :g/pattern/normal
+			if len(sol) >= 3 && sol[:3] == ":g/" && (containsSubstring(sol, "normal") || containsSubstring(sol, "norm")) {
+				hasGlobalNormal = true
+			}
+			// Check for :v/ (inverse global)
+			if len(sol) >= 3 && sol[:3] == ":v/" {
+				hasInverseGlobal = true
+			}
+		}
+	}
+
+	if !hasNormal {
+		t.Error("Macros lessons should cover :normal command")
+	}
+	if !hasNormalWithRange {
+		t.Error("Macros lessons should cover :normal with range (like :% normal)")
+	}
+	if !hasGlobal {
+		t.Error("Macros lessons should cover :g/pattern/ global command")
+	}
+	if !hasGlobalNormal {
+		t.Error("Macros lessons should cover :g/pattern/normal @a combination")
+	}
+	if !hasInverseGlobal {
+		t.Error("Macros lessons should cover :v/pattern/ inverse global command")
+	}
+}
+
+func TestGetLessons_Macros_HasCorrectCount(t *testing.T) {
+	lessons := GetLessons(ModuleMacros)
+	// After adding :normal and :g commands, should have 24 lessons
+	if len(lessons) < 24 {
+		t.Errorf("Macros module should have at least 24 lessons after adding :normal/:g, got %d", len(lessons))
+	}
+}
+
+func TestGetPracticeExercises_Macros_ReturnsExercises(t *testing.T) {
+	exercises := GetPracticeExercises(ModuleMacros)
+	if len(exercises) == 0 {
+		t.Error("GetPracticeExercises should return exercises for Macros")
+	}
+}
+
+func TestGetPracticeExercises_Macros_AllPracticeType(t *testing.T) {
+	exercises := GetPracticeExercises(ModuleMacros)
+	for i, ex := range exercises {
+		if ex.Type != ExercisePractice {
+			t.Errorf("Practice exercise %d: Type should be Practice, got %s", i, ex.Type)
+		}
+	}
+}
+
 func TestGetBoss_Macros_ReturnsBoss(t *testing.T) {
 	boss := GetBoss(ModuleMacros)
 	if boss == nil {
@@ -753,6 +1017,35 @@ func TestGetBoss_Macros_HasCorrectName(t *testing.T) {
 	if boss.Name != "The Automation Wizard" {
 		t.Errorf("Boss name should be 'The Automation Wizard', got %s", boss.Name)
 	}
+}
+
+func TestGetBoss_Macros_Has5Steps(t *testing.T) {
+	boss := GetBoss(ModuleMacros)
+	if len(boss.Steps) != 5 {
+		t.Errorf("Boss should have 5 steps, got %d", len(boss.Steps))
+	}
+}
+
+func TestGetBoss_Macros_StepsHaveTimeLimits(t *testing.T) {
+	boss := GetBoss(ModuleMacros)
+	for i, step := range boss.Steps {
+		if step.TimeLimit <= 0 {
+			t.Errorf("Boss step %d: TimeLimit should be positive, got %d", i, step.TimeLimit)
+		}
+	}
+}
+
+// Helper function to check if string contains substring
+func containsSubstring(s, substr string) bool {
+	if len(substr) > len(s) {
+		return false
+	}
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }
 
 // =============================================================================

@@ -1694,3 +1694,243 @@ func TestTextObjectSelection_HTMLTags(t *testing.T) {
 		})
 	}
 }
+
+// ============================================================================
+// SCREEN POSITION COMMANDS (H, M, L) AND SCROLL COMMANDS (Ctrl+d/u/f/b)
+// ============================================================================
+
+func TestSimulateMotions_H_HighScreen(t *testing.T) {
+	code := []string{
+		"  line 1",
+		"  line 2",
+		"  line 3",
+		"  line 4",
+		"  line 5",
+		"  line 6",
+		"  line 7",
+	}
+	start := Position{Line: 5, Col: 3}
+
+	result := SimulateMotions(start, code, "H")
+
+	// H goes to first line (simulated as line 0)
+	if result.Line != 0 {
+		t.Errorf("H should move to line 0, got %d", result.Line)
+	}
+	// Should also move to first non-blank
+	if result.Col != 2 {
+		t.Errorf("H should move to first non-blank (col 2), got %d", result.Col)
+	}
+}
+
+func TestSimulateMotions_M_MiddleScreen(t *testing.T) {
+	code := []string{
+		"  line 1",
+		"  line 2",
+		"  line 3",
+		"  line 4",
+		"  line 5",
+		"  line 6",
+		"  line 7",
+	}
+	start := Position{Line: 0, Col: 0}
+
+	result := SimulateMotions(start, code, "M")
+
+	// M goes to middle line (7/2 = 3)
+	if result.Line != 3 {
+		t.Errorf("M should move to middle line (3), got %d", result.Line)
+	}
+	// Should also move to first non-blank
+	if result.Col != 2 {
+		t.Errorf("M should move to first non-blank (col 2), got %d", result.Col)
+	}
+}
+
+func TestSimulateMotions_L_LowScreen(t *testing.T) {
+	code := []string{
+		"  line 1",
+		"  line 2",
+		"  line 3",
+		"  line 4",
+		"  line 5",
+		"  line 6",
+		"  line 7",
+	}
+	start := Position{Line: 0, Col: 0}
+
+	result := SimulateMotions(start, code, "L")
+
+	// L goes to last line (line 6, index = len-1)
+	if result.Line != 6 {
+		t.Errorf("L should move to last line (6), got %d", result.Line)
+	}
+	// Should also move to first non-blank
+	if result.Col != 2 {
+		t.Errorf("L should move to first non-blank (col 2), got %d", result.Col)
+	}
+}
+
+func TestSimulateMotions_CtrlD_HalfPageDown(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+		"line 4",
+		"line 5",
+		"line 6",
+		"line 7",
+		"line 8",
+		"line 9",
+		"line 10",
+	}
+	start := Position{Line: 0, Col: 0}
+
+	result := SimulateMotions(start, code, "\x04") // Ctrl+d
+
+	// Ctrl+d moves half page down (min 5 lines for 10 line file)
+	if result.Line != 5 {
+		t.Errorf("Ctrl+d should move to line 5, got %d", result.Line)
+	}
+	if result.Col != 0 {
+		t.Errorf("Ctrl+d should reset column to 0, got %d", result.Col)
+	}
+}
+
+func TestSimulateMotions_CtrlU_HalfPageUp(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+		"line 4",
+		"line 5",
+		"line 6",
+		"line 7",
+		"line 8",
+		"line 9",
+		"line 10",
+	}
+	start := Position{Line: 9, Col: 3}
+
+	result := SimulateMotions(start, code, "\x15") // Ctrl+u
+
+	// Ctrl+u moves half page up (min 5 lines for 10 line file)
+	if result.Line != 4 {
+		t.Errorf("Ctrl+u should move to line 4, got %d", result.Line)
+	}
+	if result.Col != 0 {
+		t.Errorf("Ctrl+u should reset column to 0, got %d", result.Col)
+	}
+}
+
+func TestSimulateMotions_CtrlF_FullPageForward(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+		"line 4",
+		"line 5",
+		"line 6",
+		"line 7",
+		"line 8",
+		"line 9",
+		"line 10",
+	}
+	start := Position{Line: 0, Col: 0}
+
+	result := SimulateMotions(start, code, "\x06") // Ctrl+f
+
+	// Ctrl+f moves full page forward, clamped to last line
+	if result.Line != 9 {
+		t.Errorf("Ctrl+f should move to last line (9), got %d", result.Line)
+	}
+}
+
+func TestSimulateMotions_CtrlB_FullPageBackward(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+		"line 4",
+		"line 5",
+		"line 6",
+		"line 7",
+		"line 8",
+		"line 9",
+		"line 10",
+	}
+	start := Position{Line: 9, Col: 3}
+
+	result := SimulateMotions(start, code, "\x02") // Ctrl+b
+
+	// Ctrl+b moves full page backward, clamped to first line
+	if result.Line != 0 {
+		t.Errorf("Ctrl+b should move to first line (0), got %d", result.Line)
+	}
+}
+
+func TestSimulateMotions_CtrlD_Boundary(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+	}
+	start := Position{Line: 2, Col: 0}
+
+	result := SimulateMotions(start, code, "\x04") // Ctrl+d
+
+	// Already at end, should stay at last line
+	if result.Line != 2 {
+		t.Errorf("Ctrl+d at end should stay at line 2, got %d", result.Line)
+	}
+}
+
+func TestSimulateMotions_CtrlU_Boundary(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+	}
+	start := Position{Line: 0, Col: 0}
+
+	result := SimulateMotions(start, code, "\x15") // Ctrl+u
+
+	// Already at start, should stay at first line
+	if result.Line != 0 {
+		t.Errorf("Ctrl+u at start should stay at line 0, got %d", result.Line)
+	}
+}
+
+func TestSimulateMotions_HML_Combination(t *testing.T) {
+	code := []string{
+		"line 1",
+		"line 2",
+		"line 3",
+		"line 4",
+		"line 5",
+	}
+	start := Position{Line: 2, Col: 0}
+
+	// H then L should go top then bottom
+	result := SimulateMotions(start, code, "HL")
+
+	if result.Line != 4 {
+		t.Errorf("HL should end at last line (4), got %d", result.Line)
+	}
+}
+
+func TestSimulateMotions_ScrollCombination(t *testing.T) {
+	code := make([]string, 20) // 20 lines
+	for i := range code {
+		code[i] = "line content"
+	}
+	start := Position{Line: 10, Col: 0}
+
+	// Ctrl+u then Ctrl+d should return roughly to same position
+	result := SimulateMotions(start, code, "\x15\x04")
+
+	// Should be back around line 10 (half page = 10, so 10-10+10 = 10)
+	if result.Line != 10 {
+		t.Errorf("Ctrl+u Ctrl+d should return to ~line 10, got %d", result.Line)
+	}
+}
