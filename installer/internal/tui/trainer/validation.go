@@ -31,16 +31,36 @@ func ValidateAnswerDetailed(exercise *Exercise, answer string) ValidationResult 
 		return result
 	}
 
-	// Check if it's in the predefined solutions
+	// Check if it's in the predefined solutions (normalize both for comparison)
 	for _, sol := range exercise.Solutions {
-		if answer == sol {
+		if answer == strings.TrimSpace(sol) {
 			result.IsInSolutions = true
 			break
 		}
 	}
 
-	// Check if it's optimal
-	result.IsOptimal = answer == exercise.Optimal
+	// Check if it's optimal (normalize for comparison)
+	result.IsOptimal = answer == strings.TrimSpace(exercise.Optimal)
+
+	// Detect if this is an exercise that shouldn't use simulator
+	// 1. Ex commands (start with : / ?)
+	// 2. Substitution module (r, R, s, S, ~, etc. are edit commands)
+	// 3. Macros module (q, @, :normal, :g/)
+	// 4. Regex module (/, ?, :vimgrep, etc.)
+	isExCommand := len(exercise.Solutions) > 0 && len(exercise.Solutions[0]) > 0 &&
+		(exercise.Solutions[0][0] == ':' || exercise.Solutions[0][0] == '/' || exercise.Solutions[0][0] == '?')
+	isNonMotionModule := exercise.Module == ModuleSubstitution ||
+		exercise.Module == ModuleMacros ||
+		exercise.Module == ModuleRegex
+	skipSimulation := isExCommand || isNonMotionModule
+
+	if skipSimulation {
+		// For non-motion exercises, correct if it matches any predefined solution
+		result.IsCorrect = result.IsInSolutions
+		result.TargetPosition = exercise.CursorPos
+		result.ActualPosition = exercise.CursorPos
+		return result
+	}
 
 	// Use simulator to check if answer reaches the correct position
 	// First, find the target position by simulating the optimal solution
@@ -69,11 +89,24 @@ func ValidateAnswer(exercise *Exercise, answer string) bool {
 		return false
 	}
 
-	// First check predefined solutions (fast path)
+	// First check predefined solutions (fast path) - normalize both for comparison
 	for _, sol := range exercise.Solutions {
-		if answer == sol {
+		if answer == strings.TrimSpace(sol) {
 			return true
 		}
+	}
+
+	// Detect if this exercise shouldn't use simulator
+	isExCommand := len(exercise.Solutions) > 0 && len(exercise.Solutions[0]) > 0 &&
+		(exercise.Solutions[0][0] == ':' || exercise.Solutions[0][0] == '/' || exercise.Solutions[0][0] == '?')
+	isNonMotionModule := exercise.Module == ModuleSubstitution ||
+		exercise.Module == ModuleMacros ||
+		exercise.Module == ModuleRegex
+	skipSimulation := isExCommand || isNonMotionModule
+
+	if skipSimulation {
+		// For non-motion exercises, only predefined solutions are valid
+		return false
 	}
 
 	// Use simulator to check if answer reaches correct position
@@ -102,7 +135,7 @@ func IsInSolutions(exercise *Exercise, answer string) bool {
 
 	answer = strings.TrimSpace(answer)
 	for _, sol := range exercise.Solutions {
-		if answer == sol {
+		if answer == strings.TrimSpace(sol) {
 			return true
 		}
 	}

@@ -1421,11 +1421,32 @@ func (m Model) renderTrainerExercise(mode string) string {
 	s.WriteString(InfoStyle.Render("   " + exercise.Mission))
 	s.WriteString("\n\n")
 
+	// Detect if this exercise should skip cursor simulation
+	// 1. Ex commands (start with : / ?)
+	// 2. Substitution module (r, R, s, S, ~, etc. are edit commands, not motions)
+	// 3. Macros module (q, @, :normal, :g/ are not pure motions)
+	// 4. Regex module (/, ?, :vimgrep, etc.)
+	isExCommand := len(exercise.Solutions) > 0 && len(exercise.Solutions[0]) > 0 &&
+		(exercise.Solutions[0][0] == ':' || exercise.Solutions[0][0] == '/' || exercise.Solutions[0][0] == '?')
+	isNonMotionModule := exercise.Module == trainer.ModuleSubstitution ||
+		exercise.Module == trainer.ModuleMacros ||
+		exercise.Module == trainer.ModuleRegex
+	skipSimulation := isExCommand || isNonMotionModule
+
 	// Calculate simulated cursor position and selection based on current input
+	// Only simulate for motion-based exercises
 	startPos := exercise.CursorPos
-	simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
-	simPos := simResult.Position
-	selection := simResult.Selection
+	var simPos trainer.SimulatedPosition
+	var selection trainer.Selection
+
+	if !skipSimulation {
+		simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
+		simPos = simResult.Position
+		selection = simResult.Selection
+	} else {
+		// For non-motion exercises, cursor stays at start position
+		simPos = trainer.SimulatedPosition{Line: startPos.Line, Col: startPos.Col}
+	}
 
 	// Code display with cursors and selection
 	s.WriteString(SubtitleStyle.Render("📝 Code:"))
@@ -1436,6 +1457,26 @@ func (m Model) renderTrainerExercise(mode string) string {
 	for lineNum, line := range exercise.Code {
 		lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
 		s.WriteString(MutedStyle.Render(lineNumStr))
+
+		// For non-motion exercises, show code with only the start cursor (no simulation)
+		if skipSimulation {
+			// Show start cursor position
+			if lineNum == startPos.Line && startPos.Col < len(line) {
+				before := line[:startPos.Col]
+				cursor := string(line[startPos.Col])
+				after := ""
+				if startPos.Col+1 < len(line) {
+					after = line[startPos.Col+1:]
+				}
+				s.WriteString(CodeStyle.Render(before))
+				s.WriteString(StartCursorStyle.Render(cursor))
+				s.WriteString(CodeStyle.Render(after))
+			} else {
+				s.WriteString(CodeStyle.Render(line))
+			}
+			s.WriteString("\n")
+			continue
+		}
 
 		// Check if there's an active selection on this line
 		if selection.Active && lineNum == selection.StartLine {
@@ -1692,11 +1733,26 @@ func (m Model) renderTrainerBoss() string {
 		s.WriteString(InfoStyle.Render("   " + exercise.Mission))
 		s.WriteString("\n\n")
 
+		// Detect if this exercise should skip cursor simulation
+		isExCommand := len(exercise.Solutions) > 0 && len(exercise.Solutions[0]) > 0 &&
+			(exercise.Solutions[0][0] == ':' || exercise.Solutions[0][0] == '/' || exercise.Solutions[0][0] == '?')
+		isNonMotionModule := exercise.Module == trainer.ModuleSubstitution ||
+			exercise.Module == trainer.ModuleMacros ||
+			exercise.Module == trainer.ModuleRegex
+		skipSimulation := isExCommand || isNonMotionModule
+
 		// Calculate simulated cursor position and selection based on current input
 		startPos := exercise.CursorPos
-		simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
-		simPos := simResult.Position
-		selection := simResult.Selection
+		var simPos trainer.SimulatedPosition
+		var selection trainer.Selection
+
+		if !skipSimulation {
+			simResult := trainer.SimulateMotionsWithSelection(startPos, exercise.Code, m.TrainerInput)
+			simPos = simResult.Position
+			selection = simResult.Selection
+		} else {
+			simPos = trainer.SimulatedPosition{Line: startPos.Line, Col: startPos.Col}
+		}
 
 		// Code display with cursors and selection
 		s.WriteString(SubtitleStyle.Render("📝 Code:"))
@@ -1707,6 +1763,25 @@ func (m Model) renderTrainerBoss() string {
 		for lineNum, line := range exercise.Code {
 			lineNumStr := fmt.Sprintf("%2d │ ", lineNum+1)
 			s.WriteString(MutedStyle.Render(lineNumStr))
+
+			// For non-motion exercises, show code with only the start cursor
+			if skipSimulation {
+				if lineNum == startPos.Line && startPos.Col < len(line) {
+					before := line[:startPos.Col]
+					cursor := string(line[startPos.Col])
+					after := ""
+					if startPos.Col+1 < len(line) {
+						after = line[startPos.Col+1:]
+					}
+					s.WriteString(CodeStyle.Render(before))
+					s.WriteString(StartCursorStyle.Render(cursor))
+					s.WriteString(CodeStyle.Render(after))
+				} else {
+					s.WriteString(CodeStyle.Render(line))
+				}
+				s.WriteString("\n")
+				continue
+			}
 
 			// Check if there's an active selection on this line
 			if selection.Active && lineNum == selection.StartLine {

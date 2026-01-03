@@ -1322,7 +1322,6 @@ func (m Model) handleTrainerMenuKeys(key string) (tea.Model, tea.Cmd) {
 		// Select module and start lesson
 		module := m.TrainerModules[m.TrainerCursor]
 
-		// Check if module is unlocked
 		if !m.TrainerStats.IsModuleUnlocked(module.ID) {
 			m.TrainerMessage = "🔒 Module locked! Complete previous boss first."
 			return m, nil
