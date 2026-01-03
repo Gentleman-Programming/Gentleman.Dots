@@ -249,10 +249,16 @@ func (m Model) GetCurrentOptions() []string {
 		}
 		return []string{macLabel, linuxLabel}
 	case ScreenTerminalSelect:
-		if m.Choices.OS == "mac" {
-			return []string{"Alacritty", "WezTerm", "Kitty", "Ghostty", "None", "─────────────", "ℹ️  Learn about terminals"}
+		alacrittyLabel := "Alacritty"
+		// On Debian/Ubuntu, Alacritty needs to be built from source (PPAs are unreliable)
+		// This applies to ALL Debian-based systems, not just ARM
+		if m.SystemInfo != nil && (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && m.Choices.OS == "linux" {
+			alacrittyLabel = "Alacritty ⏱️  (builds from source, installs Rust ~5-10 min)"
 		}
-		return []string{"Alacritty", "WezTerm", "Ghostty", "None", "─────────────", "ℹ️  Learn about terminals"}
+		if m.Choices.OS == "mac" {
+			return []string{alacrittyLabel, "WezTerm", "Kitty", "Ghostty", "None", "─────────────", "ℹ️  Learn about terminals"}
+		}
+		return []string{alacrittyLabel, "WezTerm", "Ghostty", "None", "─────────────", "ℹ️  Learn about terminals"}
 	case ScreenFontSelect:
 		return []string{"Yes, install Iosevka Term Nerd Font", "No, I already have it"}
 	case ScreenShellSelect:

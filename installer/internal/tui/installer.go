@@ -242,15 +242,76 @@ func stepInstallTerminal(m *Model) error {
 				result = system.RunBrewWithLogs("install --cask alacritty", nil, func(line string) {
 					SendLog(stepID, line)
 				})
-			} else {
-				// Ubuntu/Debian - install software-properties-common first (provides add-apt-repository)
-				SendLog(stepID, "Installing required packages for PPA support...")
-				system.RunSudo("apt-get install -y software-properties-common", nil)
-				system.RunSudo("add-apt-repository -y ppa:aslatter/ppa", nil)
-				system.RunSudo("apt-get update", nil)
-				result = system.RunSudoWithLogs("apt-get install -y alacritty", nil, func(line string) {
+			} else if m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux {
+				// Debian/Ubuntu: compile from source (PPAs are unreliable)
+				SendLog(stepID, "Building Alacritty from source...")
+				SendLog(stepID, "Installing build dependencies...")
+				result = system.RunSudoWithLogs("apt-get install -y cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 gzip scdoc git curl", nil, func(line string) {
 					SendLog(stepID, line)
 				})
+				if result.Error != nil {
+					return wrapStepError("terminal", "Install Alacritty",
+						"Failed to install build dependencies",
+						result.Error)
+				}
+				// Install Rust/Cargo only for this build
+				cargoPath := filepath.Join(homeDir, ".cargo/bin/cargo")
+				if !system.CommandExists("cargo") && !system.CommandExists(cargoPath) {
+					SendLog(stepID, "Installing Rust/Cargo toolchain...")
+					result = system.RunWithLogs("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y", nil, func(line string) {
+						SendLog(stepID, line)
+					})
+					if result.Error != nil {
+						return wrapStepError("terminal", "Install Alacritty",
+							"Failed to install Rust",
+							result.Error)
+					}
+					cargoPath = filepath.Join(homeDir, ".cargo/bin/cargo")
+				}
+				// Clone and build Alacritty
+				SendLog(stepID, "Cloning Alacritty repository...")
+				alacrittyDir := filepath.Join(os.TempDir(), "alacritty-build")
+				os.RemoveAll(alacrittyDir)
+				result = system.RunWithLogs(fmt.Sprintf("git clone https://github.com/alacritty/alacritty.git %s", alacrittyDir), nil, func(line string) {
+					SendLog(stepID, line)
+				})
+				if result.Error != nil {
+					return wrapStepError("terminal", "Install Alacritty",
+						"Failed to clone Alacritty repository",
+						result.Error)
+				}
+				SendLog(stepID, "Building Alacritty (this may take 5-10 minutes)...")
+				if !system.CommandExists("cargo") {
+					cargoPath = filepath.Join(homeDir, ".cargo/bin/cargo")
+				} else {
+					cargoPath = "cargo"
+				}
+				result = system.RunWithLogs(fmt.Sprintf("%s build --release --manifest-path %s/Cargo.toml", cargoPath, alacrittyDir), nil, func(line string) {
+					SendLog(stepID, line)
+				})
+				if result.Error != nil {
+					return wrapStepError("terminal", "Install Alacritty",
+						"Failed to build Alacritty",
+						result.Error)
+				}
+				SendLog(stepID, "Installing Alacritty binary...")
+				result = system.RunSudoWithLogs(fmt.Sprintf("cp %s/target/release/alacritty /usr/local/bin/alacritty", alacrittyDir), nil, func(line string) {
+					SendLog(stepID, line)
+				})
+				if result.Error != nil {
+					return wrapStepError("terminal", "Install Alacritty",
+						"Failed to install Alacritty binary",
+						result.Error)
+				}
+				system.RunSudoWithLogs(fmt.Sprintf("cp %s/extra/linux/Alacritty.desktop /usr/share/applications/", alacrittyDir), nil, func(line string) {
+					SendLog(stepID, line)
+				})
+				os.RemoveAll(alacrittyDir)
+				SendLog(stepID, "✓ Alacritty built and installed from source")
+			} else {
+				return wrapStepError("terminal", "Install Alacritty",
+					"Unsupported operating system for Alacritty installation",
+					fmt.Errorf("OS type: %v", m.SystemInfo.OS))
 			}
 			if result.Error != nil {
 				return wrapStepError("terminal", "Install Alacritty",

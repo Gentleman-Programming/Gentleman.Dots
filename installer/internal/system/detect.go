@@ -13,7 +13,7 @@ const (
 	OSMac OSType = iota
 	OSLinux
 	OSArch
-	OSDebian
+	OSDebian // Debian-based (Debian, Ubuntu, etc.)
 	OSUnknown
 )
 
@@ -21,6 +21,7 @@ type SystemInfo struct {
 	OS        OSType
 	OSName    string
 	IsWSL     bool
+	IsARM     bool
 	HomeDir   string
 	HasBrew   bool
 	HasXcode  bool
@@ -32,6 +33,7 @@ func Detect() *SystemInfo {
 		OS:      OSUnknown,
 		OSName:  "Unknown",
 		HomeDir: os.Getenv("HOME"),
+		IsARM:   runtime.GOARCH == "arm64" || runtime.GOARCH == "arm",
 	}
 
 	switch runtime.GOOS {
@@ -106,7 +108,12 @@ func CommandExists(cmd string) bool {
 // GetBrewPrefix returns the homebrew prefix path
 func GetBrewPrefix() string {
 	if runtime.GOOS == "darwin" {
-		return "/opt/homebrew"
+		// Apple Silicon (arm64) uses /opt/homebrew
+		// Intel (amd64) uses /usr/local
+		if runtime.GOARCH == "arm64" {
+			return "/opt/homebrew"
+		}
+		return "/usr/local"
 	}
 	return "/home/linuxbrew/.linuxbrew"
 }

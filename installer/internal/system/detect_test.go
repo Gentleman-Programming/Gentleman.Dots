@@ -71,11 +71,17 @@ func TestCommandExists(t *testing.T) {
 func TestGetBrewPrefix(t *testing.T) {
 	prefix := GetBrewPrefix()
 
-	t.Run("should return valid prefix based on OS", func(t *testing.T) {
+	t.Run("should return valid prefix based on OS and arch", func(t *testing.T) {
 		switch runtime.GOOS {
 		case "darwin":
-			if prefix != "/opt/homebrew" {
-				t.Errorf("Expected '/opt/homebrew' on macOS, got '%s'", prefix)
+			if runtime.GOARCH == "arm64" {
+				if prefix != "/opt/homebrew" {
+					t.Errorf("Expected '/opt/homebrew' on macOS ARM64, got '%s'", prefix)
+				}
+			} else {
+				if prefix != "/usr/local" {
+					t.Errorf("Expected '/usr/local' on macOS Intel, got '%s'", prefix)
+				}
 			}
 		case "linux":
 			if prefix != "/home/linuxbrew/.linuxbrew" {
