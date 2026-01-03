@@ -28,13 +28,13 @@ gentleman.dots
 
 ```bash
 # macOS Apple Silicon
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-arm64 -o gentleman.dots
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-darwin-arm64 -o gentleman.dots
 
 # macOS Intel
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-darwin-amd64 -o gentleman.dots
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-darwin-amd64 -o gentleman.dots
 
 # Linux x86_64
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman.dots-linux-amd64 -o gentleman.dots
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-linux-amd64 -o gentleman.dots
 
 # Then run
 chmod +x gentleman.dots
