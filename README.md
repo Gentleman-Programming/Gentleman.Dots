@@ -109,13 +109,131 @@ The flake automatically handles system-specific configurations, installs all dep
 ├── television.nix         # Television file navigator
 ├── zellij.nix             # Zellij terminal workspace (optional)
 ├── oil-scripts.nix        # Custom Oil.nvim scripts
+├── yabai.nix              # Yabai window manager (macOS only)
+├── skhd.nix               # Skhd hotkey daemon (macOS only)
+├── simple-bar.nix         # simple-bar for Übersicht (macOS only)
 ├── fish/                  # Fish completions and configs
 ├── nvim/                  # Neovim plugins and settings
 ├── ghostty/               # Ghostty themes and config
 ├── zed/                   # Zed themes and settings
 ├── scripts/               # Custom utility scripts
+├── simple-bar/            # simple-bar themes and config (macOS only)
+├── yabai/                 # Yabai window manager config (macOS only)
 └── aerospace/             # Aerospace window manager config
 ```
+
+---
+
+## 🐧 Linux Users: Important Configuration
+
+**If you're using Linux, you MUST disable macOS-specific modules before running the installation.**
+
+The following modules are **macOS-only** and will fail on Linux:
+
+| Module | Description | Why macOS-only |
+|--------|-------------|----------------|
+| `yabai.nix` | Tiling window manager | Uses macOS Accessibility API |
+| `skhd.nix` | Hotkey daemon | Depends on macOS input system |
+| `simple-bar.nix` | Status bar widget | Requires Übersicht (macOS app) |
+
+### How to Disable macOS Modules
+
+Edit `flake.nix` and comment out these lines in the `modules` array (around line 40-57):
+
+```nix
+modules = [
+  ./nushell.nix
+  ./ghostty.nix
+  ./zed.nix
+  ./television.nix
+  ./wezterm.nix
+  # ./zellij.nix  # Optional - uncomment if you want Zellij
+  ./tmux.nix
+  ./fish.nix
+  ./starship.nix
+  ./nvim.nix
+  ./zsh.nix
+  ./oil-scripts.nix
+  ./opencode.nix
+  ./claude.nix
+  # ─── macOS ONLY - Comment these on Linux ───
+  # ./yabai.nix        # ← Comment this line
+  # ./skhd.nix         # ← Comment this line
+  # ./simple-bar.nix   # ← Comment this line
+  {
+    # ... rest of config
+```
+
+Also remove the macOS window manager packages from `home.packages` (around line 73-75):
+
+```nix
+home.packages = with pkgs; [
+  # ...
+  
+  # ─── Window management (macOS) ───
+  # yabai   # ← Comment this line
+  # skhd    # ← Comment this line
+  
+  # ...
+];
+```
+
+### Additional Linux Changes
+
+**1. Change home directory path** (around line 61):
+
+```nix
+# Change from macOS path:
+home.homeDirectory = "/Users/YourUser/";
+
+# To Linux path:
+home.homeDirectory = "/home/YourUser/";
+```
+
+**2. Add Linux system support** (around line 17):
+
+```nix
+# Change from:
+supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
+
+# To (add your Linux architecture):
+supportedSystems = [ "x86_64-darwin" "aarch64-darwin" "x86_64-linux" "aarch64-linux" ];
+```
+
+**3. Add Linux home configuration** (around line 135):
+
+```nix
+homeConfigurations = {
+  # macOS system configurations
+  "gentleman-macos-intel" = mkHomeConfiguration "x86_64-darwin";
+  "gentleman-macos-arm" = mkHomeConfiguration "aarch64-darwin";
+  
+  # Linux system configurations (add these)
+  "gentleman-linux" = mkHomeConfiguration "x86_64-linux";
+  "gentleman-linux-arm" = mkHomeConfiguration "aarch64-linux";
+  
+  # Default to Apple Silicon
+  "gentleman" = mkHomeConfiguration "aarch64-darwin";
+};
+```
+
+**4. Run installation with Linux config:**
+
+```bash
+home-manager switch --flake .#gentleman-linux
+```
+
+### Linux Alternatives
+
+For window management on Linux, consider:
+- **i3/Sway** - Popular tiling window managers
+- **Hyprland** - Modern Wayland compositor
+- **bspwm** - Scriptable tiling window manager
+- **Polybar/Waybar** - Status bars (replace simple-bar)
+
+> **Note:** This configuration is primarily optimized for macOS. Linux support is possible but requires manual adjustment of these modules.
+
+---
 
 ## Installation Steps (for macOS)
 
