@@ -4,7 +4,7 @@
 <img width="1424" height="1536" alt="image" src="https://github.com/user-attachments/assets/1db56d3b-a8c0-4885-82aa-c5ec04af4ac0" />
 
 ## ShowCase
-<img width="2998" height="1649" alt="image" src="https://github.com/user-attachments/assets/c5a1eae2-69de-4ca1-8b4d-9d9b56e4cb5a" />
+<img width="3840" height="2160" alt="image" src="https://github.com/user-attachments/assets/fff14c05-9676-4e04-b05e-dab5e3cf300a" />
 
 ## What is this?
 
