@@ -26,9 +26,19 @@ yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
 yabai -m config mouse_drop_action            swap
 
+# simple-bar integration
+yabai -m config external_bar                 all:28:0
+
+# simple-bar-server refresh signals (via curl - much faster than osascript)
+yabai -m signal --add event=window_focused action="curl -s http://localhost:7776/yabai/windows/refresh" label="Refresh windows on focus"
+yabai -m signal --add event=window_destroyed action="curl -s http://localhost:7776/yabai/windows/refresh" label="Refresh windows on close"
+yabai -m signal --add event=window_created action="curl -s http://localhost:7776/yabai/windows/refresh" label="Refresh windows on create"
+yabai -m signal --add event=space_changed action="curl -s http://localhost:7776/yabai/spaces/refresh" label="Refresh spaces on change"
+yabai -m signal --add event=application_activated action="curl -s http://localhost:7776/yabai/windows/refresh" label="Refresh windows on app activate"
+
 # general space settings - beautiful spacing
 yabai -m config layout                       bsp
-yabai -m config top_padding                  6
+yabai -m config top_padding                  10
 yabai -m config bottom_padding               6
 yabai -m config left_padding                 6
 yabai -m config right_padding                6

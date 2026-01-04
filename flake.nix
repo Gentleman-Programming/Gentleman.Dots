@@ -52,6 +52,9 @@
             ./oil-scripts.nix  # Oil.nvim scripts configuration
             ./opencode.nix  # OpenCode AI assistant configuration
             ./claude.nix  # Claude Code CLI configuration
+            ./yabai.nix  # Yabai window manager configuration
+            ./skhd.nix  # Skhd hotkey daemon configuration
+            ./simple-bar.nix  # simple-bar for Übersicht
             {
               # Personal data
               home.username = "YourUser";  # Replace with your username
@@ -66,6 +69,10 @@
                 fish
                 zsh
                 nushell
+
+                # ─── Window management (macOS) ───
+                yabai
+                skhd
 
                 # ─── Development tools ───
                 volta

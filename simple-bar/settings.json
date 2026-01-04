@@ -1,0 +1,14 @@
+{
+  "global": {
+    "yabaiPath": "/opt/homebrew/bin/yabai",
+    "windowManager": "yabai",
+    "enableServer": true,
+    "font": "IosevkaTerm NF",
+    "fontSize": "12px",
+    "theme": "dark"
+  },
+  "themes": {
+    "lightTheme": "MacOSLight",
+    "darkTheme": "Gentleman"
+  }
+}

@@ -1,6 +1,6 @@
-# Yabai + skhd Configuration
+# Yabai + skhd + simple-bar Configuration
 
-Tiling window manager setup for macOS with custom keybindings.
+Tiling window manager setup for macOS with custom keybindings and a beautiful status bar.
 
 ## Prerequisites
 
@@ -22,12 +22,13 @@ Wait for the installation dialog to complete before proceeding.
 
 ## Installation
 
-### 1. Install yabai and skhd
+### 1. Install yabai, skhd, and Übersicht
 
 ```bash
 # Install via Homebrew
 brew install koekeishiya/formulae/yabai
 brew install koekeishiya/formulae/skhd
+brew install --cask ubersicht
 ```
 
 ### 2. Create config directories
@@ -41,16 +42,89 @@ mkdir -p ~/.config/skhd
 
 ```bash
 # From your dotfiles repo
-cp yabairc ~/.config/yabai/yabairc
-cp skhdrc ~/.config/skhd/skhdrc
-cp move-window-to-space.sh ~/.config/yabai/move-window-to-space.sh
+cp yabai/yabairc ~/.config/yabai/yabairc
+cp skhd/skhdrc ~/.config/skhd/skhdrc
+cp yabai/move-window-to-space.sh ~/.config/yabai/move-window-to-space.sh
 
 # Make helper script executable
 chmod +x ~/.config/yabai/move-window-to-space.sh
 chmod +x ~/.config/yabai/yabairc
 ```
 
-### 4. Grant Accessibility Permissions
+### 4. Install simple-bar
+
+```bash
+# Open Übersicht once to create the widgets folder
+open -a "Übersicht"
+
+# Clone simple-bar
+git clone --depth 1 https://github.com/Jean-Tinland/simple-bar "$HOME/Library/Application Support/Übersicht/widgets/simple-bar"
+
+# Copy Gentleman theme
+cp simple-bar/themes/gentleman.js "$HOME/Library/Application Support/Übersicht/widgets/simple-bar/lib/styles/themes/"
+
+# Copy settings
+cp simple-bar/settings.json "$HOME/Library/Application Support/Übersicht/simple-bar-settings.json"
+```
+
+### 5. Register Gentleman theme in simple-bar
+
+Edit `$HOME/Library/Application Support/Übersicht/widgets/simple-bar/lib/styles/themes.js`:
+
+Add at the top with other imports:
+```javascript
+import * as Gentleman from "./themes/gentleman";
+```
+
+Add at the bottom of the collection object:
+```javascript
+  Gentleman: Gentleman.theme,
+```
+
+### 6. Install simple-bar-server (for fast updates)
+
+```bash
+# Clone simple-bar-server
+git clone https://github.com/Jean-Tinland/simple-bar-server.git ~/.config/simple-bar-server
+cd ~/.config/simple-bar-server
+npm install
+
+# Copy launchd service
+cp ../Gentleman.Dots2/simple-bar/com.simple-bar-server.plist ~/Library/LaunchAgents/
+
+# Load service (starts automatically on login)
+launchctl load -w ~/Library/LaunchAgents/com.simple-bar-server.plist
+```
+
+### 7. Configure simple-bar
+
+1. Click on simple-bar (the status bar at the top)
+2. Press `Cmd + ,` to open settings
+3. Set **yabai path** to `/opt/homebrew/bin/yabai`
+4. Enable **"Enable server"** option
+5. In Themes section, select **"Gentleman"** as dark theme
+
+### 8. Configure macOS menu bar and Dock
+
+**Menu Bar:**
+1. Open **System Settings**
+2. Go to **Control Center**
+3. Set **"Automatically hide and show the menu bar"** to **"Always"**
+
+This allows you to access the native macOS menu bar by moving your mouse to the top of the screen.
+
+**Dock:**
+1. Open **System Settings**
+2. Go to **Desktop & Dock**
+3. Enable **"Automatically hide and show the Dock"**
+4. Disable **"Show suggested and recent apps in Dock"** (optional)
+
+**Background (Wallpaper):**
+1. Open **System Settings**
+2. Go to **Wallpaper**
+3. Make sure **"Show as wallpaper"** is enabled (not transparent)
+
+### 9. Grant Accessibility Permissions
 
 **IMPORTANT**: Both yabai and skhd need accessibility permissions to work.
 
@@ -61,7 +135,7 @@ chmod +x ~/.config/yabai/yabairc
 5. Click **+** again and add `skhd` from the same location
 6. Enable checkboxes next to both
 
-### 5. Create Mission Control Spaces
+### 10. Create Mission Control Spaces
 
 macOS spaces must be created manually via Mission Control:
 
@@ -70,7 +144,7 @@ macOS spaces must be created manually via Mission Control:
 3. Click **+** to add desktops
 4. Create a total of 7 desktops
 
-### 6. Enable Mission Control Keyboard Shortcuts
+### 11. Enable Mission Control Keyboard Shortcuts
 
 1. Open **System Settings**
 2. Go to **Keyboard** → **Keyboard Shortcuts** → **Mission Control**
@@ -83,7 +157,7 @@ macOS spaces must be created manually via Mission Control:
    - ☑ Switch to Desktop 6: `Ctrl+6` (^6)
    - ☑ Switch to Desktop 7: `Ctrl+7` (^7)
 
-### 7. Start Services
+### 12. Start Services
 
 ```bash
 # Start services (will auto-start at login)
@@ -129,9 +203,9 @@ This will:
 2. work
 3. development
 4. others
-5. stream
-6. six
-7. seven
+5. five
+6. teleprompter
+7. arzopa
 
 ## Service Management
 
@@ -147,10 +221,28 @@ skhd --stop-service
 # Start services
 yabai --start-service
 skhd --start-service
+
+# Restart simple-bar-server
+launchctl unload ~/Library/LaunchAgents/com.simple-bar-server.plist
+launchctl load -w ~/Library/LaunchAgents/com.simple-bar-server.plist
 ```
+
+## Gentleman Theme
+
+The Gentleman theme for simple-bar matches the Ghostty terminal theme with colors:
+
+- Background: `#06080f`
+- Foreground: `#f3f6f9`
+- Red: `#cb7c94`
+- Green: `#b7cc85`
+- Yellow: `#ffe066`
+- Blue: `#7fb4ca`
+- Magenta: `#ff8dd7`
+- Cyan: `#7aa89f`
 
 ## Notes
 
-- Configuration works with **SIP enabled** (no need to disable System Integrity Protection)
-- Uses Mission Control shortcuts as workaround for space switching
-- Window tiling and management fully functional without scripting-addition
+- Configuration works with **SIP partially disabled** for full yabai features
+- Uses simple-bar-server for efficient widget updates via curl
+- Window tiling and management fully functional
+- macOS menu bar accessible by moving mouse to top of screen

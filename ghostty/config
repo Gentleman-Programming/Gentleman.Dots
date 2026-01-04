@@ -1,74 +1,86 @@
-custom-shader = shaders/cursor_smear_gentleman.glsl
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                         GENTLEMAN DOTS - GHOSTTY                             ║
+# ║                          Optimized for Neovim                                ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                                   FONT                                       │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+font-family = IosevkaTerm NF
+font-size = 14
+
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                                  WINDOW                                      │
+# └──────────────────────────────────────────────────────────────────────────────┘
 
 background-opacity = 0.95
-
 background-blur-radius = 20
+
+window-decoration = false
+window-padding-color = extend
+window-step-resize = false
+window-padding-balance = true
+window-height = 100
+window-width = 100
 
 gtk-tabs-location = hidden
 
 
-#palette = 0=#16161d
-#palette = 1=#c34043
-#palette = 2=#76946a
-#palette /= 3=#c0a36e
-#palette = 4=#7e9cd8
-#palette = 5=#957fb8
-#palette = 6=#6a9589
-#palette = 7=#c8c093
-#palette = 8=#727169
-#palette = 9=#e82424
-#palette = 10=#98bb6c
-#palette = 11=#e6c384
-#palette = 12=#7fb4ca
-#palette = 13=#938aa9
-#palette = 14=#7aa89f
-#palette = 15=#dcd7ba
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                                  SHADER                                      │
+# └──────────────────────────────────────────────────────────────────────────────┘
 
-#background = 1f1f28
-#foreground = dcd7ba
-#cursor-color = c8c093
-#selection-background = 2d4f67
-#selection-foreground = c8c093
+custom-shader = shaders/cursor_smear_gentleman.glsl
 
-font-family = IosevkaTerm NF
-font-size = 16
-#font-size = 20
-window-padding-color = extend
-window-step-resize = true
-window-padding-balance = true
 
-### Mac Alt Fix
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                            INPUT / KEYBINDINGS                               │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+# macOS Alt key fix
 macos-option-as-alt = left
-
 keybind = alt+left=unbind
 keybind = alt+right=unbind
-
-### KeyBindings
-# Toggle commands
-#keybind = global:alt+f=toggle_quick_terminal
-#keybind = alt+z=toggle_split_zoom
 
 # Split Management
 keybind = alt+v=new_split:right
 keybind = alt+d=new_split:down
 
-# Resize Split
-keybind = ctrl+shift+j=resize_split:up,10
-keybind = ctrl+shift+k=resize_split:down,10
-keybind = ctrl+shift+h=resize_split:left,10
-keybind = ctrl+shift+l=resize_split:right,10
-
-# Navigation
+# Split Navigation
 keybind = alt+k=goto_split:up
 keybind = alt+j=goto_split:down
 keybind = alt+h=goto_split:left
 keybind = alt+l=goto_split:right
 
+# Split Resize
+keybind = ctrl+shift+j=resize_split:up,10
+keybind = ctrl+shift+k=resize_split:down,10
+keybind = ctrl+shift+h=resize_split:left,10
+keybind = ctrl+shift+l=resize_split:right,10
+
 # Miscellaneous
 keybind = cmd+k=clear_screen
+keybind = shift+enter=text:\x1b\r
 
-# Use it by writing 'nvim' first and then the keybinding to open the file with nvim
+# Open file with nvim (write 'nvim' first, then use this keybinding)
 keybind = alt+s=write_screen_file:paste
+
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                           GENTLEMAN THEME                                    │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+# --- Base Colors ---
+background = 06080f
+foreground = f3f6f9
+cursor-color = e0c15a
+selection-background = 263356
+selection-foreground = f3f6f9
+
+# --- Normal Colors ---
 palette = 0=#06080f
 palette = 1=#cb7c94
 palette = 2=#b7cc85
@@ -77,6 +89,8 @@ palette = 4=#7fb4ca
 palette = 5=#ff8dd7
 palette = 6=#7aa89f
 palette = 7=#f3f6f9
+
+# --- Bright Colors ---
 palette = 8=#8a8fa3
 palette = 9=#de8fa8
 palette = 10=#d1e8a9
@@ -85,9 +99,4 @@ palette = 12=#a3d4d5
 palette = 13=#ffaeea
 palette = 14=#7fb4ca
 palette = 15=#f3f6f9
-background = 06080f
-foreground = f3f6f9
-cursor-color = e0c15a
-selection-background = 263356
-selection-foreground = f3f6f9
-keybind = shift+enter=text:\x1b\r
+
