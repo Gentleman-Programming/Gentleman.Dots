@@ -108,8 +108,9 @@ launchctl load -w ~/Library/LaunchAgents/com.simple-bar-server.plist
 
 **Menu Bar:**
 1. Open **System Settings**
-2. Go to **Control Center**
+2. Go to **Menu Bar** (in the left sidebar)
 3. Set **"Automatically hide and show the menu bar"** to **"Always"**
+4. Enable **"Show menu bar background"** (toggle ON)
 
 This allows you to access the native macOS menu bar by moving your mouse to the top of the screen.
 
@@ -118,11 +119,6 @@ This allows you to access the native macOS menu bar by moving your mouse to the 
 2. Go to **Desktop & Dock**
 3. Enable **"Automatically hide and show the Dock"**
 4. Disable **"Show suggested and recent apps in Dock"** (optional)
-
-**Background (Wallpaper):**
-1. Open **System Settings**
-2. Go to **Wallpaper**
-3. Make sure **"Show as wallpaper"** is enabled (not transparent)
 
 ### 9. Grant Accessibility Permissions
 
