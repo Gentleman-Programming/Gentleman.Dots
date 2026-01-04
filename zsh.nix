@@ -1,61 +1,74 @@
 {
-  programs.zsh = {
-    # Enable completions
-    enableCompletion = false;
+  # Zsh configuration via home.file (not programs.zsh to avoid recursive .zshenv bug)
+  
+  home.file.".zshenv" = {
+    text = ''
+      # Source Home Manager session variables if available
+      if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+        . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+      fi
+    '';
+  };
 
-    # zplug configuration
-    zplug = {
-      enable = true;
-      plugins = [
-        { name = "zsh-users/zsh-autosuggestions"; }
-        { name = "zsh-users/zsh-syntax-highlighting"; }
-        { name = "marlonrichert/zsh-autocomplete"; }
-        { name = "jeffreytse/zsh-vi-mode"; }
-      ];
-    };
-
-    # Extra initialization
-    initContent = ''
+  home.file.".zshrc" = {
+    text = ''
       # --------------------------
-      # 1) COMPINIT + CACHE
+      # 1) ZPLUG
+      # --------------------------
+      if [[ ! -d ~/.zplug ]]; then
+        git clone https://github.com/zplug/zplug ~/.zplug
+      fi
+      source ~/.zplug/init.zsh
+
+      zplug "zsh-users/zsh-autosuggestions"
+      zplug "zsh-users/zsh-syntax-highlighting"
+      zplug "marlonrichert/zsh-autocomplete"
+      zplug "jeffreytse/zsh-vi-mode"
+
+      if ! zplug check; then
+        zplug install
+      fi
+      zplug load
+
+      # --------------------------
+      # 2) COMPINIT + CACHE
       # --------------------------
       autoload -Uz compinit
-      # Use a directory in .cache or as you prefer
-      compinit -d "$${XDG_CACHE_HOME:-$${HOME}/.cache}/zsh/zcompdump-$${ZSH_VERSION}"
+      compinit -d "''${XDG_CACHE_HOME:-''${HOME}/.cache}/zsh/zcompdump-''${ZSH_VERSION}"
 
       # --------------------------
-      # 2) EDITOR
+      # 3) EDITOR
       # --------------------------
       export EDITOR="nvim"
       export VISUAL="nvim"
 
       # --------------------------
-      # 3) FZF
+      # 4) FZF
       # --------------------------
       export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
       export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
       alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
-      alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {})"'
-
-      # If you really need this eval, leave it:
-      # eval "$(fzf --zsh)"
+      alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
 
       # --------------------------
-      # 3) Carapace
+      # 5) Carapace
       # --------------------------
       export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
       source <(carapace _carapace)
 
       # --------------------------
-      # 4) Tools initialization
+      # 6) Tools initialization
       # --------------------------
       eval "$(zoxide init zsh)"
       eval "$(atuin init zsh)"
       eval "$(starship init zsh)"
 
+      # --------------------------
+      # 7) Yazi + Zed function
+      # --------------------------
       ya_zed() {
         tmp=$(mktemp -t "yazi-chooser.XXXXXXXXXX")
         yazi --chooser-file "$tmp" "$@"
@@ -63,13 +76,7 @@
         if [[ -s "$tmp" ]]; then
           opened_file=$(head -n 1 -- "$tmp")
           if [[ -n "$opened_file" ]]; then
-            if [[ -d "$opened_file" ]]; then
-              # Es una carpeta, la agregamos al workspace
-              zed --add "$opened_file"
-            else
-              # Es un archivo, lo abrimos normalmente
-              zed --add "$opened_file"
-            fi
+            zed --add "$opened_file"
           fi
         fi
 
@@ -77,43 +84,45 @@
       }
 
       # --------------------------
-      # 5) Final cleanup
+      # 7.1) Oil aliases
       # --------------------------
-      # Clear gives you that "fresh" feeling,
-      # but if you prefer speed, you can comment it out.
-      clear
+      alias o='oil'
+      alias oo='oil .'
+      alias of='oil-float'
+      alias oz='oil-zed'
 
       # --------------------------
-      # 6) Login shell specific configuration
+      # 8) PATH and Brew
       # --------------------------
-      if [[ -o login ]]; then
-        # PATHS and Variables
-        export PATH="$HOME/.local/bin:$HOME/.local/state/nix/profiles/home-manager/home-path/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*:$PATH"
+      export PATH="$HOME/.local/bin:$HOME/.local/state/nix/profiles/home-manager/home-path/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:$PATH"
 
-        # macOS vs Linux distinction
-        if [[ "$(uname)" == "Darwin" ]]; then
-          export BREW_BIN="/opt/homebrew/bin"
-        else
-          export BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
-        fi
-
-        # Load brew
-        if [ -x "$BREW_BIN/brew" ]; then
-          eval "$($BREW_BIN/brew shellenv)"
-        fi
+      if [[ "$(uname)" == "Darwin" ]]; then
+        export BREW_BIN="/opt/homebrew/bin"
+      else
+        export BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
       fi
 
-    WM_VAR="/$TMUX"
-    # change with ZELLIJ
-    WM_CMD="tmux"
-    # change with zellij
+      if [ -x "$BREW_BIN/brew" ]; then
+        eval "$($BREW_BIN/brew shellenv)"
+      fi
 
-    function start_if_needed() {
-        if [[ $- == *i* ]] && [[ -z "\$\{WM_VAR#/\}" ]] && [[ -t 1 ]] && [[ -z "$ZED_TERMINAL" ]]; then
-            exec $WM_CMD
+      # --------------------------
+      # 9) TMUX auto-start
+      # --------------------------
+      WM_VAR="/$TMUX"
+      WM_CMD="tmux"
+
+      function start_if_needed() {
+        if [[ $- == *i* ]] && [[ -z "''${WM_VAR#/}" ]] && [[ -t 1 ]] && [[ -z "$ZED_TERMINAL" ]]; then
+          exec $WM_CMD
         fi
-    }
-    start_if_needed
+      }
+      start_if_needed
+
+      # --------------------------
+      # 10) Clear screen
+      # --------------------------
+      clear
     '';
   };
 }

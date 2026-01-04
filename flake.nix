@@ -113,16 +113,14 @@
               programs.fish.enable = true;
               programs.nushell.enable = true;
               programs.starship.enable = false;
-              programs.zsh.enable = true;
+              programs.zsh.enable = false;  # Managed via home.file in zsh.nix
               programs.git.enable = true;
               programs.gh.enable = true;  # GitHub CLI
               programs.home-manager.enable = true;
               # Note: tmux is configured via home.file in tmux.nix, not programs.tmux
 
-              # Set XDG_CONFIG_HOME to ensure apps use ~/.config
-              home.sessionVariables = {
-                XDG_CONFIG_HOME = "$HOME/.config";
-              };
+              # NOTE: home.sessionVariables removed - it generates a recursive .zshenv bug
+              # XDG_CONFIG_HOME is set in shell configs instead
 
               # Allow unfree packages
               nixpkgs.config.allowUnfree = true;

@@ -333,19 +333,7 @@
     '';
   };
 
-  programs.zsh = {
-    enable = true;
-    shellAliases = {
-      "o" = "oil";
-      "oo" = "oil .";
-      "of" = "oil-float";
-      "oz" = "oil-zed";
-    };
-    initContent = ''
-      # Ensure nix-profile bin is in PATH
-      export PATH="$HOME/.nix-profile/bin:$PATH"
-    '';
-  };
+  # Zsh aliases handled via home.file in zsh.nix - don't enable programs.zsh here
 
   # Extend Nushell configuration with Oil aliases
   programs.nushell.extraConfig = ''
