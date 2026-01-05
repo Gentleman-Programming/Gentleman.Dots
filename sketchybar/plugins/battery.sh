@@ -2,13 +2,10 @@
 
 # Battery - displays battery percentage with dynamic icon and color
 
-
-
 PERCENTAGE=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
 CHARGING=$(pmset -g batt | grep 'AC Power')
 
 if [ -z "$PERCENTAGE" ]; then
-  # No battery (desktop Mac)
   sketchybar --set $NAME drawing=off
   exit 0
 fi
@@ -34,7 +31,4 @@ else
   COLOR=0xffcb7c94
 fi
 
-sketchybar --set $NAME \
-  icon="$ICON" \
-  icon.color="$COLOR" \
-  label="${PERCENTAGE}%"
+sketchybar --set $NAME icon="$ICON" icon.color="$COLOR" label="${PERCENTAGE}%"

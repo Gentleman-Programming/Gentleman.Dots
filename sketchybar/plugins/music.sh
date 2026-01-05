@@ -2,8 +2,6 @@
 
 # Music - shows currently playing track (Spotify/Apple Music)
 
-
-
 GREEN=0xffb7cc85
 RED=0xffcb7c94
 DIM=0xff565f89
@@ -14,23 +12,11 @@ MUSIC_PLAYING=$(osascript -e 'tell application "Music" to player state' 2>/dev/n
 if [ "$SPOTIFY_PLAYING" = "playing" ]; then
   TRACK=$(osascript -e 'tell application "Spotify" to name of current track')
   ARTIST=$(osascript -e 'tell application "Spotify" to artist of current track')
-  sketchybar --set $NAME \
-    icon="MUS" \
-    icon.color=$GREEN \
-    label="$ARTIST - $TRACK" \
-    drawing=on
+  sketchybar --set $NAME icon.color=$GREEN label="$ARTIST - $TRACK"
 elif [ "$MUSIC_PLAYING" = "playing" ]; then
   TRACK=$(osascript -e 'tell application "Music" to name of current track')
   ARTIST=$(osascript -e 'tell application "Music" to artist of current track')
-  sketchybar --set $NAME \
-    icon="MUS" \
-    icon.color=$RED \
-    label="$ARTIST - $TRACK" \
-    drawing=on
+  sketchybar --set $NAME icon.color=$RED label="$ARTIST - $TRACK"
 else
-  sketchybar --set $NAME \
-    icon="MUS" \
-    icon.color=$DIM \
-    label="--" \
-    drawing=on
+  sketchybar --set $NAME icon.color=$DIM label="--"
 fi

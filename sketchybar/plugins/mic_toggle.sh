@@ -1,9 +1,22 @@
 #!/bin/bash
 
-# Toggle microphone mute/unmute with loading state
+# Toggle microphone mute/unmute with pulse animation
 
-# Show loading spinner
-sketchybar --set mic icon="..." icon.color=0xffffe066
+# Colors
+RED=0xffcb7c94
+GREEN=0xffb7cc85
+DIM=0xff565f89
+YELLOW=0xffffe066
+
+# Animation settings
+ANIM_DURATION=5
+ANIM_CURVE="sin"
+
+# Show loading with scale pulse
+sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
+  icon="..." \
+  icon.color=$YELLOW \
+  background.y_offset=2 background.y_offset=0
 
 # Get current state
 MIC_VOLUME=$(osascript -e "input volume of (get volume settings)")
@@ -16,20 +29,20 @@ else
   osascript -e "set volume input volume 0"
 fi
 
-# Small delay to show the spinner
-sleep 0.2
+# Small delay
+sleep 0.15
 
-# Update the sketchybar item with new state
+# Update with animation
 MIC_VOLUME=$(osascript -e "input volume of (get volume settings)")
 
 if [ "$MIC_VOLUME" -eq 0 ]; then
-  sketchybar --set mic \
+  sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
     icon="MIC" \
-    icon.color=0xff565f89 \
+    icon.color=$DIM \
     label="OFF"
 else
-  sketchybar --set mic \
+  sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
     icon="MIC" \
-    icon.color=0xffcb7c94 \
+    icon.color=$RED \
     label="ON"
 fi

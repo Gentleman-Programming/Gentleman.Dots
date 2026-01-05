@@ -2,8 +2,6 @@
 
 # Meeting - shows next calendar event (next 24 hours)
 
-
-
 YELLOW=0xffffe066
 DIM=0xff565f89
 
@@ -46,13 +44,7 @@ FILTERED=$(echo "$NEXT_EVENT" | while IFS='|' read -r time_num display; do
 done | sort -n | head -1 | cut -d'|' -f2)
 
 if [ -z "$FILTERED" ]; then
-  sketchybar --set $NAME \
-    icon="MTG" \
-    icon.color=$DIM \
-    label="--"
+  sketchybar --set $NAME icon.color=$DIM label="--"
 else
-  sketchybar --set $NAME \
-    icon="MTG" \
-    icon.color=$YELLOW \
-    label="$FILTERED"
+  sketchybar --set $NAME icon.color=$YELLOW label="$FILTERED"
 fi

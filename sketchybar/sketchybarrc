@@ -39,10 +39,13 @@ sketchybar --bar \
   padding_right=8 \
   color=$TRANSPARENT \
   corner_radius=0 \
-  y_offset=2 \
+  y_offset=-50 \
   margin=0 \
   notch_width=188 \
   notch_offset=0
+
+# Startup animation - slide down from top
+sketchybar --animate sin 12 --bar y_offset=-50 y_offset=2
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # DEFAULT VALUES
@@ -97,19 +100,19 @@ for sid in $(seq 1 10); do
       background.drawing=on \
       script="$PLUGIN_DIR/space.sh" \
       click_script="yabai -m space --focus $sid" \
-    --subscribe space.$sid space_change space_windows_change yabai_space_changed yabai_window_created yabai_window_destroyed yabai_window_moved
+    
 done
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# SEPARATOR (dot between workspaces and front app)
+# SEPARATOR (arrow between workspaces and front app)
 # ─────────────────────────────────────────────────────────────────────────────────
 sketchybar --add item separator_left left \
   --set separator_left \
-    icon="·" \
-    icon.color=$DIM \
+    icon=">" \
+    icon.color=$ACCENT_COLOR \
     icon.font="IosevkaTerm NF:Bold:16.0" \
-    icon.padding_left=6 \
-    icon.padding_right=6 \
+    icon.padding_left=8 \
+    icon.padding_right=8 \
     background.drawing=off \
     label.drawing=off
 
@@ -123,6 +126,8 @@ sketchybar --add item front_app left \
     label.color=$BLACK \
     label.padding_left=10 \
     label.padding_right=10 \
+    label.max_chars=16 \
+    scroll_texts=on \
     background.color=$GREEN \
     background.border_color=$GREEN \
     background.border_width=0 \
@@ -146,6 +151,8 @@ sketchybar --add item battery right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
+    label.width=40 \
+    label.align=right \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -187,7 +194,8 @@ sketchybar --add item meeting right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
-    label.max_chars=20 \
+    label.max_chars=12 \
+    scroll_texts=on \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -208,7 +216,7 @@ sketchybar --add item music right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
-    label.max_chars=30 \
+    label.max_chars=17 \
     scroll_texts=on \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
@@ -230,6 +238,8 @@ sketchybar --add item volume right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
+    label.width=40 \
+    label.align=right \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -270,6 +280,8 @@ sketchybar --add item github right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
+    label.width=25 \
+    label.align=right \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -290,6 +302,8 @@ sketchybar --add item cpu right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
+    label.width=40 \
+    label.align=right \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -297,7 +311,8 @@ sketchybar --add item cpu right \
     background.height=24 \
     update_freq=3 \
     script="$PLUGIN_DIR/cpu.sh" \
-    click_script="open -a 'Activity Monitor'"
+    click_script="open -a 'Activity Monitor'" \
+  
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # RAM
@@ -310,6 +325,8 @@ sketchybar --add item ram right \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
+    label.width=40 \
+    label.align=right \
     background.color=$ISLAND_BG \
     background.border_color=$ISLAND_BORDER \
     background.border_width=1 \
@@ -317,7 +334,8 @@ sketchybar --add item ram right \
     background.height=24 \
     update_freq=5 \
     script="$PLUGIN_DIR/ram.sh" \
-    click_script="open -a 'Activity Monitor'"
+    click_script="open -a 'Activity Monitor'" \
+  
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # FINALIZE
