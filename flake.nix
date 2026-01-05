@@ -54,11 +54,12 @@
             ./claude.nix  # Claude Code CLI configuration
             ./yabai.nix  # Yabai window manager configuration
             ./skhd.nix  # Skhd hotkey daemon configuration
-            ./simple-bar.nix  # simple-bar for Übersicht
+            # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
+            ./sketchybar.nix  # SketchyBar status bar
             {
               # Personal data
               home.username = "YourUser";  # Replace with your username
-              home.homeDirectory = "/Users/YourUser/";  # macOS home directory
+              home.homeDirectory = "YourUser";  # macOS home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere

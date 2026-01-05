@@ -1,0 +1,325 @@
+#!/bin/bash
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                          GENTLEMAN SKETCHYBAR                                 ║
+# ║                    Minimal Islands - Floating Style                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# GENTLEMAN COLOR PALETTE (matching Ghostty/Neovim theme)
+# ─────────────────────────────────────────────────────────────────────────────────
+export BLACK=0xff06080f
+export WHITE=0xfff3f6f9
+export RED=0xffcb7c94
+export GREEN=0xffb7cc85
+export YELLOW=0xffffe066
+export ORANGE=0xfffff7b1
+export BLUE=0xff7fb4ca
+export MAGENTA=0xffff8dd7
+export CYAN=0xff7aa89f
+export TRANSPARENT=0x00000000
+
+# Island colors
+export ISLAND_BG=0xff121620
+export ISLAND_BORDER=0xff263356
+export ACCENT_COLOR=0xffe0c15a
+export DIM=0xff565f89
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# BAR APPEARANCE (transparent base for floating islands)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --bar \
+  height=45 \
+  blur_radius=0 \
+  position=top \
+  sticky=on \
+  padding_left=8 \
+  padding_right=8 \
+  color=$TRANSPARENT \
+  corner_radius=0 \
+  y_offset=2 \
+  margin=0 \
+  notch_width=188 \
+  notch_offset=0
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DEFAULT VALUES
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --default \
+  icon.font="IosevkaTerm NFM:Bold:14.0" \
+  icon.color=$WHITE \
+  label.font="IosevkaTerm NFM:Medium:13.0" \
+  label.color=$WHITE \
+  background.color=$ISLAND_BG \
+  background.border_color=$ISLAND_BORDER \
+  background.border_width=1 \
+  background.corner_radius=12 \
+  background.height=32 \
+  padding_left=6 \
+  padding_right=6 \
+  label.padding_left=6 \
+  label.padding_right=8 \
+  icon.padding_left=10 \
+  icon.padding_right=4
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#                                LEFT SIDE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SPACES (YABAI WORKSPACES)
+# ─────────────────────────────────────────────────────────────────────────────────
+# Add yabai events
+sketchybar --add event yabai_space_changed
+sketchybar --add event yabai_window_created
+sketchybar --add event yabai_window_destroyed
+sketchybar --add event yabai_window_moved
+
+for sid in $(seq 1 10); do
+  sketchybar --add space space.$sid left \
+    --set space.$sid \
+      space=$sid \
+      icon.drawing=off \
+      label="$sid" \
+      label.padding_left=8 \
+      label.padding_right=8 \
+      label.color=$DIM \
+      label.font="IosevkaTerm NF:Regular:12.0" \
+      padding_left=2 \
+      padding_right=2 \
+      background.color=$ISLAND_BG \
+      background.border_color=$ISLAND_BORDER \
+      background.border_width=1 \
+      background.corner_radius=4 \
+      background.height=24 \
+      background.drawing=on \
+      script="$PLUGIN_DIR/space.sh" \
+      click_script="yabai -m space --focus $sid" \
+    --subscribe space.$sid space_change space_windows_change yabai_space_changed yabai_window_created yabai_window_destroyed yabai_window_moved
+done
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SEPARATOR (dot between workspaces and front app)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item separator_left left \
+  --set separator_left \
+    icon="·" \
+    icon.color=$DIM \
+    icon.font="IosevkaTerm NF:Bold:16.0" \
+    icon.padding_left=6 \
+    icon.padding_right=6 \
+    background.drawing=off \
+    label.drawing=off
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FRONT APP (current focused app)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item front_app left \
+  --set front_app \
+    icon.drawing=off \
+    label.font="IosevkaTerm NF:Bold:12.0" \
+    label.color=$BLACK \
+    label.padding_left=10 \
+    label.padding_right=10 \
+    background.color=$GREEN \
+    background.border_color=$GREEN \
+    background.border_width=0 \
+    background.corner_radius=4 \
+    background.height=24 \
+    script="$PLUGIN_DIR/front_app.sh" \
+  --subscribe front_app front_app_switched
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#                                RIGHT SIDE
+# ═══════════════════════════════════════════════════════════════════════════════
+# Order (right to left): Battery | DateTime | Meeting | Music | Volume | Mic | GitHub | CPU | RAM
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# BATTERY (rightmost)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item battery right \
+  --set battery \
+    icon.font="IosevkaTerm NF:Bold:14.0" \
+    icon.color=$GREEN \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=60 \
+    script="$PLUGIN_DIR/battery.sh" \
+    click_script="open -a 'System Preferences' /System/Library/PreferencePanes/Battery.prefPane" \
+  --subscribe battery system_woke power_source_change
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DATETIME
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item datetime right \
+  --set datetime \
+    icon="CAL" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$YELLOW \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=10 \
+    script="$PLUGIN_DIR/datetime.sh" \
+    click_script="open -a Calendar"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MEETING (next calendar event)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item meeting right \
+  --set meeting \
+    icon="MTG" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$YELLOW \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    label.max_chars=20 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=60 \
+    script="$PLUGIN_DIR/meeting.sh" \
+    click_script="open -a Calendar"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MUSIC
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item music right \
+  --set music \
+    icon="MUS" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$GREEN \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    label.max_chars=30 \
+    scroll_texts=on \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=3 \
+    script="$PLUGIN_DIR/music.sh" \
+    click_script="open -a Spotify"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VOLUME
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item volume right \
+  --set volume \
+    icon="VOL" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$BLUE \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    script="$PLUGIN_DIR/volume.sh" \
+    click_script="open -a 'System Preferences' /System/Library/PreferencePanes/Sound.prefPane" \
+  --subscribe volume volume_change
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MIC (microphone status) - click to toggle mute
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item mic right \
+  --set mic \
+    icon="MIC" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$DIM \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=5 \
+    script="$PLUGIN_DIR/mic.sh" \
+    click_script="$PLUGIN_DIR/mic_toggle.sh"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# GITHUB NOTIFICATIONS
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item github right \
+  --set github \
+    icon="GH" \
+    icon.font="IosevkaTerm NF:Bold:12.0" \
+    icon.color=$WHITE \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=120 \
+    script="$PLUGIN_DIR/github.sh" \
+    click_script="open https://github.com/notifications"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CPU
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item cpu right \
+  --set cpu \
+    icon="CPU" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$RED \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=3 \
+    script="$PLUGIN_DIR/cpu.sh" \
+    click_script="open -a 'Activity Monitor'"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RAM
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item ram right \
+  --set ram \
+    icon="RAM" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$MAGENTA \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=5 \
+    script="$PLUGIN_DIR/ram.sh" \
+    click_script="open -a 'Activity Monitor'"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FINALIZE
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --update
