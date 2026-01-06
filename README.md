@@ -432,6 +432,33 @@ hash -r  # Refresh command cache
 source ~/.zshrc  # or ~/.bashrc
 ```
 
+**`nix: command not found` when running home-manager:**
+
+This happens when the Nix binaries aren't in your PATH. Source the Nix daemon profile first:
+
+```bash
+# Source Nix profile
+source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+
+# Then run home-manager
+home-manager switch --flake .#gentleman
+```
+
+**`Permission denied` when copying configs (sketchybar, nvim, etc):**
+
+Some config files may be set as read-only. Fix permissions before running home-manager:
+
+```bash
+# For sketchybar:
+chmod -R u+w ~/.config/sketchybar/
+
+# For nvim:
+chmod -R u+w ~/.config/nvim/
+
+# Then re-run home-manager
+home-manager switch --flake .#gentleman
+```
+
 **Nix installation issues:**
 
 - Ensure `/etc/nix/nix.conf` has experimental features enabled
