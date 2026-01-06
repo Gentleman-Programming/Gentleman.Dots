@@ -139,7 +139,7 @@ sketchybar --add item front_app left \
 # ═══════════════════════════════════════════════════════════════════════════════
 #                                RIGHT SIDE
 # ═══════════════════════════════════════════════════════════════════════════════
-# Order (right to left): Battery | DateTime | Meeting | Music | Volume | Mic | GitHub | CPU | RAM
+# Order (right to left): Battery | DateTime | Meeting | Music | Volume | Mic | GitHub | CPU | GPU | RAM
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # BATTERY (rightmost)
@@ -311,8 +311,29 @@ sketchybar --add item cpu right \
     background.height=24 \
     update_freq=3 \
     script="$PLUGIN_DIR/cpu.sh" \
-    click_script="open -a 'Activity Monitor'" \
-  
+    click_script="open -a 'Activity Monitor'"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# GPU (Apple Silicon)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item gpu right \
+  --set gpu \
+    icon="GPU" \
+    icon.font="IosevkaTerm NF:Bold:10.0" \
+    icon.color=$ORANGE \
+    icon.padding_left=10 \
+    icon.padding_right=4 \
+    label.padding_right=10 \
+    label.width=40 \
+    label.align=right \
+    background.color=$ISLAND_BG \
+    background.border_color=$ISLAND_BORDER \
+    background.border_width=1 \
+    background.corner_radius=4 \
+    background.height=24 \
+    update_freq=5 \
+    script="$PLUGIN_DIR/gpu.sh" \
+    click_script="open -a 'Activity Monitor'"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # RAM
