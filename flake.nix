@@ -59,7 +59,7 @@
             {
               # Personal data
               home.username = "YourUser";  # Replace with your username
-              home.homeDirectory = "YourUser";  # macOS home directory
+              home.homeDirectory = "/Users/YourUser";  # macOS home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
@@ -74,6 +74,7 @@
                 # ─── Window management (macOS) ───
                 yabai
                 skhd
+                sketchybar
 
                 # ─── Development tools ───
                 volta

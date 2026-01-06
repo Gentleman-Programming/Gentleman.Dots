@@ -121,7 +121,7 @@
         [git_branch]
         format = "-> [$symbol$branch]($style) "
         style = "bold fg:mauve"
-        symbol = "git:"
+        symbol = " "
 
         [git_status]
         format = '[$all_status$ahead_behind ]($style)'
