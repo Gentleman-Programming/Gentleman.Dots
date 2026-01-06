@@ -32,7 +32,7 @@
       end
 
       # Nix paths BEFORE Homebrew so nix-managed tools take priority
-      set -gx PATH ~/.nix-profile/bin ~/.local/state/nix/profiles/home-manager/home-path/bin $PATH
+      set -gx PATH /nix/var/nix/profiles/default/bin ~/.nix-profile/bin ~/.local/state/nix/profiles/home-manager/home-path/bin $PATH
 
       set -gx GPG_TTY (tty)
 
