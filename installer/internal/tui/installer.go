@@ -772,8 +772,11 @@ func stepInstallNvim(m *Model) error {
 	openCodeDir := filepath.Join(homeDir, ".config/opencode")
 	system.EnsureDir(openCodeDir)
 	system.EnsureDir(filepath.Join(openCodeDir, "themes"))
+	system.EnsureDir(filepath.Join(openCodeDir, "skill"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
+	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode/skill/*"), filepath.Join(openCodeDir, "skill/"))
+	SendLog(stepID, "🧠 Copied OpenCode skills")
 
 	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
 	return nil
