@@ -1,0 +1,89 @@
+# ~/.markdownlint-cli2.yaml
+# Configuración optimizada para Obsidian + Neovim (Auto-fix)
+
+config:
+  # ===========================================================================
+  # 1. REGLAS VISUALES Y DE ESTRUCTURA (Lo que pediste: Títulos, Párrafos)
+  # ===========================================================================
+
+  # MD013: Longitud de línea.
+  # RECOMENDACIÓN: 'false' (infinito). Obsidian usa "Soft Wrap" visual.
+  # Cortar líneas (Hard Wrap) rompe los enlaces y la búsqueda en móvil.
+  # Si AUN ASÍ quieres cortar a 120, cambia 'false' por el bloque comentado abajo.
+  # MD013: false
+  MD013:
+    line_length: 120
+    code_block_line_length: 120
+    heading_line_length: 120
+
+  # MD022: Líneas en blanco alrededor de los títulos.
+  # ANTES: Te molestaba.
+  # AHORA: Lo activamos (true) porque 'conform.nvim' lo arreglará automáticamente.
+  # Resultado: Tus notas se verán más limpias y profesionales sin esfuerzo.
+  MD022:
+    lines_above: 1
+    lines_below: 1
+
+  # MD025: Múltiples títulos H1.
+  # En Obsidian es común usar varios H1 o ninguno (si el nombre del archivo es el título).
+  # Lo desactivamos para darte libertad creativa.
+  MD025: false
+
+  # MD041: Primera línea debe ser H1.
+  # Desactivado porque a veces empiezas con Frontmatter (YAML) o texto directo.
+  MD041: false
+
+  # ===========================================================================
+  # 2. LISTAS Y VIÑETAS (Consistencia)
+  # ===========================================================================
+
+  # MD004: Estilo de lista desordenada.
+  # Forzamos el uso de guiones '-' en lugar de asteriscos '*' (Estándar moderno).
+  MD004:
+    style: "dash"
+
+  # MD007: Indentación de listas.
+  # 2 espacios es lo estándar para ahorrar espacio horizontal en notas anidadas.
+  MD007:
+    indent: 2
+
+  # ===========================================================================
+  # 3. CÓDIGO Y TABLAS
+  # ===========================================================================
+
+  # MD046: Estilo de bloque de código.
+  # Forzamos el uso de "fenced" (```) en lugar de indentar con espacios.
+  MD046:
+    style: "fenced"
+
+  # MD055 / MD056: Tablas.
+  # Estas reglas aseguran que las tablas estén bien alineadas.
+  # El auto-fix las alineará perfectamente por ti.
+  MD055: true
+  MD056: true
+
+  # ===========================================================================
+  # 4. OBSIDIAN SPECIFICS (HTML, Wikilinks, Callouts)
+  # ===========================================================================
+
+  # MD033: HTML en línea.
+  # CRÍTICO: Debe ser 'false'. Obsidian usa mucho <br>, <img>, <center>, etc.
+  MD033: false
+
+  # MD034: URLs desnudas (sin < >).
+  # Lo dejamos activado. El auto-fix convertirá http://google.com en <http://google.com>
+  # Esto evita problemas de renderizado en algunos visores.
+  MD034: true
+
+  # MD024: Títulos duplicados.
+  # Desactivado. Es normal tener varios apartados "Notas" o "Fuentes" en un mismo archivo.
+  MD024: false
+
+# =============================================================================
+# IGNORAR CARPETAS (Sintaxis correcta para markdownlint-cli2)
+# =============================================================================
+ignores:
+  - "Templates/**"
+  - ".git/**"
+  - "node_modules/**"
+  - "Archive/**"

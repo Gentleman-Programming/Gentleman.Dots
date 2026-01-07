@@ -17,7 +17,7 @@ return {
         path = os.getenv("HOME") .. "/.config/obsidian", -- Path to the notes directory
       },
     },
-    completition = {
+    completion = {
       cmp = true,
     },
     picker = {
@@ -27,7 +27,11 @@ return {
     -- Optional, define your own callbacks to further customize behavior.
     callbacks = {
       -- Runs anytime you enter the buffer for a note.
-      enter_note = function(client, note)
+      -- FIX: Breaking change from obsidian-nvim/obsidian.nvim
+      -- The callback now only receives 1 parameter (note) instead of 2 (client, note)
+      enter_note = function(note)
+        if not note then return end
+
         -- Setup keymaps for obsidian notes
         vim.keymap.set("n", "gf", function()
           return require("obsidian").util.gf_passthrough()
