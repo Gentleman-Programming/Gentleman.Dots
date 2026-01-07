@@ -180,17 +180,25 @@ home.packages = with pkgs; [
 
 ### Additional Linux Changes
 
-**1. Change home directory path** (around line 61):
+**1. Set your username** (around line 20):
+
+```nix
+# ─── User Configuration ───
+# Change this to your Linux username
+username = "YourUser";  # ← Replace with your username
+```
+
+**2. Change home directory path** (around line 67):
 
 ```nix
 # Change from macOS path:
-home.homeDirectory = "/Users/YourUser/";
+home.homeDirectory = "/Users/${username}";
 
 # To Linux path:
-home.homeDirectory = "/home/YourUser/";
+home.homeDirectory = "/home/${username}";
 ```
 
-**2. Add Linux system support** (around line 17):
+**3. Add Linux system support** (around line 17):
 
 ```nix
 # Change from:
@@ -200,7 +208,7 @@ supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
 supportedSystems = [ "x86_64-darwin" "aarch64-darwin" "x86_64-linux" "aarch64-linux" ];
 ```
 
-**3. Add Linux home configuration** (around line 135):
+**4. Add Linux home configuration** (around line 140):
 
 ```nix
 homeConfigurations = {
@@ -217,7 +225,7 @@ homeConfigurations = {
 };
 ```
 
-**4. Run installation with Linux config:**
+**5. Run installation with Linux config:**
 
 ```bash
 home-manager switch --flake .#gentleman-linux
