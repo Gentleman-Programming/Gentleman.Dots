@@ -120,6 +120,12 @@
       echo "⚠️ Themes source not found: $OPENCODE_SRC/themes"
     fi
 
+    # Copy skills
+    if [ -d "$OPENCODE_SRC/skill" ]; then
+      cp -rf "$OPENCODE_SRC/skill" "$OPENCODE_DST/" 2>/dev/null || true
+      echo "🧠 Copied OpenCode skills to $OPENCODE_DST/skill"
+    fi
+
     # Check if OpenCode is already installed and working
     if [ -f "$OPENCODE_BIN" ] && "$OPENCODE_BIN" --version &>/dev/null; then
       INSTALLED_VERSION=$("$OPENCODE_BIN" --version 2>/dev/null | head -n1 || echo "unknown")
