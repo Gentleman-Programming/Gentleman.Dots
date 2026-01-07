@@ -16,6 +16,10 @@
       # Support macOS systems only
       supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
       
+      # ─── User Configuration ───
+      # Change this to your macOS username
+      username = "YourUser";
+
       # Function to create home configuration for a specific system
       mkHomeConfiguration = system:
         let
@@ -58,8 +62,8 @@
             ./sketchybar.nix  # SketchyBar status bar
             {
               # Personal data
-              home.username = "YourUser";  # Replace with your username
-              home.homeDirectory = "/Users/YourUser";  # macOS home directory
+              home.username = username;
+              home.homeDirectory = "/Users/${username}";  # macOS home directory
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
