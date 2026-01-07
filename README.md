@@ -264,14 +264,19 @@ build-users-group = nixbld
 
 _(This is necessary because support for flakes and the new Nix command is still experimental, but it allows us to have a fully declarative and reproducible configuration.)_
 
-### 3. Prepare Your System
+### 3. Configure Your Username
 
 **No need to edit `flake.nix` for system configuration!** The flake supports both Intel and Apple Silicon Macs.
 
-You only need to update your username in `flake.nix`:
+You only need to update the `username` variable at the top of `flake.nix` (around line 20):
 
-- Change `home.username = "YourUser";` to your actual username
-- The home directory is automatically set to `/Users/YourUser`
+```nix
+# ─── User Configuration ───
+# Change this to your macOS username
+username = "YourUser";  # ← Replace with your username
+```
+
+This single variable is used for both `home.username` and `home.homeDirectory`, so you only need to change it in one place.
 
 ### 4. Install Terminal Emulators (Optional)
 
