@@ -27,17 +27,10 @@ Use this skill when creating Jira tasks for:
 - Better tracking of progress
 - API needs to be done before UI (dependency)
 
-### How to Split
+### Bug vs Feature: Different Structures
 
-When you identify multi-component work:
-
-1. **Create a parent/epic task** (optional) for tracking the overall feature
-2. **Create individual tasks** for each component
-3. **Always recommend titles** for all tasks
-
-### Example: GovCloud Support
-
-Instead of one task `[BUG] AWS GovCloud cannot connect (API + UI)`, create:
+#### For BUGS: Create separate sibling tasks
+Bugs are typically urgent fixes, so create independent tasks per component:
 
 **Task 1 - API:**
 - Title: `[BUG] Add aws_region field to AWS provider secrets (API)`
@@ -47,11 +40,102 @@ Instead of one task `[BUG] AWS GovCloud cannot connect (API + UI)`, create:
 - Title: `[BUG] Add region selector to AWS provider connection form (UI)`
 - Blocked by API task
 
+#### For FEATURES: Create parent + child tasks
+Features need business context for stakeholders, so use a parent-child structure:
+
+**Parent Task (for PM/Stakeholders):**
+- Title: `[FEATURE] AWS GovCloud support`
+- Contains: Feature overview, user story, acceptance criteria from USER perspective
+- NO technical details
+- Links to child tasks
+
+**Child Task 1 - API:**
+- Title: `[FEATURE] AWS GovCloud support (API)`
+- Contains: Technical details, affected files, API-specific acceptance criteria
+- Links to parent
+
+**Child Task 2 - UI:**
+- Title: `[FEATURE] AWS GovCloud support (UI)`
+- Contains: Technical details, component paths, UI-specific acceptance criteria
+- Links to parent, blocked by API task
+
+### Parent Task Template (Features Only)
+
+```markdown
+## Description
+
+{User-facing description of the feature - what problem does it solve?}
+
+## User Story
+
+As a {user type}, I want to {action} so that {benefit}.
+
+## Acceptance Criteria (User Perspective)
+
+- [ ] User can {do something}
+- [ ] User sees {something}
+- [ ] {Behavior from user's point of view}
+
+## Out of Scope
+
+- {What this feature does NOT include}
+
+## Design
+
+- Figma: {link if available}
+- Screenshots/mockups if available
+
+## Child Tasks
+
+- [ ] `[FEATURE] {Feature name} (API)` - Backend implementation
+- [ ] `[FEATURE] {Feature name} (UI)` - Frontend implementation
+
+## Priority
+
+{High/Medium/Low} ({business justification})
+```
+
+### Child Task Template (Features Only)
+
+```markdown
+## Description
+
+Technical implementation of {feature name} for {component}.
+
+## Parent Task
+
+`[FEATURE] {Feature name}`
+
+## Acceptance Criteria (Technical)
+
+- [ ] {Technical requirement 1}
+- [ ] {Technical requirement 2}
+
+## Technical Notes
+
+- Affected files:
+  - `{file path 1}`
+  - `{file path 2}`
+- {Implementation hints}
+
+## Testing
+
+- [ ] {Test case 1}
+- [ ] {Test case 2}
+
+## Related Tasks
+
+- Parent: `[FEATURE] {Feature name}`
+- Blocked by: {if any}
+- Blocks: {if any}
+```
+
 ### Linking Tasks
 
 In each task description, add:
 ```markdown
 ## Related Tasks
+- Parent: [Parent task title/link] (for child tasks)
 - Blocked by: [API task title/link]
 - Blocks: [UI task title/link]
 ```
@@ -178,22 +262,37 @@ Include:
 
 ## Output Format
 
-When creating tasks, always output:
+### For BUGS (sibling tasks):
 
 ```markdown
 ## Recommended Tasks
 
-### Task 1: [Full title here]
+### Task 1: [BUG] {Description} (API)
 {Full task content}
 
 ---
 
-### Task 2: [Full title here]
+### Task 2: [BUG] {Description} (UI)
 {Full task content}
+```
+
+### For FEATURES (parent + children):
+
+```markdown
+## Recommended Tasks
+
+### Parent Task: [FEATURE] {Feature name}
+{User-facing content, no technical details}
 
 ---
 
-(repeat for each task)
+### Child Task 1: [FEATURE] {Feature name} (API)
+{Technical content for API team}
+
+---
+
+### Child Task 2: [FEATURE] {Feature name} (UI)
+{Technical content for UI team}
 ```
 
 ## Formatting Rules
