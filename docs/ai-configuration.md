@@ -164,11 +164,21 @@ npx tweakcc --apply
 
 **Theme colors include:**
 - Primary blue: `rgb(127,180,202)` - main UI elements
-- Accent gold: `rgb(224,193,90)` - permissions, highlights
+- Accent gold: `rgb(224,193,90)` - permissions, highlights, spinner shimmer
 - Success green: `rgb(183,204,133)` - diffs, confirmations
 - Error pink: `rgb(203,124,148)` - errors, removals
 - Purple: `rgb(201,154,214)` - plan mode
 - Dark background: `rgb(6,8,15)` - terminal background
+
+**Custom thinking verbs (Spanish/Rioplatense):**
+
+The config also includes custom "thinking" messages like:
+- *Remontando el Barrilete Cósmico…*
+- *Preguntándole al Patito…*
+- *Haciendo Magia Negra…*
+- *Bancame un Toque…*
+- *En Modo Jarvis…*
+- And 40+ more!
 
 ---
 
