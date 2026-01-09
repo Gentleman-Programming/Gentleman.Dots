@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "mcp-atlassian": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--python=3.12", "mcp-atlassian"],
+      "env": {
+        "JIRA_URL": "https://YOUR-COMPANY.atlassian.net",
+        "JIRA_USERNAME": "YOUR_EMAIL@company.com",
+        "JIRA_API_TOKEN": "YOUR_API_TOKEN_HERE"
+      }
+    },
+    "figma": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-figma"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "YOUR_FIGMA_TOKEN_HERE"
+      }
+    }
+  }
+}
