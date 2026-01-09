@@ -31,8 +31,9 @@
           echo "   /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
       end
 
-      # Nix paths BEFORE Homebrew so nix-managed tools take priority
-      set -gx PATH /nix/var/nix/profiles/default/bin ~/.nix-profile/bin ~/.local/state/nix/profiles/home-manager/home-path/bin $PATH
+      # All PATH entries - matching zsh config
+      # Priority: local bins > nix > cargo > volta > bun > homebrew > system
+      set -gx PATH $HOME/.local/bin $HOME/.opencode/bin $HOME/.local/state/nix/profiles/home-manager/home-path/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $HOME/.cargo/bin $HOME/.volta/bin $HOME/.bun/bin $PATH
 
       set -gx GPG_TTY (tty)
 
@@ -44,7 +45,6 @@
       atuin init fish | source
       fzf --fish | source
 
-      set -x PATH $HOME/.cargo/bin $PATH
       set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
 
       if not test -d ~/.config/fish/completions
