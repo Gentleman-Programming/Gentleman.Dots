@@ -1,16 +1,18 @@
 # AI Configuration for Neovim
 
-This configuration includes several AI assistants integrated with Neovim. By default, **OpenCode is enabled** as the primary AI assistant with the custom Gentleman agent.
+> ⚠️ **Important Notice (January 2026)**: Anthropic has blocked third-party tools from using Claude Max subscriptions. OAuth tokens are now restricted to Claude Code only. This config now uses **Claude Code as the primary AI assistant**.
+
+This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant with the custom Gentleman personality.
 
 ## Available AI Assistants
 
 | Plugin | Description | Status |
 |--------|-------------|--------|
-| **OpenCode.nvim** | OpenCode AI integration with Gentleman agent | ✅ Enabled by default |
+| **Claude Code.nvim** | Claude AI integration (official) | ✅ Enabled by default |
+| **OpenCode.nvim** | OpenCode AI integration | Disabled (requires own API keys) |
 | **Avante.nvim** | AI-powered coding assistant | Disabled |
 | **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
 | **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
-| **Claude Code.nvim** | Claude AI integration | Disabled |
 | **Gemini.nvim** | Google Gemini integration | Disabled |
 
 ## Switching AI Plugins
@@ -27,16 +29,16 @@ To switch plugins:
 2. Find the plugin you want to enable and set `enabled = true`
 3. Save and restart Neovim
 
-**Example - switching from OpenCode to Claude Code:**
+**Example - switching from Claude Code to OpenCode:**
 
 ```lua
 {
-  "NickvanDyke/opencode.nvim",
-  enabled = false,  -- Disable OpenCode
+  "coder/claudecode.nvim",
+  enabled = false,  -- Disable Claude Code
 },
 {
-  "coder/claudecode.nvim",
-  enabled = true,   -- Enable Claude Code
+  "NickvanDyke/opencode.nvim",
+  enabled = true,   -- Enable OpenCode (requires API keys)
 },
 ```
 
@@ -56,15 +58,82 @@ API keys may be required for some services - check each plugin's documentation.
 
 | Use Case | Recommended Plugin |
 |----------|-------------------|
-| Full Gentleman experience | **OpenCode.nvim** (default) |
-| Claude users | **Claude Code.nvim** |
+| Full Gentleman experience | **Claude Code.nvim** (default) |
+| OpenAI/other API keys | **OpenCode.nvim** |
 | GitHub Copilot users | **CopilotChat.nvim** |
 | Multi-provider flexibility | **CodeCompanion.nvim** |
 | Google Gemini users | **Gemini.nvim** |
 
 ---
 
+## Claude Code Configuration (Primary)
+
+Claude Code is installed automatically with the custom **Gentleman** output style, skills, and configuration.
+
+### What's Included
+
+The installer configures:
+
+- **CLAUDE.md**: Global instructions with Gentleman personality
+- **settings.json**: Permissions, output style, status line config
+- **statusline.sh**: Custom status bar script
+- **output-styles/gentleman.md**: The Gentleman persona definition
+- **skills/**: 10 framework-specific coding standards (React 19, Next.js 15, TypeScript, Tailwind 4, Zod 4, Zustand 5, AI SDK 5, Django DRF, Playwright, Pytest)
+- **mcp-servers.template.json**: MCP server templates (Context7, Jira, Figma)
+
+### Gentleman Output Style
+
+The Gentleman output style is a Senior Architect persona with 15+ years of experience:
+
+- **Never a Yes-Man**: Won't say "you're right" without verifying first
+- **Collaborative Partner**: Like Jarvis to Tony Stark - provides data, alternatives, and pushes back
+- **Proposes Alternatives**: Always presents options with tradeoffs
+- **Bilingual**: Responds in Rioplatense Spanish or confrontational English based on your language
+
+### Using Claude Code with Gentleman
+
+1. Open Claude Code in your terminal:
+   ```bash
+   claude
+   # or use the alias
+   cc
+   ```
+
+2. Select the Gentleman output style:
+   ```bash
+   /config
+   # Navigate to "Output style" and select "Gentleman"
+   ```
+
+   Or set it directly:
+   ```bash
+   claude config set outputStyle Gentleman
+   ```
+
+3. The Gentleman personality will now be applied to all responses.
+
+### Configuration Location
+
+All Claude Code config is stored in:
+```bash
+~/.claude/
+├── CLAUDE.md              # Global instructions
+├── settings.json          # Settings and permissions
+├── statusline.sh          # Status bar script
+├── output-styles/         # Output style definitions
+│   └── gentleman.md
+└── skills/                # Framework coding standards
+    ├── react-19/
+    ├── nextjs-15/
+    ├── typescript/
+    └── ...
+```
+
+---
+
 ## OpenCode Configuration
+
+> ⚠️ **Note**: As of January 2026, OpenCode can no longer use Claude Max subscriptions. You'll need your own API keys (OpenAI, Anthropic API, etc.) or wait for OpenCode's upcoming subscription service.
 
 OpenCode is installed automatically with a custom **Gentleman** agent and theme.
 

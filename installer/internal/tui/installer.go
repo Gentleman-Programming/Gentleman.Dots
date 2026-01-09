@@ -761,6 +761,31 @@ func stepInstallNvim(m *Model) error {
 		SendLog(stepID, line)
 	})
 
+	// Configure Claude Code
+	SendLog(stepID, "Configuring Claude Code...")
+	claudeDir := filepath.Join(homeDir, ".claude")
+	system.EnsureDir(claudeDir)
+	system.EnsureDir(filepath.Join(claudeDir, "output-styles"))
+	system.EnsureDir(filepath.Join(claudeDir, "skills"))
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/CLAUDE.md"), filepath.Join(claudeDir, "CLAUDE.md"))
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/settings.json"), filepath.Join(claudeDir, "settings.json"))
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/statusline.sh"), filepath.Join(claudeDir, "statusline.sh"))
+	system.Run(fmt.Sprintf("chmod +x %s", filepath.Join(claudeDir, "statusline.sh")), nil)
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
+	// Copy skills (excluding prowler-* which are work-specific)
+	skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
+	for _, skill := range skillsToCopy {
+		skillSrc := filepath.Join(repoDir, "GentlemanClaude/skills", skill)
+		skillDst := filepath.Join(claudeDir, "skills", skill)
+		system.EnsureDir(skillDst)
+		system.CopyFile(filepath.Join(skillSrc, "SKILL.md"), filepath.Join(skillDst, "SKILL.md"))
+	}
+	SendLog(stepID, "⚙️ Copied CLAUDE.md")
+	SendLog(stepID, "📊 Copied statusline.sh")
+	SendLog(stepID, "🎨 Copied output styles")
+	SendLog(stepID, "🧠 Copied Claude skills")
+
 	// Install OpenCode (optional, don't fail on error)
 	SendLog(stepID, "Installing OpenCode (optional)...")
 	system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {

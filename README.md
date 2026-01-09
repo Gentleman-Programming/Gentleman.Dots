@@ -1,5 +1,7 @@
 # Gentleman.Dots
 
+> ⚠️ **Important Notice (January 2026)**: Anthropic has blocked third-party tools (OpenCode, Crush, etc.) from using Claude Max subscriptions. The OAuth tokens are now restricted to Claude Code only. Neovim in this config now uses **Claude Code** as the primary AI assistant. OpenCode remains available for use with other providers (OpenAI API keys, etc.) or OpenCode's upcoming subscription service.
+
 ## TUI
 <img width="1424" height="1536" alt="image" src="https://github.com/user-attachments/assets/1db56d3b-a8c0-4885-82aa-c5ec04af4ac0" />
 
@@ -10,7 +12,7 @@
 
 A complete development environment configuration including:
 
-- **Neovim** with LSP, autocompletion, and AI assistants (Claude, Gemini, OpenCode)
+- **Neovim** with LSP, autocompletion, and AI assistants (Claude Code, Gemini, OpenCode)
 - **Shells**: Fish, Zsh, Nushell
 - **Terminal Multiplexers**: Tmux, Zellij
 - **Terminal Emulators**: Alacritty, WezTerm, Kitty, Ghostty
@@ -84,7 +86,7 @@ Launch it from the main menu: **Vim Mastery Trainer**
 | Document | Description |
 |----------|-------------|
 | [**Neovim Keymaps**](docs/neovim-keymaps.md) | Complete reference of all keybindings |
-| [**AI Configuration**](docs/ai-configuration.md) | OpenCode, Claude, Copilot, and other AI assistants |
+| [**AI Configuration**](docs/ai-configuration.md) | Claude Code, OpenCode, Copilot, and other AI assistants |
 
 ---
 
@@ -151,6 +153,7 @@ Gentleman.Dots/
 ├── GentlemanZellij/         # Zellij config
 ├── GentlemanGhostty/        # Ghostty terminal config
 ├── GentlemanKitty/          # Kitty terminal config
+├── GentlemanClaude/         # Claude Code AI config (primary)
 ├── GentlemanOpenCode/       # OpenCode AI config
 ├── alacritty.toml           # Alacritty config
 ├── .wezterm.lua             # WezTerm config
