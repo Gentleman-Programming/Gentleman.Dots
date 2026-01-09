@@ -773,6 +773,7 @@ func stepInstallNvim(m *Model) error {
 	system.Run(fmt.Sprintf("chmod +x %s", filepath.Join(claudeDir, "statusline.sh")), nil)
 	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
+	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/tweakcc-theme.json"), filepath.Join(claudeDir, "tweakcc-theme.json"))
 	// Copy skills (excluding prowler-* which are work-specific)
 	skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
 	for _, skill := range skillsToCopy {
@@ -784,6 +785,7 @@ func stepInstallNvim(m *Model) error {
 	SendLog(stepID, "⚙️ Copied CLAUDE.md")
 	SendLog(stepID, "📊 Copied statusline.sh")
 	SendLog(stepID, "🎨 Copied output styles")
+	SendLog(stepID, "🎨 Copied tweakcc theme (run 'npx tweakcc --apply' to enable)")
 	SendLog(stepID, "🧠 Copied Claude skills")
 
 	// Install OpenCode (optional, don't fail on error)
