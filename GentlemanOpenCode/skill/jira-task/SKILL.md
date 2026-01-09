@@ -307,5 +307,82 @@ Include:
 - Use tables where appropriate
 - Use `---` to separate multiple tasks
 
+## Jira MCP Integration
+
+**CRITICAL:** When creating tasks via MCP, use these exact parameters:
+
+### Required Fields
+
+```json
+{
+  "project_key": "PROWLER",
+  "summary": "[TYPE] Task title (component)",
+  "issue_type": "Task",
+  "additional_fields": {
+    "parent": "PROWLER-XXX",
+    "customfield_10359": {"value": "UI"}
+  }
+}
+```
+
+### Team Field (REQUIRED)
+
+The `customfield_10359` (Team) field is **REQUIRED**. Options:
+- `"UI"` - Frontend tasks
+- `"API"` - Backend tasks
+- `"SDK"` - Prowler SDK tasks
+
+### Work Item Description Field
+
+**IMPORTANT:** The project uses `customfield_10363` (Work Item Description) instead of the standard `description` field for display in the UI.
+
+**CRITICAL:** Use **Jira Wiki markup**, NOT Markdown:
+- `h2.` instead of `##`
+- `*text*` for bold instead of `**text**`
+- `* item` for bullets (same)
+- `** subitem` for nested bullets
+
+After creating the issue, update the description with:
+
+```json
+{
+  "customfield_10363": "h2. Description\n\n{content}\n\n*Current State:*\n* {problem 1}\n* {problem 2}\n\n*Expected State:*\n* {solution 1}\n* {solution 2}\n\nh2. Acceptance Criteria\n\n* {criteria 1}\n* {criteria 2}\n\nh2. Technical Notes\n\nPR: [{pr_url}]\n\nAffected files:\n* {file 1}\n* {file 2}\n\nh2. Testing\n\n* [ ] PR - Local environment\n** {test case 1}\n** {test case 2}\n* [ ] After merge in prowler - dev\n** {test case 3}"
+}
+```
+
+### Common Epics
+
+| Epic | Key | Use For |
+|------|-----|---------|
+| UI - Bugs & Improvements | PROWLER-193 | UI bugs, enhancements |
+| API - Bugs / Improvements | PROWLER-XXX | API bugs, enhancements |
+| LightHouse AI | PROWLER-594 | AI features |
+| Technical Debt - UI | PROWLER-502 | Refactoring |
+
+### Workflow Transitions
+
+```
+Backlog (10037) → To Do (14) → In Progress (11) → Done (21)
+                → Blocked (10)
+```
+
+### MCP Commands Sequence
+
+1. **Create issue:**
+```
+mcp__mcp-atlassian__jira_create_issue
+```
+
+2. **Update Work Item Description:**
+```
+mcp__mcp-atlassian__jira_update_issue with customfield_10363
+```
+
+3. **Assign and transition:**
+```
+mcp__mcp-atlassian__jira_update_issue (assignee)
+mcp__mcp-atlassian__jira_transition_issue (status)
+```
+
 ## Keywords
 jira, task, ticket, issue, bug, feature, prowler

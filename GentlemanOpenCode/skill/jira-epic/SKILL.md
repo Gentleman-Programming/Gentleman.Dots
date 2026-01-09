@@ -224,5 +224,89 @@ Would you like me to generate the full task descriptions?
 - Use tables for Suggested Tasks section
 - Use `---` to separate epic from suggested tasks
 
+## Jira MCP Integration
+
+**CRITICAL:** When creating epics via MCP, use these exact parameters:
+
+### Required Fields
+
+```json
+{
+  "project_key": "PROWLER",
+  "summary": "[EPIC] Feature name",
+  "issue_type": "Epic",
+  "additional_fields": {
+    "customfield_10359": {"value": "UI"}
+  }
+}
+```
+
+### Team Field (REQUIRED)
+
+The `customfield_10359` (Team) field is **REQUIRED**. Options:
+- `"UI"` - Frontend epics
+- `"API"` - Backend epics
+- `"SDK"` - Prowler SDK epics
+
+### Work Item Description Field
+
+**IMPORTANT:** The project uses `customfield_10363` (Work Item Description) instead of the standard `description` field for display in the UI.
+
+**CRITICAL:** Use **Jira Wiki markup**, NOT Markdown:
+- `h2.` instead of `##`
+- `*text*` for bold instead of `**text**`
+- `* item` for bullets (same)
+- `** subitem` for nested bullets
+
+After creating the epic, update the description with:
+
+```json
+{
+  "customfield_10363": "h2. Feature Overview\n\n{overview}\n\nh2. Requirements\n\n*{Section 1}*\n* {requirement 1}\n* {requirement 2}\n\n*{Section 2}*\n* {requirement 1}\n* {requirement 2}\n\nh2. Technical Considerations\n\n*Performance:*\n* {consideration 1}\n\n*Data Integration:*\n* {consideration 2}\n\nh2. Implementation Checklist\n\n* [ ] {deliverable 1}\n* [ ] {deliverable 2}\n* [ ] {deliverable 3}"
+}
+```
+
+### Linking Tasks to Epic
+
+When creating child tasks, use the epic key as parent:
+
+```json
+{
+  "additional_fields": {
+    "parent": "PROWLER-XXX"
+  }
+}
+```
+
+### Workflow Transitions
+
+```
+Backlog (10037) → To Do (14) → In Progress (11) → Done (21)
+                → Blocked (10)
+```
+
+### MCP Commands Sequence
+
+1. **Create epic:**
+```
+mcp__mcp-atlassian__jira_create_issue (issue_type: "Epic")
+```
+
+2. **Update Work Item Description:**
+```
+mcp__mcp-atlassian__jira_update_issue with customfield_10363
+```
+
+3. **Create child tasks:**
+```
+mcp__mcp-atlassian__jira_create_issue with parent: EPIC-KEY
+```
+
+4. **Assign and transition:**
+```
+mcp__mcp-atlassian__jira_update_issue (assignee)
+mcp__mcp-atlassian__jira_transition_issue (status)
+```
+
 ## Keywords
 jira, epic, feature, initiative, prowler, large feature
