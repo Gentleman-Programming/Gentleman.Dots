@@ -154,6 +154,8 @@ Gentleman.Dots/
 ├── GentlemanGhostty/        # Ghostty terminal config
 ├── GentlemanKitty/          # Kitty terminal config
 ├── GentlemanClaude/         # Claude Code AI config (primary)
+│   ├── tweakcc-theme.json   # Visual theme for Claude Code (via tweakcc)
+│   └── ...
 ├── GentlemanOpenCode/       # OpenCode AI config
 ├── alacritty.toml           # Alacritty config
 ├── .wezterm.lua             # WezTerm config

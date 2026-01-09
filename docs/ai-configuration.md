@@ -129,6 +129,47 @@ All Claude Code config is stored in:
     └── ...
 ```
 
+### Gentleman Theme (Visual Colors)
+
+Claude Code supports custom color themes via [tweakcc](https://github.com/Piebald-AI/tweakcc). The Gentleman theme provides Kanagawa-inspired colors matching the OpenCode theme.
+
+**Installation:**
+
+```bash
+# 1. Install tweakcc and apply the Gentleman theme
+npx tweakcc
+
+# 2. Go to "Themes" > Create new theme or import
+# 3. Import from: GentlemanClaude/tweakcc-theme.json
+# 4. Select "Apply customizations"
+```
+
+**Or manually merge the theme:**
+
+```bash
+# Add Gentleman theme to tweakcc config
+jq '.settings.themes += [input]' ~/.tweakcc/config.json GentlemanClaude/tweakcc-theme.json > tmp.json && mv tmp.json ~/.tweakcc/config.json
+jq '.settings.selectedTheme = "gentleman"' ~/.tweakcc/config.json > tmp.json && mv tmp.json ~/.tweakcc/config.json
+
+# Apply the patch
+npx tweakcc --apply
+```
+
+**After Claude Code updates:**
+
+Tweakcc patches Claude Code's CLI directly. After updates, re-apply:
+```bash
+npx tweakcc --apply
+```
+
+**Theme colors include:**
+- Primary blue: `rgb(127,180,202)` - main UI elements
+- Accent gold: `rgb(224,193,90)` - permissions, highlights
+- Success green: `rgb(183,204,133)` - diffs, confirmations
+- Error pink: `rgb(203,124,148)` - errors, removals
+- Purple: `rgb(201,154,214)` - plan mode
+- Dark background: `rgb(6,8,15)` - terminal background
+
 ---
 
 ## OpenCode Configuration
