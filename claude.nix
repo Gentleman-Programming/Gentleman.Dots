@@ -54,6 +54,12 @@
       echo "🎨 Copied output styles"
     fi
 
+    # Copy tweakcc theme (visual colors for Claude Code)
+    if [ -f "$CLAUDE_SRC/tweakcc-theme.json" ]; then
+      cp -f "$CLAUDE_SRC/tweakcc-theme.json" "$CLAUDE_DST/"
+      echo "🎨 Copied tweakcc theme (run 'npx tweakcc --apply' to enable)"
+    fi
+
     # Copy skills
     if [ -d "$CLAUDE_SRC/skills" ]; then
       cp -rf "$CLAUDE_SRC/skills"/* "$CLAUDE_DST/skills/" 2>/dev/null || true
