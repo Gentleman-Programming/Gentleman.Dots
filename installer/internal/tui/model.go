@@ -532,6 +532,14 @@ func (m *Model) SetupInstallSteps() {
 			Status:      StatusPending,
 			Interactive: true, // Needs sudo
 		})
+	} else if m.Choices.OS == "termux" {
+		m.Steps = append(m.Steps, InstallStep{
+			ID:          "deps",
+			Name:        "Install Dependencies",
+			Description: "Base packages",
+			Status:      StatusPending,
+			Interactive: false, // Termux doesn't need sudo
+		})
 	} else if m.Choices.OS == "mac" && !m.SystemInfo.HasXcode {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "xcode",
