@@ -38,14 +38,46 @@ curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/late
 # Linux x86_64
 curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-linux-amd64 -o gentleman.dots
 
+# Linux ARM64 (Raspberry Pi, etc.)
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-linux-arm64 -o gentleman.dots
+
 # Then run
 chmod +x gentleman.dots
 ./gentleman.dots
 ```
 
+### Option 3: Termux (Android)
+
+```bash
+# Install dependencies first
+pkg install git curl
+
+# Download the installer
+curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-android-arm64 -o gentleman.dots
+
+# Run it
+chmod +x gentleman.dots
+./gentleman.dots
+```
+
+> **Note:** Termux support includes Fish, Zsh, Nushell, Neovim, Tmux, and Zellij. Terminal emulators are not available on Android.
+
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
 
 > **Windows users:** You must set up WSL first. See the [Manual Installation Guide](docs/manual-installation.md#windows-wsl).
+
+---
+
+## Supported Platforms
+
+| Platform | Architecture | Install Method |
+|----------|--------------|----------------|
+| macOS | Apple Silicon (ARM64) | Homebrew, Direct Download |
+| macOS | Intel (x86_64) | Homebrew, Direct Download |
+| Linux | x86_64 | Homebrew, Direct Download |
+| Linux | ARM64 | Homebrew, Direct Download |
+| Windows | WSL | Direct Download (see docs) |
+| Android | Termux (ARM64) | Direct Download |
 
 ---
 
