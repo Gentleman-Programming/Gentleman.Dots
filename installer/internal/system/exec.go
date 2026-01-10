@@ -8,8 +8,40 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
 )
+
+// shellPath caches the detected shell path
+var (
+	shellPath     string
+	shellPathOnce sync.Once
+)
+
+// GetShell returns the path to an available shell (bash, sh, or zsh)
+// Caches the result for subsequent calls
+func GetShell() string {
+	shellPathOnce.Do(func() {
+		// Try bash first (most compatible with our commands)
+		if path, err := exec.LookPath("bash"); err == nil {
+			shellPath = path
+			return
+		}
+		// Fall back to sh (available on almost all Unix systems including Termux)
+		if path, err := exec.LookPath("sh"); err == nil {
+			shellPath = path
+			return
+		}
+		// Last resort: zsh
+		if path, err := exec.LookPath("zsh"); err == nil {
+			shellPath = path
+			return
+		}
+		// Default to sh if nothing found (let it fail with a clear error)
+		shellPath = "sh"
+	})
+	return shellPath
+}
 
 // ExecError provides detailed error information for command execution
 type ExecError struct {
@@ -74,8 +106,8 @@ func Run(command string, opts *ExecOptions) *ExecResult {
 		defer cancel()
 	}
 
-	// Use bash -c to run the command
-	cmd := exec.CommandContext(ctx, "bash", "-c", command)
+	// Use available shell to run the command (bash, sh, or zsh)
+	cmd := exec.CommandContext(ctx, GetShell(), "-c", command)
 
 	if opts.WorkDir != "" {
 		cmd.Dir = opts.WorkDir

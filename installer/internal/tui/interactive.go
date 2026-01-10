@@ -63,13 +63,13 @@ func getHomebrewScript(m *Model) (string, error) {
 	}
 
 	brewPrefix := system.GetBrewPrefix()
-	script := fmt.Sprintf(`#!/bin/bash
+	script := fmt.Sprintf(`#!/bin/sh
 set -e
 echo ""
 echo "🍺 Installing Homebrew package manager..."
 echo "   (You may be prompted for your password)"
 echo ""
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 echo ""
 echo "📝 Configuring shell to use Homebrew..."
@@ -93,7 +93,7 @@ echo ""
 echo "✅ Homebrew installed successfully!"
 echo ""
 echo "Press Enter to continue..."
-read
+read dummy
 `, brewPrefix, brewPrefix)
 
 	return script, nil
@@ -104,7 +104,7 @@ func getDepsScript(m *Model) (string, error) {
 	var script string
 
 	if m.SystemInfo.OS == system.OSArch {
-		script = `#!/bin/bash
+		script = `#!/bin/sh
 set -e
 echo ""
 echo "🔄 Updating Arch Linux packages..."
@@ -118,11 +118,11 @@ echo ""
 echo "✅ Dependencies installed successfully!"
 echo ""
 echo "Press Enter to continue..."
-read
+read dummy
 `
 	} else {
 		// Debian/Ubuntu
-		script = `#!/bin/bash
+		script = `#!/bin/sh
 set -e
 echo ""
 echo "🔄 Updating apt package list..."
@@ -136,7 +136,7 @@ echo ""
 echo "✅ Dependencies installed successfully!"
 echo ""
 echo "Press Enter to continue..."
-read
+read dummy
 `
 	}
 
@@ -221,7 +221,7 @@ cp -r Gentleman.Dots/GentlemanGhostty/* "%s/.config/ghostty/"`, homeDir, homeDir
 		return "", nil
 	}
 
-	script := fmt.Sprintf(`#!/bin/bash
+	script := fmt.Sprintf(`#!/bin/sh
 set -e
 echo ""
 echo "🖥️  Installing %s..."
@@ -235,7 +235,7 @@ echo ""
 echo "✅ %s configured!"
 echo ""
 echo "Press Enter to continue..."
-read
+read dummy
 `, terminal, installCmd, terminal, configCmd, terminal)
 
 	return script, nil
@@ -259,7 +259,7 @@ func getSetShellScript(m *Model) (string, error) {
 
 	brewPrefix := system.GetBrewPrefix()
 
-	script := fmt.Sprintf(`#!/bin/bash
+	script := fmt.Sprintf(`#!/bin/sh
 set -e
 
 # Add brew to PATH for this script
@@ -271,7 +271,7 @@ if [ -z "$SHELL_PATH" ]; then
     echo "❌ Shell '%s' not found in PATH"
     echo ""
     echo "Press Enter to continue..."
-    read
+    read dummy
     exit 1
 fi
 
@@ -297,7 +297,7 @@ echo "✅ Default shell changed to $SHELL_PATH"
 echo "   Please log out and log back in for changes to take effect."
 echo ""
 echo "Press Enter to continue..."
-read
+read dummy
 `, brewPrefix, shellCmd, shellCmd)
 
 	return script, nil
@@ -325,8 +325,9 @@ func createTempScriptCommand(script string) (*exec.Cmd, error) {
 		return nil, fmt.Errorf("failed to make script executable: %w", err)
 	}
 
-	// Return command - use bash explicitly
-	cmd := exec.Command("bash", tmpFile.Name())
+	// Return command - use available shell (bash, sh, or zsh)
+	shellPath := system.GetShell()
+	cmd := exec.Command(shellPath, tmpFile.Name())
 	cmd.Env = os.Environ()
 
 	return cmd, nil
