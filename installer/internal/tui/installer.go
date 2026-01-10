@@ -577,7 +577,7 @@ func stepInstallShell(m *Model) error {
 				"Failed to copy starship configuration",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanFish/fish"), filepath.Join(homeDir, ".config/")); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanFish", "fish"), filepath.Join(homeDir, ".config", "fish")); err != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to copy Fish configuration",
 				err)
