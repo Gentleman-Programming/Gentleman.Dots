@@ -257,6 +257,11 @@ func getSetShellScript(m *Model) (string, error) {
 		return "", fmt.Errorf("unknown shell: %s", shell)
 	}
 
+	// Termux: no chsh, we modify ~/.bashrc to start the shell
+	if m.SystemInfo.IsTermux {
+		return getSetShellScriptTermux(shellCmd)
+	}
+
 	brewPrefix := system.GetBrewPrefix()
 
 	script := fmt.Sprintf(`#!/bin/sh
@@ -299,6 +304,53 @@ echo ""
 echo "Press Enter to continue..."
 read dummy
 `, brewPrefix, shellCmd, shellCmd)
+
+	return script, nil
+}
+
+// getSetShellScriptTermux returns script to set default shell in Termux
+// Termux doesn't have chsh, so we add shell launch to ~/.bashrc
+func getSetShellScriptTermux(shellCmd string) (string, error) {
+	script := fmt.Sprintf(`#!/data/data/com.termux/files/usr/bin/sh
+set -e
+
+SHELL_PATH=$(which %s 2>/dev/null)
+
+if [ -z "$SHELL_PATH" ]; then
+    echo "❌ Shell '%s' not found in PATH"
+    echo ""
+    echo "Press Enter to continue..."
+    read dummy
+    exit 1
+fi
+
+echo ""
+echo "🐚 Setting $SHELL_PATH as your default shell in Termux..."
+echo ""
+
+# Termux doesn't have chsh, so we add to ~/.bashrc
+BASHRC="$HOME/.bashrc"
+
+# Check if already configured
+if grep -q "# Gentleman.Dots shell auto-start" "$BASHRC" 2>/dev/null; then
+    echo "Shell auto-start already configured in ~/.bashrc"
+else
+    echo "" >> "$BASHRC"
+    echo "# Gentleman.Dots shell auto-start" >> "$BASHRC"
+    echo "if [ -x \"$SHELL_PATH\" ] && [ -z \"\$GENTLEMANDOTS_SHELL_STARTED\" ]; then" >> "$BASHRC"
+    echo "    export GENTLEMANDOTS_SHELL_STARTED=1" >> "$BASHRC"
+    echo "    exec $SHELL_PATH" >> "$BASHRC"
+    echo "fi" >> "$BASHRC"
+    echo "✅ Added shell auto-start to ~/.bashrc"
+fi
+
+echo ""
+echo "✅ Default shell set to $SHELL_PATH"
+echo "   Close and reopen Termux for changes to take effect."
+echo ""
+echo "Press Enter to continue..."
+read dummy
+`, shellCmd, shellCmd)
 
 	return script, nil
 }

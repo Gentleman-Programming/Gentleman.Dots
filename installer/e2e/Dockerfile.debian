@@ -1,20 +1,33 @@
 # Debian with sh (no bash by default for user)
+# Tests shell detection fallback to sh
 FROM debian:bookworm-slim
+
+ENV HOME=/home/testuser
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     ca-certificates \
     procps \
+    sudo \
+    fish \
+    zsh \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -s /bin/sh testuser
+# Create test user with passwordless sudo for chsh/usermod
+RUN useradd -m -s /bin/sh testuser && \
+    echo "testuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 USER testuser
 WORKDIR /home/testuser
 
+# Copy binary and test script (build context is e2e/)
 COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /usr/local/bin/gentleman-dots
+COPY --chown=testuser:testuser e2e_test.sh /home/testuser/e2e_test.sh
+
 USER root
-RUN chmod +x /usr/local/bin/gentleman-dots
+RUN chmod +x /usr/local/bin/gentleman-dots /home/testuser/e2e_test.sh
 USER testuser
 
-CMD ["gentleman-dots"]
+# Run the E2E test script (basic tests only)
+CMD ["/bin/sh", "/home/testuser/e2e_test.sh"]

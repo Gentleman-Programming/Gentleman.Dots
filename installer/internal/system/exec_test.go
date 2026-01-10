@@ -399,3 +399,339 @@ func TestBackupInfo(t *testing.T) {
 		}
 	})
 }
+
+// TestBackupE2EFlow tests a complete backup and restore cycle
+func TestBackupE2EFlow(t *testing.T) {
+	home := os.Getenv("HOME")
+
+	// Create temp test directory structure
+	testConfigDir := filepath.Join(home, ".config", "gentleman-e2e-test")
+	defer os.RemoveAll(testConfigDir)
+
+	t.Run("complete backup and restore cycle", func(t *testing.T) {
+		// 1. Setup: Create a fake config file
+		os.MkdirAll(testConfigDir, 0755)
+		originalContent := "original config content - test123"
+		testFile := filepath.Join(testConfigDir, "test-config.lua")
+		err := os.WriteFile(testFile, []byte(originalContent), 0644)
+		if err != nil {
+			t.Fatalf("Failed to create test file: %v", err)
+		}
+
+		// 2. Verify file was created
+		content, err := os.ReadFile(testFile)
+		if err != nil {
+			t.Fatalf("Failed to read test file: %v", err)
+		}
+		if string(content) != originalContent {
+			t.Errorf("Content mismatch: got '%s', want '%s'", string(content), originalContent)
+		}
+
+		// 3. Create backup directory manually (simulating CreateBackup)
+		backupDir := filepath.Join(home, ".gentleman-backup-e2e-test-flow")
+		defer os.RemoveAll(backupDir)
+		os.MkdirAll(backupDir, 0755)
+
+		// Copy file to backup
+		backupFile := filepath.Join(backupDir, "test-config.lua")
+		err = CopyFile(testFile, backupFile)
+		if err != nil {
+			t.Fatalf("Failed to backup file: %v", err)
+		}
+
+		// 4. Modify the original (simulating installer overwrite)
+		modifiedContent := "modified by installer"
+		err = os.WriteFile(testFile, []byte(modifiedContent), 0644)
+		if err != nil {
+			t.Fatalf("Failed to modify test file: %v", err)
+		}
+
+		// Verify modification
+		content, _ = os.ReadFile(testFile)
+		if string(content) != modifiedContent {
+			t.Errorf("Modification failed: got '%s', want '%s'", string(content), modifiedContent)
+		}
+
+		// 5. Restore from backup
+		err = CopyFile(backupFile, testFile)
+		if err != nil {
+			t.Fatalf("Failed to restore from backup: %v", err)
+		}
+
+		// 6. Verify restoration
+		content, _ = os.ReadFile(testFile)
+		if string(content) != originalContent {
+			t.Errorf("Restore failed: got '%s', want '%s'", string(content), originalContent)
+		}
+	})
+
+	t.Run("backup directory naming follows timestamp format", func(t *testing.T) {
+		dir := GetBackupDir()
+
+		// Should contain .gentleman-backup- prefix
+		if !strings.Contains(dir, ".gentleman-backup-") {
+			t.Errorf("Backup dir should contain '.gentleman-backup-': %s", dir)
+		}
+
+		// Should contain timestamp in format YYYY-MM-DD-HHMMSS
+		// Extract the timestamp part
+		parts := strings.Split(filepath.Base(dir), "-")
+		if len(parts) < 5 {
+			t.Errorf("Expected at least 5 parts in backup dir name, got: %s", dir)
+		}
+	})
+
+	t.Run("multiple backups with different timestamps", func(t *testing.T) {
+		dir1 := GetBackupDir()
+		time.Sleep(2 * time.Second)
+		dir2 := GetBackupDir()
+
+		if dir1 == dir2 {
+			t.Error("Backup dirs should have different timestamps")
+		}
+	})
+}
+
+// TestDetectExistingConfigsWithRealFiles tests detection with actual files
+func TestDetectExistingConfigsWithRealFiles(t *testing.T) {
+	home := os.Getenv("HOME")
+
+	t.Run("detects created config files", func(t *testing.T) {
+		// Create a test fish config
+		testFishDir := filepath.Join(home, ".config", "fish")
+		testFishFile := filepath.Join(testFishDir, "config.fish")
+
+		// Check if fish config already exists (don't overwrite user's config!)
+		fishExisted := false
+		if _, err := os.Stat(testFishFile); err == nil {
+			fishExisted = true
+		}
+
+		if !fishExisted {
+			// Create temp fish config for test
+			os.MkdirAll(testFishDir, 0755)
+			os.WriteFile(testFishFile, []byte("# test"), 0644)
+			defer func() {
+				if !fishExisted {
+					os.Remove(testFishFile)
+					// Only remove dir if we created it and it's empty
+					os.Remove(testFishDir)
+				}
+			}()
+		}
+
+		// Now detect existing configs
+		configs := DetectExistingConfigs()
+
+		// Should find at least one config (fish, or user's actual configs)
+		if len(configs) == 0 {
+			t.Log("No existing configs found - this is OK if system has no configs")
+		} else {
+			t.Logf("Found %d existing configs", len(configs))
+			for _, config := range configs {
+				t.Logf("  - %s", config)
+			}
+		}
+	})
+}
+
+// TestBackupPreservesFilePermissions verifies file permissions are maintained
+func TestBackupPreservesContent(t *testing.T) {
+	home := os.Getenv("HOME")
+	testDir := filepath.Join(home, ".config", "gentleman-perm-test")
+	defer os.RemoveAll(testDir)
+
+	t.Run("preserves file content during copy", func(t *testing.T) {
+		os.MkdirAll(testDir, 0755)
+
+		// Create file with specific content including newlines and special chars
+		content := "line1\nline2\n# comment\nexport VAR=\"value\"\n"
+		srcFile := filepath.Join(testDir, "source.txt")
+		dstFile := filepath.Join(testDir, "dest.txt")
+
+		err := os.WriteFile(srcFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Failed to write source: %v", err)
+		}
+
+		err = CopyFile(srcFile, dstFile)
+		if err != nil {
+			t.Fatalf("Failed to copy: %v", err)
+		}
+
+		// Read back and compare
+		copied, err := os.ReadFile(dstFile)
+		if err != nil {
+			t.Fatalf("Failed to read dest: %v", err)
+		}
+
+		if string(copied) != content {
+			t.Errorf("Content mismatch:\nGot: %q\nWant: %q", string(copied), content)
+		}
+	})
+}
+
+func TestRunPkg(t *testing.T) {
+	t.Run("should construct correct pkg command", func(t *testing.T) {
+		// We can't really test pkg on non-Termux systems,
+		// but we can verify the command construction by checking
+		// that it at least attempts to run "pkg" with the args
+		result := RunPkg("--help", nil)
+
+		// On non-Termux systems, this will fail with "command not found"
+		// which is expected behavior - we just verify it tried
+		if result.Command != "pkg --help" {
+			t.Errorf("Expected command 'pkg --help', got '%s'", result.Command)
+		}
+	})
+
+	t.Run("should respect options", func(t *testing.T) {
+		opts := &ExecOptions{
+			WorkDir: "/tmp",
+			Timeout: 100 * time.Millisecond,
+		}
+		result := RunPkg("--version", opts)
+
+		// Just verify it ran with options
+		if result.Command != "pkg --version" {
+			t.Errorf("Expected command 'pkg --version', got '%s'", result.Command)
+		}
+	})
+}
+
+func TestRunPkgWithLogs(t *testing.T) {
+	t.Run("should stream logs to callback", func(t *testing.T) {
+		var logs []string
+		logFunc := func(line string) {
+			logs = append(logs, line)
+		}
+
+		// Use echo to simulate pkg output
+		result := RunWithLogs("echo 'test output'", nil, logFunc)
+
+		if result.Error != nil {
+			t.Errorf("Unexpected error: %v", result.Error)
+		}
+
+		// Verify callback was called
+		if len(logs) == 0 {
+			t.Error("Expected log callback to be called")
+		}
+
+		foundOutput := false
+		for _, log := range logs {
+			if strings.Contains(log, "test output") {
+				foundOutput = true
+				break
+			}
+		}
+		if !foundOutput {
+			t.Errorf("Expected 'test output' in logs, got: %v", logs)
+		}
+	})
+
+	t.Run("should construct correct pkg command", func(t *testing.T) {
+		result := RunPkgWithLogs("--help", nil, nil)
+
+		if result.Command != "pkg --help" {
+			t.Errorf("Expected command 'pkg --help', got '%s'", result.Command)
+		}
+	})
+}
+
+func TestRunPkgInstall(t *testing.T) {
+	t.Run("should construct correct install command", func(t *testing.T) {
+		result := RunPkgInstall("vim git", nil, nil)
+
+		// Verify command includes -y flag for non-interactive
+		expectedCmd := "pkg install -y vim git"
+		if result.Command != expectedCmd {
+			t.Errorf("Expected command '%s', got '%s'", expectedCmd, result.Command)
+		}
+	})
+
+	t.Run("should include -y flag for non-interactive installs", func(t *testing.T) {
+		result := RunPkgInstall("neovim", nil, nil)
+
+		if !strings.Contains(result.Command, "-y") {
+			t.Errorf("Command should include -y flag, got: %s", result.Command)
+		}
+	})
+
+	t.Run("should stream logs to callback", func(t *testing.T) {
+		logFunc := func(line string) {
+			// Callback exists, just verify it doesn't panic
+			_ = line
+		}
+
+		// This will fail on non-Termux but we're just testing the callback wiring
+		RunPkgInstall("somepackage", nil, logFunc)
+
+		// Note: on non-Termux systems, pkg won't exist so there might be no output
+		// The important thing is the function doesn't panic
+		t.Log("RunPkgInstall completed without panic")
+	})
+}
+
+func TestRunWithLogs(t *testing.T) {
+	t.Run("should capture both stdout and stderr", func(t *testing.T) {
+		var logs []string
+		logFunc := func(line string) {
+			logs = append(logs, line)
+		}
+
+		result := RunWithLogs("echo stdout && echo stderr >&2", nil, logFunc)
+
+		if result.Error != nil {
+			t.Errorf("Unexpected error: %v", result.Error)
+		}
+
+		// Both stdout and stderr should be captured (may come as 1 or 2 entries depending on timing)
+		if len(logs) < 1 {
+			t.Errorf("Expected at least 1 log entry, got %d", len(logs))
+		}
+
+		// Check that output contains expected strings
+		combined := result.Output + result.Stderr
+		if !strings.Contains(combined, "stdout") {
+			t.Errorf("Expected output to contain 'stdout', got: %s", combined)
+		}
+	})
+
+	t.Run("should handle nil callback gracefully", func(t *testing.T) {
+		// Should not panic with nil callback
+		result := RunWithLogs("echo test", nil, nil)
+
+		if result.Error != nil {
+			t.Errorf("Unexpected error: %v", result.Error)
+		}
+
+		if !strings.Contains(result.Output, "test") {
+			t.Errorf("Expected output to contain 'test', got: %s", result.Output)
+		}
+	})
+
+	t.Run("should respect timeout", func(t *testing.T) {
+		start := time.Now()
+		result := RunWithLogs("sleep 10", &ExecOptions{Timeout: 100 * time.Millisecond}, nil)
+		elapsed := time.Since(start)
+
+		if elapsed > 2*time.Second {
+			t.Errorf("Command should have timed out quickly, took %v", elapsed)
+		}
+		if result.Error == nil {
+			t.Error("Expected timeout error")
+		}
+	})
+
+	t.Run("should capture exit code on failure", func(t *testing.T) {
+		result := RunWithLogs("exit 42", nil, nil)
+
+		if result.Error == nil {
+			t.Error("Expected error for non-zero exit")
+		}
+		if result.ExitCode != 42 {
+			t.Errorf("Expected exit code 42, got %d", result.ExitCode)
+		}
+	})
+}

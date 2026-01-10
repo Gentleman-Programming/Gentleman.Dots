@@ -48,13 +48,14 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Screen = ScreenOSSelect
 		opts := m.GetCurrentOptions()
 
-		if len(opts) != 2 {
-			t.Errorf("Expected 2 OS options, got %d", len(opts))
+		if len(opts) != 3 {
+			t.Errorf("Expected 3 OS options (macOS, Linux, Termux), got %d", len(opts))
 		}
-		// One of them should have "(detected)" based on current OS
+		// Verify options contain expected OS names
 		hasMac := strings.Contains(opts[0], "macOS")
 		hasLinux := strings.Contains(opts[1], "Linux")
-		if !hasMac || !hasLinux {
+		hasTermux := strings.Contains(opts[2], "Termux")
+		if !hasMac || !hasLinux || !hasTermux {
 			t.Errorf("Unexpected OS options: %v", opts)
 		}
 	})

@@ -532,8 +532,11 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		m.Choices.InstallFont = false
 
 	case ScreenShellSelect:
-		// If we skipped font selection (terminal = none), go back to terminal
-		if m.Choices.Terminal == "none" {
+		// Termux: go back to OS selection (skipped terminal and font)
+		if m.SystemInfo.IsTermux {
+			m.Screen = ScreenOSSelect
+		} else if m.Choices.Terminal == "none" {
+			// If we skipped font selection (terminal = none), go back to terminal
 			m.Screen = ScreenTerminalSelect
 		} else {
 			m.Screen = ScreenFontSelect
@@ -610,10 +613,19 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 	case ScreenOSSelect:
 		if strings.Contains(selected, "mac") {
 			m.Choices.OS = "mac"
+		} else if strings.Contains(selected, "Termux") {
+			m.Choices.OS = "termux"
 		} else {
 			m.Choices.OS = "linux"
 		}
-		m.Screen = ScreenTerminalSelect
+		// Termux: skip Terminal and Font selection (you're already in a terminal!)
+		if m.Choices.OS == "termux" {
+			m.Choices.Terminal = "none"
+			m.Choices.InstallFont = false
+			m.Screen = ScreenShellSelect
+		} else {
+			m.Screen = ScreenTerminalSelect
+		}
 		m.Cursor = 0
 
 	case ScreenTerminalSelect:

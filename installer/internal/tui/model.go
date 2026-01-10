@@ -258,12 +258,15 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenOSSelect:
 		macLabel := "macOS"
 		linuxLabel := "Linux"
+		termuxLabel := "Termux"
 		if m.SystemInfo.OS == system.OSMac {
 			macLabel = "macOS (detected)"
-		} else if m.SystemInfo.OS == system.OSLinux {
+		} else if m.SystemInfo.OS == system.OSTermux {
+			termuxLabel = "Termux (detected)"
+		} else if m.SystemInfo.OS == system.OSLinux || m.SystemInfo.OS == system.OSArch || m.SystemInfo.OS == system.OSDebian {
 			linuxLabel = "Linux (detected)"
 		}
-		return []string{macLabel, linuxLabel}
+		return []string{macLabel, linuxLabel, termuxLabel}
 	case ScreenTerminalSelect:
 		alacrittyLabel := "Alacritty"
 		// On Debian/Ubuntu, Alacritty needs to be built from source (PPAs are unreliable)

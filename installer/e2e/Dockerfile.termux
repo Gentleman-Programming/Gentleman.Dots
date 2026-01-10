@@ -1,24 +1,80 @@
-# Simulates Termux environment for ARM64 Android
-# - No bash by default (only ash/sh like fresh Termux)
-# - ARM64 architecture
-# - Minimal tools
+# Simulates Termux environment for testing
+# - Sets TERMUX_VERSION and PREFIX to simulate Termux detection
+# - Has pkg-like script to simulate package installation
+# - Uses Alpine as base (minimal, sh-based like Termux)
 
 FROM alpine:latest
 
+ENV HOME=/home/testuser
+
+# Install base tools
 RUN apk add --no-cache \
     git \
     curl \
     ca-certificates \
+    bash \
     && rm -rf /var/cache/apk/*
 
+# Create Termux-like directory structure
+RUN mkdir -p /data/data/com.termux/files/usr/bin
+
+# Create fake pkg script to simulate Termux pkg
+RUN cat > /usr/local/bin/pkg <<'EOF'
+#!/bin/sh
+# Fake pkg for E2E testing
+case "$1" in
+    update)
+        echo "Updating package lists..."
+        exit 0
+        ;;
+    upgrade)
+        echo "Upgrading packages..."
+        exit 0
+        ;;
+    install)
+        shift
+        echo "Installing packages: $*"
+        # Remove -y flag if present
+        PACKAGES=$(echo "$*" | sed 's/-y//g')
+        for pkg in $PACKAGES; do
+            echo "  - Installing $pkg..."
+        done
+        exit 0
+        ;;
+    --help)
+        echo "pkg - Termux package manager (fake)"
+        exit 0
+        ;;
+    --version)
+        echo "pkg 1.0.0 (e2e test)"
+        exit 0
+        ;;
+    *)
+        echo "Unknown command: $1"
+        exit 1
+        ;;
+esac
+EOF
+RUN chmod +x /usr/local/bin/pkg
+
+# Create test user with home directory
 RUN adduser -D -s /bin/sh testuser
 USER testuser
 WORKDIR /home/testuser
 
-# Use linux-arm64 (static) instead of android-arm64 (needs Android linker)
-COPY --chown=testuser:testuser gentleman-installer-linux-arm64 /usr/local/bin/gentleman-dots
+# Create config directories
+RUN mkdir -p /home/testuser/.config
+
+# Copy test script and binary (build context is e2e/)
+COPY --chown=testuser:testuser e2e_test_termux.sh /home/testuser/e2e_test.sh
+COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /home/testuser/gentleman-dots
+
 USER root
-RUN chmod +x /usr/local/bin/gentleman-dots
+RUN chmod +x /home/testuser/e2e_test.sh /home/testuser/gentleman-dots
 USER testuser
 
-CMD ["gentleman-dots"]
+# Set Termux environment variables for detection
+ENV TERMUX_VERSION="0.118.0"
+ENV PREFIX="/data/data/com.termux/files/usr"
+
+CMD ["/home/testuser/e2e_test.sh"]

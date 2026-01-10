@@ -1,18 +1,32 @@
 # Alpine with ash shell (no bash)
+# Tests shell detection with ash/sh only
 FROM alpine:latest
+
+ENV HOME=/home/testuser
 
 RUN apk add --no-cache \
     curl \
     git \
-    ca-certificates
+    ca-certificates \
+    sudo \
+    fish \
+    zsh \
+    shadow
 
-RUN adduser -D -s /bin/sh testuser
+# Create test user with passwordless sudo for chsh/usermod
+RUN adduser -D -s /bin/sh testuser && \
+    echo "testuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 USER testuser
 WORKDIR /home/testuser
 
+# Copy binary and test script (build context is e2e/)
 COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /usr/local/bin/gentleman-dots
+COPY --chown=testuser:testuser e2e_test.sh /home/testuser/e2e_test.sh
+
 USER root
-RUN chmod +x /usr/local/bin/gentleman-dots
+RUN chmod +x /usr/local/bin/gentleman-dots /home/testuser/e2e_test.sh
 USER testuser
 
-CMD ["gentleman-dots"]
+# Run the E2E test script (basic tests only)
+CMD ["/bin/sh", "/home/testuser/e2e_test.sh"]

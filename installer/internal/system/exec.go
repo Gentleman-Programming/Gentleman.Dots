@@ -202,6 +202,21 @@ func RunBrew(args string, opts *ExecOptions) *ExecResult {
 	return Run(brewPath+" "+args, opts)
 }
 
+// RunPkg runs a Termux pkg command (install packages)
+func RunPkg(args string, opts *ExecOptions) *ExecResult {
+	return Run("pkg "+args, opts)
+}
+
+// RunPkgWithLogs runs a Termux pkg command with log streaming
+func RunPkgWithLogs(args string, opts *ExecOptions, logFunc func(string)) *ExecResult {
+	return RunWithLogs("pkg "+args, opts, logFunc)
+}
+
+// RunPkgInstall runs pkg install with -y flag for non-interactive installs
+func RunPkgInstall(packages string, opts *ExecOptions, logFunc func(string)) *ExecResult {
+	return RunWithLogs("pkg install -y "+packages, opts, logFunc)
+}
+
 // CopyFile copies a file from src to dst
 func CopyFile(src, dst string) error {
 	input, err := os.ReadFile(src)
@@ -416,7 +431,7 @@ func RunWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResu
 		defer cancel()
 	}
 
-	cmd := exec.CommandContext(ctx, "bash", "-c", command)
+	cmd := exec.CommandContext(ctx, GetShell(), "-c", command)
 
 	if opts.WorkDir != "" {
 		cmd.Dir = opts.WorkDir

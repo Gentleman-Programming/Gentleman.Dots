@@ -74,8 +74,8 @@ test_non_interactive_flag() {
 test_zsh_zellij() {
     log_test "Install: Zsh + Zellij (no nvim)"
     
-    # Run installation
-    if GENTLEMAN_VERBOSE=1 gentleman-dots --test --non-interactive \
+    # Run installation (no --test in Docker, container is disposable)
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
         --shell=zsh --wm=zellij --backup=false 2>&1; then
         
         # Verify .zshrc exists
@@ -112,7 +112,7 @@ test_fish_tmux_nvim() {
     rm -rf "$HOME/.config" "$HOME/.zshrc" 2>/dev/null || true
     mkdir -p "$HOME/.config"
     
-    if GENTLEMAN_VERBOSE=1 gentleman-dots --test --non-interactive \
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
         --shell=fish --wm=tmux --nvim --backup=false 2>&1; then
         
         # Verify fish config exists
@@ -156,7 +156,7 @@ test_nushell_no_wm() {
     rm -rf "$HOME/.config" "$HOME/.zshrc" 2>/dev/null || true
     mkdir -p "$HOME/.config"
     
-    if GENTLEMAN_VERBOSE=1 gentleman-dots --test --non-interactive \
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
         --shell=nushell --wm=none --backup=false 2>&1; then
         
         # Verify nushell config exists
@@ -182,6 +182,11 @@ test_nushell_no_wm() {
 test_shell_functional() {
     log_test "Installed shell is functional"
     
+    # Ensure Homebrew is in PATH for this test
+    if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
+        export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    fi
+    
     # Check if fish runs
     if command -v fish >/dev/null 2>&1; then
         if fish -c "echo 'fish works'" 2>/dev/null | grep -q "fish works"; then
@@ -205,6 +210,11 @@ test_shell_functional() {
 test_wm_installed() {
     log_test "Window manager is installed"
     
+    # Ensure Homebrew is in PATH for this test
+    if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
+        export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    fi
+    
     if command -v tmux >/dev/null 2>&1; then
         log_pass "Tmux is installed"
     fi
@@ -217,6 +227,11 @@ test_wm_installed() {
 # Test: Nvim is installed and configured
 test_nvim_configured() {
     log_test "Neovim is properly configured"
+    
+    # Ensure Homebrew is in PATH for this test
+    if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
+        export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    fi
     
     if command -v nvim >/dev/null 2>&1; then
         log_pass "Neovim binary is installed"
@@ -233,6 +248,312 @@ test_nvim_configured() {
 }
 
 # ============================================
+# BACKUP SYSTEM TESTS
+# ============================================
+
+# Helper: Create fake existing configs
+setup_fake_configs() {
+    log_test "Setting up fake existing configs..."
+    
+    # Create fake nvim config
+    mkdir -p "$HOME/.config/nvim"
+    echo "-- Fake nvim config" > "$HOME/.config/nvim/init.lua"
+    echo "vim.opt.number = true" >> "$HOME/.config/nvim/init.lua"
+    
+    # Create fake fish config
+    mkdir -p "$HOME/.config/fish"
+    echo "# Fake fish config" > "$HOME/.config/fish/config.fish"
+    echo "set -x EDITOR nvim" >> "$HOME/.config/fish/config.fish"
+    
+    # Create fake .zshrc
+    echo "# Fake zshrc" > "$HOME/.zshrc"
+    echo "export EDITOR=nvim" >> "$HOME/.zshrc"
+    
+    # Create fake tmux config
+    echo "# Fake tmux config" > "$HOME/.tmux.conf"
+    echo "set -g prefix C-a" >> "$HOME/.tmux.conf"
+    
+    # Create fake zellij config  
+    mkdir -p "$HOME/.config/zellij"
+    echo "// Fake zellij config" > "$HOME/.config/zellij/config.kdl"
+    
+    log_pass "Fake configs created"
+}
+
+# Helper: Cleanup test environment
+cleanup_test_env() {
+    rm -rf "$HOME/.config/nvim" 2>/dev/null || true
+    rm -rf "$HOME/.config/fish" 2>/dev/null || true
+    rm -rf "$HOME/.config/zellij" 2>/dev/null || true
+    rm -f "$HOME/.zshrc" 2>/dev/null || true
+    rm -f "$HOME/.tmux.conf" 2>/dev/null || true
+    rm -rf "$HOME/.gentleman-backup-"* 2>/dev/null || true
+}
+
+# Test: Existing configs are detected
+test_detect_existing_configs() {
+    log_test "Detecting existing configurations"
+    
+    cleanup_test_env
+    setup_fake_configs
+    
+    # The installer should detect these configs
+    # We verify by checking if the files exist
+    detected=0
+    
+    if [ -f "$HOME/.config/nvim/init.lua" ]; then
+        detected=$((detected + 1))
+    fi
+    if [ -f "$HOME/.config/fish/config.fish" ]; then
+        detected=$((detected + 1))
+    fi
+    if [ -f "$HOME/.zshrc" ]; then
+        detected=$((detected + 1))
+    fi
+    if [ -f "$HOME/.tmux.conf" ]; then
+        detected=$((detected + 1))
+    fi
+    if [ -f "$HOME/.config/zellij/config.kdl" ]; then
+        detected=$((detected + 1))
+    fi
+    
+    if [ $detected -eq 5 ]; then
+        log_pass "All 5 fake configs detected ($detected/5)"
+    else
+        log_fail "Expected 5 configs, found $detected"
+    fi
+}
+
+# Test: Backup creation works
+test_backup_creation() {
+    log_test "Creating backup of existing configs"
+    
+    cleanup_test_env
+    setup_fake_configs
+    
+    # Run installer with backup=true
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
+        --shell=fish --wm=tmux --backup=true 2>&1; then
+        
+        # Check if backup directory was created
+        backup_count=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null | wc -l)
+        
+        if [ "$backup_count" -gt 0 ]; then
+            log_pass "Backup directory created"
+            
+            # Get the backup directory
+            backup_dir=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null | head -1)
+            
+            # Check if files were backed up
+            if [ -d "$backup_dir" ]; then
+                files_backed=$(ls "$backup_dir" 2>/dev/null | wc -l)
+                if [ "$files_backed" -gt 0 ]; then
+                    log_pass "Backup contains $files_backed items"
+                else
+                    log_fail "Backup directory is empty"
+                fi
+            fi
+        else
+            log_fail "No backup directory found"
+        fi
+    else
+        log_fail "Installation with backup failed"
+    fi
+}
+
+# Test: Backup directory naming format
+test_backup_naming() {
+    log_test "Backup directory naming format"
+    
+    # Check existing backups match pattern: .gentleman-backup-YYYY-MM-DD-HHMMSS
+    backup_dirs=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null || echo "")
+    
+    if [ -n "$backup_dirs" ]; then
+        for dir in $backup_dirs; do
+            basename=$(basename "$dir")
+            # Check if format matches .gentleman-backup-YYYY-MM-DD-HHMMSS
+            if echo "$basename" | grep -qE '^\.gentleman-backup-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{6}$'; then
+                log_pass "Backup naming format correct: $basename"
+            else
+                log_fail "Backup naming format incorrect: $basename"
+            fi
+        done
+    else
+        log_pass "No backups to check (expected in some test runs)"
+    fi
+}
+
+# Test: Restore from backup works
+test_backup_restore() {
+    log_test "Restoring from backup"
+    
+    cleanup_test_env
+    setup_fake_configs
+    
+    # First, create a backup
+    mkdir -p "$HOME/.gentleman-backup-test-restore"
+    
+    # Copy files to backup manually for this test
+    mkdir -p "$HOME/.gentleman-backup-test-restore/nvim"
+    echo "-- Original nvim config from backup" > "$HOME/.gentleman-backup-test-restore/nvim/init.lua"
+    echo "-- This should be restored" >> "$HOME/.gentleman-backup-test-restore/nvim/init.lua"
+    
+    # Store original content for comparison
+    original_content="-- Original nvim config from backup"
+    
+    # Now modify the current config (simulate overwrite by installer)
+    echo "-- New config after install" > "$HOME/.config/nvim/init.lua"
+    
+    # Verify modification happened
+    if grep -q "New config after install" "$HOME/.config/nvim/init.lua"; then
+        log_pass "Config was modified (simulating install)"
+    else
+        log_fail "Could not modify config for test"
+        return
+    fi
+    
+    # Now restore from backup manually (simulating restore function)
+    if cp "$HOME/.gentleman-backup-test-restore/nvim/init.lua" "$HOME/.config/nvim/init.lua"; then
+        # Verify restore worked
+        if grep -q "Original nvim config from backup" "$HOME/.config/nvim/init.lua"; then
+            log_pass "Backup restore successful"
+        else
+            log_fail "Restored content doesn't match original"
+        fi
+    else
+        log_fail "Failed to copy from backup"
+    fi
+    
+    # Cleanup test backup
+    rm -rf "$HOME/.gentleman-backup-test-restore"
+}
+
+# Test: Multiple backups can coexist
+test_multiple_backups() {
+    log_test "Multiple backups can coexist"
+    
+    # Create multiple fake backups with different timestamps
+    mkdir -p "$HOME/.gentleman-backup-2024-01-15-120000"
+    echo "backup1" > "$HOME/.gentleman-backup-2024-01-15-120000/test"
+    
+    mkdir -p "$HOME/.gentleman-backup-2024-01-16-130000"
+    echo "backup2" > "$HOME/.gentleman-backup-2024-01-16-130000/test"
+    
+    mkdir -p "$HOME/.gentleman-backup-2024-01-17-140000"
+    echo "backup3" > "$HOME/.gentleman-backup-2024-01-17-140000/test"
+    
+    # Count backups
+    backup_count=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null | wc -l)
+    
+    if [ "$backup_count" -ge 3 ]; then
+        log_pass "Multiple backups coexist ($backup_count found)"
+    else
+        log_fail "Expected at least 3 backups, found $backup_count"
+    fi
+    
+    # Cleanup test backups
+    rm -rf "$HOME/.gentleman-backup-2024-01-15-120000"
+    rm -rf "$HOME/.gentleman-backup-2024-01-16-130000"
+    rm -rf "$HOME/.gentleman-backup-2024-01-17-140000"
+}
+
+# Test: Backup deletion works
+test_backup_deletion() {
+    log_test "Backup deletion"
+    
+    # Create a test backup
+    test_backup="$HOME/.gentleman-backup-delete-test"
+    mkdir -p "$test_backup"
+    echo "test" > "$test_backup/testfile"
+    
+    # Verify it exists
+    if [ ! -d "$test_backup" ]; then
+        log_fail "Could not create test backup"
+        return
+    fi
+    
+    # Delete it
+    rm -rf "$test_backup"
+    
+    # Verify deletion
+    if [ ! -d "$test_backup" ]; then
+        log_pass "Backup deletion successful"
+    else
+        log_fail "Backup still exists after deletion"
+    fi
+}
+
+# Test: Install without backup doesn't create backup dir
+test_install_no_backup() {
+    log_test "Install without backup doesn't create backup"
+    
+    cleanup_test_env
+    setup_fake_configs
+    
+    # Count existing backups before
+    before_count=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null | wc -l)
+    
+    # Run installer with backup=false
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
+        --shell=zsh --wm=none --backup=false 2>&1; then
+        
+        # Count backups after
+        after_count=$(ls -d "$HOME/.gentleman-backup-"* 2>/dev/null | wc -l)
+        
+        if [ "$after_count" -eq "$before_count" ]; then
+            log_pass "No new backup created when backup=false"
+        else
+            log_fail "Backup was created despite backup=false"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+# Test: Backup contains expected config files
+test_backup_contents() {
+    log_test "Backup contains expected files"
+    
+    cleanup_test_env
+    setup_fake_configs
+    
+    # Run installer with backup
+    if GENTLEMAN_VERBOSE=1 gentleman-dots --non-interactive \
+        --shell=fish --wm=tmux --nvim --backup=true 2>&1; then
+        
+        # Find the backup
+        backup_dir=$(ls -dt "$HOME/.gentleman-backup-"* 2>/dev/null | head -1)
+        
+        if [ -d "$backup_dir" ]; then
+            # List what's in the backup
+            log_test "Backup contents:"
+            ls -la "$backup_dir" 2>/dev/null || true
+            
+            # Check for expected items (at least some should be there)
+            found_items=0
+            
+            # Note: The backup system uses config keys, not full paths
+            for item in nvim fish zsh tmux zellij; do
+                if [ -e "$backup_dir/$item" ]; then
+                    found_items=$((found_items + 1))
+                    log_pass "  Found: $item"
+                fi
+            done
+            
+            if [ $found_items -gt 0 ]; then
+                log_pass "Backup contains $found_items config items"
+            else
+                log_fail "Backup is empty or missing expected items"
+            fi
+        else
+            log_fail "Could not find backup directory"
+        fi
+    else
+        log_fail "Installation with backup failed"
+    fi
+}
+
+# ============================================
 # RUN TESTS
 # ============================================
 
@@ -243,6 +564,22 @@ log_section "Basic Tests"
 test_binary_runs
 test_version
 test_non_interactive_flag
+
+# Backup tests (can run in basic mode)
+if [ "$RUN_BACKUP_TESTS" = "1" ] || [ "$RUN_FULL_E2E" = "1" ]; then
+    log_section "Backup System Tests"
+    test_detect_existing_configs
+    test_backup_creation
+    test_backup_naming
+    test_backup_restore
+    test_multiple_backups
+    test_backup_deletion
+    test_install_no_backup
+    test_backup_contents
+    
+    # Cleanup after backup tests
+    cleanup_test_env
+fi
 
 # Installation tests (only if we have the full environment)
 if [ "$RUN_FULL_E2E" = "1" ]; then

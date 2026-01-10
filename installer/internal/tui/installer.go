@@ -67,6 +67,8 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallNvim(m)
 	case "cleanup":
 		return stepCleanup(m)
+	case "setshell":
+		return stepSetDefaultShell(m)
 	default:
 		return fmt.Errorf("unknown step: %s", stepID)
 	}
@@ -138,6 +140,12 @@ func stepCloneRepo(m *Model) error {
 func stepInstallHomebrew(m *Model) error {
 	stepID := "homebrew"
 
+	// Termux doesn't use Homebrew - it uses pkg
+	if m.SystemInfo.IsTermux {
+		SendLog(stepID, "Skipping Homebrew (Termux uses pkg package manager)")
+		return nil
+	}
+
 	if system.CommandExists("brew") {
 		SendLog(stepID, "Homebrew already installed, skipping...")
 		return nil
@@ -177,6 +185,39 @@ func stepInstallHomebrew(m *Model) error {
 }
 
 func stepInstallDeps(m *Model) error {
+	stepID := "deps"
+
+	// Termux: use pkg (no sudo needed)
+	if m.SystemInfo.IsTermux {
+		SendLog(stepID, "Updating Termux packages...")
+		result := system.RunPkgWithLogs("update", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("deps", "Install Dependencies",
+				"Failed to update Termux packages",
+				result.Error)
+		}
+		result = system.RunPkgWithLogs("upgrade -y", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			// Upgrade failures are not critical
+			SendLog(stepID, "Warning: package upgrade had issues, continuing...")
+		}
+		SendLog(stepID, "Installing base dependencies...")
+		result = system.RunPkgInstall("git curl", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("deps", "Install Dependencies",
+				"Failed to install base dependencies on Termux",
+				result.Error)
+		}
+		return nil
+	}
+
+	// Arch Linux
 	if m.SystemInfo.OS == system.OSArch {
 		result := system.RunSudo("pacman -Syu --noconfirm", nil)
 		if result.Error != nil {
@@ -513,9 +554,16 @@ func stepInstallShell(m *Model) error {
 	switch shell {
 	case "fish":
 		SendLog(stepID, "Installing Fish shell and plugins...")
-		result := system.RunBrewWithLogs("install fish carapace zoxide atuin starship", nil, func(line string) {
-			SendLog(stepID, line)
-		})
+		var result *system.ExecResult
+		if m.SystemInfo.IsTermux {
+			result = system.RunPkgInstall("fish starship zoxide", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		} else {
+			result = system.RunBrewWithLogs("install fish carapace zoxide atuin starship", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		}
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to install Fish shell and dependencies",
@@ -547,9 +595,17 @@ func stepInstallShell(m *Model) error {
 
 	case "zsh":
 		SendLog(stepID, "Installing Zsh and plugins...")
-		result := system.RunBrewWithLogs("install zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k", nil, func(line string) {
-			SendLog(stepID, line)
-		})
+		var result *system.ExecResult
+		if m.SystemInfo.IsTermux {
+			// Termux has zsh in pkg, but plugins need to be installed differently
+			result = system.RunPkgInstall("zsh starship zoxide", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		} else {
+			result = system.RunBrewWithLogs("install zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		}
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to install Zsh and plugins",
@@ -582,9 +638,16 @@ func stepInstallShell(m *Model) error {
 
 	case "nushell":
 		SendLog(stepID, "Installing Nushell and dependencies...")
-		result := system.RunBrewWithLogs("install nushell carapace zoxide atuin jq bash starship", nil, func(line string) {
-			SendLog(stepID, line)
-		})
+		var result *system.ExecResult
+		if m.SystemInfo.IsTermux {
+			result = system.RunPkgInstall("nushell starship zoxide jq", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		} else {
+			result = system.RunBrewWithLogs("install nushell carapace zoxide atuin jq bash starship", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		}
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to install Nushell and dependencies",
@@ -646,9 +709,16 @@ func stepInstallWM(m *Model) error {
 	case "tmux":
 		if !system.CommandExists("tmux") {
 			SendLog(stepID, "Installing Tmux...")
-			result := system.RunBrewWithLogs("install tmux", nil, func(line string) {
-				SendLog(stepID, line)
-			})
+			var result *system.ExecResult
+			if m.SystemInfo.IsTermux {
+				result = system.RunPkgInstall("tmux", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			} else {
+				result = system.RunBrewWithLogs("install tmux", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			}
 			if result.Error != nil {
 				return wrapStepError("wm", "Install Tmux",
 					"Failed to install Tmux",
@@ -699,9 +769,16 @@ func stepInstallWM(m *Model) error {
 	case "zellij":
 		if !system.CommandExists("zellij") {
 			SendLog(stepID, "Installing Zellij...")
-			result := system.RunBrewWithLogs("install zellij", nil, func(line string) {
-				SendLog(stepID, line)
-			})
+			var result *system.ExecResult
+			if m.SystemInfo.IsTermux {
+				result = system.RunPkgInstall("zellij", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			} else {
+				result = system.RunBrewWithLogs("install zellij", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			}
 			if result.Error != nil {
 				return wrapStepError("wm", "Install Zellij",
 					"Failed to install Zellij",
@@ -743,9 +820,16 @@ func stepInstallNvim(m *Model) error {
 	// Check Node.js
 	if !system.CommandExists("node") {
 		SendLog(stepID, "Installing Node.js...")
-		result := system.RunBrewWithLogs("install node", nil, func(line string) {
-			SendLog(stepID, line)
-		})
+		var result *system.ExecResult
+		if m.SystemInfo.IsTermux {
+			result = system.RunPkgInstall("nodejs", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		} else {
+			result = system.RunBrewWithLogs("install node", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+		}
 		if result.Error != nil {
 			return wrapStepError("nvim", "Install Neovim",
 				"Failed to install Node.js (required for LSP servers)",
@@ -757,9 +841,17 @@ func stepInstallNvim(m *Model) error {
 
 	// Install dependencies
 	SendLog(stepID, "Installing Neovim and dependencies...")
-	result := system.RunBrewWithLogs("install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter", nil, func(line string) {
-		SendLog(stepID, line)
-	})
+	var result *system.ExecResult
+	if m.SystemInfo.IsTermux {
+		// Termux package names (neovim instead of nvim, clang instead of gcc)
+		result = system.RunPkgInstall("neovim git clang fzf fd ripgrep bat curl lazygit", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+	} else {
+		result = system.RunBrewWithLogs("install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+	}
 	if result.Error != nil {
 		return wrapStepError("nvim", "Install Neovim",
 			"Failed to install Neovim and dependencies",
@@ -845,5 +937,136 @@ func stepCleanup(m *Model) error {
 		return nil
 	}
 	SendLog(stepID, "✓ Cleanup complete")
+	return nil
+}
+
+// stepSetDefaultShell sets the selected shell as the user's default shell
+// In non-interactive mode, this handles Termux specially (via .bashrc)
+// and attempts to set the shell on other systems if possible
+func stepSetDefaultShell(m *Model) error {
+	stepID := "setshell"
+	shell := m.Choices.Shell
+	homeDir := os.Getenv("HOME")
+
+	var shellCmd string
+	switch shell {
+	case "fish":
+		shellCmd = "fish"
+	case "zsh":
+		shellCmd = "zsh"
+	case "nushell":
+		shellCmd = "nu"
+	default:
+		SendLog(stepID, fmt.Sprintf("Unknown shell: %s, skipping", shell))
+		return nil
+	}
+
+	// Termux: no chsh available, modify .bashrc to auto-start shell
+	if m.SystemInfo.IsTermux {
+		SendLog(stepID, "Configuring shell auto-start for Termux...")
+
+		// Find the shell path
+		shellPath := system.Run(fmt.Sprintf("which %s", shellCmd), nil)
+		if shellPath.Error != nil || strings.TrimSpace(shellPath.Output) == "" {
+			SendLog(stepID, fmt.Sprintf("Shell '%s' not found in PATH, skipping", shellCmd))
+			return nil
+		}
+		shellPathStr := strings.TrimSpace(shellPath.Output)
+
+		// Read existing .bashrc
+		bashrcPath := filepath.Join(homeDir, ".bashrc")
+		existingContent := ""
+		if data, err := os.ReadFile(bashrcPath); err == nil {
+			existingContent = string(data)
+		}
+
+		// Check if already configured
+		if strings.Contains(existingContent, "# Gentleman.Dots shell auto-start") {
+			SendLog(stepID, "Shell auto-start already configured in ~/.bashrc")
+			return nil
+		}
+
+		// Append auto-start configuration
+		autoStartConfig := fmt.Sprintf(`
+# Gentleman.Dots shell auto-start
+if [ -x "%s" ] && [ -z "$GENTLEMANDOTS_SHELL_STARTED" ]; then
+    export GENTLEMANDOTS_SHELL_STARTED=1
+    exec %s
+fi
+`, shellPathStr, shellPathStr)
+
+		f, err := os.OpenFile(bashrcPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			return wrapStepError("setshell", "Set Default Shell",
+				"Failed to open ~/.bashrc for writing",
+				err)
+		}
+		defer f.Close()
+
+		if _, err := f.WriteString(autoStartConfig); err != nil {
+			return wrapStepError("setshell", "Set Default Shell",
+				"Failed to write shell auto-start to ~/.bashrc",
+				err)
+		}
+
+		SendLog(stepID, fmt.Sprintf("✓ Configured %s to auto-start in ~/.bashrc", shell))
+		SendLog(stepID, "Close and reopen Termux for changes to take effect")
+		return nil
+	}
+
+	// Non-Termux: Try to set shell using sudo usermod (works if NOPASSWD configured)
+	// Find the shell path first
+	shellPath := system.Run(fmt.Sprintf("which %s", shellCmd), nil)
+	if shellPath.Error != nil || strings.TrimSpace(shellPath.Output) == "" {
+		SendLog(stepID, fmt.Sprintf("Shell '%s' not found in PATH, skipping", shellCmd))
+		return nil
+	}
+	shellPathStr := strings.TrimSpace(shellPath.Output)
+
+	// Get current username
+	currentUser := os.Getenv("USER")
+	if currentUser == "" {
+		currentUser = os.Getenv("LOGNAME")
+	}
+	if currentUser == "" {
+		// Fallback to whoami command (useful in Docker containers)
+		whoamiResult := system.Run("whoami", nil)
+		if whoamiResult.Error == nil {
+			currentUser = strings.TrimSpace(whoamiResult.Output)
+		}
+	}
+	if currentUser == "" {
+		SendLog(stepID, "Could not determine current user, skipping shell change")
+		return nil
+	}
+
+	// First, ensure shell is in /etc/shells
+	SendLog(stepID, fmt.Sprintf("Adding %s to /etc/shells if needed...", shellPathStr))
+	checkShells := system.Run(fmt.Sprintf("grep -q '^%s$' /etc/shells", shellPathStr), nil)
+	if checkShells.Error != nil {
+		// Shell not in /etc/shells, try to add it
+		addResult := system.RunSudo(fmt.Sprintf("sh -c 'echo \"%s\" >> /etc/shells'", shellPathStr), nil)
+		if addResult.Error != nil {
+			SendLog(stepID, fmt.Sprintf("Could not add %s to /etc/shells (may need manual setup)", shellPathStr))
+		}
+	}
+
+	// Try sudo usermod first (more reliable than chsh in scripts)
+	SendLog(stepID, fmt.Sprintf("Setting %s as default shell for %s...", shell, currentUser))
+	result := system.RunSudo(fmt.Sprintf("usermod -s %s %s", shellPathStr, currentUser), nil)
+	if result.Error != nil {
+		// usermod failed, try chsh as fallback
+		SendLog(stepID, "usermod failed, trying chsh...")
+		result = system.RunSudo(fmt.Sprintf("chsh -s %s %s", shellPathStr, currentUser), nil)
+		if result.Error != nil {
+			// Both failed - not critical, just inform user
+			SendLog(stepID, fmt.Sprintf("Could not set default shell automatically"))
+			SendLog(stepID, fmt.Sprintf("Run manually: chsh -s %s", shellPathStr))
+			return nil
+		}
+	}
+
+	SendLog(stepID, fmt.Sprintf("✓ Default shell set to %s", shell))
+	SendLog(stepID, "Log out and log back in for changes to take effect")
 	return nil
 }

@@ -39,6 +39,16 @@ Frontend (Angular, React), state management (Redux, Signals, GPX-Store), Clean/H
 
 IMPORTANT: When you detect any of these contexts, IMMEDIATELY read the corresponding skill file BEFORE writing any code. These are your coding standards.
 
+### Gentleman.Dots Specific (when in this repo)
+| Context | Read this file |
+|---------|----------------|
+| Bubbletea TUI, screens, model.go | `~/.claude/skills/gentleman-bubbletea/SKILL.md` |
+| Vim Trainer, exercises, RPG system | `~/.claude/skills/gentleman-trainer/SKILL.md` |
+| Installation steps, installer.go | `~/.claude/skills/gentleman-installer/SKILL.md` |
+| E2E tests, Docker, e2e_test.sh | `~/.claude/skills/gentleman-e2e/SKILL.md` |
+| OS detection, system/exec | `~/.claude/skills/gentleman-system/SKILL.md` |
+| Go tests, teatest, table-driven | `~/.claude/skills/go-testing/SKILL.md` |
+
 ### Framework/Library Detection
 | Context | Read this file |
 |---------|----------------|

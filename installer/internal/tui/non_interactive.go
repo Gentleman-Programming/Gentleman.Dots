@@ -29,6 +29,11 @@ func RunNonInteractive(choices UserChoices) error {
 		LogLines:   []string{},
 	}
 
+	// Detect existing configs for backup functionality
+	if choices.CreateBackup {
+		model.ExistingConfigs = system.DetectExistingConfigs()
+	}
+
 	// Define steps to run based on choices
 	steps := buildStepsForChoices(model)
 

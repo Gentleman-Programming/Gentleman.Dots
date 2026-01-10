@@ -14,6 +14,7 @@ const (
 	OSLinux
 	OSArch
 	OSDebian // Debian-based (Debian, Ubuntu, etc.)
+	OSTermux // Termux on Android
 	OSUnknown
 )
 
@@ -22,10 +23,13 @@ type SystemInfo struct {
 	OSName    string
 	IsWSL     bool
 	IsARM     bool
+	IsTermux  bool
 	HomeDir   string
 	HasBrew   bool
+	HasPkg    bool // Termux package manager
 	HasXcode  bool
 	UserShell string
+	Prefix    string // Termux $PREFIX or empty for other systems
 }
 
 func Detect() *SystemInfo {
@@ -34,6 +38,18 @@ func Detect() *SystemInfo {
 		OSName:  "Unknown",
 		HomeDir: os.Getenv("HOME"),
 		IsARM:   runtime.GOARCH == "arm64" || runtime.GOARCH == "arm",
+		Prefix:  os.Getenv("PREFIX"),
+	}
+
+	// Check for Termux FIRST (it runs on Linux but is special)
+	if isTermux() {
+		info.OS = OSTermux
+		info.OSName = "Termux"
+		info.IsTermux = true
+		info.HasPkg = checkPkg()
+		info.HasBrew = false // Termux doesn't use Homebrew
+		info.UserShell = detectCurrentShell()
+		return info
 	}
 
 	switch runtime.GOOS {
@@ -77,6 +93,30 @@ func isArchLinux() bool {
 
 func isDebian() bool {
 	_, err := os.Stat("/etc/debian_version")
+	return err == nil
+}
+
+// isTermux detects if we're running in Termux on Android
+func isTermux() bool {
+	// Check TERMUX_VERSION environment variable
+	if os.Getenv("TERMUX_VERSION") != "" {
+		return true
+	}
+	// Check PREFIX contains termux path
+	prefix := os.Getenv("PREFIX")
+	if strings.Contains(prefix, "com.termux") {
+		return true
+	}
+	// Check for Termux-specific paths
+	if _, err := os.Stat("/data/data/com.termux"); err == nil {
+		return true
+	}
+	return false
+}
+
+// checkPkg checks if Termux pkg command is available
+func checkPkg() bool {
+	_, err := exec.LookPath("pkg")
 	return err == nil
 }
 

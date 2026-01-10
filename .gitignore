@@ -5,3 +5,10 @@ installer/dist/
 
 # E2E test artifacts
 installer/e2e/gentleman-installer-*
+
+# Generated AI instruction files (from AGENTS.md via ./skills/setup.sh)
+# AGENTS.md is the single source of truth - do not edit these directly
+CLAUDE.md
+GEMINI.md
+CODEX.md
+.github/copilot-instructions.md
