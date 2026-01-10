@@ -176,11 +176,33 @@ test_termux_fish_zellij_install() {
         
         log_pass "Fish + Zellij installation completed"
         
-        # Check for fish config
-        if [ -d "$HOME/.config/fish" ] || [ -f "$HOME/.config/fish/config.fish" ]; then
+        # Check for fish config directory
+        if [ -d "$HOME/.config/fish" ]; then
             log_pass "Fish config directory exists"
         else
-            log_info "Fish config not found (expected in test mode)"
+            log_fail "Fish config directory not found"
+            return
+        fi
+        
+        # Check for config.fish specifically
+        if [ -f "$HOME/.config/fish/config.fish" ]; then
+            log_pass "Fish config.fish exists"
+        else
+            log_fail "Fish config.fish not found"
+        fi
+        
+        # Verify config.fish is not empty
+        if [ -s "$HOME/.config/fish/config.fish" ]; then
+            log_pass "Fish config.fish has content"
+        else
+            log_fail "Fish config.fish is empty"
+        fi
+        
+        # Check for zellij config
+        if [ -d "$HOME/.config/zellij" ]; then
+            log_pass "Zellij config directory exists"
+        else
+            log_info "Zellij config not found (may be expected)"
         fi
     else
         log_fail "Installation failed"
@@ -201,6 +223,66 @@ test_termux_no_sudo() {
     # Termux doesn't have/need sudo
     # Package installations go through pkg without sudo
     log_pass "Termux mode uses pkg without sudo"
+}
+
+test_termux_font_install() {
+    log_test "Termux font installation"
+    
+    # Clean previous
+    rm -rf "$HOME/.termux" 2>/dev/null || true
+    
+    # Run installation with nvim (which triggers font install)
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=fish --wm=tmux --nvim --backup=false 2>&1; then
+        
+        # Check if .termux directory was created
+        if [ -d "$HOME/.termux" ]; then
+            log_pass ".termux directory created"
+            
+            # Check if font.ttf exists
+            if [ -f "$HOME/.termux/font.ttf" ]; then
+                log_pass "Nerd Font installed at ~/.termux/font.ttf"
+                
+                # Check file is not empty
+                if [ -s "$HOME/.termux/font.ttf" ]; then
+                    log_pass "Font file has content"
+                else
+                    log_fail "Font file is empty"
+                fi
+            else
+                log_info "font.ttf not found (font step may have been skipped)"
+            fi
+        else
+            log_info ".termux directory not found (font step may have been skipped)"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_nvim_config() {
+    log_test "Neovim config copied correctly on Termux"
+    
+    # Check nvim config exists
+    if [ -d "$HOME/.config/nvim" ]; then
+        log_pass "Neovim config directory exists"
+        
+        # Check init.lua exists
+        if [ -f "$HOME/.config/nvim/init.lua" ]; then
+            log_pass "Neovim init.lua exists"
+        else
+            log_fail "Neovim init.lua not found"
+        fi
+        
+        # Check lua directory exists
+        if [ -d "$HOME/.config/nvim/lua" ]; then
+            log_pass "Neovim lua directory exists"
+        else
+            log_info "Neovim lua directory not found"
+        fi
+    else
+        log_fail "Neovim config directory not found"
+    fi
 }
 
 # ============================================
@@ -231,6 +313,8 @@ test_termux_zsh_install
 test_termux_fish_zellij_install
 test_termux_no_homebrew
 test_termux_no_sudo
+test_termux_font_install
+test_termux_nvim_config
 
 # Summary
 log_section "Test Summary"
