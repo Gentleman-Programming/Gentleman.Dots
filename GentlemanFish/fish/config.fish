@@ -38,52 +38,39 @@ if test $IS_TERMUX -eq 0; and set -q BREW_BIN; and test -f $BREW_BIN
     eval ($BREW_BIN shellenv)
 end
 
-# Start tmux/zellij only if installed
-if not set -q TMUX; and type -q tmux
+# Start tmux/zellij
+if not set -q TMUX
     tmux
 end
 
-#if not set -q ZELLIJ; and type -q zellij
+#if not set -q ZELLIJ
 #    zellij
 #end
 
-# Initialize tools only if they exist
-if type -q starship
-    starship init fish | source
-end
-
-if type -q zoxide
-    zoxide init fish | source
-end
-
-if type -q atuin
-    atuin init fish | source
-end
-
-if type -q fzf
-    fzf --fish | source
-end
+# Initialize tools
+starship init fish | source
+zoxide init fish | source
+atuin init fish | source
+fzf --fish | source
 
 set -x PATH $HOME/.cargo/bin $PATH
 
-# Carapace completions (only if installed)
-if type -q carapace
-    set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
+# Carapace completions
+set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
 
+if not test -d ~/.config/fish/completions
+    mkdir -p ~/.config/fish/completions
+end
+
+if not test -f ~/.config/fish/completions/.initialized
     if not test -d ~/.config/fish/completions
         mkdir -p ~/.config/fish/completions
     end
-
-    if not test -f ~/.config/fish/completions/.initialized
-        if not test -d ~/.config/fish/completions
-            mkdir -p ~/.config/fish/completions
-        end
-        carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
-        touch ~/.config/fish/completions/.initialized
-    end
-
-    carapace _carapace | source
+    carapace --list | awk '{print $1}' | xargs -I{} touch ~/.config/fish/completions/{}.fish
+    touch ~/.config/fish/completions/.initialized
 end
+
+carapace _carapace | source
 
 set -g fish_greeting ""
 
