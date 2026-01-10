@@ -1,5 +1,9 @@
 # Gentleman.Dots
 
+> **Important Notice (January 2026)**: Anthropic has blocked third-party tools (OpenCode, Crush, etc.) from using Claude Max subscriptions. OAuth tokens are now restricted to Claude Code only. This config now uses **Claude Code as the primary AI assistant** in Neovim.
+>
+> **OpenCode Fix (v2.4.5)**: If you still want to use OpenCode with Claude Max/Pro, add the `opencode-anthropic-auth` plugin to your config. See [OpenCode with Claude Max](#opencode-with-claude-max) section below.
+
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9fcb1b15-89db-404e-b0f3-107801bd9115" />
 
 ---
@@ -630,6 +634,30 @@ To switch from one AI assistant to another:
 - **For Claude users:** Use **Claude Code.nvim** with the Claude Code CLI
 - **For GitHub Copilot users:** Use **CopilotChat.nvim**
 - **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI
+
+### OpenCode with Claude Max
+
+> **Why Claude Code is now the default:** In January 2026, Anthropic restricted their OAuth tokens to only work with the official Claude Code CLI. Third-party tools like OpenCode, Crush, etc. were blocked from using Claude Max/Pro subscriptions.
+
+**However, there's a fix!** The `opencode-anthropic-auth` plugin enables OAuth authentication with Claude Max/Pro directly from OpenCode.
+
+To enable it, add this to your `opencode.json`:
+
+```json
+{
+  "plugin": ["opencode-anthropic-auth"],
+  "model": "anthropic/claude-sonnet-4-20250514"
+}
+```
+
+**What this does:**
+- Allows OpenCode to authenticate using your Claude Max/Pro subscription
+- No separate API keys needed
+- Full access to Claude Sonnet 4 and other models
+
+**Location:** `~/.config/opencode/opencode.json`
+
+If you prefer OpenCode over Claude Code CLI, this is the way to go.
 
 ## Contributing
 
