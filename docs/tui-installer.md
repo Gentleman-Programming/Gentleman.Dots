@@ -216,9 +216,9 @@ The installer includes educational content to help you understand each tool:
 | Requirement | Details |
 |-------------|---------|
 | **macOS** | 10.15+ |
-| **Linux** | Ubuntu 20.04+, Arch, Debian |
+| **Linux** | Ubuntu 20.04+, Debian, Fedora/RHEL, Arch |
 | **Termux** | Android terminal emulator |
-| **Homebrew** | Will be installed if missing (macOS/Linux) |
+| **Homebrew** | Will be installed if missing (macOS/Linux, except Fedora) |
 | **Git** | For cloning the repository |
 | **Internet** | For downloading packages |
 

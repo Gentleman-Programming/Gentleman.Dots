@@ -146,6 +146,7 @@ Launch it from the main menu: **Vim Mastery Trainer**
 | [AI Configuration](docs/ai-configuration.md) | Claude Code, OpenCode, Copilot, and other AI assistants |
 | [Vim Trainer Spec](docs/vim-trainer-spec.md) | Technical specification for the Vim Mastery Trainer |
 | [Docker Testing](docs/docker-testing.md) | E2E testing with Docker containers |
+| [Contributing](docs/contributing.md) | Development setup, skills system, E2E tests, release process |
 
 ---
 
