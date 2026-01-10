@@ -3,6 +3,7 @@ package tui
 import (
 	"bytes"
 	"io"
+	"os"
 	"testing"
 	"time"
 
@@ -10,6 +11,15 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/exp/teatest"
 )
+
+// skipIfTermux skips the test if running in Termux environment
+// Golden tests compare against macOS snapshots, so they fail on other platforms
+func skipIfTermux(t *testing.T) {
+	t.Helper()
+	if _, err := os.Stat("/data/data/com.termux"); err == nil {
+		t.Skip("Skipping golden test: running in Termux environment (snapshots are from macOS)")
+	}
+}
 
 // Helper to read all bytes from io.Reader
 func readAll(t *testing.T, r io.Reader) []byte {
@@ -23,6 +33,7 @@ func readAll(t *testing.T, r io.Reader) []byte {
 
 // TestWelcomeScreenGolden tests the welcome screen render against golden file
 func TestWelcomeScreenGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24
@@ -45,6 +56,7 @@ func TestWelcomeScreenGolden(t *testing.T) {
 
 // TestMainMenuGolden tests the main menu render against golden file
 func TestMainMenuGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24
@@ -64,6 +76,7 @@ func TestMainMenuGolden(t *testing.T) {
 
 // TestOSSelectGolden tests OS selection screen against golden file
 func TestOSSelectGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24
@@ -236,6 +249,7 @@ func TestLearnToolsE2E(t *testing.T) {
 
 // TestBackupScreenGolden tests the backup confirmation screen
 func TestBackupScreenGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24
@@ -256,6 +270,7 @@ func TestBackupScreenGolden(t *testing.T) {
 
 // TestErrorScreenGolden tests the error screen render
 func TestErrorScreenGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24
@@ -276,6 +291,7 @@ func TestErrorScreenGolden(t *testing.T) {
 
 // TestCompleteScreenGolden tests the completion screen render
 func TestCompleteScreenGolden(t *testing.T) {
+	skipIfTermux(t)
 	m := NewModel()
 	m.Width = 80
 	m.Height = 24

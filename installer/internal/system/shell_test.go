@@ -59,7 +59,8 @@ func TestRunWithDynamicShell(t *testing.T) {
 	})
 
 	t.Run("Run should handle complex commands", func(t *testing.T) {
-		result := Run("test -d / && echo 'exists'", nil)
+		// Use sh -c to ensure && is interpreted correctly across all shells
+		result := Run("sh -c 'test -d / && echo exists'", nil)
 
 		if result.Error != nil {
 			t.Errorf("Run failed with complex command: %v", result.Error)

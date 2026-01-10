@@ -6,6 +6,27 @@ import (
 	"testing"
 )
 
+func TestOSTypes(t *testing.T) {
+	t.Run("OSFedora should be defined", func(t *testing.T) {
+		// Verify OSFedora is a valid OSType
+		var osType OSType = OSFedora
+		if osType == OSUnknown {
+			t.Error("OSFedora should not equal OSUnknown")
+		}
+	})
+
+	t.Run("all OS types should be distinct", func(t *testing.T) {
+		osTypes := []OSType{OSMac, OSLinux, OSArch, OSDebian, OSFedora, OSTermux, OSUnknown}
+		seen := make(map[OSType]bool)
+		for _, ot := range osTypes {
+			if seen[ot] {
+				t.Errorf("Duplicate OS type value found: %d", ot)
+			}
+			seen[ot] = true
+		}
+	})
+}
+
 func TestDetect(t *testing.T) {
 	info := Detect()
 
@@ -35,7 +56,7 @@ func TestDetect(t *testing.T) {
 				t.Errorf("Expected OSName to be 'macOS', got '%s'", info.OSName)
 			}
 		case "linux":
-			validNames := []string{"Linux", "Arch Linux", "Debian/Ubuntu"}
+			validNames := []string{"Linux", "Arch Linux", "Debian/Ubuntu", "Fedora/RHEL", "Termux"}
 			found := false
 			for _, name := range validNames {
 				if info.OSName == name {
@@ -125,6 +146,27 @@ func TestIsDebian(t *testing.T) {
 	})
 }
 
+func TestIsFedora(t *testing.T) {
+	t.Run("should not panic", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("isFedora panicked: %v", r)
+			}
+		}()
+		_ = isFedora()
+	})
+
+	t.Run("should return bool", func(t *testing.T) {
+		result := isFedora()
+		// Just verify it returns a boolean without panicking
+		if result {
+			t.Log("Running on Fedora/RHEL system")
+		} else {
+			t.Log("Not running on Fedora/RHEL system")
+		}
+	})
+}
+
 func TestIsTermux(t *testing.T) {
 	t.Run("should not panic", func(t *testing.T) {
 		defer func() {
@@ -191,6 +233,12 @@ func TestDetectTermuxFields(t *testing.T) {
 	})
 
 	t.Run("Non-Termux system should have IsTermux=false", func(t *testing.T) {
+		// Skip this test if we're actually running in Termux
+		// (the directory /data/data/com.termux will exist regardless of env vars)
+		if _, err := os.Stat("/data/data/com.termux"); err == nil {
+			t.Skip("Skipping test: running in actual Termux environment")
+		}
+
 		// Save original values
 		originalVersion := os.Getenv("TERMUX_VERSION")
 		originalPrefix := os.Getenv("PREFIX")
@@ -208,9 +256,8 @@ func TestDetectTermuxFields(t *testing.T) {
 		os.Setenv("PREFIX", "/usr/local") // Non-termux prefix
 
 		// On non-Termux systems, IsTermux should be false
-		// (unless /data/data/com.termux exists, which it won't on normal systems)
 		info := Detect()
-		if info.IsTermux && info.Prefix != "" && !containsTermux(info.Prefix) {
+		if info.IsTermux {
 			t.Error("IsTermux should be false on non-Termux systems")
 		}
 	})

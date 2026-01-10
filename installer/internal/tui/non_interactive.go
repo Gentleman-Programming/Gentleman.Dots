@@ -71,7 +71,7 @@ func buildStepsForChoices(m *Model) []InstallStep {
 	// Clone repo
 	steps = append(steps, InstallStep{ID: "clone", Name: "Clone Gentleman.Dots repository"})
 
-	// Homebrew (for Mac and some Linux)
+	// Homebrew (for Mac and Debian/Ubuntu Linux - NOT Fedora/Arch which use native package managers)
 	if m.SystemInfo.OS == system.OSMac || m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux {
 		steps = append(steps, InstallStep{ID: "homebrew", Name: "Install/Update Homebrew"})
 	}

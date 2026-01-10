@@ -13,8 +13,9 @@ const (
 	OSMac OSType = iota
 	OSLinux
 	OSArch
-	OSDebian // Debian-based (Debian, Ubuntu, etc.)
-	OSTermux // Termux on Android
+	OSDebian  // Debian-based (Debian, Ubuntu, etc.)
+	OSFedora  // Fedora/RHEL-based (Fedora, CentOS, RHEL, etc.)
+	OSTermux  // Termux on Android
 	OSUnknown
 )
 
@@ -65,6 +66,9 @@ func Detect() *SystemInfo {
 		if isArchLinux() {
 			info.OS = OSArch
 			info.OSName = "Arch Linux"
+		} else if isFedora() {
+			info.OS = OSFedora
+			info.OSName = "Fedora/RHEL"
 		} else if isDebian() {
 			info.OS = OSDebian
 			info.OSName = "Debian/Ubuntu"
@@ -94,6 +98,18 @@ func isArchLinux() bool {
 func isDebian() bool {
 	_, err := os.Stat("/etc/debian_version")
 	return err == nil
+}
+
+func isFedora() bool {
+	// Check for Fedora specifically
+	if _, err := os.Stat("/etc/fedora-release"); err == nil {
+		return true
+	}
+	// Check for RHEL/CentOS (also use dnf)
+	if _, err := os.Stat("/etc/redhat-release"); err == nil {
+		return true
+	}
+	return false
 }
 
 // isTermux detects if we're running in Termux on Android

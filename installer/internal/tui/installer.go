@@ -236,6 +236,18 @@ func stepInstallDeps(m *Model) error {
 		return nil
 	}
 
+	// Fedora/RHEL
+	if m.SystemInfo.OS == system.OSFedora {
+		result := system.RunSudo("dnf check-update || true", nil) // dnf check-update returns 100 if updates available
+		result = system.RunSudo("dnf install -y @development-tools curl file git wget unzip fontconfig", nil)
+		if result.Error != nil {
+			return wrapStepError("deps", "Install Dependencies",
+				"Failed to install base dependencies on Fedora/RHEL",
+				result.Error)
+		}
+		return nil
+	}
+
 	// Debian/Ubuntu
 	result := system.RunSudo("apt-get update", nil)
 	if result.Error != nil {
@@ -283,6 +295,11 @@ func stepInstallTerminal(m *Model) error {
 				})
 			} else if m.SystemInfo.OS == system.OSMac {
 				result = system.RunBrewWithLogs("install --cask alacritty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			} else if m.SystemInfo.OS == system.OSFedora {
+				// Fedora: install from dnf
+				result = system.RunSudoWithLogs("dnf install -y alacritty", nil, func(line string) {
 					SendLog(stepID, line)
 				})
 			} else if m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux {
@@ -385,6 +402,12 @@ func stepInstallTerminal(m *Model) error {
 				result = system.RunSudoWithLogs("pacman -S --noconfirm wezterm", nil, func(line string) {
 					SendLog(stepID, line)
 				})
+			} else if m.SystemInfo.OS == system.OSFedora {
+				// Fedora: enable COPR and install
+				system.RunSudo("dnf copr enable -y wezfurlong/wezterm-nightly", nil)
+				result = system.RunSudoWithLogs("dnf install -y wezterm", nil, func(line string) {
+					SendLog(stepID, line)
+				})
 			} else if m.SystemInfo.OS == system.OSMac {
 				result = system.RunBrewWithLogs("install --cask wezterm", nil, func(line string) {
 					SendLog(stepID, line)
@@ -449,6 +472,12 @@ func stepInstallTerminal(m *Model) error {
 			var result *system.ExecResult
 			if m.SystemInfo.OS == system.OSArch {
 				result = system.RunSudoWithLogs("pacman -S --noconfirm ghostty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			} else if m.SystemInfo.OS == system.OSFedora {
+				// Fedora: enable COPR and install
+				system.RunSudo("dnf copr enable -y pgdev/ghostty", nil)
+				result = system.RunSudoWithLogs("dnf install -y ghostty", nil, func(line string) {
 					SendLog(stepID, line)
 				})
 			} else if m.SystemInfo.OS == system.OSMac {

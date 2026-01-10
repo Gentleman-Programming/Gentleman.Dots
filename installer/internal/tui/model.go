@@ -263,7 +263,7 @@ func (m Model) GetCurrentOptions() []string {
 			macLabel = "macOS (detected)"
 		} else if m.SystemInfo.OS == system.OSTermux {
 			termuxLabel = "Termux (detected)"
-		} else if m.SystemInfo.OS == system.OSLinux || m.SystemInfo.OS == system.OSArch || m.SystemInfo.OS == system.OSDebian {
+		} else if m.SystemInfo.OS == system.OSLinux || m.SystemInfo.OS == system.OSArch || m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSFedora {
 			linuxLabel = "Linux (detected)"
 		}
 		return []string{macLabel, linuxLabel, termuxLabel}

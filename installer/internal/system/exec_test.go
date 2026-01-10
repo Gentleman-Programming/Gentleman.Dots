@@ -61,7 +61,8 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("should handle environment variables", func(t *testing.T) {
-		result := Run("echo $TEST_VAR", &ExecOptions{
+		// Use sh -c to ensure variable expansion works across all shells
+		result := Run(`sh -c 'echo "$TEST_VAR"'`, &ExecOptions{
 			Env: []string{"TEST_VAR=gentleman"},
 		})
 		if result.Error != nil {
@@ -725,7 +726,8 @@ func TestRunWithLogs(t *testing.T) {
 	})
 
 	t.Run("should capture exit code on failure", func(t *testing.T) {
-		result := RunWithLogs("exit 42", nil, nil)
+		// Use sh -c to ensure exit works correctly across all shells
+		result := RunWithLogs("sh -c 'exit 42'", nil, nil)
 
 		if result.Error == nil {
 			t.Error("Expected error for non-zero exit")

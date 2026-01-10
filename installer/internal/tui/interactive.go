@@ -120,6 +120,24 @@ echo ""
 echo "Press Enter to continue..."
 read dummy
 `
+	} else if m.SystemInfo.OS == system.OSFedora {
+		// Fedora/RHEL
+		script = `#!/bin/sh
+set -e
+echo ""
+echo "🔄 Checking for Fedora/RHEL updates..."
+echo "   (You may be prompted for your password)"
+echo ""
+sudo dnf check-update || true
+echo ""
+echo "📦 Installing base dependencies..."
+sudo dnf install -y @development-tools curl file git wget unzip fontconfig
+echo ""
+echo "✅ Dependencies installed successfully!"
+echo ""
+echo "Press Enter to continue..."
+read dummy
+`
 	} else {
 		// Debian/Ubuntu
 		script = `#!/bin/sh
@@ -157,6 +175,8 @@ func getTerminalScript(m *Model) (string, error) {
 			installCmd = `echo "✓ Alacritty already installed"`
 		} else if m.SystemInfo.OS == system.OSArch {
 			installCmd = `sudo pacman -S --noconfirm alacritty`
+		} else if m.SystemInfo.OS == system.OSFedora {
+			installCmd = `sudo dnf install -y alacritty`
 		} else {
 			// Debian/Ubuntu: compile from source (PPAs are unreliable)
 			installCmd = `echo "📦 Installing build dependencies..."
@@ -198,6 +218,9 @@ cp "Gentleman.Dots/alacritty.toml" "%s/.config/alacritty/alacritty.toml"`, homeD
 			installCmd = `echo "✓ WezTerm already installed"`
 		} else if m.SystemInfo.OS == system.OSArch {
 			installCmd = `sudo pacman -S --noconfirm wezterm`
+		} else if m.SystemInfo.OS == system.OSFedora {
+			installCmd = `sudo dnf copr enable -y wezfurlong/wezterm-nightly
+sudo dnf install -y wezterm`
 		} else {
 			// Debian uses brew, not interactive
 			return "", nil
@@ -210,6 +233,9 @@ cp "Gentleman.Dots/.wezterm.lua" "%s/.config/wezterm/wezterm.lua"`, homeDir, hom
 			installCmd = `echo "✓ Ghostty already installed"`
 		} else if m.SystemInfo.OS == system.OSArch {
 			installCmd = `sudo pacman -S --noconfirm ghostty`
+		} else if m.SystemInfo.OS == system.OSFedora {
+			installCmd = `sudo dnf copr enable -y pgdev/ghostty
+sudo dnf install -y ghostty`
 		} else {
 			// Debian uses install script
 			installCmd = `curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh | bash`

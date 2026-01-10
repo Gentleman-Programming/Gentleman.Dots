@@ -23,13 +23,14 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 # Image configurations
-IMAGES="alpine debian ubuntu termux"
+IMAGES="alpine debian ubuntu fedora termux"
 
 get_dockerfile() {
     case "$1" in
         alpine) echo "Dockerfile.alpine" ;;
         debian) echo "Dockerfile.debian" ;;
         ubuntu) echo "Dockerfile.ubuntu" ;;
+        fedora) echo "Dockerfile.fedora" ;;
         termux) echo "Dockerfile.termux" ;;
     esac
 }
@@ -39,6 +40,7 @@ get_description() {
         alpine) echo "Alpine (ash/sh, no bash)" ;;
         debian) echo "Debian (sh, no bash)" ;;
         ubuntu) echo "Ubuntu (bash, full e2e + backup tests)" ;;
+        fedora) echo "Fedora (dnf package manager)" ;;
         termux) echo "Termux-like (simulated pkg)" ;;
     esac
 }
@@ -305,7 +307,8 @@ select_image() {
         1) SELECTED_IMAGE="alpine" ;;
         2) SELECTED_IMAGE="debian" ;;
         3) SELECTED_IMAGE="ubuntu" ;;
-        4) SELECTED_IMAGE="termux" ;;
+        4) SELECTED_IMAGE="fedora" ;;
+        5) SELECTED_IMAGE="termux" ;;
         0|"") SELECTED_IMAGE="" ;;
         *) SELECTED_IMAGE="" ;;
     esac
@@ -495,7 +498,7 @@ usage() {
     echo "  reset <image>   Reset specific image"
     echo "  status          Show image status"
     echo ""
-    echo "Images: alpine, debian, ubuntu, termux"
+    echo "Images: alpine, debian, ubuntu, fedora, termux"
     echo "Platforms: arm64, amd64 (optional)"
     echo ""
     echo "Examples:"

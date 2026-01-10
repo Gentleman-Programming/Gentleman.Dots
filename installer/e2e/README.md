@@ -12,6 +12,7 @@ End-to-end tests that verify the installer works across different environments.
 ./run_e2e.sh debian   # Tests sh fallback (no bash)
 ./run_e2e.sh alpine   # Tests ash shell
 ./run_e2e.sh ubuntu   # Full E2E tests
+./run_e2e.sh fedora   # Tests dnf package manager
 
 # Test Termux compatibility
 ./test-termux.sh arm64  # Tests ARM64 (like real Termux)
@@ -25,6 +26,7 @@ End-to-end tests that verify the installer works across different environments.
 | Debian | sh (no bash) | Verifies installer works without bash |
 | Alpine | ash | Verifies BusyBox shell compatibility |
 | Ubuntu | bash | Full E2E with all features |
+| Fedora | bash | Verifies dnf package manager support |
 | Termux | sh (Alpine sim) | Simulates Termux/Android environment |
 
 ## Requirements
