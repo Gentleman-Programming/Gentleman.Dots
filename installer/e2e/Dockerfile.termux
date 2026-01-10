@@ -16,7 +16,8 @@ RUN apk add --no-cache \
     && rm -rf /var/cache/apk/*
 
 # Create Termux-like directory structure
-RUN mkdir -p /data/data/com.termux/files/usr/bin
+RUN mkdir -p /data/data/com.termux/files/usr/bin \
+    && mkdir -p /data/data/com.termux/files/usr/etc
 
 # Create fake pkg script to simulate Termux pkg
 RUN cat > /usr/local/bin/pkg <<'EOF'
@@ -58,7 +59,8 @@ EOF
 RUN chmod +x /usr/local/bin/pkg
 
 # Create test user with home directory
-RUN adduser -D -s /bin/sh testuser
+RUN adduser -D -s /bin/sh testuser \
+    && chown -R testuser:testuser /data/data/com.termux
 USER testuser
 WORKDIR /home/testuser
 
