@@ -532,6 +532,17 @@ func stepInstallShell(m *Model) error {
 				"Failed to copy Fish configuration",
 				err)
 		}
+		// Patch config.fish based on WM choice
+		SendLog(stepID, "Configuring shell for window manager...")
+		if err := system.PatchFishForWM(filepath.Join(homeDir, ".config/fish/config.fish"), m.Choices.WindowMgr, m.Choices.InstallNvim); err != nil {
+			return wrapStepError("shell", "Install Fish",
+				"Failed to configure config.fish for window manager",
+				err)
+		}
+		// Remove tmux.fish function if not using tmux
+		if m.Choices.WindowMgr != "tmux" {
+			os.Remove(filepath.Join(homeDir, ".config/fish/functions/tmux.fish"))
+		}
 		SendLog(stepID, "✓ Fish shell configured")
 
 	case "zsh":
@@ -548,6 +559,13 @@ func stepInstallShell(m *Model) error {
 		if err := system.CopyFile(filepath.Join(repoDir, "GentlemanZsh/.zshrc"), filepath.Join(homeDir, ".zshrc")); err != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to copy .zshrc configuration",
+				err)
+		}
+		// Patch .zshrc based on WM choice
+		SendLog(stepID, "Configuring shell for window manager...")
+		if err := system.PatchZshForWM(filepath.Join(homeDir, ".zshrc"), m.Choices.WindowMgr, m.Choices.InstallNvim); err != nil {
+			return wrapStepError("shell", "Install Zsh",
+				"Failed to configure .zshrc for window manager",
 				err)
 		}
 		if err := system.CopyFile(filepath.Join(repoDir, "GentlemanZsh/.p10k.zsh"), filepath.Join(homeDir, ".p10k.zsh")); err != nil {
@@ -603,6 +621,13 @@ func stepInstallShell(m *Model) error {
 		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanNushell/*"), nuDir+"/"); err != nil {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to copy Nushell configuration",
+				err)
+		}
+		// Patch config.nu based on WM choice
+		SendLog(stepID, "Configuring shell for window manager...")
+		if err := system.PatchNushellForWM(filepath.Join(nuDir, "config.nu"), m.Choices.WindowMgr); err != nil {
+			return wrapStepError("shell", "Install Nushell",
+				"Failed to configure config.nu for window manager",
 				err)
 		}
 		SendLog(stepID, "✓ Nushell configured")
