@@ -1074,8 +1074,18 @@ func stepInstallNvim(m *Model) error {
 	SendLog(stepID, "⚙️ Copied CLAUDE.md")
 	SendLog(stepID, "📊 Copied statusline.sh")
 	SendLog(stepID, "🎨 Copied output styles")
-	SendLog(stepID, "🎨 Copied tweakcc theme (run 'npx tweakcc --apply' to enable)")
 	SendLog(stepID, "🧠 Copied Claude skills")
+
+	// Apply tweakcc theme (only if Claude Code was installed)
+	if !m.SystemInfo.IsTermux {
+		SendLog(stepID, "Applying tweakcc theme...")
+		result := system.Run("npx tweakcc --apply", nil)
+		if result.Error == nil {
+			SendLog(stepID, "🎨 Applied tweakcc theme")
+		} else {
+			SendLog(stepID, "⚠️ Could not apply tweakcc theme (run 'npx tweakcc --apply' manually)")
+		}
+	}
 
 	// Install OpenCode (optional, don't fail on error)
 	// Skip on Termux - OpenCode doesn't support Android
