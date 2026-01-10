@@ -655,9 +655,11 @@ To enable it, add this to your `opencode.json`:
 - No separate API keys needed
 - Full access to Claude Sonnet 4 and other models
 
+> **Stability warning:** This workaround is stable *for now*, but Anthropic could block it at any time. If you need guaranteed long-term stability, use Claude Code CLI instead.
+
 **Location:** `~/.config/opencode/opencode.json`
 
-If you prefer OpenCode over Claude Code CLI, this is the way to go.
+If you prefer OpenCode over Claude Code CLI, this is the way to go (at your own risk).
 
 ## Contributing
 
