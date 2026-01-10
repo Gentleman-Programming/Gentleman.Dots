@@ -188,7 +188,9 @@ func stepInstallDeps(m *Model) error {
 	stepID := "deps"
 
 	// Termux: use pkg (no sudo needed)
-	if m.SystemInfo.IsTermux {
+	// Check both SystemInfo and Choices.OS for redundancy
+	isTermux := m.SystemInfo.IsTermux || m.Choices.OS == "termux"
+	if isTermux {
 		SendLog(stepID, "Updating Termux packages...")
 		result := system.RunPkgWithLogs("update", nil, func(line string) {
 			SendLog(stepID, line)
