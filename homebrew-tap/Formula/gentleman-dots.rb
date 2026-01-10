@@ -16,6 +16,10 @@ class GentlemanDots < Formula
   end
 
   on_linux do
+    on_arm do
+      url "https://github.com/Gentleman-Programming/Gentleman.Dots/releases/download/v#{version}/gentleman-installer-linux-arm64"
+      sha256 "dd4977657084974843a7ab881ae38304afb912a4731ddbe27ca52f063f2b8b58"
+    end
     on_intel do
       url "https://github.com/Gentleman-Programming/Gentleman.Dots/releases/download/v#{version}/gentleman-installer-linux-amd64"
       sha256 "89bbc2367ea16f1596962d66d1583a75d075dbf931b9aa7c655c619e679075c3"
@@ -27,6 +31,8 @@ class GentlemanDots < Formula
       bin.install "gentleman-installer-darwin-arm64" => "gentleman-dots"
     elsif OS.mac? && Hardware::CPU.intel?
       bin.install "gentleman-installer-darwin-amd64" => "gentleman-dots"
+    elsif OS.linux? && Hardware::CPU.arm?
+      bin.install "gentleman-installer-linux-arm64" => "gentleman-dots"
     elsif OS.linux? && Hardware::CPU.intel?
       bin.install "gentleman-installer-linux-amd64" => "gentleman-dots"
     end
