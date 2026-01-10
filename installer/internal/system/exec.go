@@ -128,7 +128,20 @@ func parseCommand(command string) (string, []string) {
 	if len(args) == 0 {
 		return "", nil
 	}
-	return args[0], args[1:]
+
+	// In Termux, resolve executable path using $PREFIX/bin
+	executable := args[0]
+	if isTermux() {
+		prefix := os.Getenv("PREFIX")
+		if prefix != "" {
+			fullPath := prefix + "/bin/" + executable
+			if _, err := os.Stat(fullPath); err == nil {
+				executable = fullPath
+			}
+		}
+	}
+
+	return executable, args[1:]
 }
 
 // Run executes a command and returns the result with detailed error information
