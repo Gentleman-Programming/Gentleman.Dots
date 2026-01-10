@@ -187,10 +187,6 @@ func stepInstallHomebrew(m *Model) error {
 func stepInstallDeps(m *Model) error {
 	stepID := "deps"
 
-	// DEBUG: Log detection values
-	SendLog(stepID, fmt.Sprintf("DEBUG: Choices.OS=%s, SystemInfo.IsTermux=%v, SystemInfo.OS=%v",
-		m.Choices.OS, m.SystemInfo.IsTermux, m.SystemInfo.OS))
-
 	// Termux: use pkg (no sudo needed)
 	// Check both SystemInfo and Choices.OS for redundancy
 	isTermux := m.SystemInfo.IsTermux || m.Choices.OS == "termux"
