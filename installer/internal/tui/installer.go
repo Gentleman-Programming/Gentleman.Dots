@@ -791,20 +791,32 @@ func stepInstallWM(m *Model) error {
 		// Configure tmux to use the user's chosen shell
 		SendLog(stepID, "Configuring tmux default shell...")
 		tmuxConfPath := filepath.Join(homeDir, ".tmux.conf")
-		shellPath := ""
+		shellName := ""
 		switch m.Choices.Shell {
 		case "fish":
-			shellPath = "fish"
+			shellName = "fish"
 		case "zsh":
-			shellPath = "zsh"
+			shellName = "zsh"
 		case "nushell":
-			shellPath = "nu"
+			shellName = "nu"
 		}
-		if shellPath != "" {
+		if shellName != "" {
+			// Find the full path to the shell
+			shellFullPath := ""
+			result := system.Run(fmt.Sprintf("which %s", shellName), nil)
+			if result.Error == nil && result.Output != "" {
+				shellFullPath = strings.TrimSpace(result.Output)
+			}
+
 			// Append default-shell config to tmux.conf
 			f, err := os.OpenFile(tmuxConfPath, os.O_APPEND|os.O_WRONLY, 0644)
 			if err == nil {
-				f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command %s\nset -g default-shell %s\n", shellPath, shellPath))
+				if shellFullPath != "" {
+					f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command \"%s\"\nset -g default-shell \"%s\"\n", shellFullPath, shellFullPath))
+				} else {
+					// Fallback to just the name if which fails
+					f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command \"%s\"\nset -g default-shell \"%s\"\n", shellName, shellName))
+				}
 				f.Close()
 			}
 		}
@@ -849,6 +861,27 @@ func stepInstallWM(m *Model) error {
 			return wrapStepError("wm", "Install Zellij",
 				"Failed to copy Zellij configuration",
 				err)
+		}
+
+		// Configure zellij to use the user's chosen shell
+		SendLog(stepID, "Configuring zellij default shell...")
+		zellijConfPath := filepath.Join(zellijDir, "config.kdl")
+		shellPath := ""
+		switch m.Choices.Shell {
+		case "fish":
+			shellPath = "fish"
+		case "zsh":
+			shellPath = "zsh"
+		case "nushell":
+			shellPath = "nu"
+		}
+		if shellPath != "" {
+			// Append default_shell config to zellij config.kdl
+			f, err := os.OpenFile(zellijConfPath, os.O_APPEND|os.O_WRONLY, 0644)
+			if err == nil {
+				f.WriteString(fmt.Sprintf("\n// Default shell (configured by Gentleman.Dots)\ndefault_shell \"%s\"\n", shellPath))
+				f.Close()
+			}
 		}
 		SendLog(stepID, "✓ Zellij configured")
 	}

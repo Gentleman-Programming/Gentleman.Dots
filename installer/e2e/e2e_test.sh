@@ -99,6 +99,17 @@ test_zsh_zellij() {
         else
             log_pass ".zshrc correctly has no tmux"
         fi
+        
+        # Verify Zellij config has default_shell set to zsh
+        if [ -f "$HOME/.config/zellij/config.kdl" ]; then
+            if grep -q 'default_shell "zsh"' "$HOME/.config/zellij/config.kdl"; then
+                log_pass "Zellij config has default_shell set to zsh"
+            else
+                log_fail "Zellij config missing default_shell zsh"
+            fi
+        else
+            log_fail "Zellij config.kdl not found"
+        fi
     else
         log_fail "Installation failed"
     fi
