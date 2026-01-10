@@ -788,6 +788,27 @@ func stepInstallWM(m *Model) error {
 				err)
 		}
 
+		// Configure tmux to use the user's chosen shell
+		SendLog(stepID, "Configuring tmux default shell...")
+		tmuxConfPath := filepath.Join(homeDir, ".tmux.conf")
+		shellPath := ""
+		switch m.Choices.Shell {
+		case "fish":
+			shellPath = "fish"
+		case "zsh":
+			shellPath = "zsh"
+		case "nushell":
+			shellPath = "nu"
+		}
+		if shellPath != "" {
+			// Append default-shell config to tmux.conf
+			f, err := os.OpenFile(tmuxConfPath, os.O_APPEND|os.O_WRONLY, 0644)
+			if err == nil {
+				f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command %s\nset -g default-shell %s\n", shellPath, shellPath))
+				f.Close()
+			}
+		}
+
 		// Install plugins
 		SendLog(stepID, "Installing Tmux plugins...")
 		system.RunWithLogs(filepath.Join(homeDir, ".tmux/plugins/tpm/bin/install_plugins"), nil, func(line string) {
