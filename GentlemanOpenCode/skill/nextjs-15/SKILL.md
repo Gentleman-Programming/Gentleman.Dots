@@ -5,7 +5,7 @@ description: >
   Trigger: When working with Next.js - routing, Server Actions, data fetching.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

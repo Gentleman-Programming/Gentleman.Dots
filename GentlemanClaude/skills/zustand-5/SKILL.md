@@ -5,7 +5,7 @@ description: >
   Trigger: When managing React state with Zustand.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

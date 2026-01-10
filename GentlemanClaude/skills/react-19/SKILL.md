@@ -5,7 +5,7 @@ description: >
   Trigger: When writing React components - no useMemo/useCallback needed.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

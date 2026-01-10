@@ -5,7 +5,7 @@ description: >
   Trigger: When building AI chat features - breaking changes from v4.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

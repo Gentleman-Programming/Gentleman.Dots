@@ -5,7 +5,7 @@ description: >
   Trigger: When user asks to create a Jira task, ticket, or issue.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

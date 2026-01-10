@@ -5,7 +5,7 @@ description: >
   Trigger: When using Zod for validation - breaking changes from v3.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 

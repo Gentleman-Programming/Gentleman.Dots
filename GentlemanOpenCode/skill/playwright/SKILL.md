@@ -5,7 +5,7 @@ description: >
   Trigger: When writing E2E tests - Page Objects, selectors, MCP workflow.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.1"
 ---
 

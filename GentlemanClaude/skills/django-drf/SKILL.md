@@ -5,7 +5,7 @@ description: >
   Trigger: When building REST APIs with Django - ViewSets, Serializers, Filters.
 license: Apache-2.0
 metadata:
-  author: prowler-cloud
+  author: gentleman-programming
   version: "1.0"
 ---
 
