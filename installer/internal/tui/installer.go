@@ -872,7 +872,9 @@ func stepInstallNvim(m *Model) error {
 			"Failed to create Neovim config directory",
 			err)
 	}
-	if err := system.CopyDir(filepath.Join(repoDir, "GentlemanNvim/nvim/*"), nvimDir+"/"); err != nil {
+	// Copy nvim config directory
+	srcNvim := filepath.Join(repoDir, "GentlemanNvim", "nvim")
+	if err := system.CopyDir(srcNvim, nvimDir); err != nil {
 		return wrapStepError("nvim", "Install Neovim",
 			"Failed to copy Neovim configuration",
 			err)

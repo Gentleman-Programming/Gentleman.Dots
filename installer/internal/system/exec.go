@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -290,10 +291,30 @@ func CopyFile(src, dst string) error {
 	return os.WriteFile(dst, input, 0644)
 }
 
-// CopyDir recursively copies a directory
+// CopyDir recursively copies a directory using native Go (shell-independent)
 func CopyDir(src, dst string) error {
-	result := Run(fmt.Sprintf("cp -r %s %s", src, dst), nil)
-	return result.Error
+	// Clean paths - remove trailing /* or /. if present
+	src = strings.TrimSuffix(strings.TrimSuffix(src, "/*"), "/.")
+
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate destination path
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+		dstPath := filepath.Join(dst, relPath)
+
+		if info.IsDir() {
+			return os.MkdirAll(dstPath, info.Mode())
+		}
+
+		// Copy file
+		return CopyFile(path, dstPath)
+	})
 }
 
 // EnsureDir creates a directory if it doesn't exist
