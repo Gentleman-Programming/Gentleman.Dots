@@ -611,17 +611,19 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	switch m.Screen {
 	case ScreenOSSelect:
-		if strings.Contains(selected, "mac") {
+		selectedLower := strings.ToLower(selected)
+		if strings.Contains(selectedLower, "mac") {
 			m.Choices.OS = "mac"
-		} else if strings.Contains(selected, "Termux") {
+		} else if strings.Contains(selectedLower, "termux") {
 			m.Choices.OS = "termux"
 		} else {
 			m.Choices.OS = "linux"
 		}
-		// Termux: skip Terminal and Font selection (you're already in a terminal!)
+		// Termux: skip Terminal selection (you're already in a terminal!)
+		// But allow font installation (Termux supports custom fonts)
 		if m.Choices.OS == "termux" {
 			m.Choices.Terminal = "none"
-			m.Choices.InstallFont = false
+			m.Choices.InstallFont = true // Install Nerd Font for Termux
 			m.Screen = ScreenShellSelect
 		} else {
 			m.Screen = ScreenTerminalSelect

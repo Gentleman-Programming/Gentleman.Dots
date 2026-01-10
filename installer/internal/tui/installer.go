@@ -489,6 +489,33 @@ func stepInstallFont(m *Model) error {
 	homeDir := os.Getenv("HOME")
 	stepID := "font"
 
+	// Termux: fonts work differently - copy to ~/.termux/font.ttf
+	isTermux := m.SystemInfo.IsTermux || m.Choices.OS == "termux"
+	if isTermux {
+		SendLog(stepID, "Downloading JetBrainsMono Nerd Font for Termux...")
+		termuxDir := filepath.Join(homeDir, ".termux")
+		if err := system.EnsureDir(termuxDir); err != nil {
+			return wrapStepError("font", "Install Nerd Font",
+				"Failed to create .termux directory",
+				err)
+		}
+
+		// Download a single TTF file for Termux
+		result := system.RunWithLogs(fmt.Sprintf("curl -fsSL -o %s/font.ttf https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf", termuxDir), nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("font", "Install Nerd Font",
+				"Failed to download font. Check your internet connection.",
+				result.Error)
+		}
+
+		SendLog(stepID, "Reloading Termux settings...")
+		system.Run("termux-reload-settings", nil)
+		SendLog(stepID, "✓ Font installed - restart Termux to apply")
+		return nil
+	}
+
 	if m.SystemInfo.OS == system.OSMac {
 		SendLog(stepID, "Installing Iosevka Term Nerd Font...")
 		result := system.RunBrewWithLogs("install --cask font-iosevka-term-nerd-font", nil, func(line string) {
