@@ -6,7 +6,20 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 export ZSH="$HOME/.oh-my-zsh"
-export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*:$PATH"
+
+# Detect Termux
+IS_TERMUX=0
+if [[ -n "$TERMUX_VERSION" ]] || [[ -d "/data/data/com.termux" ]]; then
+    IS_TERMUX=1
+fi
+
+# Set PATH based on platform
+if [[ $IS_TERMUX -eq 1 ]]; then
+    # Termux - use PREFIX for binaries
+    export PATH="$PREFIX/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+else
+    export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.volta/bin:$HOME/.bun/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:$HOME/.config:$HOME/.cargo/bin:/usr/local/lib/*:$PATH"
+fi
 
 # Set nvim as default editor for opencode and other tools
 export EDITOR="nvim"
@@ -23,29 +36,42 @@ else
   alias ls='gls --color=auto'
 fi
 
-if [[ "$(uname)" == "Darwin" ]]; then
-    # macOS - check for Apple Silicon vs Intel
-    if [[ -f "/opt/homebrew/bin/brew" ]]; then
-        # Apple Silicon (M1/M2/M3)
-        BREW_BIN="/opt/homebrew/bin"
-    elif [[ -f "/usr/local/bin/brew" ]]; then
-        # Intel Mac
-        BREW_BIN="/usr/local/bin"
+# Homebrew setup (skip on Termux)
+if [[ $IS_TERMUX -eq 0 ]]; then
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS - check for Apple Silicon vs Intel
+        if [[ -f "/opt/homebrew/bin/brew" ]]; then
+            # Apple Silicon (M1/M2/M3)
+            BREW_BIN="/opt/homebrew/bin"
+        elif [[ -f "/usr/local/bin/brew" ]]; then
+            # Intel Mac
+            BREW_BIN="/usr/local/bin"
+        fi
+    else
+        # Linux
+        BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
     fi
+
+    # Only eval brew shellenv if brew is installed
+    if [[ -n "$BREW_BIN" && -f "$BREW_BIN/brew" ]]; then
+        eval "$($BREW_BIN/brew shellenv)"
+    fi
+fi
+
+# Zsh plugins - different paths for Termux vs Homebrew
+if [[ $IS_TERMUX -eq 1 ]]; then
+    # Termux - plugins installed via pkg
+    [[ -f "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && source "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+    [[ -f "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    [[ -f "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    # Powerlevel10k on Termux - may need manual install
+    [[ -f "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && source "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 else
-    # Linux
-    BREW_BIN="/home/linuxbrew/.linuxbrew/bin"
+    source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+    source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source $(dirname $BREW_BIN)/share/powerlevel10k/powerlevel10k.zsh-theme
 fi
-
-# Only eval brew shellenv if brew is installed
-if [[ -n "$BREW_BIN" && -f "$BREW_BIN/brew" ]]; then
-    eval "$($BREW_BIN/brew shellenv)"
-fi
-
-source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(dirname $BREW_BIN)/share/powerlevel10k/powerlevel10k.zsh-theme
 
 export PROJECT_PATHS="/home/alanbuscaglia/work"
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
