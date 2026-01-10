@@ -1,32 +1,24 @@
-# Simulates Termux environment limitations for testing
+# Simulates Termux environment for ARM64 Android
 # - No bash by default (only ash/sh like fresh Termux)
-# - ARM64 architecture (use --platform linux/arm64)
+# - ARM64 architecture
 # - Minimal tools
 
 FROM alpine:latest
 
-# Install only what Termux has by default + git for testing
 RUN apk add --no-cache \
     git \
     curl \
-    go \
+    ca-certificates \
     && rm -rf /var/cache/apk/*
 
-# Verify NO bash exists (simulates fresh Termux)
-RUN ! command -v bash && echo "✓ No bash installed (like fresh Termux)"
+RUN adduser -D -s /bin/sh testuser
+USER testuser
+WORKDIR /home/testuser
 
-# Verify sh is available
-RUN command -v sh && echo "✓ sh available at $(which sh)"
+# Use linux-arm64 (static) instead of android-arm64 (needs Android linker)
+COPY --chown=testuser:testuser gentleman-installer-linux-arm64 /usr/local/bin/gentleman-dots
+USER root
+RUN chmod +x /usr/local/bin/gentleman-dots
+USER testuser
 
-# Set working directory
-WORKDIR /app
-
-# Copy go.mod and go.sum first for better caching
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy the rest of the source
-COPY . .
-
-# Default command: run the POSIX compatibility tests
-CMD ["go", "test", "-v", "./internal/system/...", "-run", "POSIX|Shell|Script|Run"]
+CMD ["gentleman-dots"]

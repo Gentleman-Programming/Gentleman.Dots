@@ -1,7 +1,6 @@
-# Dockerfile for E2E testing on Debian (without bash to simulate Termux-like environment)
+# Debian with sh (no bash by default for user)
 FROM debian:bookworm-slim
 
-# Install minimal dependencies (NO bash initially to test sh fallback)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
@@ -9,14 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-# Create test user
 RUN useradd -m -s /bin/sh testuser
 USER testuser
 WORKDIR /home/testuser
 
-# Copy the binary
 COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /usr/local/bin/gentleman-dots
+USER root
 RUN chmod +x /usr/local/bin/gentleman-dots
+USER testuser
 
-# Default command runs the test script
-CMD ["/bin/sh", "-c", "gentleman-dots --help && echo 'SUCCESS: Binary runs correctly'"]
+CMD ["gentleman-dots"]

@@ -1,9 +1,12 @@
-# Dockerfile for E2E testing on Ubuntu with full installation
+# Dockerfile for FULL E2E testing on Ubuntu
+# This runs actual installation tests with verification
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV RUN_FULL_E2E=1
+ENV HOME=/home/testuser
 
-# Install dependencies
+# Install base dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
@@ -16,19 +19,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fontconfig \
     && rm -rf /var/lib/apt/lists/*
 
-# Create test user with sudo
+# Create test user with passwordless sudo
 RUN useradd -m -s /bin/bash testuser && \
     echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER testuser
 WORKDIR /home/testuser
 
-# Copy the binary
+# Copy the binary and test script
 COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /usr/local/bin/gentleman-dots
-RUN chmod +x /usr/local/bin/gentleman-dots
-
-# Copy test script
 COPY --chown=testuser:testuser e2e_test.sh /home/testuser/e2e_test.sh
-RUN chmod +x /home/testuser/e2e_test.sh
 
+USER root
+RUN chmod +x /usr/local/bin/gentleman-dots /home/testuser/e2e_test.sh
+USER testuser
+
+# Run the full E2E test suite
 CMD ["/bin/bash", "/home/testuser/e2e_test.sh"]

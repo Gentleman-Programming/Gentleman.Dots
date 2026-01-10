@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
@@ -205,8 +206,23 @@ func SetGlobalProgram(p *tea.Program) {
 	globalProgram = p
 }
 
+// nonInteractiveMode indicates if we're running without TUI
+var nonInteractiveMode bool
+
+// SetNonInteractiveMode enables or disables non-interactive mode
+func SetNonInteractiveMode(enabled bool) {
+	nonInteractiveMode = enabled
+}
+
 // SendLog sends a log message to the TUI during installation
 func SendLog(stepID string, log string) {
+	if nonInteractiveMode {
+		// In non-interactive mode, print to stdout if verbose
+		if os.Getenv("GENTLEMAN_VERBOSE") == "1" {
+			fmt.Printf("    %s\n", log)
+		}
+		return
+	}
 	if globalProgram != nil {
 		globalProgram.Send(stepProgressMsg{
 			stepID: stepID,
