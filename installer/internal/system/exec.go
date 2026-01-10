@@ -97,6 +97,40 @@ type ExecOptions struct {
 	Timeout    time.Duration
 }
 
+// parseCommand splits a command string into executable and arguments
+// This is a simple parser that handles basic quoting
+func parseCommand(command string) (string, []string) {
+	var args []string
+	var current strings.Builder
+	inQuote := false
+	quoteChar := rune(0)
+
+	for _, r := range command {
+		if (r == '"' || r == '\'') && !inQuote {
+			inQuote = true
+			quoteChar = r
+		} else if r == quoteChar && inQuote {
+			inQuote = false
+			quoteChar = 0
+		} else if r == ' ' && !inQuote {
+			if current.Len() > 0 {
+				args = append(args, current.String())
+				current.Reset()
+			}
+		} else {
+			current.WriteRune(r)
+		}
+	}
+	if current.Len() > 0 {
+		args = append(args, current.String())
+	}
+
+	if len(args) == 0 {
+		return "", nil
+	}
+	return args[0], args[1:]
+}
+
 // Run executes a command and returns the result with detailed error information
 func Run(command string, opts *ExecOptions) *ExecResult {
 	if opts == nil {
@@ -115,8 +149,16 @@ func Run(command string, opts *ExecOptions) *ExecResult {
 		defer cancel()
 	}
 
-	// Use available shell to run the command (bash, sh, or zsh)
-	cmd := exec.CommandContext(ctx, GetShell(), "-c", command)
+	// In Termux, execute commands directly without shell wrapper
+	// Go has issues with fork/exec through shell on Android
+	var cmd *exec.Cmd
+	if isTermux() {
+		executable, args := parseCommand(command)
+		cmd = exec.CommandContext(ctx, executable, args...)
+	} else {
+		// Use available shell to run the command (bash, sh, or zsh)
+		cmd = exec.CommandContext(ctx, GetShell(), "-c", command)
+	}
 
 	if opts.WorkDir != "" {
 		cmd.Dir = opts.WorkDir
@@ -440,7 +482,14 @@ func RunWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResu
 		defer cancel()
 	}
 
-	cmd := exec.CommandContext(ctx, GetShell(), "-c", command)
+	// In Termux, execute commands directly without shell wrapper
+	var cmd *exec.Cmd
+	if isTermux() {
+		executable, args := parseCommand(command)
+		cmd = exec.CommandContext(ctx, executable, args...)
+	} else {
+		cmd = exec.CommandContext(ctx, GetShell(), "-c", command)
+	}
 
 	if opts.WorkDir != "" {
 		cmd.Dir = opts.WorkDir

@@ -512,7 +512,8 @@ func (m *Model) SetupInstallSteps() {
 	})
 
 	// Homebrew (interactive - first install needs password)
-	if !m.SystemInfo.HasBrew {
+	// Skip for Termux - it uses pkg instead
+	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "homebrew",
 			Name:        "Install Homebrew",
