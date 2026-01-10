@@ -201,8 +201,46 @@ test_termux_fish_zellij_install() {
         # Check for zellij config
         if [ -d "$HOME/.config/zellij" ]; then
             log_pass "Zellij config directory exists"
+            
+            # Check zellij has default_shell set to fish
+            if [ -f "$HOME/.config/zellij/config.kdl" ]; then
+                if grep -q 'default_shell "fish"' "$HOME/.config/zellij/config.kdl"; then
+                    log_pass "Zellij config has default_shell set to fish"
+                else
+                    log_fail "Zellij config missing default_shell fish"
+                fi
+            fi
         else
-            log_info "Zellij config not found (may be expected)"
+            log_fail "Zellij config not found"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_zsh_tmux_install() {
+    log_test "Install: Zsh + Tmux on Termux (verify tmux default shell)"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.tmux.conf" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=zsh --wm=tmux --backup=false 2>&1; then
+        
+        log_pass "Zsh + Tmux installation completed"
+        
+        # Check tmux.conf has default-shell set to zsh
+        if [ -f "$HOME/.tmux.conf" ]; then
+            log_pass "Tmux config exists"
+            
+            if grep -q 'default-shell.*zsh' "$HOME/.tmux.conf"; then
+                log_pass "Tmux config has default-shell set to zsh"
+            else
+                log_fail "Tmux config missing default-shell zsh"
+            fi
+        else
+            log_fail "Tmux config not found"
         fi
     else
         log_fail "Installation failed"
@@ -285,6 +323,150 @@ test_termux_nvim_config() {
     fi
 }
 
+test_termux_etc_shells() {
+    log_test "Termux /etc/shells created with chosen shell"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$PREFIX/etc/shells" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=fish --wm=tmux --backup=false 2>&1; then
+        
+        # Check if $PREFIX/etc/shells was created
+        if [ -f "$PREFIX/etc/shells" ]; then
+            log_pass "$PREFIX/etc/shells created"
+            
+            # Check if fish is in the file
+            if grep -q "fish" "$PREFIX/etc/shells"; then
+                log_pass "fish is registered in $PREFIX/etc/shells"
+            else
+                log_fail "fish not found in $PREFIX/etc/shells"
+            fi
+        else
+            log_fail "$PREFIX/etc/shells not created"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_fish_tmux_default_shell() {
+    log_test "Install: Fish + Tmux on Termux (verify tmux default shell)"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.tmux.conf" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=fish --wm=tmux --backup=false 2>&1; then
+        
+        log_pass "Fish + Tmux installation completed"
+        
+        # Check tmux.conf has default-shell set to fish
+        if [ -f "$HOME/.tmux.conf" ]; then
+            log_pass "Tmux config exists"
+            
+            if grep -q 'default-shell.*fish' "$HOME/.tmux.conf"; then
+                log_pass "Tmux config has default-shell set to fish"
+            else
+                log_fail "Tmux config missing default-shell fish"
+            fi
+        else
+            log_fail "Tmux config not found"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_zsh_zellij_default_shell() {
+    log_test "Install: Zsh + Zellij on Termux (verify zellij default_shell)"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.tmux.conf" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=zsh --wm=zellij --backup=false 2>&1; then
+        
+        log_pass "Zsh + Zellij installation completed"
+        
+        # Check zellij config has default_shell set to zsh
+        if [ -f "$HOME/.config/zellij/config.kdl" ]; then
+            log_pass "Zellij config exists"
+            
+            if grep -q 'default_shell "zsh"' "$HOME/.config/zellij/config.kdl"; then
+                log_pass "Zellij config has default_shell set to zsh"
+            else
+                log_fail "Zellij config missing default_shell zsh"
+            fi
+        else
+            log_fail "Zellij config not found"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_nushell_tmux_default_shell() {
+    log_test "Install: Nushell + Tmux on Termux (verify tmux default shell)"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.tmux.conf" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=nushell --wm=tmux --backup=false 2>&1; then
+        
+        log_pass "Nushell + Tmux installation completed"
+        
+        # Check tmux.conf has default-shell set to nu
+        if [ -f "$HOME/.tmux.conf" ]; then
+            log_pass "Tmux config exists"
+            
+            if grep -q 'default-shell.*nu' "$HOME/.tmux.conf"; then
+                log_pass "Tmux config has default-shell set to nu"
+            else
+                log_fail "Tmux config missing default-shell nu"
+            fi
+        else
+            log_fail "Tmux config not found"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
+test_termux_nushell_zellij_default_shell() {
+    log_test "Install: Nushell + Zellij on Termux (verify zellij default_shell)"
+    
+    # Clean previous test
+    rm -rf "$HOME/.config" "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.tmux.conf" 2>/dev/null || true
+    mkdir -p "$HOME/.config"
+    
+    if GENTLEMAN_VERBOSE=1 ./gentleman-dots --non-interactive \
+        --shell=nushell --wm=zellij --backup=false 2>&1; then
+        
+        log_pass "Nushell + Zellij installation completed"
+        
+        # Check zellij config has default_shell set to nu
+        if [ -f "$HOME/.config/zellij/config.kdl" ]; then
+            log_pass "Zellij config exists"
+            
+            if grep -q 'default_shell "nu"' "$HOME/.config/zellij/config.kdl"; then
+                log_pass "Zellij config has default_shell set to nu"
+            else
+                log_fail "Zellij config missing default_shell nu"
+            fi
+        else
+            log_fail "Zellij config not found"
+        fi
+    else
+        log_fail "Installation failed"
+    fi
+}
+
 # ============================================
 # RUN TESTS
 # ============================================
@@ -311,10 +493,19 @@ test_termux_detection
 log_section "Termux Installation Tests"
 test_termux_zsh_install
 test_termux_fish_zellij_install
+test_termux_zsh_tmux_install
 test_termux_no_homebrew
 test_termux_no_sudo
 test_termux_font_install
 test_termux_nvim_config
+test_termux_etc_shells
+
+# Shell + WM default shell combinations
+log_section "Shell + WM Default Shell Tests"
+test_termux_fish_tmux_default_shell
+test_termux_zsh_zellij_default_shell
+test_termux_nushell_tmux_default_shell
+test_termux_nushell_zellij_default_shell
 
 # Summary
 log_section "Test Summary"

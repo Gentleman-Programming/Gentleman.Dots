@@ -620,6 +620,21 @@ func stepInstallShell(m *Model) error {
 		if m.Choices.WindowMgr != "tmux" {
 			os.Remove(filepath.Join(homeDir, ".config/fish/functions/tmux.fish"))
 		}
+		// Termux: Add fish to $PREFIX/etc/shells so tmux doesn't complain
+		if m.SystemInfo.IsTermux {
+			SendLog(stepID, "Adding fish to Termux shells...")
+			prefix := os.Getenv("PREFIX")
+			if prefix == "" {
+				prefix = "/data/data/com.termux/files/usr"
+			}
+			shellsFile := filepath.Join(prefix, "etc", "shells")
+			system.EnsureDir(filepath.Join(prefix, "etc"))
+			f, err := os.OpenFile(shellsFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err == nil {
+				f.WriteString(filepath.Join(prefix, "bin", "fish") + "\n")
+				f.Close()
+			}
+		}
 		SendLog(stepID, "✓ Fish shell configured")
 
 	case "zsh":
@@ -662,6 +677,21 @@ func stepInstallShell(m *Model) error {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to copy Oh-My-Zsh directory",
 				err)
+		}
+		// Termux: Add zsh to $PREFIX/etc/shells so tmux doesn't complain
+		if m.SystemInfo.IsTermux {
+			SendLog(stepID, "Adding zsh to Termux shells...")
+			prefix := os.Getenv("PREFIX")
+			if prefix == "" {
+				prefix = "/data/data/com.termux/files/usr"
+			}
+			shellsFile := filepath.Join(prefix, "etc", "shells")
+			system.EnsureDir(filepath.Join(prefix, "etc"))
+			f, err := os.OpenFile(shellsFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err == nil {
+				f.WriteString(filepath.Join(prefix, "bin", "zsh") + "\n")
+				f.Close()
+			}
 		}
 		SendLog(stepID, "✓ Zsh configured with Powerlevel10k")
 
@@ -721,6 +751,21 @@ func stepInstallShell(m *Model) error {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to configure config.nu for window manager",
 				err)
+		}
+		// Termux: Add nu to $PREFIX/etc/shells so tmux doesn't complain
+		if m.SystemInfo.IsTermux {
+			SendLog(stepID, "Adding nushell to Termux shells...")
+			prefix := os.Getenv("PREFIX")
+			if prefix == "" {
+				prefix = "/data/data/com.termux/files/usr"
+			}
+			shellsFile := filepath.Join(prefix, "etc", "shells")
+			system.EnsureDir(filepath.Join(prefix, "etc"))
+			f, err := os.OpenFile(shellsFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err == nil {
+				f.WriteString(filepath.Join(prefix, "bin", "nu") + "\n")
+				f.Close()
+			}
 		}
 		SendLog(stepID, "✓ Nushell configured")
 	}
@@ -807,17 +852,16 @@ func stepInstallWM(m *Model) error {
 			if result.Error == nil && result.Output != "" {
 				shellFullPath = strings.TrimSpace(result.Output)
 			}
+			if shellFullPath == "" {
+				shellFullPath = shellName // Fallback
+			}
 
-			// Append default-shell config to tmux.conf
-			f, err := os.OpenFile(tmuxConfPath, os.O_APPEND|os.O_WRONLY, 0644)
+			// Replace placeholder in tmux.conf with actual shell config
+			content, err := os.ReadFile(tmuxConfPath)
 			if err == nil {
-				if shellFullPath != "" {
-					f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command \"%s\"\nset -g default-shell \"%s\"\n", shellFullPath, shellFullPath))
-				} else {
-					// Fallback to just the name if which fails
-					f.WriteString(fmt.Sprintf("\n# Default shell (configured by Gentleman.Dots)\nset -g default-command \"%s\"\nset -g default-shell \"%s\"\n", shellName, shellName))
-				}
-				f.Close()
+				shellConfig := fmt.Sprintf("set -g default-command \"%s\"\nset -g default-shell \"%s\"", shellFullPath, shellFullPath)
+				newContent := strings.Replace(string(content), "# GENTLEMAN_DEFAULT_SHELL", shellConfig, 1)
+				os.WriteFile(tmuxConfPath, []byte(newContent), 0644)
 			}
 		}
 
