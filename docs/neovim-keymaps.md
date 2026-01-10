@@ -6,6 +6,46 @@ Complete reference of all keybindings configured in Gentleman.Dots Neovim setup.
 
 ---
 
+## Table of Contents
+
+- [Mode Legend](#mode-legend)
+- [Quick Reference](#quick-reference)
+- [General & Essential](#general--essential)
+- [File Navigation](#file-navigation)
+  - [Harpoon](#harpoon-quick-file-navigation)
+  - [Mini.files](#minifiles-file-explorer)
+  - [Oil.nvim](#oilnvim-directory-editor)
+  - [Snacks Picker](#snacks-picker-fuzzy-finding)
+- [Code Editing](#code-editing)
+  - [Mini.surround](#minisurround-text-manipulation)
+  - [LSP & Code Navigation](#lsp--code-navigation)
+- [Search Commands](#search-commands)
+- [Git Integration](#git-integration)
+- [AI Assistants](#ai-assistants-copilot--opencode)
+- [Obsidian Notes](#obsidian-notes)
+- [Tmux Navigation](#tmux-navigation)
+- [Buffers & Tabs](#buffers--tabs)
+- [Windows & Splits](#windows--splits)
+- [Debugging (DAP)](#debugging-dap)
+- [UI Toggles](#ui-toggles)
+- [Diagnostics & Quickfix](#diagnostics--quickfix)
+- [Session & Quit](#session--quit)
+
+---
+
+## Mode Legend
+
+| Mode | Description |
+|------|-------------|
+| `n` | Normal mode |
+| `i` | Insert mode |
+| `v` | Visual mode |
+| `x` | Visual block mode |
+| `n,v` | Normal and Visual modes |
+| `n,x` | Normal and Visual block modes |
+
+---
+
 ## Quick Reference
 
 | Action | Keys |
@@ -21,9 +61,11 @@ Complete reference of all keybindings configured in Gentleman.Dots Neovim setup.
 
 ---
 
-## Harpoon (Quick File Navigation)
+## File Navigation
 
-Mark and jump to files instantly - by ThePrimeagen
+### Harpoon (Quick File Navigation)
+
+Mark and jump to files instantly (by ThePrimeagen).
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -35,11 +77,9 @@ Mark and jump to files instantly - by ThePrimeagen
 | `<leader>4` | Jump to Harpoon file 4 | n |
 | `<leader>5` | Jump to Harpoon file 5 | n |
 
----
+### Mini.files (File Explorer)
 
-## Mini.files (File Explorer)
-
-Edit filesystem like a buffer
+Edit filesystem like a buffer.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -52,11 +92,9 @@ Edit filesystem like a buffer
 | `<C-w>S` | Open in horizontal split and close | n |
 | `<C-w>V` | Open in vertical split and close | n |
 
----
+### Oil.nvim (Directory Editor)
 
-## Oil.nvim (Directory Editor)
-
-Edit your filesystem like a buffer
+Edit your filesystem like a buffer.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -82,9 +120,11 @@ Edit your filesystem like a buffer
 
 ---
 
-## Mini.surround (Text Manipulation)
+## Code Editing
 
-Add, delete, replace surroundings (brackets, quotes, etc)
+### Mini.surround (Text Manipulation)
+
+Add, delete, replace surroundings (brackets, quotes, etc).
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -96,11 +136,9 @@ Add, delete, replace surroundings (brackets, quotes, etc)
 | `sh` | Highlight surrounding | n |
 | `sn` | Update number of search lines | n |
 
----
+### Snacks Picker (Fuzzy Finding)
 
-## Snacks Picker (Fuzzy Finding)
-
-Find files, grep text, search everything
+Find files, grep text, search everything.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -123,7 +161,7 @@ Find files, grep text, search everything
 
 ## Search Commands
 
-Search registers, marks, diagnostics, and more
+Search registers, marks, diagnostics, and more.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -154,12 +192,11 @@ Search registers, marks, diagnostics, and more
 | `<leader>su` | Undotree | n |
 | `<leader>sw` | Word under cursor (Root Dir) | n,v |
 | `<leader>sW` | Word under cursor (cwd) | n,v |
+| `<leader>md` | Delete all marks | n |
 
----
+### LSP & Code Navigation
 
-## LSP & Code Navigation
-
-Go-to definitions, references, and previews
+Go-to definitions, references, and previews.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -177,7 +214,7 @@ Go-to definitions, references, and previews
 | `<leader>cR` | Rename File | n |
 | `<leader>cs` | Symbols Outline | n |
 
-### Preview Windows (goto-preview)
+#### Preview Windows (goto-preview)
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -192,7 +229,7 @@ Go-to definitions, references, and previews
 
 ## Git Integration
 
-Git operations from within Neovim
+Git operations from within Neovim.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -208,7 +245,7 @@ Git operations from within Neovim
 | `<leader>gs` | Git Status | n |
 | `<leader>gS` | Git Stash | n |
 
-### Hunk Navigation
+### Hunk Navigation (Gitsigns)
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -224,9 +261,9 @@ Git operations from within Neovim
 
 ## AI Assistants (Copilot + OpenCode)
 
-AI-powered coding assistance
+AI-powered coding assistance.
 
-### Copilot (Insert Mode)
+### Copilot
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -254,9 +291,9 @@ AI-powered coding assistance
 
 ---
 
-## Obsidian (Notes)
+## Obsidian Notes
 
-Note-taking and knowledge management
+Note-taking and knowledge management.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -273,7 +310,7 @@ Note-taking and knowledge management
 
 ## Tmux Navigation
 
-Seamless navigation between Neovim and Tmux panes
+Seamless navigation between Neovim and Tmux panes.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -286,27 +323,9 @@ Seamless navigation between Neovim and Tmux panes
 
 ---
 
-## Custom Keymaps
-
-Gentleman.Dots custom keybindings
-
-| Keys | Description | Mode |
-|------|-------------|------|
-| `<C-b>` | Delete to end of word (insert) | i |
-| `<C-c>` | Escape from any mode | i,n,v |
-| `<leader>uk` | Toggle Screenkey | n |
-| `-` | Open Oil (parent directory) | n |
-| `<leader>bq` | Delete other buffers but current | n |
-| `<C-s>` | Save file | n |
-| `<leader>sg` | Grep Selected Text | v |
-| `<leader>sG` | Grep Selected Text (Root Dir) | v |
-| `<leader>md` | Delete all marks | n |
-
----
-
 ## Buffers & Tabs
 
-Buffer and tab management
+Buffer and tab management.
 
 ### Buffers
 
@@ -316,6 +335,7 @@ Buffer and tab management
 | `<leader>bd` | Delete Buffer | n |
 | `<leader>bD` | Delete Buffer and Window | n |
 | `<leader>bo` | Delete Other Buffers | n |
+| `<leader>bq` | Delete other buffers (keep current) | n |
 | `<leader>bp` | Toggle Buffer Pin | n |
 | `<leader>bP` | Delete Non-Pinned Buffers | n |
 | `[b` | Previous Buffer | n |
@@ -336,14 +356,14 @@ Buffer and tab management
 
 ## Windows & Splits
 
-Window navigation and management
+Window navigation and management.
 
 | Keys | Description | Mode |
 |------|-------------|------|
 | `<leader>w` | Windows menu (which-key) | n |
 | `<leader>wd` | Delete Window | n |
 | `<leader>wm` | Maximize Window | n |
-| `<leader>-` | Split Below | n |
+| `<leader>-` | Split Below / Open Oil (current file dir) | n |
 | `<leader>\|` | Split Right | n |
 | `<C-Up>` | Increase Height | n |
 | `<C-Down>` | Decrease Height | n |
@@ -356,7 +376,7 @@ Window navigation and management
 
 ## Debugging (DAP)
 
-Debug Adapter Protocol integration
+Debug Adapter Protocol integration.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -383,7 +403,7 @@ Debug Adapter Protocol integration
 
 ## UI Toggles
 
-Toggle UI elements and settings
+Toggle UI elements and settings.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -399,6 +419,7 @@ Toggle UI elements and settings
 | `<leader>uL` | Toggle Relative Numbers | n |
 | `<leader>un` | Dismiss Notifications | n |
 | `<leader>us` | Toggle Spelling | n |
+| `<leader>uk` | Toggle Screenkey | n |
 | `<leader>uT` | Toggle Treesitter Highlight | n |
 | `<leader>uw` | Toggle Word Wrap | n |
 | `<leader>uz` | Toggle Zen Mode | n |
@@ -408,7 +429,7 @@ Toggle UI elements and settings
 
 ## Diagnostics & Quickfix
 
-Navigate errors, warnings, and quickfix
+Navigate errors, warnings, and quickfix.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -429,7 +450,7 @@ Navigate errors, warnings, and quickfix
 
 ## Session & Quit
 
-Session management and exiting
+Session management and exiting.
 
 | Keys | Description | Mode |
 |------|-------------|------|
@@ -443,13 +464,13 @@ Session management and exiting
 
 ## General & Essential
 
-Essential keybindings every Neovim user needs
+Core keybindings for everyday use.
 
 | Keys | Description | Mode |
 |------|-------------|------|
 | `<leader>?` | Show Buffer Local Keymaps | n |
 | `<leader>e` | Toggle Explorer (neo-tree) | n |
-| `<leader>E` | Explorer (neo-tree cwd) | n |
+| `<leader>E` | Explorer neo-tree (cwd) / Oil (floating) | n |
 | `<leader>l` | Lazy (plugin manager) | n |
 | `<leader>L` | LazyVim Changelog | n |
 | `<Esc>` | Escape and Clear hlsearch | n,i |
@@ -457,18 +478,9 @@ Essential keybindings every Neovim user needs
 | `gx` | Open with system app | n |
 | `j` | Down (respects wrapped lines) | n,x |
 | `k` | Up (respects wrapped lines) | n,x |
-
----
-
-## Mode Legend
-
-| Mode | Description |
-|------|-------------|
-| `n` | Normal mode |
-| `i` | Insert mode |
-| `v` | Visual mode |
-| `x` | Visual block mode |
-| `n,v` | Normal and Visual modes |
+| `<C-c>` | Escape from any mode | i,n,v |
+| `<C-s>` | Save file | n |
+| `<C-b>` | Delete to end of word | i |
 
 ---
 
@@ -477,4 +489,4 @@ Essential keybindings every Neovim user needs
 - Press `<leader>?` to see context-aware keybindings in which-key
 - Press `<leader>sk` to fuzzy search all keymaps
 - Run `:map` to see all current mappings
-- Check the [LazyVim documentation](https://lazyvim.org) for more details
+- Check the [LazyVim documentation](https://www.lazyvim.org) for more details

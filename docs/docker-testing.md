@@ -2,6 +2,16 @@
 
 Test the Gentleman.Dots installer in an isolated Ubuntu environment without affecting your system.
 
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Container Environment](#container-environment)
+- [Common Tasks](#common-tasks)
+  - [Update to Latest Version](#update-to-latest-version)
+  - [Test Specific Version](#test-specific-version)
+  - [Interactive Debugging](#interactive-debugging)
+- [Clean Up](#clean-up)
+
 ## Quick Start
 
 ```bash
@@ -12,32 +22,47 @@ docker build -f Dockerfile.test -t gentleman-test .
 docker run -it --rm gentleman-test
 ```
 
-## User Credentials
+## Container Environment
 
-- **Username**: `testuser`
-- **Password**: `test`
+| Setting | Value |
+|---------|-------|
+| Base Image | Ubuntu 22.04 |
+| Username | `testuser` |
+| Password | `test` |
+| Sudo | Passwordless (NOPASSWD) |
+| Installer Path | `/usr/local/bin/gentleman.dots` |
 
-The user has passwordless sudo configured, so you won't need the password for most operations.
+> **Note**: The user has passwordless sudo, so you won't need the password for most operations.
 
-## Update to Latest Version
+## Common Tasks
+
+### Update to Latest Version
 
 If you've already built the image and want to test a newer version:
 
+**Option 1: Rebuild from scratch (recommended)**
+
 ```bash
-# Option 1: Rebuild from scratch (recommended)
 docker build -f Dockerfile.test -t gentleman-test --no-cache .
 docker run -it --rm gentleman-test
+```
 
-# Option 2: Update inside running container
+**Option 2: Update inside running container**
+
+```bash
 docker run -it --rm gentleman-test bash
-# Then inside the container:
+```
+
+Then inside the container:
+
+```bash
 cd /app/installer
 git pull origin main
 go build -o /usr/local/bin/gentleman.dots ./cmd/gentleman-installer
 gentleman.dots
 ```
 
-## Testing Specific Versions
+### Test Specific Version
 
 ```bash
 # Checkout a specific tag before building
@@ -46,7 +71,7 @@ docker build -f Dockerfile.test -t gentleman-test .
 docker run -it --rm gentleman-test
 ```
 
-## Interactive Shell (for debugging)
+### Interactive Debugging
 
 ```bash
 # Start bash instead of the installer
@@ -59,7 +84,7 @@ gentleman.dots
 ## Clean Up
 
 ```bash
-# Remove the image when done
+# Remove the image
 docker rmi gentleman-test
 
 # Remove all unused Docker resources
@@ -68,7 +93,6 @@ docker system prune
 
 ## Notes
 
-- The container runs Ubuntu 22.04
 - All changes are lost when the container exits (`--rm` flag)
 - Your host system is completely isolated - nothing is modified
-- The installer builds from the local source code at build time
+- The installer builds from local source at image build time

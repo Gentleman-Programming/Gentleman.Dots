@@ -2,6 +2,29 @@
 
 This guide walks you through manually setting up your development environment with Gentleman.Dots. Use this if you prefer full control over each step or if the automatic installer doesn't work for your setup.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Windows (WSL)](#windows-wsl)
+  - [Install WSL](#1-install-wsl)
+  - [Install a Linux Distribution](#2-install-a-linux-distribution)
+  - [Install the Iosevka Font](#3-install-the-iosevka-font)
+  - [Update the Distribution](#4-update-the-distribution)
+  - [Install a Terminal Emulator](#5-install-a-terminal-emulator)
+  - [Configure Terminal Emulator](#6-configure-terminal-emulator)
+  - [Install Chocolatey and win32yank](#7-install-chocolatey-and-win32yank)
+- [Linux, Arch Linux, macOS, and WSL](#linux-arch-linux-macos-and-wsl)
+  - [Install Dependencies](#1-install-dependencies)
+  - [Install Iosevka Term Nerd Font](#2-install-iosevka-term-nerd-font)
+  - [Install Terminal Emulator](#3-install-terminal-emulator)
+  - [Install a Shell](#4-install-a-shell)
+  - [Install Window Manager](#5-install-window-manager)
+  - [Install Neovim](#6-install-neovim)
+  - [Set Default Shell](#7-set-default-shell)
+  - [Restart](#8-restart)
+
+---
+
 ## Prerequisites
 
 **Clone the repository first!**
@@ -58,11 +81,13 @@ sudo apt-get upgrade
 
 ### 5. Install a Terminal Emulator
 
-Choose one:
+Choose one of the following:
 
-- **Alacritty**: [Download from GitHub Releases](https://github.com/alacritty/alacritty/releases)
-- **WezTerm**: [Download and Install](https://wezfurlong.org/wezterm/installation.html) - Create a `HOME` environment variable pointing to `C:\Users\your-username`
-- **Kitty**: [Download and Install](https://sw.kovidgoyal.net/kitty/#get-the-app)
+| Terminal | Download | Notes |
+|----------|----------|-------|
+| **Alacritty** | [GitHub Releases](https://github.com/alacritty/alacritty/releases) | Lightweight, GPU-accelerated |
+| **WezTerm** | [Official Site](https://wezfurlong.org/wezterm/installation.html) | Create `HOME` env var → `C:\Users\your-username` |
+| **Kitty** | [Official Site](https://sw.kovidgoyal.net/kitty/#get-the-app) | Feature-rich, GPU-based |
 
 ### 6. Configure Terminal Emulator
 
@@ -160,7 +185,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```bash
 mkdir -p ~/.local/share/fonts
-wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/IosevkaTerm.zip
+# Download latest version from https://github.com/ryanoasis/nerd-fonts/releases
+wget -O ~/.local/share/fonts/Iosevka.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip
 unzip ~/.local/share/fonts/Iosevka.zip -d ~/.local/share/fonts/
 fc-cache -fv
 ```
@@ -168,7 +194,6 @@ fc-cache -fv
 #### macOS
 
 ```bash
-brew tap homebrew/cask-fonts
 brew install --cask font-iosevka-term-nerd-font
 ```
 
@@ -238,27 +263,30 @@ mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
 
 #### Nushell
 
+**Install dependencies:**
+
 ```bash
-# Install dependencies
+brew install nushell carapace zoxide atuin jq bash starship fzf
 cp -rf bash-env-json ~/.config/
 cp -rf bash-env.nu ~/.config/
-brew install nushell carapace zoxide atuin jq bash starship fzf
 cp -rf starship.toml ~/.config/
+```
 
-# Arch Linux / Linux
+**Arch Linux / Linux:**
+
+```bash
 mkdir -p ~/.config/nushell
 cp -rf GentlemanNushell/* ~/.config/nushell/
+```
 
-# macOS
+**macOS:**
+
+```bash
 mkdir -p ~/Library/Application\ Support/nushell
 
-# Update config for macOS brew path
-if grep -q "/home/linuxbrew/.linuxbrew/bin" GentlemanNushell/env.nu; then
-  awk -v search="/home/linuxbrew/.linuxbrew/bin" -v replace="    | prepend '/opt/homebrew/bin'" '
-  $0 ~ search {print replace; next}
-  {print}
-  ' GentlemanNushell/env.nu > GentlemanNushell/env.nu.tmp && mv GentlemanNushell/env.nu.tmp GentlemanNushell/env.nu
-fi
+# Update brew path from Linux to macOS
+# Edit GentlemanNushell/env.nu and replace:
+#   /home/linuxbrew/.linuxbrew/bin  →  /opt/homebrew/bin
 
 cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
 ```
@@ -309,42 +337,16 @@ mkdir -p ~/.config/zellij
 cp -r GentlemanZellij/zellij/* ~/.config/zellij/
 ```
 
-**If using Zsh, update config:**
+**Update shell config for Zellij:**
 
-```bash
-# Replace TMUX with ZELLIJ
-if grep -q "TMUX" ~/.zshrc; then
-  sed -i 's/TMUX/ZELLIJ/g' ~/.zshrc
-  sed -i 's/tmux/zellij/g' ~/.zshrc
-fi
-```
+If you chose Zellij instead of Tmux, update your shell configuration:
 
-**If using Fish, update config:**
-
-```bash
-# Replace TMUX with ZELLIJ in fish config
-if grep -q "TMUX" ~/.config/fish/config.fish; then
-  sed -i 's/TMUX/ZELLIJ/g' ~/.config/fish/config.fish
-  sed -i 's/tmux/zellij/g' ~/.config/fish/config.fish
-fi
-```
-
-**If using Nushell, update config:**
-
-```bash
-# For macOS
-if grep -q '"tmux"' GentlemanNushell/config.nu; then
-  sed -i 's/"tmux"/"zellij"/g' GentlemanNushell/config.nu
-  sed -i 's/"TMUX"/"ZELLIJ"/g' GentlemanNushell/config.nu
-fi
-cp -rf GentlemanNushell/* ~/Library/Application\ Support/nushell/
-
-# For Linux
-if grep -q '"tmux"' ~/.config/nushell/config.nu; then
-  sed -i 's/"tmux"/"zellij"/g' ~/.config/nushell/config.nu
-  sed -i 's/"TMUX"/"ZELLIJ"/g' ~/.config/nushell/config.nu
-fi
-```
+| Shell | Config File | Change |
+|-------|-------------|--------|
+| Zsh | `~/.zshrc` | Replace `TMUX` → `ZELLIJ` and `tmux` → `zellij` |
+| Fish | `~/.config/fish/config.fish` | Replace `TMUX` → `ZELLIJ` and `tmux` → `zellij` |
+| Nushell (Linux) | `~/.config/nushell/config.nu` | Replace `"tmux"` → `"zellij"` and `"TMUX"` → `"ZELLIJ"` |
+| Nushell (macOS) | `~/Library/Application Support/nushell/config.nu` | Same as above |
 
 ### 6. Install Neovim
 
@@ -356,33 +358,29 @@ cp -r GentlemanNvim/nvim/* ~/.config/nvim/
 
 **Configure Obsidian path (optional):**
 
-1. Create your notes directory:
-   ```bash
-   mkdir -p /path/to/your/notes/templates
-   ```
+If you use Obsidian for notes, configure the integration:
 
-2. Edit the Obsidian config:
-   ```bash
-   nvim ~/.config/nvim/lua/plugins/obsidian.lua
-   ```
+```bash
+# 1. Create your notes directory
+mkdir -p /path/to/your/notes/templates
 
-3. Update the path:
-   ```lua
-   path = "/path/to/your/notes",
-   ```
+# 2. Edit ~/.config/nvim/lua/plugins/obsidian.lua
+# 3. Update the path variable:
+#    path = "/path/to/your/notes",
+```
 
 ### 7. Set Default Shell
 
 ```bash
-# Choose your shell
-shell_path=$(which zsh)   # or fish, or nu
+# Get path to your preferred shell (zsh, fish, or nu)
+shell_path=$(which zsh)
 
-# Add to /etc/shells and set as default
-if [ -n "$shell_path" ]; then
-  sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
-  sudo chsh -s "$shell_path" "$USER"
-fi
+# Add to allowed shells if not present, then set as default
+sudo sh -c "grep -Fxq \"$shell_path\" /etc/shells || echo \"$shell_path\" >> /etc/shells"
+sudo chsh -s "$shell_path" "$USER"
 ```
+
+> **Note:** Replace `zsh` with `fish` or `nu` depending on which shell you installed.
 
 ### 8. Restart
 
@@ -390,6 +388,13 @@ Close and reopen your terminal, or restart your computer/WSL instance for change
 
 ---
 
-**Done!** You've manually configured your development environment. Enjoy! 🎉
+## Troubleshooting
 
-If you encounter problems, consult the official documentation of each tool or open an issue on GitHub.
+If you encounter problems:
+
+1. Consult the official documentation of the specific tool
+2. Open an issue on [GitHub](https://github.com/Gentleman-Programming/Gentleman.Dots/issues)
+
+---
+
+**Done!** You've manually configured your development environment. Enjoy! 🎉

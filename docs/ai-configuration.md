@@ -4,12 +4,33 @@
 
 This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant with the custom Gentleman personality.
 
+## Table of Contents
+
+- [Available AI Assistants](#available-ai-assistants)
+- [Switching AI Plugins](#switching-ai-plugins)
+- [Required CLI Tools](#required-cli-tools)
+- [Recommended by Use Case](#recommended-by-use-case)
+- [Claude Code Configuration](#claude-code-configuration)
+  - [What's Included](#whats-included)
+  - [Gentleman Persona](#gentleman-persona)
+  - [Using Claude Code](#using-claude-code)
+  - [Configuration Location](#configuration-location)
+  - [Gentleman Theme](#gentleman-theme-visual-colors)
+- [OpenCode Configuration](#opencode-configuration)
+  - [Using the Gentleman Agent](#using-the-gentleman-agent)
+  - [Configuring the Default Model](#configuring-the-default-model)
+  - [Available Models](#available-models)
+  - [OpenCode Theme](#opencode-theme)
+  - [MCP Integrations](#mcp-integrations)
+
+---
+
 ## Available AI Assistants
 
 | Plugin | Description | Status |
 |--------|-------------|--------|
 | **Claude Code.nvim** | Claude AI integration (official) | ✅ Enabled by default |
-| **OpenCode.nvim** | OpenCode AI integration | Disabled (requires own API keys) |
+| **OpenCode.nvim** | OpenCode AI integration | Disabled (requires API keys) |
 | **Avante.nvim** | AI-powered coding assistant | Disabled |
 | **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
 | **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
@@ -23,7 +44,7 @@ All plugin states are managed in a single file:
 nvim ~/.config/nvim/lua/plugins/disabled.lua
 ```
 
-To switch plugins:
+**Steps to switch plugins:**
 
 1. Find the plugin you want to disable and set `enabled = false`
 2. Find the plugin you want to enable and set `enabled = true`
@@ -42,19 +63,21 @@ To switch plugins:
 },
 ```
 
-> **Important:** Only enable ONE AI plugin at a time to avoid conflicts and keybinding issues.
+> ⚠️ **Important:** Only enable ONE AI plugin at a time to avoid conflicts and keybinding issues.
 
 ## Required CLI Tools
 
-These are automatically installed by the script:
+These are automatically installed by the installer script:
 
-- **OpenCode CLI**: `curl -fsSL https://opencode.ai/install | bash`
-- **Claude Code CLI**: `curl -fsSL https://claude.ai/install.sh | bash`
-- **Gemini CLI**: `brew install gemini-cli`
+| Tool | Installation Command |
+|------|---------------------|
+| OpenCode CLI | `curl -fsSL https://opencode.ai/install \| bash` |
+| Claude Code CLI | `curl -fsSL https://claude.ai/install.sh \| bash` |
+| Gemini CLI | `brew install gemini-cli` |
 
-API keys may be required for some services - check each plugin's documentation.
+> Some services require API keys. Check each plugin's documentation for details.
 
-## Recommended AI Assistants
+## Recommended by Use Case
 
 | Use Case | Recommended Plugin |
 |----------|-------------------|
@@ -66,7 +89,7 @@ API keys may be required for some services - check each plugin's documentation.
 
 ---
 
-## Claude Code Configuration (Primary)
+## Claude Code Configuration
 
 Claude Code is installed automatically with the custom **Gentleman** output style, skills, and configuration.
 
@@ -74,25 +97,35 @@ Claude Code is installed automatically with the custom **Gentleman** output styl
 
 The installer configures:
 
-- **CLAUDE.md**: Global instructions with Gentleman personality
-- **settings.json**: Permissions, output style, status line config
-- **statusline.sh**: Custom status bar script
-- **output-styles/gentleman.md**: The Gentleman persona definition
-- **skills/**: 10 framework-specific coding standards (React 19, Next.js 15, TypeScript, Tailwind 4, Zod 4, Zustand 5, AI SDK 5, Django DRF, Playwright, Pytest)
-- **mcp-servers.template.json**: MCP server templates (Context7, Jira, Figma)
+| Component | Description |
+|-----------|-------------|
+| `CLAUDE.md` | Global instructions with Gentleman personality |
+| `settings.json` | Permissions, output style, status line config |
+| `statusline.sh` | Custom status bar script |
+| `output-styles/gentleman.md` | The Gentleman persona definition |
+| `skills/` | 10 framework-specific coding standards |
+| `mcp-servers.template.json` | MCP server templates (Context7, Jira, Figma) |
 
-### Gentleman Output Style
+**Included Skills:**
 
-The Gentleman output style is a Senior Architect persona with 15+ years of experience:
+React 19, Next.js 15, TypeScript, Tailwind 4, Zod 4, Zustand 5, AI SDK 5, Django DRF, Playwright, Pytest
 
-- **Never a Yes-Man**: Won't say "you're right" without verifying first
-- **Collaborative Partner**: Like Jarvis to Tony Stark - provides data, alternatives, and pushes back
-- **Proposes Alternatives**: Always presents options with tradeoffs
-- **Bilingual**: Responds in Rioplatense Spanish or confrontational English based on your language
+### Gentleman Persona
 
-### Using Claude Code with Gentleman
+The Gentleman persona is a Senior Architect with 15+ years of experience. Both Claude Code and OpenCode share this personality:
+
+| Trait | Description |
+|-------|-------------|
+| **Never a Yes-Man** | Won't agree without verifying first |
+| **Collaborative Partner** | Like Jarvis to Tony Stark - provides data, alternatives, and pushes back |
+| **Proposes Alternatives** | Always presents options with tradeoffs |
+| **Verifies Claims** | Investigates before accepting challenges to suggestions |
+| **Bilingual** | Rioplatense Spanish or direct English based on your input language |
+
+### Using Claude Code
 
 1. Open Claude Code in your terminal:
+
    ```bash
    claude
    # or use the alias
@@ -100,28 +133,27 @@ The Gentleman output style is a Senior Architect persona with 15+ years of exper
    ```
 
 2. Select the Gentleman output style:
+
    ```bash
    /config
    # Navigate to "Output style" and select "Gentleman"
    ```
 
    Or set it directly:
+
    ```bash
    claude config set outputStyle Gentleman
    ```
 
-3. The Gentleman personality will now be applied to all responses.
-
 ### Configuration Location
 
-All Claude Code config is stored in:
-```bash
+```
 ~/.claude/
 ├── CLAUDE.md              # Global instructions
 ├── settings.json          # Settings and permissions
 ├── statusline.sh          # Status bar script
-├── output-styles/         # Output style definitions
-│   └── gentleman.md
+├── output-styles/
+│   └── gentleman.md       # Gentleman persona definition
 └── skills/                # Framework coding standards
     ├── react-19/
     ├── nextjs-15/
@@ -131,7 +163,7 @@ All Claude Code config is stored in:
 
 ### Gentleman Theme (Visual Colors)
 
-Claude Code supports custom color themes via [tweakcc](https://github.com/Piebald-AI/tweakcc). The Gentleman theme provides Kanagawa-inspired colors matching the OpenCode theme.
+Claude Code supports custom color themes via [tweakcc](https://github.com/Piebald-AI/tweakcc). The Gentleman theme provides Kanagawa-inspired colors.
 
 **Installation:**
 
@@ -155,52 +187,41 @@ jq '.settings.selectedTheme = "gentleman"' ~/.tweakcc/config.json > tmp.json && 
 npx tweakcc --apply
 ```
 
-**After Claude Code updates:**
+> ⚠️ **After Claude Code updates:** Tweakcc patches Claude Code's CLI directly. Re-apply after updates with `npx tweakcc --apply`
 
-Tweakcc patches Claude Code's CLI directly. After updates, re-apply:
-```bash
-npx tweakcc --apply
-```
+**Theme Colors:**
 
-**Theme colors include:**
-- Primary blue: `rgb(127,180,202)` - main UI elements
-- Accent gold: `rgb(224,193,90)` - permissions, highlights, spinner shimmer
-- Success green: `rgb(183,204,133)` - diffs, confirmations
-- Error pink: `rgb(203,124,148)` - errors, removals
-- Purple: `rgb(201,154,214)` - plan mode
-- Dark background: `rgb(6,8,15)` - terminal background
+| Color | RGB | Usage |
+|-------|-----|-------|
+| Primary blue | `rgb(127,180,202)` | Main UI elements |
+| Accent gold | `rgb(224,193,90)` | Permissions, highlights, spinner |
+| Success green | `rgb(183,204,133)` | Diffs, confirmations |
+| Error pink | `rgb(203,124,148)` | Errors, removals |
+| Purple | `rgb(201,154,214)` | Plan mode |
+| Dark background | `rgb(6,8,15)` | Terminal background |
 
-**Custom thinking verbs (Spanish/Rioplatense):**
+**Custom Thinking Verbs (Spanish/Rioplatense):**
 
-The config also includes custom "thinking" messages like:
+The config includes 40+ custom "thinking" messages:
+
 - *Remontando el Barrilete Cósmico…*
 - *Preguntándole al Patito…*
 - *Haciendo Magia Negra…*
 - *Bancame un Toque…*
 - *En Modo Jarvis…*
-- And 40+ more!
 
 ---
 
 ## OpenCode Configuration
 
-> ✅ **Claude Max/Pro Support**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin. This is already configured in `GentlemanOpenCode/opencode.json`. Just run `opencode` and authenticate with your Claude account. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
-
 OpenCode is installed automatically with a custom **Gentleman** agent and theme.
 
-### Gentleman Agent Philosophy
-
-The Gentleman agent is a Senior Architect persona with 15+ years of experience:
-
-- **Never a Yes-Man**: Won't say "you're right" without verifying first
-- **Collaborative Partner**: Like Jarvis to Tony Stark - provides data, alternatives, and pushes back
-- **Proposes Alternatives**: Always presents options with tradeoffs
-- **Verifies Before Agreeing**: Investigates before accepting challenges to suggestions
-- **Bilingual**: Responds in Rioplatense Spanish or confrontational English based on your language
+> ✅ **Claude Max/Pro Support**: OpenCode supports Claude subscriptions via the `opencode-anthropic-auth` plugin, already configured in `GentlemanOpenCode/opencode.json`. Just run `opencode` and authenticate with your Claude account.
 
 ### Using the Gentleman Agent
 
 1. Open OpenCode in your terminal:
+
    ```bash
    opencode
    ```
@@ -226,7 +247,7 @@ Example configuration:
   "model": "anthropic/claude-sonnet-4-20250514",
   "agent": {
     "gentleman": {
-      ...
+      "model": "anthropic/claude-sonnet-4-20250514"
     }
   }
 }
@@ -243,18 +264,7 @@ Example configuration:
 | Google | `google/gemini-2.0-flash` |
 | Google | `google/gemini-2.5-pro-preview-06-05` |
 
-You can also set a specific model per agent:
-
-```json
-{
-  "agent": {
-    "gentleman": {
-      "model": "anthropic/claude-sonnet-4-20250514",
-      ...
-    }
-  }
-}
-```
+> You can also set a specific model per agent in the `agent` section.
 
 ### OpenCode Theme
 
@@ -264,6 +274,8 @@ The configuration includes a custom **Gentleman** theme with a dark background a
 
 The Gentleman OpenCode config includes MCP (Model Context Protocol) integration:
 
-- **Context7**: Remote MCP for fetching up-to-date documentation
+| Server | Description |
+|--------|-------------|
+| **Context7** | Remote MCP for fetching up-to-date documentation |
 
 This is enabled by default and enhances the agent's ability to verify information with current docs.
