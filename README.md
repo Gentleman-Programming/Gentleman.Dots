@@ -1,6 +1,6 @@
 # Gentleman.Dots
 
-> ⚠️ **Important Notice (January 2026)**: Anthropic has blocked third-party tools (OpenCode, Crush, etc.) from using Claude Max subscriptions. The OAuth tokens are now restricted to Claude Code only. Neovim in this config now uses **Claude Code** as the primary AI assistant. OpenCode remains available for use with other providers (OpenAI API keys, etc.) or OpenCode's upcoming subscription service.
+> ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both **Claude Code** and **OpenCode** work with your Claude subscription. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
 
 ## TUI
 <img width="1424" height="1536" alt="image" src="https://github.com/user-attachments/assets/1db56d3b-a8c0-4885-82aa-c5ec04af4ac0" />

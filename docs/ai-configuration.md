@@ -1,6 +1,6 @@
 # AI Configuration for Neovim
 
-> ⚠️ **Important Notice (January 2026)**: Anthropic has blocked third-party tools from using Claude Max subscriptions. OAuth tokens are now restricted to Claude Code only. This config now uses **Claude Code as the primary AI assistant**.
+> ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both Claude Code and OpenCode work with your Claude subscription. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
 
 This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant with the custom Gentleman personality.
 
@@ -184,7 +184,7 @@ The config also includes custom "thinking" messages like:
 
 ## OpenCode Configuration
 
-> ⚠️ **Note**: As of January 2026, OpenCode can no longer use Claude Max subscriptions. You'll need your own API keys (OpenAI, Anthropic API, etc.) or wait for OpenCode's upcoming subscription service.
+> ✅ **Claude Max/Pro Support**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin. This is already configured in `GentlemanOpenCode/opencode.json`. Just run `opencode` and authenticate with your Claude account. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
 
 OpenCode is installed automatically with a custom **Gentleman** agent and theme.
 
