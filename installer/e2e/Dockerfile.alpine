@@ -1,0 +1,20 @@
+# Dockerfile for E2E testing on Alpine (uses ash/sh, no bash)
+FROM alpine:latest
+
+# Install minimal dependencies - Alpine uses ash (no bash by default)
+RUN apk add --no-cache \
+    curl \
+    git \
+    ca-certificates
+
+# Create test user
+RUN adduser -D -s /bin/sh testuser
+USER testuser
+WORKDIR /home/testuser
+
+# Copy the binary
+COPY --chown=testuser:testuser gentleman-installer-linux-amd64 /usr/local/bin/gentleman-dots
+RUN chmod +x /usr/local/bin/gentleman-dots
+
+# Default command
+CMD ["/bin/sh", "-c", "gentleman-dots --help && echo 'SUCCESS: Binary runs correctly on Alpine'"]

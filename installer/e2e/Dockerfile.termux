@@ -1,0 +1,32 @@
+# Simulates Termux environment limitations for testing
+# - No bash by default (only ash/sh like fresh Termux)
+# - ARM64 architecture (use --platform linux/arm64)
+# - Minimal tools
+
+FROM alpine:latest
+
+# Install only what Termux has by default + git for testing
+RUN apk add --no-cache \
+    git \
+    curl \
+    go \
+    && rm -rf /var/cache/apk/*
+
+# Verify NO bash exists (simulates fresh Termux)
+RUN ! command -v bash && echo "✓ No bash installed (like fresh Termux)"
+
+# Verify sh is available
+RUN command -v sh && echo "✓ sh available at $(which sh)"
+
+# Set working directory
+WORKDIR /app
+
+# Copy go.mod and go.sum first for better caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source
+COPY . .
+
+# Default command: run the POSIX compatibility tests
+CMD ["go", "test", "-v", "./internal/system/...", "-run", "POSIX|Shell|Script|Run"]

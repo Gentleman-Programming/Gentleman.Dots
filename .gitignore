@@ -2,3 +2,6 @@
 installer/gentleman.dots
 installer/gentleman-test
 installer/dist/
+
+# E2E test artifacts
+installer/e2e/gentleman-installer-*
