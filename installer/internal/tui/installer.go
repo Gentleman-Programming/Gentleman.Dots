@@ -848,9 +848,18 @@ func stepInstallWM(m *Model) error {
 		if shellName != "" {
 			// Find the full path to the shell
 			shellFullPath := ""
-			result := system.Run(fmt.Sprintf("which %s", shellName), nil)
-			if result.Error == nil && result.Output != "" {
-				shellFullPath = strings.TrimSpace(result.Output)
+			if m.SystemInfo.IsTermux {
+				// In Termux, construct the path directly (which command has issues)
+				prefix := os.Getenv("PREFIX")
+				if prefix == "" {
+					prefix = "/data/data/com.termux/files/usr"
+				}
+				shellFullPath = filepath.Join(prefix, "bin", shellName)
+			} else {
+				result := system.Run(fmt.Sprintf("which %s", shellName), nil)
+				if result.Error == nil && result.Output != "" {
+					shellFullPath = strings.TrimSpace(result.Output)
+				}
 			}
 			if shellFullPath == "" {
 				shellFullPath = shellName // Fallback
@@ -1002,10 +1011,15 @@ func stepInstallNvim(m *Model) error {
 	}
 
 	// Install Claude Code (optional, don't fail on error)
-	SendLog(stepID, "Installing Claude Code (optional)...")
-	system.RunWithLogs(`curl -fsSL https://claude.ai/install.sh | bash`, nil, func(line string) {
-		SendLog(stepID, line)
-	})
+	// Skip on Termux - Claude Code doesn't support Android
+	if !m.SystemInfo.IsTermux {
+		SendLog(stepID, "Installing Claude Code (optional)...")
+		system.RunWithLogs(`curl -fsSL https://claude.ai/install.sh | bash`, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+	} else {
+		SendLog(stepID, "Skipping Claude Code (not supported on Termux)")
+	}
 
 	// Configure Claude Code
 	SendLog(stepID, "Configuring Claude Code...")
@@ -1035,10 +1049,15 @@ func stepInstallNvim(m *Model) error {
 	SendLog(stepID, "🧠 Copied Claude skills")
 
 	// Install OpenCode (optional, don't fail on error)
-	SendLog(stepID, "Installing OpenCode (optional)...")
-	system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
-		SendLog(stepID, line)
-	})
+	// Skip on Termux - OpenCode doesn't support Android
+	if !m.SystemInfo.IsTermux {
+		SendLog(stepID, "Installing OpenCode (optional)...")
+		system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+	} else {
+		SendLog(stepID, "Skipping OpenCode (not supported on Termux)")
+	}
 
 	// Configure OpenCode
 	SendLog(stepID, "Configuring OpenCode...")
