@@ -48,19 +48,34 @@ chmod +x gentleman.dots
 
 ### Option 3: Termux (Android)
 
+Termux requires building the installer locally (Go cross-compilation to Android has limitations).
+
 ```bash
-# Install dependencies first
-pkg install git curl
+# 1. Install dependencies
+pkg update && pkg upgrade
+pkg install git golang
 
-# Download the installer
-curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-android-arm64 -o gentleman.dots
+# 2. Clone the repository
+git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
+cd Gentleman.Dots/installer
 
-# Run it
-chmod +x gentleman.dots
-./gentleman.dots
+# 3. Build and run
+go build -o ~/gentleman-installer ./cmd/gentleman-installer
+cd ~
+./gentleman-installer
 ```
 
-> **Note:** Termux support includes Fish, Zsh, Nushell, Neovim, Tmux, and Zellij. Terminal emulators are not available on Android.
+**What works on Termux:**
+- Shells: Fish, Zsh, Nushell
+- Multiplexers: Tmux, Zellij  
+- Editor: Neovim with full config
+- Nerd Fonts (auto-installed to `~/.termux/font.ttf`)
+
+**Not available on Termux:**
+- Terminal emulators (you're already in Termux)
+- Homebrew (uses `pkg` instead)
+
+> **Tip:** After installation, restart Termux to apply the font, then run `tmux` or `zellij` to start your configured environment.
 
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
 
@@ -77,7 +92,7 @@ The TUI guides you through selecting your preferred tools and handles all the co
 | Linux | x86_64 | Homebrew, Direct Download |
 | Linux | ARM64 | Homebrew, Direct Download |
 | Windows | WSL | Direct Download (see docs) |
-| Android | Termux (ARM64) | Direct Download |
+| Android | Termux (ARM64) | Build locally (see above) |
 
 ---
 
