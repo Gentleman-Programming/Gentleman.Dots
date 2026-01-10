@@ -38,12 +38,13 @@ if test $IS_TERMUX -eq 0; and set -q BREW_BIN; and test -f $BREW_BIN
     eval ($BREW_BIN shellenv)
 end
 
-if not set -q TMUX
+# Start tmux/zellij only if installed
+if not set -q TMUX; and type -q tmux
     tmux
 end
 
-#if not set -q ZELLIJ 
-#  zellij
+#if not set -q ZELLIJ; and type -q zellij
+#    zellij
 #end
 
 # Initialize tools only if they exist
