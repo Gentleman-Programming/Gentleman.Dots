@@ -524,7 +524,9 @@ func (m *Model) SetupInstallSteps() {
 	}
 
 	// Dependencies based on OS
-	if m.Choices.OS == "linux" {
+	// Check both Choices.OS and SystemInfo for Termux detection (redundancy)
+	isTermux := m.Choices.OS == "termux" || m.SystemInfo.IsTermux
+	if m.Choices.OS == "linux" && !isTermux {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "deps",
 			Name:        "Install Dependencies",
@@ -532,11 +534,11 @@ func (m *Model) SetupInstallSteps() {
 			Status:      StatusPending,
 			Interactive: true, // Needs sudo
 		})
-	} else if m.Choices.OS == "termux" {
+	} else if isTermux {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "deps",
 			Name:        "Install Dependencies",
-			Description: "Base packages",
+			Description: "Base packages (pkg)",
 			Status:      StatusPending,
 			Interactive: false, // Termux doesn't need sudo
 		})
