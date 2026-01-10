@@ -436,7 +436,7 @@ func stepInstallTerminal(m *Model) error {
 				"Failed to create Kitty config directory",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanKitty/*"), filepath.Join(homeDir, ".config/kitty/")); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanKitty"), filepath.Join(homeDir, ".config", "kitty")); err != nil {
 			return wrapStepError("terminal", "Install Kitty",
 				"Failed to copy Kitty configuration",
 				err)
@@ -474,7 +474,7 @@ func stepInstallTerminal(m *Model) error {
 				"Failed to create Ghostty config directory",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanGhostty/*"), filepath.Join(homeDir, ".config/ghostty/")); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanGhostty"), filepath.Join(homeDir, ".config", "ghostty")); err != nil {
 			return wrapStepError("terminal", "Install Ghostty",
 				"Failed to copy Ghostty configuration",
 				err)
@@ -631,7 +631,7 @@ func stepInstallShell(m *Model) error {
 				"Failed to copy Powerlevel10k configuration",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZsh/.oh-my-zsh"), filepath.Join(homeDir, "/")); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZsh", ".oh-my-zsh"), filepath.Join(homeDir, ".oh-my-zsh")); err != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to copy Oh-My-Zsh directory",
 				err)
@@ -683,7 +683,7 @@ func stepInstallShell(m *Model) error {
 				"Failed to create Nushell config directory",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanNushell/*"), nuDir+"/"); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanNushell"), nuDir); err != nil {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to copy Nushell configuration",
 				err)
@@ -750,7 +750,7 @@ func stepInstallWM(m *Model) error {
 				"Failed to create .tmux directory",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanTmux/plugins"), filepath.Join(homeDir, ".tmux/")); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanTmux", "plugins"), filepath.Join(homeDir, ".tmux", "plugins")); err != nil {
 			return wrapStepError("wm", "Install Tmux",
 				"Failed to copy Tmux plugins",
 				err)
@@ -797,7 +797,7 @@ func stepInstallWM(m *Model) error {
 				"Failed to create Zellij config directory",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZellij/zellij/*"), zellijDir+"/"); err != nil {
+		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZellij", "zellij"), zellijDir); err != nil {
 			return wrapStepError("wm", "Install Zellij",
 				"Failed to copy Zellij configuration",
 				err)
@@ -923,7 +923,7 @@ func stepInstallNvim(m *Model) error {
 	system.EnsureDir(filepath.Join(openCodeDir, "skill"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
-	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode/skill/*"), filepath.Join(openCodeDir, "skill/"))
+	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
 	SendLog(stepID, "🧠 Copied OpenCode skills")
 
 	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
