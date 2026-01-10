@@ -22,6 +22,15 @@ var (
 // Caches the result for subsequent calls
 func GetShell() string {
 	shellPathOnce.Do(func() {
+		// In Termux, prefer sh to avoid fork/exec issues with bash
+		// Go has known issues with fork/exec on Android
+		if isTermux() {
+			if path, err := exec.LookPath("sh"); err == nil {
+				shellPath = path
+				return
+			}
+		}
+
 		// Try bash first (most compatible with our commands)
 		if path, err := exec.LookPath("bash"); err == nil {
 			shellPath = path
