@@ -223,7 +223,7 @@ func getHorizontalLessons() []Exercise {
 			Level:       3,
 			Type:        ExerciseLesson,
 			Code:        []string{"const userName = 'gentleman';"},
-			CursorPos:   Position{Line: 0, Col: 28},
+			CursorPos:   Position{Line: 0, Col: 27},
 			Mission:     "Move backwards to the first quote using F'",
 			Solutions:   []string{"F'"},
 			Optimal:     "F'",
