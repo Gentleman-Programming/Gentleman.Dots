@@ -1,6 +1,6 @@
-# Gentleman.Dots
+# GentlemanmDots
 
-> ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both **Claude Code** and **OpenCode** work with your Claude subscription. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
+> ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both **Claude Code** and **OpenCode** work with your Claude subscription. _Note: This workaround is stable for now, but Anthropic could block it in the future._
 
 ## Table of Contents
 
@@ -43,7 +43,7 @@ A complete development environment configuration including:
 
 ```bash
 brew install Gentleman-Programming/tap/gentleman-dots
-gentleman.dots
+gentleman-dots
 ```
 
 ### Option 2: Direct Download
@@ -85,14 +85,14 @@ cd ~
 ./gentleman-installer
 ```
 
-| Termux Support | Status |
-|----------------|--------|
-| Shells (Fish, Zsh, Nushell) | ✅ Available |
-| Multiplexers (Tmux, Zellij) | ✅ Available |
-| Neovim with full config | ✅ Available |
-| Nerd Fonts | ✅ Auto-installed to `~/.termux/font.ttf` |
-| Terminal emulators | ❌ Not applicable |
-| Homebrew | ❌ Uses `pkg` instead |
+| Termux Support              | Status                                    |
+| --------------------------- | ----------------------------------------- |
+| Shells (Fish, Zsh, Nushell) | ✅ Available                              |
+| Multiplexers (Tmux, Zellij) | ✅ Available                              |
+| Neovim with full config     | ✅ Available                              |
+| Nerd Fonts                  | ✅ Auto-installed to `~/.termux/font.ttf` |
+| Terminal emulators          | ❌ Not applicable                         |
+| Homebrew                    | ❌ Uses `pkg` instead                     |
 
 > **Tip:** After installation, restart Termux to apply the font, then run `tmux` or `zellij` to start your configured environment.
 
@@ -104,15 +104,15 @@ The TUI guides you through selecting your preferred tools and handles all the co
 
 ## Supported Platforms
 
-| Platform | Architecture | Install Method | Package Manager |
-|----------|--------------|----------------|-----------------|
-| macOS | Apple Silicon (ARM64) | Homebrew, Direct Download | Homebrew |
-| macOS | Intel (x86_64) | Homebrew, Direct Download | Homebrew |
-| Linux (Ubuntu/Debian) | x86_64, ARM64 | Homebrew, Direct Download | Homebrew |
-| Linux (Fedora/RHEL) | x86_64, ARM64 | Direct Download | dnf |
-| Linux (Arch) | x86_64 | Homebrew, Direct Download | Homebrew |
-| Windows | WSL | Direct Download (see docs) | Homebrew |
-| Android | Termux (ARM64) | Build locally (see above) | pkg |
+| Platform              | Architecture          | Install Method             | Package Manager |
+| --------------------- | --------------------- | -------------------------- | --------------- |
+| macOS                 | Apple Silicon (ARM64) | Homebrew, Direct Download  | Homebrew        |
+| macOS                 | Intel (x86_64)        | Homebrew, Direct Download  | Homebrew        |
+| Linux (Ubuntu/Debian) | x86_64, ARM64         | Homebrew, Direct Download  | Homebrew        |
+| Linux (Fedora/RHEL)   | x86_64, ARM64         | Direct Download            | dnf             |
+| Linux (Arch)          | x86_64                | Homebrew, Direct Download  | Homebrew        |
+| Windows               | WSL                   | Direct Download (see docs) | Homebrew        |
+| Android               | Termux (ARM64)        | Build locally (see above)  | pkg             |
 
 ---
 
@@ -120,15 +120,15 @@ The TUI guides you through selecting your preferred tools and handles all the co
 
 Learn Vim the fun way! The installer includes an interactive RPG-style trainer with:
 
-| Module | Keys Covered |
-|--------|--------------|
-| 🔤 Horizontal Movement | `w`, `e`, `b`, `f`, `t`, `0`, `$`, `^` |
-| ↕️ Vertical Movement | `j`, `k`, `G`, `gg`, `{`, `}` |
-| 📦 Text Objects | `iw`, `aw`, `i"`, `a(`, `it`, `at` |
-| ✂️ Change & Repeat | `d`, `c`, `dd`, `cc`, `D`, `C`, `x` |
-| 🔄 Substitution | `r`, `R`, `s`, `S`, `~`, `gu`, `gU`, `J` |
-| 🎬 Macros & Registers | `qa`, `@a`, `@@`, `"ay`, `"+p` |
-| 🔍 Regex/Search | `/`, `?`, `n`, `N`, `*`, `#`, `\v` |
+| Module                 | Keys Covered                             |
+| ---------------------- | ---------------------------------------- |
+| 🔤 Horizontal Movement | `w`, `e`, `b`, `f`, `t`, `0`, `$`, `^`   |
+| ↕️ Vertical Movement   | `j`, `k`, `G`, `gg`, `{`, `}`            |
+| 📦 Text Objects        | `iw`, `aw`, `i"`, `a(`, `it`, `at`       |
+| ✂️ Change & Repeat     | `d`, `c`, `dd`, `cc`, `D`, `C`, `x`      |
+| 🔄 Substitution        | `r`, `R`, `s`, `S`, `~`, `gu`, `gU`, `J` |
+| 🎬 Macros & Registers  | `qa`, `@a`, `@@`, `"ay`, `"+p`           |
+| 🔍 Regex/Search        | `/`, `?`, `n`, `N`, `*`, `#`, `\v`       |
 
 Each module includes 15 progressive lessons, practice mode with intelligent exercise selection, boss fights, and XP tracking.
 
@@ -138,15 +138,15 @@ Launch it from the main menu: **Vim Mastery Trainer**
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [TUI Installer Guide](docs/tui-installer.md) | Interactive installer features, navigation, backup/restore |
-| [Manual Installation](docs/manual-installation.md) | Step-by-step manual setup for all platforms |
-| [Neovim Keymaps](docs/neovim-keymaps.md) | Complete reference of all keybindings |
-| [AI Configuration](docs/ai-configuration.md) | Claude Code, OpenCode, Copilot, and other AI assistants |
-| [Vim Trainer Spec](docs/vim-trainer-spec.md) | Technical specification for the Vim Mastery Trainer |
-| [Docker Testing](docs/docker-testing.md) | E2E testing with Docker containers |
-| [Contributing](docs/contributing.md) | Development setup, skills system, E2E tests, release process |
+| Document                                           | Description                                                  |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| [TUI Installer Guide](docs/tui-installer.md)       | Interactive installer features, navigation, backup/restore   |
+| [Manual Installation](docs/manual-installation.md) | Step-by-step manual setup for all platforms                  |
+| [Neovim Keymaps](docs/neovim-keymaps.md)           | Complete reference of all keybindings                        |
+| [AI Configuration](docs/ai-configuration.md)       | Claude Code, OpenCode, Copilot, and other AI assistants      |
+| [Vim Trainer Spec](docs/vim-trainer-spec.md)       | Technical specification for the Vim Mastery Trainer          |
+| [Docker Testing](docs/docker-testing.md)           | E2E testing with Docker containers                           |
+| [Contributing](docs/contributing.md)               | Development setup, skills system, E2E tests, release process |
 
 ---
 
@@ -154,38 +154,38 @@ Launch it from the main menu: **Vim Mastery Trainer**
 
 ### Terminal Emulators
 
-| Tool | Description |
-|------|-------------|
-| **Ghostty** | GPU-accelerated, native, blazing fast |
-| **Kitty** | Feature-rich, GPU-based rendering |
-| **WezTerm** | Lua-configurable, cross-platform |
-| **Alacritty** | Minimal, Rust-based, lightweight |
+| Tool          | Description                           |
+| ------------- | ------------------------------------- |
+| **Ghostty**   | GPU-accelerated, native, blazing fast |
+| **Kitty**     | Feature-rich, GPU-based rendering     |
+| **WezTerm**   | Lua-configurable, cross-platform      |
+| **Alacritty** | Minimal, Rust-based, lightweight      |
 
 ### Shells
 
-| Tool | Description |
-|------|-------------|
-| **Nushell** | Structured data, modern syntax, pipelines |
-| **Fish** | User-friendly, great defaults, no config needed |
-| **Zsh** | Highly customizable, POSIX-compatible, Powerlevel10k |
+| Tool        | Description                                          |
+| ----------- | ---------------------------------------------------- |
+| **Nushell** | Structured data, modern syntax, pipelines            |
+| **Fish**    | User-friendly, great defaults, no config needed      |
+| **Zsh**     | Highly customizable, POSIX-compatible, Powerlevel10k |
 
 ### Multiplexers
 
-| Tool | Description |
-|------|-------------|
-| **Tmux** | Battle-tested, widely used, lots of plugins |
+| Tool       | Description                                 |
+| ---------- | ------------------------------------------- |
+| **Tmux**   | Battle-tested, widely used, lots of plugins |
 | **Zellij** | Modern, WebAssembly plugins, floating panes |
 
 ### Editor
 
-| Tool | Description |
-|------|-------------|
+| Tool       | Description                              |
+| ---------- | ---------------------------------------- |
 | **Neovim** | LazyVim config with LSP, completions, AI |
 
 ### Prompts
 
-| Tool | Description |
-|------|-------------|
+| Tool         | Description                             |
+| ------------ | --------------------------------------- |
 | **Starship** | Cross-shell prompt with Git integration |
 
 ---
