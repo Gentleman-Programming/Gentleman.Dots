@@ -32,7 +32,7 @@ The Gentleman.Dots TUI Installer is a modern, interactive terminal application b
 
 ```bash
 brew install Gentleman-Programming/tap/gentleman-dots
-gentleman.dots
+gentleman-dots
 ```
 
 ### Option 2: Download Pre-built Binary

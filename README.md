@@ -43,7 +43,7 @@ A complete development environment configuration including:
 
 ```bash
 brew install Gentleman-Programming/tap/gentleman-dots
-gentleman.dots
+gentleman-dots
 ```
 
 ### Option 2: Direct Download
