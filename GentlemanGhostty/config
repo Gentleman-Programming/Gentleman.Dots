@@ -19,7 +19,7 @@ font-size = 14
 background-opacity = 0.95
 background-blur-radius = 20
 
-window-decoration = false
+window-decoration = true
 window-padding-color = extend
 window-step-resize = false
 window-padding-balance = true
