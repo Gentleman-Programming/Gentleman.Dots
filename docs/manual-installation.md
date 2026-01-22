@@ -112,9 +112,14 @@ Copy-Item -Path .wezterm.lua -Destination $HOME
 
 # In .wezterm.lua, uncomment for Windows:
 # config.default_domain = 'WSL:Ubuntu'
-# config.front_end = "WebGpu"
-# config.max_fps = 120
 ```
+
+**Transparency issues on Windows?** WezTerm has known issues with certain GPU drivers. Try different `front_end` values in order:
+1. `config.front_end = "OpenGL"` (default, try first)
+2. `config.front_end = "WebGpu"` (if OpenGL has issues)
+3. `config.front_end = "Software"` (fallback, uses CPU)
+
+For Windows Acrylic effect, set `window_background_opacity = 0` (not 0.95).
 
 If WezTerm doesn't pick up the config:
 - Create `C:\Users\your-username\.config\wezterm`
@@ -124,7 +129,8 @@ If WezTerm doesn't pick up the config:
 **Kitty:**
 
 ```powershell
-Copy-Item -Path GentlemanKitty\* -Destination $HOME\.config\kitty -Recurse
+mkdir $HOME\.config\kitty -Force
+Copy-Item -Path GentlemanKitty\kitty.conf -Destination $HOME\.config\kitty\kitty.conf
 ```
 
 ### 7. Install Chocolatey and win32yank
@@ -230,8 +236,8 @@ brew install wezterm --cask
 brew tap wez/wezterm-linuxbrew
 brew install wezterm
 
-# All platforms - copy config
-mkdir -p ~/.config/wezterm && cp .wezterm.lua ~/.config/wezterm/wezterm.lua
+# All platforms - copy config (to home directory)
+cp .wezterm.lua ~/.wezterm.lua
 ```
 
 #### Ghostty
@@ -254,7 +260,7 @@ mkdir -p ~/.config/ghostty && cp -r GentlemanGhostty/* ~/.config/ghostty
 brew install --cask kitty
 
 # Copy config
-mkdir -p ~/.config/kitty && cp -r GentlemanKitty/* ~/.config/kitty
+mkdir -p ~/.config/kitty && cp GentlemanKitty/kitty.conf ~/.config/kitty/
 ```
 
 **Note:** Reload Kitty config with `Ctrl+Shift+,` (Linux) or `Cmd+Shift+,` (macOS)
