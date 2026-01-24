@@ -2,7 +2,7 @@
 
 > ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both Claude Code and OpenCode work with your Claude subscription. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
 
-This configuration includes several AI assistants integrated with Neovim. By default, **Claude Code is enabled** as the primary AI assistant with the custom Gentleman personality.
+This configuration includes several AI assistants integrated with Neovim. By default, **OpenCode is enabled** as the primary AI assistant with the custom Gentleman personality.
 
 ## Table of Contents
 
@@ -29,8 +29,8 @@ This configuration includes several AI assistants integrated with Neovim. By def
 
 | Plugin | Description | Status |
 |--------|-------------|--------|
-| **Claude Code.nvim** | Claude AI integration (official) | ✅ Enabled by default |
-| **OpenCode.nvim** | OpenCode AI integration | Disabled (requires API keys) |
+| **OpenCode.nvim** | OpenCode AI integration | ✅ Enabled by default |
+| **Claude Code.nvim** | Claude AI integration (official) | Disabled |
 | **Avante.nvim** | AI-powered coding assistant | Disabled |
 | **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
 | **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
@@ -50,16 +50,16 @@ nvim ~/.config/nvim/lua/plugins/disabled.lua
 2. Find the plugin you want to enable and set `enabled = true`
 3. Save and restart Neovim
 
-**Example - switching from Claude Code to OpenCode:**
+**Example - switching from OpenCode to Claude Code:**
 
 ```lua
 {
-  "coder/claudecode.nvim",
-  enabled = false,  -- Disable Claude Code
+  "NickvanDyke/opencode.nvim",
+  enabled = false,  -- Disable OpenCode
 },
 {
-  "NickvanDyke/opencode.nvim",
-  enabled = true,   -- Enable OpenCode (requires API keys)
+  "coder/claudecode.nvim",
+  enabled = true,   -- Enable Claude Code
 },
 ```
 
@@ -81,8 +81,8 @@ These are automatically installed by the installer script:
 
 | Use Case | Recommended Plugin |
 |----------|-------------------|
-| Full Gentleman experience | **Claude Code.nvim** (default) |
-| OpenAI/other API keys | **OpenCode.nvim** |
+| Full Gentleman experience | **OpenCode.nvim** (default) |
+| Claude CLI in terminal | **Claude Code.nvim** |
 | GitHub Copilot users | **CopilotChat.nvim** |
 | Multi-provider flexibility | **CodeCompanion.nvim** |
 | Google Gemini users | **Gemini.nvim** |
