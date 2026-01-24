@@ -1,6 +1,7 @@
 # Gentleman.Dots
 
 > ℹ️ **Update (January 2026)**: OpenCode now supports Claude Max/Pro subscriptions via the `opencode-anthropic-auth` plugin (included in this config). Both **Claude Code** and **OpenCode** work with your Claude subscription. *Note: This workaround is stable for now, but Anthropic could block it in the future.*
+📄 Read this in: **English** | [Español](README.es.md)
 
 ## Table of Contents
 
