@@ -1,8 +1,6 @@
 # Gentleman.Dots
 
-> **Important Notice (January 2026)**: Anthropic has blocked third-party tools (OpenCode, Crush, etc.) from using Claude Max subscriptions. OAuth tokens are now restricted to Claude Code only. This config now uses **Claude Code as the primary AI assistant** in Neovim.
->
-> **OpenCode Fix (v2.4.5)**: If you still want to use OpenCode with Claude Max/Pro, add the `opencode-anthropic-auth` plugin to your config. See [OpenCode with Claude Max](#opencode-with-claude-max) section below.
+> **Important Notice (January 2026)**: Anthropic has blocked third-party tools (OpenCode, Crush, etc.) from using Claude Max subscriptions. OAuth tokens are now restricted to Claude Code only. This config now uses **Claude Code as the primary AI assistant** in Neovim, and **OpenCode with API key** as secondary option.
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9fcb1b15-89db-404e-b0f3-107801bd9115" />
 
@@ -821,13 +819,49 @@ To switch from one AI assistant to another:
 - **For GitHub Copilot users:** Use **CopilotChat.nvim**
 - **For Google Gemini users:** Use **Gemini.nvim** with the Gemini CLI
 
-### OpenCode with Claude Max
+### OpenCode Configuration
 
-> **Why Claude Code is now the default:** In January 2026, Anthropic restricted their OAuth tokens to only work with the official Claude Code CLI. Third-party tools like OpenCode, Crush, etc. were blocked from using Claude Max/Pro subscriptions.
+> **Why Claude Code is the default:** In January 2026, Anthropic restricted their OAuth tokens to only work with the official Claude Code CLI. Third-party tools like OpenCode, Crush, etc. were blocked from using Claude Max/Pro subscriptions.
 
-**However, there's a fix!** The `opencode-anthropic-auth` plugin enables OAuth authentication with Claude Max/Pro directly from OpenCode.
+**Recommended: Use OpenCode with API Key**
 
-To enable it, add this to your `opencode.json`:
+The safest way to use OpenCode is with an Anthropic API key:
+
+```json
+{
+  "provider": "anthropic",
+  "model": "anthropic/claude-sonnet-4-20250514"
+}
+```
+
+Then set your API key:
+```bash
+export ANTHROPIC_API_KEY="your-api-key-here"
+```
+
+**Location:** `~/.config/opencode/opencode.json`
+
+---
+
+<details>
+<summary>⚠️ <strong>RISKY ALTERNATIVE: opencode-anthropic-auth plugin</strong> (click to expand)</summary>
+
+There's a community plugin (`opencode-anthropic-auth`) that enables OAuth authentication with Claude Max/Pro subscriptions. **However, this violates Anthropic's Terms of Service and can result in account suspension.**
+
+**What the plugin does:**
+- Spoofs the Claude Code CLI's OAuth client ID
+- Fakes the user-agent to impersonate Claude Code
+- Replaces "OpenCode" strings to evade server detection
+
+**From Anthropic's Usage Policy:**
+> "Do Not Abuse our Platform: Intentionally bypass capabilities, restrictions, or guardrails established within our products without prior authorization from Anthropic"
+
+**Risks:**
+- 🚫 **Account ban** - Your Claude account can be suspended
+- ⚠️ You can request an unban via X/Twitter, but it's not guaranteed
+- 🔄 Anthropic could block this workaround at any time
+
+**If you still want to use it (at your own risk):**
 
 ```json
 {
@@ -836,16 +870,9 @@ To enable it, add this to your `opencode.json`:
 }
 ```
 
-**What this does:**
-- Allows OpenCode to authenticate using your Claude Max/Pro subscription
-- No separate API keys needed
-- Full access to Claude Sonnet 4 and other models
+**We do NOT recommend this approach.** Use Claude Code CLI or OpenCode with an API key instead.
 
-> **Stability warning:** This workaround is stable *for now*, but Anthropic could block it at any time. If you need guaranteed long-term stability, use Claude Code CLI instead.
-
-**Location:** `~/.config/opencode/opencode.json`
-
-If you prefer OpenCode over Claude Code CLI, this is the way to go (at your own risk).
+</details>
 
 ## Contributing
 
