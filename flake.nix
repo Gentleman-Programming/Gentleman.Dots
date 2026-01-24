@@ -18,7 +18,7 @@
       
       # ─── User Configuration ───
       # Change this to your macOS username
-      username = "YourUser";
+      username = "alanbuscaglia";
 
       # Function to create home configuration for a specific system
       mkHomeConfiguration = system:
@@ -60,6 +60,7 @@
             ./skhd.nix  # Skhd hotkey daemon configuration
             # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
             ./sketchybar.nix  # SketchyBar status bar
+            ./raycast.nix  # Raycast scripts
             {
               # Personal data
               home.username = username;

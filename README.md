@@ -54,7 +54,14 @@ This repository provides a complete, declarative development environment configu
 - **Atuin**: Enhanced shell history
 - **Carapace**: Universal shell completions
 - **FZF**: Fuzzy finder integration
-- **Aerospace**: Tiling window manager configuration (optional)
+- **Raycast Scripts**: Custom automation scripts for display management
+
+### 🪟 Window Management (macOS)
+
+- **Yabai**: Tiling window manager with scripting support
+- **Skhd**: Hotkey daemon for keyboard shortcuts
+- **SketchyBar**: Customizable status bar with plugins
+- **Aerospace**: Alternative tiling window manager (optional)
 
 ### 📝 Development Workflow
 
@@ -91,39 +98,65 @@ The flake automatically handles system-specific configurations, installs all dep
 | **AI Tools**        | Claude Code, OpenCode, Gemini (opt.), multiple providers |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
+| **Window Manager**  | Yabai + Skhd, SketchyBar, Aerospace (opt) |
+| **Automation**      | Raycast Scripts                           |
 
 ### 📁 Project Structure
 
 ```
 .
 ├── flake.nix              # Main Nix flake configuration
-├── README.md               # This file
+├── README.md              # This file
+├── AGENTS.md              # AI agent instructions
+│
+├── # ─── Shell Configurations ───
 ├── fish.nix               # Fish shell configuration
+├── fish/                  # Fish completions (400+ commands)
 ├── nushell.nix            # Nushell configuration
+├── nushell/               # Nushell config and env files
 ├── zsh.nix                # Zsh configuration
 ├── starship.nix           # Starship prompt configuration
-├── nvim.nix               # Neovim configuration
+│
+├── # ─── Terminal Emulators ───
 ├── ghostty.nix            # Ghostty terminal configuration
+├── ghostty/               # Ghostty config, themes, and shaders
 ├── wezterm.nix            # WezTerm configuration
 ├── tmux.nix               # Tmux configuration
-├── zed.nix                # Zed editor configuration
-├── claude.nix             # Claude Code CLI configuration
-├── opencode.nix           # OpenCode AI configuration
-├── gemini.nix             # Gemini CLI configuration (optional)
-├── television.nix         # Television file navigator
 ├── zellij.nix             # Zellij terminal workspace (optional)
+├── zellij/                # Zellij plugins (zjstatus, forgot)
+│
+├── # ─── Editors ───
+├── nvim.nix               # Neovim configuration
+├── nvim/                  # Neovim plugins and settings (LazyVim)
+├── nvim-oil-minimal/      # Minimal Neovim config for Oil.nvim
+├── zed.nix                # Zed editor configuration
+├── zed/                   # Zed themes, keymaps, tasks, prompts
+│
+├── # ─── AI Tools ───
+├── claude.nix             # Claude Code CLI configuration
+├── claude/                # Claude settings, skills, themes, statusline
+├── opencode.nix           # OpenCode AI configuration
+├── opencode/              # OpenCode themes and skills
+├── gemini.nix             # Gemini CLI configuration (optional)
+│
+├── # ─── Window Management (macOS) ───
+├── yabai.nix              # Yabai window manager configuration
+├── yabai/                 # Yabai scripts and config
+├── skhd.nix               # Skhd hotkey daemon configuration
+├── skhd/                  # Skhd keybindings (skhdrc)
+├── sketchybar.nix         # SketchyBar status bar configuration
+├── sketchybar/            # SketchyBar plugins and config
+├── simple-bar.nix         # simple-bar for Übersicht (disabled)
+├── simple-bar/            # simple-bar themes (disabled)
+├── aerospace/             # Aerospace window manager config (optional)
+│
+├── # ─── Utilities ───
+├── television.nix         # Television file navigator
+├── television/            # Television config and channels
 ├── oil-scripts.nix        # Custom Oil.nvim scripts
-├── yabai.nix              # Yabai window manager (macOS only)
-├── skhd.nix               # Skhd hotkey daemon (macOS only)
-├── simple-bar.nix         # simple-bar for Übersicht (macOS only)
-├── fish/                  # Fish completions and configs
-├── nvim/                  # Neovim plugins and settings
-├── ghostty/               # Ghostty themes and config
-├── zed/                   # Zed themes and settings
-├── scripts/               # Custom utility scripts
-├── simple-bar/            # simple-bar themes and config (macOS only)
-├── yabai/                 # Yabai window manager config (macOS only)
-└── aerospace/             # Aerospace window manager config
+├── scripts/               # Custom utility scripts (ocd, oil)
+├── raycast.nix            # Raycast scripts configuration
+└── raycast/               # Raycast automation scripts
 ```
 
 ---
@@ -138,7 +171,9 @@ The following modules are **macOS-only** and will fail on Linux:
 |--------|-------------|----------------|
 | `yabai.nix` | Tiling window manager | Uses macOS Accessibility API |
 | `skhd.nix` | Hotkey daemon | Depends on macOS input system |
+| `sketchybar.nix` | Status bar | macOS menu bar integration |
 | `simple-bar.nix` | Status bar widget | Requires Übersicht (macOS app) |
+| `raycast.nix` | Automation scripts | Raycast is macOS-only |
 
 ### How to Disable macOS Modules
 
@@ -247,6 +282,68 @@ For window management on Linux, consider:
 
 ---
 
+## 🖥️ SketchyBar Status Bar
+
+This configuration includes a fully customized SketchyBar setup with:
+
+- **Workspace indicators** with Yabai integration
+- **System monitors** (CPU, memory, battery)
+- **Media controls** and now playing info
+- **Custom plugins** for various system information
+
+### SketchyBar Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| `spaces.sh` | Workspace/space indicators with window counts |
+| `front_app.sh` | Currently focused application |
+| `media.sh` | Now playing media info |
+| `battery.sh` | Battery status and percentage |
+| `wifi.sh` | Network connection status |
+| `clock.sh` | Date and time display |
+
+### Starting SketchyBar
+
+SketchyBar starts automatically via Nix. To manually control:
+
+```bash
+# Start
+brew services start sketchybar
+
+# Restart
+brew services restart sketchybar
+
+# Stop
+brew services stop sketchybar
+```
+
+---
+
+## ⚡ Raycast Scripts
+
+Custom Raycast automation scripts for display and system management:
+
+| Script | Description |
+|--------|-------------|
+| `set-4k.sh` | Set LG TV to 4K resolution with multi-monitor arrangement |
+| `set-1080p.sh` | Set LG TV to 1080p resolution with multi-monitor arrangement |
+| `reset-display-placement.sh` | Auto-detect resolution and reset display arrangement |
+| `restart-sketchybar.sh` | Kill and restart SketchyBar |
+
+### Setup
+
+1. Open Raycast Settings → Extensions → Script Commands
+2. Add `~/Raycast Scripts/` as a script directory
+3. Scripts will be available in Raycast search
+
+### Requirements
+
+- [displayplacer](https://github.com/jakehilborn/displayplacer): `brew install displayplacer`
+
+> **Note:** Display scripts use hardcoded monitor IDs. Run `displayplacer list` to get your monitor IDs and update the scripts accordingly.
+
+---
+
 ## Installation Steps (for macOS)
 
 ### 1. Install the Nix Package Manager
@@ -298,15 +395,55 @@ Configurations are automatically applied. Choose your preferred terminal:
   - Reload config with **Shift + Cmd + ,**
   - Modern GPU-accelerated with custom themes
   - Optimized for performance
+  - **50+ custom shaders included** (CRT effects, cursor trails, matrix, etc.)
 
 - **WezTerm**: <https://wezterm.org/installation.html>
   - Feature-rich with Lua configuration
   - Cross-platform compatibility
   - Advanced customization options
 
-### 5. Optional: Aerospace Window Manager
+#### Ghostty Shaders
 
-For tiling window management, copy the Aerospace configuration:
+The configuration includes 50+ GLSL shaders for visual effects:
+
+| Category | Examples |
+|----------|----------|
+| **CRT Effects** | `crt.glsl`, `bettercrt.glsl`, `retro-terminal.glsl` |
+| **Cursor Trails** | `cursor_blaze.glsl`, `cursor_smear.glsl`, `cursor_frozen.glsl` |
+| **Backgrounds** | `starfield.glsl`, `matrix-hallway.glsl`, `galaxy.glsl` |
+| **Effects** | `bloom.glsl`, `glitchy.glsl`, `underwater.glsl` |
+
+To enable a shader, edit `~/.config/ghostty/config` and add:
+```
+custom-shader = ~/.config/ghostty/shaders/cursor_smear_gentleman.glsl
+```
+
+### 5. Window Management Options
+
+#### Option A: Yabai + Skhd (Recommended)
+
+Yabai and Skhd are automatically configured via the flake. They provide:
+
+- **Yabai**: Tiling window manager with BSP layout
+- **Skhd**: Hotkey daemon for keyboard shortcuts
+- **SketchyBar**: Status bar with workspace indicators
+
+**Key bindings (configured in `skhd/skhdrc`):**
+
+| Shortcut | Action |
+|----------|--------|
+| `alt + h/j/k/l` | Focus window (vim-style) |
+| `shift + alt + h/j/k/l` | Move window |
+| `alt + 1-9` | Switch to space |
+| `shift + alt + 1-9` | Move window to space |
+| `alt + f` | Toggle fullscreen |
+| `alt + t` | Toggle float |
+
+> **Note:** Yabai requires accessibility permissions and SIP configuration. See `yabai/README.md` for details.
+
+#### Option B: Aerospace (Alternative)
+
+For a simpler setup without SIP changes, copy the Aerospace configuration:
 
 ```bash
 cp ./aerospace/.aerospace.toml ~/
@@ -317,7 +454,7 @@ Aerospace provides:
 - Automatic window tiling
 - Workspace management
 - Keyboard-driven navigation
-- macOS-native integration
+- macOS-native integration (no SIP changes needed)
 
 ### 6. Install Home Manager
 
@@ -402,18 +539,24 @@ shellPath="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/zsh" && su
 
 Configurations are automatically deployed to:
 
-| Tool           | Location                                 |
-| -------------- | ---------------------------------------- |
-| **Nushell**    | `~/Library/Application Support/nushell/` |
-| **Fish**       | `~/.config/fish/`                        |
-| **Ghostty**    | `~/.config/ghostty/`                     |
-| **WezTerm**    | `~/.wezterm.lua`                         |
-| **Neovim**     | `~/.config/nvim/`                        |
-| **Zed**        | `~/Library/Application Support/Zed/`     |
-| **Starship**   | `~/.config/starship.toml`                |
-| **Tmux**       | `~/.config/tmux/`                        |
-| **Zellij**     | `~/.config/zellij/` (optional)           |
-| **Television** | `~/.config/television/`                  |
+| Tool              | Location                                 |
+| ----------------- | ---------------------------------------- |
+| **Nushell**       | `~/Library/Application Support/nushell/` |
+| **Fish**          | `~/.config/fish/`                        |
+| **Ghostty**       | `~/.config/ghostty/`                     |
+| **WezTerm**       | `~/.wezterm.lua`                         |
+| **Neovim**        | `~/.config/nvim/`                        |
+| **Zed**           | `~/Library/Application Support/Zed/`     |
+| **Starship**      | `~/.config/starship.toml`                |
+| **Tmux**          | `~/.config/tmux/`                        |
+| **Zellij**        | `~/.config/zellij/` (optional)           |
+| **Television**    | `~/.config/television/`                  |
+| **Claude Code**   | `~/.claude/`                             |
+| **OpenCode**      | `~/.config/opencode/`                    |
+| **Yabai**         | `~/.config/yabai/`                       |
+| **Skhd**          | `~/.config/skhd/`                        |
+| **SketchyBar**    | `~/.config/sketchybar/`                  |
+| **Raycast**       | `~/Raycast Scripts/`                     |
 
 ### 🚀 Performance Features
 
@@ -570,6 +713,49 @@ Some configurations are commented out by default. To enable them:
    - Integrated via Bun package manager
    - Direct access with `gemini` command
    - Perfect for AI-powered development workflows
+
+## 🤖 Claude Code CLI Configuration
+
+This configuration includes a complete Claude Code CLI setup with custom skills, themes, and output styles.
+
+### Claude Code Features
+
+| Feature | Description |
+|---------|-------------|
+| **CLAUDE.md** | Custom system instructions and personality |
+| **Skills** | Framework-specific coding patterns (React 19, Next.js 15, etc.) |
+| **Output Styles** | Custom response formatting (Gentleman style) |
+| **Themes** | Custom TweakCC theme for terminal |
+| **Statusline** | Custom status bar script |
+| **MCP Servers** | Template for Model Context Protocol servers |
+
+### Included Skills
+
+The following skills auto-load based on context:
+
+| Skill | Trigger |
+|-------|---------|
+| `react-19` | React components, hooks, JSX |
+| `nextjs-15` | App Router, Server Components |
+| `typescript` | Types, interfaces, generics |
+| `tailwind-4` | Tailwind CSS styling |
+| `zod-4` | Schema validation |
+| `zustand-5` | State management |
+| `ai-sdk-5` | Vercel AI SDK |
+| `django-drf` | Django REST Framework |
+| `playwright` | E2E testing |
+| `pytest` | Python testing |
+
+### OpenCode Configuration
+
+OpenCode also includes similar skills plus:
+
+| Skill | Description |
+|-------|-------------|
+| `jira-epic` | Create Jira epics following standard format |
+| `jira-task` | Create Jira tasks following standard format |
+
+---
 
 ## AI Configuration for Neovim
 
