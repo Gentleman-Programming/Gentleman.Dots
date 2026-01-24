@@ -100,7 +100,12 @@ for sid in $(seq 1 10); do
       background.drawing=on \
       script="$PLUGIN_DIR/space.sh" \
       click_script="yabai -m space --focus $sid" \
-    
+    --subscribe space.$sid \
+      space_change \
+      yabai_space_changed \
+      yabai_window_created \
+      yabai_window_destroyed \
+      yabai_window_moved
 done
 
 # ─────────────────────────────────────────────────────────────────────────────────
