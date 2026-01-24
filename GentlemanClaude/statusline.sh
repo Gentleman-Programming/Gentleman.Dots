@@ -127,12 +127,13 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
   fi
 fi
 
-# Model icon
-MODEL_ICON="🤖"
+# Model icon (ASCII only to avoid width calculation issues)
+MODEL_ICON=""
 case "$MODEL" in
-  *Opus*) MODEL_ICON="🎭" ;;
-  *Sonnet*) MODEL_ICON="📝" ;;
-  *Haiku*) MODEL_ICON="🍃" ;;
+  *Opus*) MODEL_ICON="[O]" ;;
+  *Sonnet*) MODEL_ICON="[S]" ;;
+  *Haiku*) MODEL_ICON="[H]" ;;
+  *) MODEL_ICON="[C]" ;;
 esac
 
 # Progress bar
@@ -148,22 +149,21 @@ else
   BAR_COLOR="$SUCCESS"
 fi
 
-BAR="${BAR_COLOR}"
-for ((i=0; i<FILLED; i++)); do BAR+="█"; done
-BAR+="${MUTED}"
-for ((i=0; i<EMPTY; i++)); do BAR+="░"; done
-BAR+="${NC}"
+BAR="${BAR_COLOR}["
+for ((i=0; i<FILLED; i++)); do BAR+="="; done
+for ((i=0; i<EMPTY; i++)); do BAR+="."; done
+BAR+="]${NC}"
 
 # Build status line
 SEP="${MUTED}  ${NC}"
 
 LINE="${BOLD}${PURPLE}${MODEL_ICON} ${MODEL}${NC}"
 LINE+="${SEP}"
-LINE+="${ACCENT}󰉋 ${DIR_NAME}${NC}"
+LINE+="${ACCENT}${DIR_NAME}${NC}"
 
 if [ -n "$BRANCH" ]; then
   LINE+="${SEP}"
-  LINE+="${SECONDARY} ${BRANCH}${GIT_DIRTY}${NC}"
+  LINE+="${SECONDARY}git:${BRANCH}${GIT_DIRTY}${NC}"
 fi
 
 LINE+="${SEP}"
@@ -172,4 +172,5 @@ LINE+="${SUCCESS}+${ADDED}${NC} ${ERROR}-${REMOVED}${NC}"
 LINE+="${SEP}"
 LINE+="${MUTED}ctx${NC} ${BAR} ${MUTED}${CTX_PERCENT}%${NC}"
 
-echo -e "$LINE"
+# Clear to end of line to prevent artifacts from previous renders
+echo -e "${LINE}\033[K"
