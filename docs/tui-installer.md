@@ -75,8 +75,16 @@ From the main menu you can access:
 4. **Shell**: Choose Nushell, Fish, Zsh, or None
 5. **Window Manager**: Select Tmux, Zellij, or None
 6. **Neovim**: Configure LazyVim with LSP and AI assistants
-7. **Backup Confirmation**: Option to backup existing configs before overwriting
-8. **Installation**: Watch real-time progress
+7. **AI Coding Assistants**: Multi-select AI tools (OpenCode, Kilo Code, Continue.dev, Aider)
+8. **Backup Confirmation**: Option to backup existing configs before overwriting
+9. **Installation**: Watch real-time progress
+
+**Skip Steps**: Each configuration screen (steps 2-7) includes a "⏭️  Skip this step" option. This is useful if you:
+- Already have terminal/shell configurations you want to keep
+- Only want to install specific components (e.g., just AI Assistants)
+- Need to customize certain tools manually before running the installer
+
+Skipped steps won't be installed or configured. For example, selecting "Skip this step" on the Terminal screen will keep your current terminal setup unchanged.
 
 ### Keyboard Shortcuts
 
@@ -85,6 +93,7 @@ From the main menu you can access:
 | `↑` / `k` | Move up |
 | `↓` / `j` | Move down |
 | `Enter` / `Space` | Select option |
+| `Space` | Toggle checkbox (AI Assistants screen) |
 | `Esc` | Go back |
 | `q` | Quit (when not installing) |
 | `d` | Toggle details (during installation) |
@@ -122,6 +131,7 @@ gentleman.dots --non-interactive --shell=<shell> [options]
 | `--nvim` | | Install Neovim configuration |
 | `--font` | | Install Nerd Font |
 | `--backup` | `true`/`false` | Backup existing configs (default: true) |
+| `--ai` | `opencode`, `kilocode`, `continue`, `aider` | AI assistants (comma-separated) |
 
 ### Examples
 
@@ -132,6 +142,12 @@ gentleman.dots
 # Non-interactive with Fish + Zellij + Neovim
 gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
 
+# Non-interactive with OpenCode AI assistant
+gentleman.dots --non-interactive --shell=zsh --nvim --ai=opencode
+
+# Multiple AI assistants
+gentleman.dots --non-interactive --shell=fish --ai=opencode,continue
+
 # Test mode with Zsh + Tmux (no terminal, no nvim)
 gentleman.dots --test --non-interactive --shell=zsh --wm=tmux
 
@@ -141,6 +157,86 @@ gentleman.dots --dry-run
 # Verbose output (shows all command logs)
 GENTLEMAN_VERBOSE=1 gentleman.dots --non-interactive --shell=fish --nvim
 ```
+
+## AI Coding Assistants
+
+The installer supports multiple AI coding assistants that integrate with your development environment. You can select one or more assistants during installation.
+
+### Available Assistants
+
+| Assistant | Status | Description |
+|-----------|--------|-------------|
+| **OpenCode** | ✅ Available Now | Open-source AI coding assistant with context-aware completions |
+| **Kilo Code** | 🚧 Coming Soon | Lightweight AI assistant optimized for performance |
+| **Continue.dev** | 🚧 Coming Soon | Open-source autopilot for software development |
+| **Aider** | 🚧 Coming Soon | AI pair programming in the terminal |
+
+### How It Works
+
+1. **Selection Screen**: Use `Space` to toggle checkboxes for each assistant
+2. **Skills Installation**: Selected assistants will have their skills installed to `~/.{assistant}/skills/`
+3. **Independent Installation**: AI assistants install independently from Neovim
+4. **Configuration**: Each assistant uses its own configuration directory
+
+### Interactive Mode
+
+During installation, you'll see the AI Assistants screen:
+
+```
+Step 7: AI Coding Assistants
+Select AI coding assistants (Space to toggle, Enter to confirm)
+
+[ ] OpenCode
+[ ] Kilo Code (Coming Soon)
+[ ] Continue.dev (Coming Soon)
+[ ] Aider (Coming Soon)
+─────────────
+✅ Confirm Selection
+← Back
+```
+
+- **Navigation**: Use `↑`/`↓` or `j`/`k` to move
+- **Toggle**: Press `Space` to select/deselect
+- **Confirm**: Press `Enter` on "Confirm Selection"
+- **Skip**: Leave all unchecked and confirm to skip
+
+### Non-Interactive Mode
+
+Use the `--ai` flag with comma-separated values:
+
+```bash
+# Single assistant
+gentleman.dots --non-interactive --shell=fish --ai=opencode
+
+# Multiple assistants
+gentleman.dots --non-interactive --shell=fish --ai=opencode,continue
+
+# No AI assistants (omit the flag)
+gentleman.dots --non-interactive --shell=fish --nvim
+```
+
+### Skills Directory
+
+Skills are installed to:
+
+| Assistant | Skills Location |
+|-----------|-----------------|
+| OpenCode | `~/.opencode/skills/` |
+| Kilo Code | `~/.kilocode/skills/` |
+| Continue.dev | `~/.continue/skills/` |
+| Aider | `~/.aider/skills/` |
+
+### Manual Installation
+
+If you want to install AI assistants later:
+
+```bash
+# OpenCode example
+mkdir -p ~/.opencode/skills
+cp -r ~/Gentleman.Dots/GentlemanClaude/skills/* ~/.opencode/skills/
+```
+
+See [Manual Installation](./manual-installation.md) for detailed steps.
 
 ## Backup & Restore
 
@@ -161,6 +257,10 @@ The installer automatically detects existing configurations for:
 | Kitty | `~/.config/kitty` |
 | Ghostty | `~/.config/ghostty` |
 | Starship | `~/.config/starship.toml` |
+| OpenCode | `~/.opencode` |
+| Kilo Code | `~/.kilocode` |
+| Continue.dev | `~/.continue` |
+| Aider | `~/.aider` |
 
 ### Backup Location
 
@@ -209,7 +309,17 @@ The installer includes educational content to help you understand each tool:
 
 - LazyVim configuration
 - LSP setup
-- AI assistants (OpenCode, Claude, Copilot, etc.)
+- Treesitter syntax highlighting
+- Modern plugin ecosystem
+
+### AI Assistants
+
+| Assistant | Description |
+|-----------|-------------|
+| OpenCode | Context-aware code completions and generation |
+| Kilo Code | Lightweight, performance-focused AI assistant |
+| Continue.dev | Open-source autopilot for development |
+| Aider | Terminal-based AI pair programming |
 
 ## Requirements
 

@@ -62,7 +62,7 @@ func (m Model) View() string {
 		s.WriteString(m.renderWelcome())
 	case ScreenMainMenu:
 		s.WriteString(m.renderMainMenu())
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning, ScreenAIAssistants:
 		s.WriteString(m.renderSelection())
 	case ScreenLearnTerminals:
 		s.WriteString(m.renderLearnTerminals())
@@ -184,7 +184,12 @@ func (m Model) renderMainMenu() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Space q] quit"))
+	// Different help text for AI Assistants screen (has checkboxes)
+	if m.Screen == ScreenAIAssistants {
+		s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Space] toggle • [Enter] done • [Esc] back"))
+	} else {
+		s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+	}
 
 	return s.String()
 }
@@ -229,7 +234,7 @@ func (m Model) renderSelection() string {
 }
 
 func (m Model) renderStepProgress() string {
-	steps := []string{"OS", "Terminal", "Font", "Shell", "WM", "Nvim"}
+	steps := []string{"OS", "Terminal", "Font", "Shell", "WM", "Nvim", "AI Assistants"}
 	currentIdx := 0
 
 	switch m.Screen {
@@ -245,6 +250,8 @@ func (m Model) renderStepProgress() string {
 		currentIdx = 4
 	case ScreenNvimSelect:
 		currentIdx = 5
+	case ScreenAIAssistants:
+		currentIdx = 6
 	}
 
 	var parts []string
@@ -460,7 +467,12 @@ func (m Model) renderSingleToolInfo(info ToolInfo) string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back • [Space q] quit"))
+	// Different help text for AI Assistants screen (has checkboxes)
+	if m.Screen == ScreenAIAssistants {
+		s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Space] toggle • [Enter] done • [Esc] back"))
+	} else {
+		s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] select • [Esc] back"))
+	}
 
 	return s.String()
 }
@@ -1070,44 +1082,49 @@ func (m Model) renderComplete() string {
 	s.WriteString(SuccessStyle.Render("✨ Installation Complete! ✨"))
 	s.WriteString("\n\n")
 
-	// Summary
+	// Summary - Use GetInstallationSummary() for consistency
 	s.WriteString(TitleStyle.Render("Summary"))
+	s.WriteString("\n\n")
+
+	// Show OS selection
+	s.WriteString(InfoStyle.Render(fmt.Sprintf("  • OS: %s", m.Choices.OS)))
 	s.WriteString("\n")
 
-	items := []string{
-		fmt.Sprintf("OS: %s", m.Choices.OS),
-		fmt.Sprintf("Terminal: %s", m.Choices.Terminal),
-		fmt.Sprintf("Shell: %s", m.Choices.Shell),
-		fmt.Sprintf("Window Manager: %s", m.Choices.WindowMgr),
-	}
-
-	if m.Choices.InstallFont {
-		items = append(items, "Font: Iosevka Term Nerd Font")
-	}
-	if m.Choices.InstallNvim {
-		items = append(items, "Editor: Neovim with Gentleman config")
-	}
-
-	for _, item := range items {
-		s.WriteString(InfoStyle.Render("  • " + item))
+	// Get installation summary (includes all components with ✓/✗ status)
+	summary := m.GetInstallationSummary()
+	for _, item := range summary {
+		// Color code based on status
+		if strings.HasPrefix(item, "✓") {
+			s.WriteString(SuccessStyle.Render("  • " + item))
+		} else if strings.HasPrefix(item, "✗") {
+			s.WriteString(MutedStyle.Render("  • " + item))
+		} else {
+			s.WriteString(InfoStyle.Render("  • " + item))
+		}
 		s.WriteString("\n")
-	}
-
-	// Shell change instructions
-	shell := m.Choices.Shell
-	shellCmd := shell
-	if shell == "nushell" {
-		shellCmd = "nu"
 	}
 
 	s.WriteString("\n")
 	s.WriteString(TitleStyle.Render("Next Step"))
 	s.WriteString("\n\n")
 
-	s.WriteString(InfoStyle.Render("To use your new shell now, run:"))
-	s.WriteString("\n")
-	s.WriteString(HighlightStyle.Render(fmt.Sprintf("   exec %s", shellCmd)))
-	s.WriteString("\n\n")
+	// Only show shell command if shell was actually installed (not skipped)
+	if !m.SkippedSteps[ScreenShellSelect] && m.Choices.Shell != "" {
+		shell := m.Choices.Shell
+		shellCmd := shell
+		if shell == "nushell" {
+			shellCmd = "nu"
+		}
+
+		s.WriteString(InfoStyle.Render("To use your new shell now, run:"))
+		s.WriteString("\n")
+		s.WriteString(HighlightStyle.Render(fmt.Sprintf("   exec %s", shellCmd)))
+		s.WriteString("\n\n")
+	} else {
+		// No shell installed, just show a generic message
+		s.WriteString(InfoStyle.Render("Your dotfiles have been configured!"))
+		s.WriteString("\n\n")
+	}
 
 	s.WriteString(HelpStyle.Render("Press [Enter] or [q] to exit"))
 
@@ -1158,18 +1175,45 @@ func (m Model) renderBackupConfirm() string {
 
 	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
 	s.WriteString("\n")
-	s.WriteString(MutedStyle.Render("The following configs will be overwritten:"))
+	
+	// Show what will be installed
+	s.WriteString(InfoStyle.Render("📦 Installation Summary:"))
 	s.WriteString("\n\n")
-
-	// List existing configs
-	for _, config := range m.ExistingConfigs {
-		s.WriteString(WarningStyle.Render("  ⚠️  " + config))
+	
+	installSummary := m.GetInstallationSummary()
+	for _, item := range installSummary {
+		// Check if this is a skipped item (starts with ✗)
+		if strings.HasPrefix(item, "✗") {
+			s.WriteString(MutedStyle.Render("  " + item))
+		} else {
+			s.WriteString(SuccessStyle.Render("  " + item))
+		}
 		s.WriteString("\n")
 	}
+	
+	// Get configs that will actually be overwritten based on user choices
+	configsToOverwrite := m.GetConfigsToOverwrite()
+	
+	// Only show config overwrite warning if there are configs that will actually be replaced
+	if len(configsToOverwrite) > 0 {
+		s.WriteString("\n")
+		s.WriteString(WarningStyle.Render("⚠️  The following configs will be overwritten:"))
+		s.WriteString("\n\n")
 
-	s.WriteString("\n")
-	s.WriteString(InfoStyle.Render("Creating a backup allows you to restore later if needed."))
-	s.WriteString("\n\n")
+		// List configs that will be overwritten
+		for _, config := range configsToOverwrite {
+			s.WriteString(WarningStyle.Render("  ⚠️  " + config))
+			s.WriteString("\n")
+		}
+
+		s.WriteString("\n")
+		s.WriteString(InfoStyle.Render("Creating a backup allows you to restore later if needed."))
+		s.WriteString("\n\n")
+	} else {
+		s.WriteString("\n")
+		s.WriteString(InfoStyle.Render("No existing configurations will be affected. Fresh installation!"))
+		s.WriteString("\n\n")
+	}
 
 	// Options
 	options := m.GetCurrentOptions()

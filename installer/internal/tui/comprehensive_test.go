@@ -84,7 +84,7 @@ func TestGetCurrentOptionsForAllScreens(t *testing.T) {
 		{ScreenShellSelect, 4},
 		{ScreenWMSelect, 4},
 		{ScreenNvimSelect, 5},
-		{ScreenBackupConfirm, 3},
+		{ScreenBackupConfirm, 2}, // Can be 2 or 3 depending on configs
 		{ScreenRestoreConfirm, 3},
 		{ScreenLearnTerminals, 5},
 		{ScreenLearnShells, 4},
@@ -945,7 +945,8 @@ func TestBackupConfirmWithBackup(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenBackupConfirm
 	m.Cursor = 0 // Install with Backup
-	m.ExistingConfigs = []string{"nvim"}
+	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim"}
+	m.Choices.InstallNvim = true // User chose to install Neovim
 
 	result, cmd := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)
@@ -965,7 +966,8 @@ func TestBackupConfirmWithoutBackup(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenBackupConfirm
 	m.Cursor = 1 // Install without Backup
-	m.ExistingConfigs = []string{"nvim"}
+	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim"}
+	m.Choices.InstallNvim = true // User chose to install Neovim, so config will be overwritten
 
 	result, cmd := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)
@@ -984,7 +986,9 @@ func TestBackupConfirmWithoutBackup(t *testing.T) {
 func TestBackupConfirmCancel(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenBackupConfirm
-	m.Cursor = 2 // Cancel
+	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim"}
+	m.Choices.InstallNvim = true // User chose to install Neovim, so 3 options available
+	m.Cursor = 2 // Cancel (3rd option)
 
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)

@@ -65,9 +65,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Choices.OS = "mac"
 		opts := m.GetCurrentOptions()
 
-		// Should have: Alacritty, WezTerm, Kitty, Ghostty, None, separator, Learn
-		if len(opts) != 7 {
-			t.Errorf("Expected 7 terminal options for mac (including separator and learn), got %d", len(opts))
+		// Should have: Alacritty, WezTerm, Kitty, Ghostty, None, separator, Skip, Learn = 8 options
+		if len(opts) != 8 {
+			t.Errorf("Expected 8 terminal options for mac (including separator, skip, and learn), got %d", len(opts))
 		}
 		// Should include Kitty on mac
 		hasKitty := false
@@ -87,9 +87,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Choices.OS = "linux"
 		opts := m.GetCurrentOptions()
 
-		// Should have: Alacritty, WezTerm, Ghostty, None, separator, Learn
-		if len(opts) != 6 {
-			t.Errorf("Expected 6 terminal options for linux (including separator and learn), got %d", len(opts))
+		// Should have: Alacritty, WezTerm, Ghostty, None, separator, Skip, Learn = 7 options
+		if len(opts) != 7 {
+			t.Errorf("Expected 7 terminal options for linux (including separator, skip, and learn), got %d", len(opts))
 		}
 		// Should NOT include Kitty on linux
 		for _, opt := range opts {
@@ -103,9 +103,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Screen = ScreenShellSelect
 		opts := m.GetCurrentOptions()
 
-		// Should have: Fish, Zsh, Nushell, separator, Learn
-		if len(opts) != 5 {
-			t.Errorf("Expected 5 shell options (including separator and learn), got %d", len(opts))
+		// Should have: Fish, Zsh, Nushell, separator, Skip, Learn = 6 options
+		if len(opts) != 6 {
+			t.Errorf("Expected 6 shell options (including separator, skip, and learn), got %d", len(opts))
 		}
 		expected := []string{"Fish", "Zsh", "Nushell"}
 		for i, exp := range expected {
@@ -119,9 +119,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Screen = ScreenWMSelect
 		opts := m.GetCurrentOptions()
 
-		// Should have: Tmux, Zellij, None, separator, Learn
-		if len(opts) != 5 {
-			t.Errorf("Expected 5 WM options (including separator and learn), got %d", len(opts))
+		// Should have: Tmux, Zellij, None, separator, Skip, Learn = 6 options
+		if len(opts) != 6 {
+			t.Errorf("Expected 6 WM options (including separator, skip, and learn), got %d", len(opts))
 		}
 	})
 
@@ -376,13 +376,16 @@ func TestScreen(t *testing.T) {
 
 func TestBackupScreenOptions(t *testing.T) {
 	t.Run("ScreenBackupConfirm should return correct options", func(t *testing.T) {
+		// Test case 1: With configs to overwrite (3 options)
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
+		m.Choices = UserChoices{Shell: "fish"}
 
 		opts := m.GetCurrentOptions()
 
 		if len(opts) != 3 {
-			t.Errorf("Expected 3 options for BackupConfirm, got %d", len(opts))
+			t.Errorf("Expected 3 options for BackupConfirm with configs to overwrite, got %d", len(opts))
 		}
 
 		// Check options contain expected text
@@ -390,6 +393,31 @@ func TestBackupScreenOptions(t *testing.T) {
 		for i, expected := range expectedOptions {
 			found := false
 			for _, opt := range opts {
+				if containsString(opt, expected) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("Expected option %d to contain '%s'", i, expected)
+			}
+		}
+
+		// Test case 2: Without configs to overwrite (2 options)
+		m2 := NewModel()
+		m2.Screen = ScreenBackupConfirm
+		m2.ExistingConfigs = []string{} // No existing configs
+
+		opts2 := m2.GetCurrentOptions()
+
+		if len(opts2) != 2 {
+			t.Errorf("Expected 2 options for BackupConfirm without configs to overwrite, got %d", len(opts2))
+		}
+
+		expectedOptions2 := []string{"Start Installation", "Cancel"}
+		for i, expected := range expectedOptions2 {
+			found := false
+			for _, opt := range opts2 {
 				if containsString(opt, expected) {
 					found = true
 					break
@@ -441,7 +469,7 @@ func TestBackupScreenTitles(t *testing.T) {
 		screen   Screen
 		expected string
 	}{
-		{ScreenBackupConfirm, "Existing Configs Detected"},
+		{ScreenBackupConfirm, "Confirm Installation"},
 		{ScreenRestoreBackup, "Restore from Backup"},
 		{ScreenRestoreConfirm, "Confirm Restore"},
 	}

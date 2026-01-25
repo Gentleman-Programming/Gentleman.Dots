@@ -736,7 +736,7 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("install with backup", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.SystemInfo = &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true}
 		m.Choices = UserChoices{OS: "mac", Shell: "fish"}
 		m.Cursor = 0 // Install with Backup
@@ -750,7 +750,7 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("install without backup", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.SystemInfo = &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true}
 		m.Choices = UserChoices{OS: "mac", Shell: "fish"}
 		m.Cursor = 1 // Install without Backup
@@ -764,7 +764,8 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("cancel", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
+		m.Choices = UserChoices{Shell: "fish"} // User chose fish, so 3 options available
 		m.Cursor = 2 // Cancel
 
 		m, _ = simulateKeyPress(m, "enter")

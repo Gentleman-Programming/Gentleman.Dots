@@ -254,7 +254,12 @@ func TestBackupScreenGolden(t *testing.T) {
 	m.Width = 80
 	m.Height = 24
 	m.Screen = ScreenBackupConfirm
-	m.ExistingConfigs = []string{".config/nvim", ".zshrc", ".tmux.conf"}
+	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim", "zsh: /home/user/.zshrc", "tmux: /home/user/.tmux.conf"}
+	m.Choices = UserChoices{
+		InstallNvim: true,
+		Shell:       "zsh",
+		WindowMgr:   "tmux",
+	}
 
 	tm := teatest.NewTestModel(t, m,
 		teatest.WithInitialTermSize(80, 24),

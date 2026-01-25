@@ -229,6 +229,9 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case ScreenTrainerLesson, ScreenTrainerPractice, ScreenTrainerBoss:
 			// Trainer input screens: space is part of the input, pass through
 			// (handled below in screen-specific handlers)
+		case ScreenAIAssistants:
+			// AI Assistants screen: space toggles checkboxes, pass through
+			// (handled below in handleAIAssistantsKeys)
 		default:
 			// All other screens: activate leader mode
 			m.LeaderMode = true
@@ -255,6 +258,9 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
 		return m.handleSelectionKeys(key)
+
+	case ScreenAIAssistants:
+		return m.handleAIAssistantsKeys(key)
 
 	case ScreenLearnTerminals, ScreenLearnShells, ScreenLearnWM, ScreenLearnNvim:
 		return m.handleLearnMenuKeys(key)
@@ -342,7 +348,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	switch m.Screen {
 	// Installation wizard screens - go back through the flow
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIAssistants:
 		return m.goBackInstallStep()
 	case ScreenGhosttyWarning:
 		// Go back to terminal selection
@@ -516,43 +522,48 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		// Go back to main menu
 		m.Screen = ScreenMainMenu
 		m.Cursor = 0
-		// Reset choices
+		// Reset ALL choices when going back to main menu
 		m.Choices = UserChoices{}
+		m.SkippedSteps = make(map[Screen]bool)
 
 	case ScreenTerminalSelect:
 		m.Screen = ScreenOSSelect
 		m.Cursor = 0
-		// Reset terminal choice
-		m.Choices.Terminal = ""
+		// DON'T reset terminal choice - user might want to see/change it
 
 	case ScreenFontSelect:
 		m.Screen = ScreenTerminalSelect
 		m.Cursor = 0
-		// Reset font choice
-		m.Choices.InstallFont = false
+		// DON'T reset font choice
 
 	case ScreenShellSelect:
 		// Termux: go back to OS selection (skipped terminal and font)
 		if m.SystemInfo.IsTermux {
 			m.Screen = ScreenOSSelect
-		} else if m.Choices.Terminal == "none" {
+		} else if m.Choices.Terminal == "none" || m.Choices.Terminal == "" {
 			// If we skipped font selection (terminal = none), go back to terminal
 			m.Screen = ScreenTerminalSelect
 		} else {
 			m.Screen = ScreenFontSelect
 		}
 		m.Cursor = 0
-		m.Choices.Shell = ""
+		// DON'T reset shell choice
 
 	case ScreenWMSelect:
 		m.Screen = ScreenShellSelect
 		m.Cursor = 0
-		m.Choices.WindowMgr = ""
+		// DON'T reset WM choice
 
 	case ScreenNvimSelect:
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
-		m.Choices.InstallNvim = false
+		// DON'T reset Nvim choice
+
+	case ScreenAIAssistants:
+		m.Screen = ScreenNvimSelect
+		m.Cursor = 0
+		// CRITICAL FIX: DON'T reset AI selections when going back
+		// User should be able to see and modify their previous selections
 	}
 
 	return m, nil
@@ -631,20 +642,46 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		m.Cursor = 0
 
 	case ScreenTerminalSelect:
-		term := strings.ToLower(strings.Split(options[m.Cursor], " ")[0])
-		m.Choices.Terminal = term
-
-		// Check if Ghostty on Debian/Ubuntu - show warning
-		if term == "ghostty" && m.Choices.OS == "linux" && m.SystemInfo.OS == system.OSDebian && !system.CommandExists("ghostty") {
-			m.Screen = ScreenGhosttyWarning
+		selected := options[m.Cursor]
+		
+		// Check if user selected "Skip this step"
+		if strings.Contains(selected, "Skip this step") {
+			m.SkippedSteps[ScreenTerminalSelect] = true
+			// Clear previous terminal choice
+			m.Choices.Terminal = ""
+			m.Choices.InstallFont = false
+			m.Screen = ScreenShellSelect
 			m.Cursor = 0
 			return m, nil
 		}
+		
+		// Check if user selected "Learn about terminals"
+		if strings.Contains(selected, "Learn about") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenLearnTerminals
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Only process valid terminal options (not separator)
+		if !strings.HasPrefix(selected, "───") {
+			term := strings.ToLower(strings.Split(selected, " ")[0])
+			m.Choices.Terminal = term
+			// CRITICAL: Clear skip flag when user makes a real selection
+			m.SkippedSteps[ScreenTerminalSelect] = false
 
-		if term != "none" {
-			m.Screen = ScreenFontSelect
-		} else {
-			m.Screen = ScreenShellSelect
+			// Check if Ghostty on Debian/Ubuntu - show warning
+			if term == "ghostty" && m.Choices.OS == "linux" && m.SystemInfo.OS == system.OSDebian && !system.CommandExists("ghostty") {
+				m.Screen = ScreenGhosttyWarning
+				m.Cursor = 0
+				return m, nil
+			}
+
+			if term != "none" {
+				m.Screen = ScreenFontSelect
+			} else {
+				m.Screen = ScreenShellSelect
+			}
 		}
 		m.Cursor = 0
 
@@ -654,7 +691,32 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		m.Cursor = 0
 
 	case ScreenShellSelect:
-		m.Choices.Shell = strings.ToLower(options[m.Cursor])
+		selected := options[m.Cursor]
+		
+		// Check if user selected "Skip this step"
+		if strings.Contains(selected, "Skip this step") {
+			m.SkippedSteps[ScreenShellSelect] = true
+			// Clear previous shell choice
+			m.Choices.Shell = ""
+			m.Screen = ScreenWMSelect
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Check if user selected "Learn about shells"
+		if strings.Contains(selected, "Learn about") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenLearnShells
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Only set shell if it's a valid shell option (not separator)
+		if !strings.HasPrefix(selected, "───") {
+			m.Choices.Shell = strings.ToLower(selected)
+			// CRITICAL: Clear skip flag when user makes a real selection
+			m.SkippedSteps[ScreenShellSelect] = false
+		}
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
 
@@ -672,25 +734,81 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		}
 
 	case ScreenWMSelect:
-		m.Choices.WindowMgr = strings.ToLower(options[m.Cursor])
+		selected := options[m.Cursor]
+		
+		// Check if user selected "Skip this step"
+		if strings.Contains(selected, "Skip this step") {
+			m.SkippedSteps[ScreenWMSelect] = true
+			// Clear previous window manager choice
+			m.Choices.WindowMgr = ""
+			m.Screen = ScreenNvimSelect
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Check if user selected "Learn about multiplexers"
+		if strings.Contains(selected, "Learn about") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenLearnWM
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Only set window manager if it's a valid option (not separator)
+		if !strings.HasPrefix(selected, "───") {
+			m.Choices.WindowMgr = strings.ToLower(selected)
+			// CRITICAL: Clear skip flag when user makes a real selection
+			m.SkippedSteps[ScreenWMSelect] = false
+		}
 		m.Screen = ScreenNvimSelect
 		m.Cursor = 0
 
 	case ScreenNvimSelect:
-		m.Choices.InstallNvim = m.Cursor == 0
-		// Detect existing configs before proceeding
-		m.ExistingConfigs = system.DetectExistingConfigs()
-		if len(m.ExistingConfigs) > 0 {
-			// Show backup confirmation screen
-			m.Screen = ScreenBackupConfirm
+		selected := options[m.Cursor]
+		
+		// Check if user selected "Skip this step"
+		if strings.Contains(selected, "Skip this step") {
+			m.SkippedSteps[ScreenNvimSelect] = true
+			// Clear previous nvim choice
+			m.Choices.InstallNvim = false
+			m.Screen = ScreenAIAssistants
 			m.Cursor = 0
-		} else {
-			// No existing configs, proceed directly
-			m.SetupInstallSteps()
-			m.Screen = ScreenInstalling
-			m.CurrentStep = 0
-			return m, func() tea.Msg { return installStartMsg{} }
+			return m, nil
 		}
+		
+		// Check if user selected "Learn about Neovim"
+		if strings.Contains(selected, "Learn about") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenLearnNvim
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Check if user selected "View Keymaps"
+		if strings.Contains(selected, "View Keymaps") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenKeymaps
+			m.Cursor = 0
+			m.SelectedCategory = 0
+			return m, nil
+		}
+		
+		// Check if user selected "LazyVim Guide"
+		if strings.Contains(selected, "LazyVim Guide") {
+			m.PrevScreen = m.Screen
+			m.Screen = ScreenLearnLazyVim
+			m.Cursor = 0
+			return m, nil
+		}
+		
+		// Only process if not separator
+		if !strings.HasPrefix(selected, "───") {
+			m.Choices.InstallNvim = m.Cursor == 0
+			// CRITICAL: Clear skip flag when user makes a real selection
+			m.SkippedSteps[ScreenNvimSelect] = false
+		}
+		m.Screen = ScreenAIAssistants
+		m.Cursor = 0
 	}
 
 	return m, nil
@@ -1176,28 +1294,48 @@ func (m Model) handleBackupConfirmKeys(key string) (tea.Model, tea.Cmd) {
 			m.Cursor++
 		}
 	case "enter", " ":
-		switch m.Cursor {
-		case 0: // Install with Backup
-			m.Choices.CreateBackup = true
-			m.SetupInstallSteps()
-			m.Screen = ScreenInstalling
-			m.CurrentStep = 0
-			return m, func() tea.Msg { return installStartMsg{} }
-		case 1: // Install without Backup
-			m.Choices.CreateBackup = false
-			m.SetupInstallSteps()
-			m.Screen = ScreenInstalling
-			m.CurrentStep = 0
-			return m, func() tea.Msg { return installStartMsg{} }
-		case 2: // Cancel - abort the entire wizard
-			m.Screen = ScreenMainMenu
-			m.Cursor = 0
-			// Reset choices when canceling
-			m.Choices = UserChoices{}
+		// Handle based on whether there are configs that will be overwritten
+		configsToOverwrite := m.GetConfigsToOverwrite()
+		if len(configsToOverwrite) > 0 {
+			// 3 options: Backup, No Backup, Cancel
+			switch m.Cursor {
+			case 0: // Install with Backup
+				m.Choices.CreateBackup = true
+				m.SetupInstallSteps()
+				m.Screen = ScreenInstalling
+				m.CurrentStep = 0
+				return m, func() tea.Msg { return installStartMsg{} }
+			case 1: // Install without Backup
+				m.Choices.CreateBackup = false
+				m.SetupInstallSteps()
+				m.Screen = ScreenInstalling
+				m.CurrentStep = 0
+				return m, func() tea.Msg { return installStartMsg{} }
+			case 2: // Cancel - abort the entire wizard
+				m.Screen = ScreenMainMenu
+				m.Cursor = 0
+				// Reset choices when canceling
+				m.Choices = UserChoices{}
+			}
+		} else {
+			// 2 options: Start Installation, Cancel
+			switch m.Cursor {
+			case 0: // Start Installation
+				m.Choices.CreateBackup = false // No backup needed since no configs will be overwritten
+				m.SetupInstallSteps()
+				m.Screen = ScreenInstalling
+				m.CurrentStep = 0
+				return m, func() tea.Msg { return installStartMsg{} }
+			case 1: // Cancel
+				m.Screen = ScreenMainMenu
+				m.Cursor = 0
+				// Reset choices when canceling
+				m.Choices = UserChoices{}
+			}
 		}
 	case "esc", "backspace":
-		// Go back to Nvim selection
-		m.Screen = ScreenNvimSelect
+		// Go back to AI Assistants selection
+		m.Screen = ScreenAIAssistants
 		m.Cursor = 0
 	}
 

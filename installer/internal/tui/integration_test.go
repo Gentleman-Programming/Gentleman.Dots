@@ -96,13 +96,22 @@ func TestFullInstallationFlow(t *testing.T) {
 		}
 
 		// Select "Yes" for Nvim (cursor at 0)
-		// This should either go to BackupConfirm (if existing configs) or Installing
+		// After Nvim, it now goes to AI Assistants screen
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
 
 		if !m.Choices.InstallNvim {
 			t.Fatal("Expected InstallNvim to be true")
 		}
+
+		// Should go to AI Assistants screen now
+		if m.Screen != ScreenAIAssistants {
+			t.Fatalf("Expected ScreenAIAssistants, got %v", m.Screen)
+		}
+
+		// Press Enter to confirm (skip AI assistants)
+		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+		m = result.(Model)
 
 		// Screen depends on existing configs
 		if m.Screen != ScreenBackupConfirm && m.Screen != ScreenInstalling {
@@ -322,7 +331,7 @@ func TestBackupFlow(t *testing.T) {
 	t.Run("backup confirm options work correctly", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.SystemInfo = &system.SystemInfo{
 			OS:       system.OSMac,
 			HasBrew:  true,
