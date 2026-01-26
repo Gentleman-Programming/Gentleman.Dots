@@ -146,15 +146,15 @@ func TestLinuxFlow(t *testing.T) {
 
 // TestSkipTerminal tests skipping terminal installation
 func TestSkipTerminal(t *testing.T) {
-	t.Run("selecting None should skip font selection", func(t *testing.T) {
+	t.Run("selecting Skip should skip font selection", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenTerminalSelect
 		m.Choices.OS = "mac"
 
-		// Find and select "None" option
+		// Find and select "Skip this step" option
 		options := m.GetCurrentOptions()
 		for i, opt := range options {
-			if opt == "None" {
+			if strings.Contains(opt, "Skip this step") {
 				m.Cursor = i
 				break
 			}
@@ -165,7 +165,7 @@ func TestSkipTerminal(t *testing.T) {
 
 		// Should skip font and go directly to shell
 		if m.Screen != ScreenShellSelect {
-			t.Fatalf("Expected ScreenShellSelect when terminal is None, got %v", m.Screen)
+			t.Fatalf("Expected ScreenShellSelect when terminal is skipped, got %v", m.Screen)
 		}
 	})
 }

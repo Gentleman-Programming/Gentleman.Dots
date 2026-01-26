@@ -643,7 +643,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenTerminalSelect:
 		selected := options[m.Cursor]
-		
+
 		// Check if user selected "Skip this step"
 		if strings.Contains(selected, "Skip this step") {
 			m.SkippedSteps[ScreenTerminalSelect] = true
@@ -654,7 +654,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "Learn about terminals"
 		if strings.Contains(selected, "Learn about") {
 			m.PrevScreen = m.Screen
@@ -662,7 +662,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Only process valid terminal options (not separator)
 		if !strings.HasPrefix(selected, "───") {
 			term := strings.ToLower(strings.Split(selected, " ")[0])
@@ -677,11 +677,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 
-			if term != "none" {
-				m.Screen = ScreenFontSelect
-			} else {
-				m.Screen = ScreenShellSelect
-			}
+			m.Screen = ScreenFontSelect
 		}
 		m.Cursor = 0
 
@@ -692,7 +688,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenShellSelect:
 		selected := options[m.Cursor]
-		
+
 		// Check if user selected "Skip this step"
 		if strings.Contains(selected, "Skip this step") {
 			m.SkippedSteps[ScreenShellSelect] = true
@@ -702,7 +698,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "Learn about shells"
 		if strings.Contains(selected, "Learn about") {
 			m.PrevScreen = m.Screen
@@ -710,7 +706,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Only set shell if it's a valid shell option (not separator)
 		if !strings.HasPrefix(selected, "───") {
 			m.Choices.Shell = strings.ToLower(selected)
@@ -735,7 +731,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenWMSelect:
 		selected := options[m.Cursor]
-		
+
 		// Check if user selected "Skip this step"
 		if strings.Contains(selected, "Skip this step") {
 			m.SkippedSteps[ScreenWMSelect] = true
@@ -745,7 +741,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "Learn about multiplexers"
 		if strings.Contains(selected, "Learn about") {
 			m.PrevScreen = m.Screen
@@ -753,7 +749,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Only set window manager if it's a valid option (not separator)
 		if !strings.HasPrefix(selected, "───") {
 			m.Choices.WindowMgr = strings.ToLower(selected)
@@ -765,7 +761,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenNvimSelect:
 		selected := options[m.Cursor]
-		
+
 		// Check if user selected "Skip this step"
 		if strings.Contains(selected, "Skip this step") {
 			m.SkippedSteps[ScreenNvimSelect] = true
@@ -775,7 +771,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "Learn about Neovim"
 		if strings.Contains(selected, "Learn about") {
 			m.PrevScreen = m.Screen
@@ -783,7 +779,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "View Keymaps"
 		if strings.Contains(selected, "View Keymaps") {
 			m.PrevScreen = m.Screen
@@ -792,7 +788,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.SelectedCategory = 0
 			return m, nil
 		}
-		
+
 		// Check if user selected "LazyVim Guide"
 		if strings.Contains(selected, "LazyVim Guide") {
 			m.PrevScreen = m.Screen
@@ -800,7 +796,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 			m.Cursor = 0
 			return m, nil
 		}
-		
+
 		// Only process if not separator
 		if !strings.HasPrefix(selected, "───") {
 			m.Choices.InstallNvim = m.Cursor == 0

@@ -83,11 +83,11 @@ const (
 
 // UserChoices stores all user selections
 type UserChoices struct {
-	OS           string   // "mac", "linux"
-	Terminal     string   // "alacritty", "wezterm", "kitty", "ghostty", "none"
+	OS           string // "mac", "linux"
+	Terminal     string // "alacritty", "wezterm", "kitty", "ghostty", "none"
 	InstallFont  bool
-	Shell        string   // "fish", "zsh", "nushell"
-	WindowMgr    string   // "tmux", "zellij", "none"
+	Shell        string // "fish", "zsh", "nushell"
+	WindowMgr    string // "tmux", "zellij", "none"
 	InstallNvim  bool
 	AIAssistants []string // List of AI assistant IDs to install (e.g., ["opencode", "kilocode"])
 	CreateBackup bool     // Whether to backup existing configs
@@ -147,9 +147,9 @@ type Model struct {
 	TrainerLastCorrect bool                 // Was last answer correct
 	TrainerMessage     string               // Feedback message to display
 	// AI Assistants mode
-	AIAssistantsList     []AIAssistant     // Available AI assistants
-	SelectedAIAssistants map[string]bool   // Selected assistants (ID -> selected)
-	AIAssistantCursor    int               // Cursor position in AI assistants list
+	AIAssistantsList     []AIAssistant   // Available AI assistants
+	SelectedAIAssistants map[string]bool // Selected assistants (ID -> selected)
+	AIAssistantCursor    int             // Cursor position in AI assistants list
 	// Skip tracking
 	SkippedSteps map[Screen]bool // Track which installation steps user wants to skip
 	// Leader key mode (like Vim's <space> leader)
@@ -289,17 +289,17 @@ func (m Model) GetCurrentOptions() []string {
 			alacrittyLabel = "Alacritty ⏱️  (builds from source, installs Rust ~5-10 min)"
 		}
 		if m.Choices.OS == "mac" {
-			return []string{alacrittyLabel, "WezTerm", "Kitty", "Ghostty", "None", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about terminals"}
+			return []string{alacrittyLabel, "WezTerm", "Kitty", "Ghostty", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about terminals"}
 		}
-		return []string{alacrittyLabel, "WezTerm", "Ghostty", "None", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about terminals"}
+		return []string{alacrittyLabel, "WezTerm", "Ghostty", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about terminals"}
 	case ScreenFontSelect:
 		return []string{"Yes, install Iosevka Term Nerd Font", "No, I already have it"}
 	case ScreenShellSelect:
 		return []string{"Fish", "Zsh", "Nushell", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about shells"}
 	case ScreenWMSelect:
-		return []string{"Tmux", "Zellij", "None", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about multiplexers"}
+		return []string{"Tmux", "Zellij", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about multiplexers"}
 	case ScreenNvimSelect:
-		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
+		return []string{"Yes, install Neovim with config", "─────────────", "⏭️  Skip this step", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
 	case ScreenAIAssistants:
 		// Build options list from available AI assistants
 		opts := make([]string, 0)
@@ -691,38 +691,38 @@ func (m *Model) SetupInstallSteps() {
 // GetInstallationSummary returns a list of components that will be installed
 func (m Model) GetInstallationSummary() []string {
 	summary := []string{}
-	
+
 	// Terminal
 	if m.SkippedSteps[ScreenTerminalSelect] {
 		summary = append(summary, "✗ Terminal (skipped)")
-	} else if m.Choices.Terminal != "" && m.Choices.Terminal != "none" {
+	} else if m.Choices.Terminal != "" {
 		summary = append(summary, fmt.Sprintf("✓ Terminal: %s", strings.Title(m.Choices.Terminal)))
 		if m.Choices.InstallFont {
 			summary = append(summary, "  └─ Iosevka Nerd Font")
 		}
 	}
-	
+
 	// Shell
 	if m.SkippedSteps[ScreenShellSelect] {
 		summary = append(summary, "✗ Shell (skipped)")
 	} else if m.Choices.Shell != "" {
 		summary = append(summary, fmt.Sprintf("✓ Shell: %s", strings.Title(m.Choices.Shell)))
 	}
-	
+
 	// Window Manager
 	if m.SkippedSteps[ScreenWMSelect] {
 		summary = append(summary, "✗ Multiplexer (skipped)")
-	} else if m.Choices.WindowMgr != "" && m.Choices.WindowMgr != "none" {
+	} else if m.Choices.WindowMgr != "" {
 		summary = append(summary, fmt.Sprintf("✓ Multiplexer: %s", strings.Title(m.Choices.WindowMgr)))
 	}
-	
+
 	// Neovim
 	if m.SkippedSteps[ScreenNvimSelect] {
 		summary = append(summary, "✗ Neovim (skipped)")
 	} else if m.Choices.InstallNvim {
 		summary = append(summary, "✓ Neovim: LazyVim configuration")
 	}
-	
+
 	// AI Assistants
 	if m.SkippedSteps[ScreenAIAssistants] {
 		summary = append(summary, "✗ AI Assistants (skipped)")
@@ -740,11 +740,11 @@ func (m Model) GetInstallationSummary() []string {
 		// User went through AI screen but didn't select any
 		summary = append(summary, "✗ AI Assistants (none selected)")
 	}
-	
+
 	if len(summary) == 0 {
 		summary = append(summary, "Nothing to install (all steps skipped)")
 	}
-	
+
 	return summary
 }
 
@@ -752,13 +752,13 @@ func (m Model) GetInstallationSummary() []string {
 // based on what the user chose to install
 func (m Model) GetConfigsToOverwrite() []string {
 	willOverwrite := []string{}
-	
+
 	for _, config := range m.ExistingConfigs {
 		shouldInclude := false
-		
+
 		// Parse config name (format is "name: path")
 		configName := strings.Split(config, ":")[0]
-		
+
 		// Check if this config will be affected by user's choices
 		switch configName {
 		case "fish":
@@ -804,12 +804,12 @@ func (m Model) GetConfigsToOverwrite() []string {
 			// Only if user chose Continue.dev and didn't skip AI assistants
 			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "continue")
 		}
-		
+
 		if shouldInclude {
 			willOverwrite = append(willOverwrite, config)
 		}
 	}
-	
+
 	return willOverwrite
 }
 

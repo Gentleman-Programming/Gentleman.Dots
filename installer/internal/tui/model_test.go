@@ -65,9 +65,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Choices.OS = "mac"
 		opts := m.GetCurrentOptions()
 
-		// Should have: Alacritty, WezTerm, Kitty, Ghostty, None, separator, Skip, Learn = 8 options
-		if len(opts) != 8 {
-			t.Errorf("Expected 8 terminal options for mac (including separator, skip, and learn), got %d", len(opts))
+		// Should have: Alacritty, WezTerm, Kitty, Ghostty, separator, Skip, Learn = 7 options
+		if len(opts) != 7 {
+			t.Errorf("Expected 7 terminal options for mac (including separator, skip, and learn), got %d", len(opts))
 		}
 		// Should include Kitty on mac
 		hasKitty := false
@@ -87,9 +87,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Choices.OS = "linux"
 		opts := m.GetCurrentOptions()
 
-		// Should have: Alacritty, WezTerm, Ghostty, None, separator, Skip, Learn = 7 options
-		if len(opts) != 7 {
-			t.Errorf("Expected 7 terminal options for linux (including separator, skip, and learn), got %d", len(opts))
+		// Should have: Alacritty, WezTerm, Ghostty, separator, Skip, Learn = 6 options
+		if len(opts) != 6 {
+			t.Errorf("Expected 6 terminal options for linux (including separator, skip, and learn), got %d", len(opts))
 		}
 		// Should NOT include Kitty on linux
 		for _, opt := range opts {
@@ -119,9 +119,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Screen = ScreenWMSelect
 		opts := m.GetCurrentOptions()
 
-		// Should have: Tmux, Zellij, None, separator, Skip, Learn = 6 options
-		if len(opts) != 6 {
-			t.Errorf("Expected 6 WM options (including separator, skip, and learn), got %d", len(opts))
+		// Should have: Tmux, Zellij, separator, Skip, Learn = 5 options
+		if len(opts) != 5 {
+			t.Errorf("Expected 5 WM options (including separator, skip, and learn), got %d", len(opts))
 		}
 	})
 

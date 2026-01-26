@@ -3,6 +3,7 @@ package tui
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
@@ -15,14 +16,14 @@ func TestAllUserSelectionPaths(t *testing.T) {
 	osChoices := []string{"mac", "linux"}
 
 	// All possible terminal choices (varies by OS)
-	terminalChoicesMac := []string{"alacritty", "wezterm", "kitty", "ghostty", "none"}
-	terminalChoicesLinux := []string{"alacritty", "wezterm", "ghostty", "none"}
+	terminalChoicesMac := []string{"alacritty", "wezterm", "kitty", "ghostty", ""}
+	terminalChoicesLinux := []string{"alacritty", "wezterm", "ghostty", ""}
 
 	// All possible shell choices
 	shellChoices := []string{"fish", "zsh", "nushell"}
 
 	// All possible WM choices
-	wmChoices := []string{"tmux", "zellij", "none"}
+	wmChoices := []string{"tmux", "zellij", ""}
 
 	// All possible nvim choices
 	nvimChoices := []bool{true, false}
@@ -42,7 +43,8 @@ func TestAllUserSelectionPaths(t *testing.T) {
 					for _, nvim := range nvimChoices {
 						for _, font := range fontChoices {
 							// Skip font test if terminal is none
-							if terminal == "none" && font {
+							// Skip font selection if terminal is skipped (empty string)
+							if terminal == "" && font {
 								continue
 							}
 
@@ -522,10 +524,10 @@ func TestNavigationToEachScreen(t *testing.T) {
 		m.Screen = ScreenTerminalSelect
 		m.Choices.OS = "mac"
 
-		// Find None option
+		// Find Skip option
 		options := m.GetCurrentOptions()
 		for i, opt := range options {
-			if opt == "None" {
+			if strings.Contains(opt, "Skip this step") {
 				m.Cursor = i
 				break
 			}
@@ -533,7 +535,7 @@ func TestNavigationToEachScreen(t *testing.T) {
 
 		m, _ = simulateKeyPress(m, "enter")
 		if m.Screen != ScreenShellSelect {
-			t.Errorf("Expected ShellSelect when terminal=none, got %v", m.Screen)
+			t.Errorf("Expected ShellSelect when terminal skipped, got %v", m.Screen)
 		}
 	})
 
@@ -766,7 +768,7 @@ func TestBackupOptions(t *testing.T) {
 		m.Screen = ScreenBackupConfirm
 		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.Choices = UserChoices{Shell: "fish"} // User chose fish, so 3 options available
-		m.Cursor = 2 // Cancel
+		m.Cursor = 2                           // Cancel
 
 		m, _ = simulateKeyPress(m, "enter")
 		if m.Screen != ScreenMainMenu {

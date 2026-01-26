@@ -23,11 +23,11 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		}
 
 		// Step 2: Skip Terminal (select "Skip this step")
-		// Options: Alacritty, WezTerm, Kitty, Ghostty, None, separator, Skip, Learn
-		m.Cursor = 6 // Skip this step
+		// Options: Alacritty, WezTerm, Kitty, Ghostty, separator, Skip, Learn
+		m.Cursor = 5 // Skip this step
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
-		
+
 		// When you skip Terminal, it goes directly to ShellSelect (no font needed)
 		if m.Screen != ScreenShellSelect {
 			t.Fatalf("Expected ScreenShellSelect after skipping terminal, got %v", m.Screen)
@@ -46,7 +46,7 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		m.Cursor = 4 // Skip this step
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
-		
+
 		if !m.SkippedSteps[ScreenShellSelect] {
 			t.Fatal("Shell should be marked as skipped")
 		}
@@ -93,7 +93,7 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		// Verify summary shows ONLY AI Assistant
 		summary := m.GetInstallationSummary()
 		t.Logf("Summary after first pass: %v", summary)
-		
+
 		hasAI := false
 		for _, item := range summary {
 			if strings.Contains(item, "✓ AI Assistant: OpenCode") {
@@ -168,10 +168,10 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		// From Shell, we need to check where we go
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEsc})
 		m = result.(Model)
-		
+
 		// When we skipped Terminal earlier, ESC from Shell should go to... let's see
 		t.Logf("After ESC from Shell with Zsh selected, screen is: %v", m.Screen)
-		
+
 		// We need to navigate backward through the flow to get to Terminal
 		// The flow depends on whether Font was shown or not
 		// Since we skipped Terminal, Font wasn't shown, so ESC should go to Terminal
@@ -198,11 +198,11 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		if ghosttyIndex == -1 {
 			t.Fatal("Could not find Ghostty in terminal options")
 		}
-		
+
 		m.Cursor = ghosttyIndex
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
-		
+
 		t.Logf("After selecting Ghostty: screen=%v, terminal='%s', cursor=%d", m.Screen, m.Choices.Terminal, m.Cursor)
 
 		// CRITICAL: SkippedSteps should be cleared for Terminal
@@ -217,37 +217,37 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		if m.Screen != ScreenFontSelect {
 			t.Fatalf("Expected FontSelect after selecting Ghostty, got %v", m.Screen)
 		}
-		
+
 		// Press Enter to skip/accept font
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
-		
+
 		// Should be at ShellSelect with our previous Zsh choice
 		if m.Screen != ScreenShellSelect {
 			t.Fatalf("Expected ShellSelect, got %v", m.Screen)
 		}
-		
+
 		// CRITICAL: The cursor should be at Zsh (index 1) because we selected it before
 		// OR we should manually navigate to it if cursor is wrong
 		// For now, let's check if the choice is preserved
 		t.Logf("At ShellSelect, current shell choice: '%s', cursor: %d", m.Choices.Shell, m.Cursor)
-		
+
 		// If the choice is already 'zsh', we can just press Enter to keep it
 		// But if cursor is at 0 (Fish), pressing Enter would change it
 		// This is actually expected behavior - the cursor resets when you re-enter a screen
 		// So we need to navigate to the correct option
-		
+
 		// Navigate to Zsh (cursor 1)
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyDown})
 		m = result.(Model)
 		if m.Cursor != 1 {
 			t.Fatalf("Cursor should be at 1 (Zsh), got %d", m.Cursor)
 		}
-		
+
 		// Press Enter to confirm Zsh
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
-		
+
 		if m.Choices.Shell != "zsh" {
 			t.Fatalf("Shell should be 'zsh' after re-selection, got: '%s'", m.Choices.Shell)
 		}
@@ -299,12 +299,12 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 // TestEveryStepWithBackwardNavigation tests ALL possible navigation scenarios
 func TestEveryStepWithBackwardNavigation(t *testing.T) {
 	scenarios := []struct {
-		name           string
-		initialChoice  string  // First choice made
-		backToScreen   Screen  // Which screen to go back to
-		newChoice      string  // New choice to make
-		expectedField  string  // Which field to check
-		expectedValue  string  // Expected value in that field
+		name          string
+		initialChoice string // First choice made
+		backToScreen  Screen // Which screen to go back to
+		newChoice     string // New choice to make
+		expectedField string // Which field to check
+		expectedValue string // Expected value in that field
 	}{
 		{
 			name:          "Terminal: Alacritty → Back → Ghostty",

@@ -806,14 +806,14 @@ func TestOSSelectLinux(t *testing.T) {
 	}
 }
 
-func TestTerminalSelectNoneSkipsFont(t *testing.T) {
+func TestTerminalSkipGoesToShell(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenTerminalSelect
 	m.Choices.OS = "mac"
 
 	opts := m.GetCurrentOptions()
 	for i, opt := range opts {
-		if strings.Contains(strings.ToLower(opt), "none") {
+		if strings.Contains(opt, "Skip this step") {
 			m.Cursor = i
 			break
 		}
@@ -823,7 +823,7 @@ func TestTerminalSelectNoneSkipsFont(t *testing.T) {
 	newModel := result.(Model)
 
 	if newModel.Screen != ScreenShellSelect {
-		t.Errorf("Terminal 'none' should skip to ShellSelect, got %v", newModel.Screen)
+		t.Errorf("Terminal skip should go to ShellSelect, got %v", newModel.Screen)
 	}
 }
 
@@ -898,7 +898,7 @@ func TestShellSelect(t *testing.T) {
 }
 
 func TestWMSelect(t *testing.T) {
-	wms := []string{"tmux", "zellij", "none"}
+	wms := []string{"tmux", "zellij"}
 
 	for i, wm := range wms {
 		t.Run(wm, func(t *testing.T) {
@@ -988,7 +988,7 @@ func TestBackupConfirmCancel(t *testing.T) {
 	m.Screen = ScreenBackupConfirm
 	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim"}
 	m.Choices.InstallNvim = true // User chose to install Neovim, so 3 options available
-	m.Cursor = 2 // Cancel (3rd option)
+	m.Cursor = 2                 // Cancel (3rd option)
 
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	newModel := result.(Model)
