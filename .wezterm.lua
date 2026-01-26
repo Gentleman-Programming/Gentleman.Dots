@@ -45,7 +45,14 @@ config.cursor_blink_ease_out = "Constant"
 -- └──────────────────────────────────────────────────────────────────────────────┘
 
 -- Terminal & Colors
-config.term = "wezterm"
+if wezterm.target_triple:find("windows") then
+  -- WSL
+  config.term = "xterm-256color"
+else
+  -- Native Linux / macOS
+  config.term = "wezterm"
+end
+
 config.enable_csi_u_key_encoding = true
 
 -- Undercurl support (LSP diagnostics, spelling)
