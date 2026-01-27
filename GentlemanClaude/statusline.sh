@@ -127,13 +127,12 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
   fi
 fi
 
-# Model icon (ASCII only to avoid width calculation issues)
-MODEL_ICON=""
+# Model icon
+MODEL_ICON="🤖"
 case "$MODEL" in
-  *Opus*) MODEL_ICON="[O]" ;;
-  *Sonnet*) MODEL_ICON="[S]" ;;
-  *Haiku*) MODEL_ICON="[H]" ;;
-  *) MODEL_ICON="[C]" ;;
+  *Opus*) MODEL_ICON="🎭" ;;
+  *Sonnet*) MODEL_ICON="📝" ;;
+  *Haiku*) MODEL_ICON="🍃" ;;
 esac
 
 # Progress bar
@@ -159,11 +158,11 @@ SEP="${MUTED}  ${NC}"
 
 LINE="${BOLD}${PURPLE}${MODEL_ICON} ${MODEL}${NC}"
 LINE+="${SEP}"
-LINE+="${ACCENT}${DIR_NAME}${NC}"
+LINE+="${ACCENT}󰉋 ${DIR_NAME}${NC}"
 
 if [ -n "$BRANCH" ]; then
   LINE+="${SEP}"
-  LINE+="${SECONDARY}git:${BRANCH}${GIT_DIRTY}${NC}"
+  LINE+="${SECONDARY} ${BRANCH}${GIT_DIRTY}${NC}"
 fi
 
 LINE+="${SEP}"
