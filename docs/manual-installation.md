@@ -414,14 +414,16 @@ When using WezTerm on Windows with WSL, Fish or Zsh may fail with:
 missing or unsuitable terminal: wezterm
 ```
 
-**Solution**: Edit `~/.wezterm.lua` and add in the WSL section:
+**Status**: ✅ Fixed automatically in the default `.wezterm.lua` config (v2.7.7+).
+
+If you're using an older config, update your `.wezterm.lua` to include the auto-detection:
 ```lua
 if wezterm.target_triple:find("windows") then
   config.term = "xterm-256color"
+else
+  config.term = "wezterm"
 end
 ```
-
-This happens because WSL doesn't have the wezterm terminfo entry by default.
 
 ### Other Issues
 
