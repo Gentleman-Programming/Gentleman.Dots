@@ -459,6 +459,13 @@ default_layout "work_kanagawa"
 // the stdin of the program to perform the copy. This can be used with
 // terminal emulators which do not support the OSC 52 ANSI control sequence
 // that will be used by default if this option is not set.
+//
+// NOTE: If copy/paste isn't working, uncomment the line matching your system:
+// - Linux X11: uncomment "xclip" line AND set copy_clipboard "primary"
+// - Linux Wayland: uncomment "wl-copy" line
+// - macOS: uncomment "pbcopy" line
+// See: https://zellij.dev/documentation/faq.html#copy--paste-isnt-working-how-can-i-fix-this
+//
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11

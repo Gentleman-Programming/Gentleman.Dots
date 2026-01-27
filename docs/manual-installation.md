@@ -396,7 +396,36 @@ Close and reopen your terminal, or restart your computer/WSL instance for change
 
 ## Troubleshooting
 
-If you encounter problems:
+### Copy/Paste Not Working in Zellij (Linux)
+
+If you can't copy text from the terminal when using Zellij on Linux:
+
+1. Edit `~/.config/zellij/config.kdl`
+2. Uncomment the appropriate line for your system:
+   - **X11**: `copy_command "xclip -selection clipboard"` AND `copy_clipboard "primary"`
+   - **Wayland**: `copy_command "wl-copy"`
+
+See: [Zellij FAQ](https://zellij.dev/documentation/faq.html#copy--paste-isnt-working-how-can-i-fix-this)
+
+### Fish/Zsh Fails in WSL with "missing or unsuitable terminal"
+
+When using WezTerm on Windows with WSL, Fish or Zsh may fail with:
+```
+missing or unsuitable terminal: wezterm
+```
+
+**Solution**: Edit `~/.wezterm.lua` and add in the WSL section:
+```lua
+if wezterm.target_triple:find("windows") then
+  config.term = "xterm-256color"
+end
+```
+
+This happens because WSL doesn't have the wezterm terminfo entry by default.
+
+### Other Issues
+
+If you encounter other problems:
 
 1. Consult the official documentation of the specific tool
 2. Open an issue on [GitHub](https://github.com/Gentleman-Programming/Gentleman.Dots/issues)

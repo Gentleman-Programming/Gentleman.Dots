@@ -245,6 +245,33 @@ Backups must be in your home directory with the format:
 2. Restart your terminal after font installation
 3. On macOS, you may need to manually select the font in terminal preferences
 
+### Copy/Paste Not Working in Zellij (Linux)
+
+If you can't copy text from the terminal when using Zellij on Linux:
+
+1. Edit `~/.config/zellij/config.kdl`
+2. Uncomment the appropriate line for your system:
+   - **X11**: `copy_command "xclip -selection clipboard"` AND `copy_clipboard "primary"`
+   - **Wayland**: `copy_command "wl-copy"`
+
+See: [Zellij FAQ](https://zellij.dev/documentation/faq.html#copy--paste-isnt-working-how-can-i-fix-this)
+
+### Fish/Zsh Fails in WSL with "missing or unsuitable terminal"
+
+When using WezTerm on Windows with WSL, Fish or Zsh may fail with:
+```
+missing or unsuitable terminal: wezterm
+```
+
+**Solution**: Edit `~/.wezterm.lua` and add in the WSL section:
+```lua
+if wezterm.target_triple:find("windows") then
+  config.term = "xterm-256color"
+end
+```
+
+This happens because WSL doesn't have the wezterm terminfo entry by default.
+
 ## Development
 
 The TUI installer is built with:
