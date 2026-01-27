@@ -2,19 +2,25 @@
 name: pr-review
 description: >
   Review GitHub PRs and Issues with structured analysis for open source projects.
-  Trigger: When reviewing PRs, analyzing issues, or evaluating contributions to repositories.
+  Trigger: When user wants to review PRs (even if first asking what's open), analyze issues, or audit PR/issue backlog.
+  Key phrases: "pr review", "revisar pr", "qué PRs hay", "PRs pendientes", "issues abiertos", "sin atención", "hacer review".
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.1"
+  version: "1.2"
 ---
 
 ## When to Use
 
-- Reviewing open PRs in a repository
-- Analyzing GitHub issues for validity/priority
-- Evaluating external contributions before merge
-- Auditing PR quality across a project
+**ALWAYS use this skill when user mentions "pr review", "revisar PRs", or asks about pending PRs/issues** - even if they first ask what's pending. This skill handles the FULL flow: listing → analyzing → reviewing.
+
+Specific triggers:
+- User wants to review PRs (even if first asking what's open)
+- Analyze issues or contributions
+- Audit PR/issue backlog
+- Check what needs attention
+
+**Key phrases:** "pr review", "revisar", "qué hay pendiente", "sin atención", "PRs abiertos", "issues abiertos", "hacer review", "necesito revisar"
 
 ## Review Process
 
