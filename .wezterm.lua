@@ -45,9 +45,13 @@ config.cursor_blink_ease_out = "Constant"
 -- └──────────────────────────────────────────────────────────────────────────────┘
 
 -- Terminal & Colors
--- NOTE: WSL users may need "xterm-256color" if fish/zsh fails with "missing terminal"
+-- WSL doesn't have wezterm terminfo, so we use xterm-256color there
 -- See: https://github.com/Gentleman-Programming/Gentleman.Dots/issues/117
-config.term = "wezterm"
+if wezterm.target_triple:find("windows") then
+  config.term = "xterm-256color"
+else
+  config.term = "wezterm"
+end
 config.enable_csi_u_key_encoding = true
 
 -- Undercurl support (LSP diagnostics, spelling)
@@ -118,10 +122,5 @@ config.colors = {
 -- Uncomment for Windows/WSL:
 -- config.default_domain = 'WSL:Ubuntu'
 -- config.front_end = "OpenGL"
-
--- WSL terminal fix: uncomment if fish/zsh fails with "missing or unsuitable terminal"
--- if wezterm.target_triple:find("windows") then
---   config.term = "xterm-256color"
--- end
 
 return config
