@@ -74,9 +74,7 @@ yabai -m rule --add app="^Disk Utility$" manage=off
 yabai -m rule --add app="^Font File Browser$" manage=off
 yabai -m rule --add app="^System Information$" manage=off
 
-# Slack - huddles, calls, and popups cause issues
-yabai -m rule --add app="^Slack$" title="Huddle" manage=off
-yabai -m rule --add app="^Slack$" title="(Call|Screen)" manage=off
+# Slack - only system dialogs float
 yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off
 yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off
 
@@ -94,8 +92,8 @@ yabai -m rule --add app="^1Password" manage=off
 # Media
 yabai -m rule --add app="^QuickTime Player$" manage=off
 yabai -m rule --add app="^Preview$" manage=off
-yabai -m rule --add app="^Music$" manage=off
 yabai -m rule --add app="^Podcasts$" manage=off
+yabai -m rule --add app="^VLC$" manage=off
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # SIGNALS - Auto-fix problematic windows
