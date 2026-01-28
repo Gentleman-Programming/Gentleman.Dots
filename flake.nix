@@ -79,7 +79,7 @@
                 # ─── Window management (macOS) ───
                 yabai
                 skhd
-                sketchybar
+                unstablePkgs.sketchybar  # Use unstable for latest version
 
                 # ─── Development tools ───
                 volta
