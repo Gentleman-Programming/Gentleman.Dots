@@ -584,7 +584,6 @@ func TestEachTerminalSelection(t *testing.T) {
 		{"wezterm", 1, "wezterm"},
 		{"kitty", 2, "kitty"},
 		{"ghostty", 3, "ghostty"},
-		{"none", 4, "none"},
 	}
 
 	for _, tc := range terminalsMac {
@@ -609,7 +608,6 @@ func TestEachTerminalSelection(t *testing.T) {
 		{"alacritty", 0, "alacritty"},
 		{"wezterm", 1, "wezterm"},
 		{"ghostty", 2, "ghostty"},
-		{"none", 3, "none"},
 	}
 
 	for _, tc := range terminalsLinux {
@@ -662,7 +660,6 @@ func TestEachWMSelection(t *testing.T) {
 	}{
 		{"tmux", 0, "tmux"},
 		{"zellij", 1, "zellij"},
-		{"none", 2, "none"},
 	}
 
 	for _, tc := range wms {

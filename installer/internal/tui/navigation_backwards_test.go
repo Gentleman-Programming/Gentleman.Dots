@@ -58,7 +58,7 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		if m.Screen != ScreenWMSelect {
 			t.Fatalf("Expected ScreenWMSelect, got %v", m.Screen)
 		}
-		m.Cursor = 4 // Skip this step
+		m.Cursor = 3 // Skip this step (was 4, now 3 after removing "None")
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
 
@@ -66,7 +66,7 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		if m.Screen != ScreenNvimSelect {
 			t.Fatalf("Expected ScreenNvimSelect, got %v", m.Screen)
 		}
-		m.Cursor = 3 // Skip this step
+		m.Cursor = 2 // Skip this step (was 3, now 2 after removing "No, skip Neovim")
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
 
