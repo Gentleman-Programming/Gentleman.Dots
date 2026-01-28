@@ -1,21 +1,28 @@
 #!/bin/bash
 
 # Meeting - shows next calendar event (next 24 hours)
+# IMPORTANT: Uses pgrep to check if Calendar is running (osascript can launch apps)
 
 YELLOW=0xffffe066
 DIM=0xff565f89
 
+# Check if Calendar is running using pgrep (safe, won't launch the app)
+if ! pgrep -x "Calendar" > /dev/null 2>&1; then
+  sketchybar --set $NAME icon.color=$DIM label="--"
+  exit 0
+fi
+
 # Get current hour and minute
 CURRENT_TIME=$(date +%H%M)
 
-# Get all events in next 24 hours
+# Get all events in next 24 hours (only if Calendar is running)
 NEXT_EVENT=$(osascript -e '
 tell application "Calendar"
     set now to current date
     set tomorrow to now + (24 * 60 * 60)
-    
+
     set eventList to ""
-    
+
     repeat with cal in calendars
         try
             set theEvents to (every event of cal whose start date >= now and start date <= tomorrow)
@@ -31,7 +38,7 @@ tell application "Calendar"
             end repeat
         end try
     end repeat
-    
+
     return eventList
 end tell
 ' 2>/dev/null)
