@@ -10,22 +10,52 @@ import (
 
 // AIAssistant represents an AI coding assistant that can be installed
 type AIAssistant struct {
-	ID          string   // Unique identifier (e.g., "opencode")
-	Name        string   // Display name (e.g., "OpenCode")
-	Description string   // Short description
-	LongDesc    string   // Detailed description for the selection screen
-	Available   bool     // Whether this assistant is currently available
-	SkillsPath  string   // Path to skills in repo (e.g., "GentlemanOpenCode/skill")
-	ConfigPath  string   // Installation path relative to $HOME (e.g., ".config/opencode")
-	InstallCmd  string   // Command to install the assistant
-	Skills      []string // List of skill names
-	ConfigFiles []string // Additional config files to copy (relative to SkillsPath parent)
-	RequiresNvim bool    // Whether this assistant requires Neovim
+	ID           string   // Unique identifier (e.g., "opencode")
+	Name         string   // Display name (e.g., "OpenCode")
+	Description  string   // Short description
+	LongDesc     string   // Detailed description for the selection screen
+	Available    bool     // Whether this assistant is currently available
+	SkillsPath   string   // Path to skills in repo (e.g., "GentlemanOpenCode/skill")
+	ConfigPath   string   // Installation path relative to $HOME (e.g., ".config/opencode")
+	InstallCmd   string   // Command to install the assistant
+	Skills       []string // List of skill names
+	ConfigFiles  []string // Additional config files to copy (relative to SkillsPath parent)
+	RequiresNvim bool     // Whether this assistant requires Neovim
 }
 
 // GetAvailableAIAssistants returns the list of all AI assistants
 func GetAvailableAIAssistants() []AIAssistant {
 	return []AIAssistant{
+		{
+			ID:          "claudecode",
+			Name:        "Claude Code",
+			Description: "Official Claude AI integration (installed with Neovim)",
+			LongDesc: `Claude Code is the official Anthropic CLI with:
+  • Native Claude integration for terminal
+  • Skills system for custom patterns
+  • MCP server support
+  • Custom themes and statusline
+
+Note: Automatically installed when you select Neovim.`,
+			Available:    true,
+			SkillsPath:   "GentlemanClaude/skills",
+			ConfigPath:   ".claude",
+			InstallCmd:   "curl -fsSL https://claude.ai/install.sh | bash",
+			RequiresNvim: true,
+			Skills: []string{
+				"react-19", "nextjs-15", "typescript", "tailwind-4",
+				"ai-sdk-5", "django-drf", "playwright", "pytest",
+				"zod-4", "zustand-5",
+			},
+			ConfigFiles: []string{
+				"CLAUDE.md",
+				"settings.json",
+				"statusline.sh",
+				"output-styles/gentleman.md",
+				"mcp-servers.template.json",
+				"tweakcc-theme.json",
+			},
+		},
 		{
 			ID:          "opencode",
 			Name:        "OpenCode",
@@ -35,10 +65,10 @@ func GetAvailableAIAssistants() []AIAssistant {
   • Skills system for React, Next.js, TypeScript, and more
   • Terminal-first workflow
   • Custom themes and configurations`,
-			Available:   true,
-			SkillsPath:  "GentlemanOpenCode/skill",
-			ConfigPath:  ".config/opencode",
-			InstallCmd:  "curl -fsSL https://opencode.ai/install | bash",
+			Available:    true,
+			SkillsPath:   "GentlemanOpenCode/skill",
+			ConfigPath:   ".config/opencode",
+			InstallCmd:   "curl -fsSL https://opencode.ai/install | bash",
 			RequiresNvim: false,
 			Skills: []string{
 				"react-19", "nextjs-15", "typescript", "tailwind-4",

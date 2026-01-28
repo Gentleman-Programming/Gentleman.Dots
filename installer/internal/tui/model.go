@@ -303,7 +303,20 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenAIAssistants:
 		// Build options list from available AI assistants
 		opts := make([]string, 0)
+
+		// If Neovim is being installed, show informational note about Claude Code
+		if m.Choices.InstallNvim {
+			opts = append(opts, "ℹ️  Note: Claude Code is installed automatically with Neovim")
+			opts = append(opts, "         (required for AI features)")
+			opts = append(opts, "") // Blank line for spacing
+		}
+
 		for _, ai := range m.AIAssistantsList {
+			// Skip Claude Code if Neovim is being installed (it's automatic)
+			if ai.ID == "claudecode" && m.Choices.InstallNvim {
+				continue
+			}
+
 			checkbox := "[ ]"
 			if m.SelectedAIAssistants[ai.ID] {
 				checkbox = "[✓]"
@@ -316,6 +329,12 @@ func (m Model) GetCurrentOptions() []string {
 		}
 		opts = append(opts, "─────────────")
 		opts = append(opts, "⏭️  Skip this step")
+
+		// If Neovim is being installed, add link to AI configuration docs
+		if m.Choices.InstallNvim {
+			opts = append(opts, "📖 View AI Configuration Docs")
+		}
+
 		return opts
 	case ScreenBackupConfirm:
 		configsToOverwrite := m.GetConfigsToOverwrite()
@@ -721,6 +740,8 @@ func (m Model) GetInstallationSummary() []string {
 		summary = append(summary, "✗ Neovim (skipped)")
 	} else if m.Choices.InstallNvim {
 		summary = append(summary, "✓ Neovim: LazyVim configuration")
+		// Claude Code is automatically installed with Neovim
+		summary = append(summary, "✓ AI Assistant: Claude Code (with Neovim)")
 	}
 
 	// AI Assistants
@@ -728,6 +749,11 @@ func (m Model) GetInstallationSummary() []string {
 		summary = append(summary, "✗ AI Assistants (skipped)")
 	} else if len(m.Choices.AIAssistants) > 0 {
 		for _, aiID := range m.Choices.AIAssistants {
+			// Skip Claude Code if Neovim is being installed (already shown above)
+			if aiID == "claudecode" && m.Choices.InstallNvim {
+				continue
+			}
+
 			// Find the assistant name from the list
 			for _, ai := range m.AIAssistantsList {
 				if ai.ID == aiID {

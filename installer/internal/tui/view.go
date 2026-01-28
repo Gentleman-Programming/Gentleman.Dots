@@ -217,6 +217,19 @@ func (m Model) renderSelection() string {
 			continue
 		}
 
+		// Informational notes (non-selectable)
+		if strings.HasPrefix(opt, "ℹ️") || strings.HasPrefix(opt, "        ") {
+			s.WriteString(MutedStyle.Render("  " + opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		// Blank lines (spacing)
+		if opt == "" {
+			s.WriteString("\n")
+			continue
+		}
+
 		cursor := "  "
 		style := UnselectedStyle
 		if i == m.Cursor {
@@ -1175,11 +1188,11 @@ func (m Model) renderBackupConfirm() string {
 
 	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
 	s.WriteString("\n")
-	
+
 	// Show what will be installed
 	s.WriteString(InfoStyle.Render("📦 Installation Summary:"))
 	s.WriteString("\n\n")
-	
+
 	installSummary := m.GetInstallationSummary()
 	for _, item := range installSummary {
 		// Check if this is a skipped item (starts with ✗)
@@ -1190,10 +1203,10 @@ func (m Model) renderBackupConfirm() string {
 		}
 		s.WriteString("\n")
 	}
-	
+
 	// Get configs that will actually be overwritten based on user choices
 	configsToOverwrite := m.GetConfigsToOverwrite()
-	
+
 	// Only show config overwrite warning if there are configs that will actually be replaced
 	if len(configsToOverwrite) > 0 {
 		s.WriteString("\n")
