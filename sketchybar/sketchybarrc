@@ -364,6 +364,15 @@ sketchybar --add item ram right \
   
 
 # ─────────────────────────────────────────────────────────────────────────────────
+# SYSTEM WATCHER (handles wake from sleep)
+# ─────────────────────────────────────────────────────────────────────────────────
+sketchybar --add item system_watcher center \
+  --set system_watcher \
+    drawing=off \
+    script="sketchybar --bar y_offset=2; sketchybar --update" \
+  --subscribe system_watcher system_woke
+
+# ─────────────────────────────────────────────────────────────────────────────────
 # FINALIZE
 # ─────────────────────────────────────────────────────────────────────────────────
 sketchybar --update
