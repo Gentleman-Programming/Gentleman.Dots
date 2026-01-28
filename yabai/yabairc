@@ -57,51 +57,7 @@ yabai -m space 5 --label five 2>/dev/null || true
 yabai -m space 6 --label teleprompter 2>/dev/null || true
 yabai -m space 7 --label arzopa 2>/dev/null || true
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# WINDOW RULES - Apps that don't play well with tiling
-# ─────────────────────────────────────────────────────────────────────────────────
-
-# System apps
+# window rules - Finder floating (matching aerospace config)
 yabai -m rule --add app="^Finder$" manage=off
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Keychain Access$" manage=off
-yabai -m rule --add app="^Archive Utility$" manage=off
-yabai -m rule --add app="^App Store$" manage=off
-yabai -m rule --add app="^Activity Monitor$" manage=off
-yabai -m rule --add app="^Disk Utility$" manage=off
-yabai -m rule --add app="^Font File Browser$" manage=off
-yabai -m rule --add app="^System Information$" manage=off
-
-# Slack - huddles, calls, and popups cause issues
-yabai -m rule --add app="^Slack$" title="Huddle" manage=off
-yabai -m rule --add app="^Slack$" title="(Call|Screen)" manage=off
-yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off
-yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off
-
-# Communication apps with problematic windows
-yabai -m rule --add app="^zoom.us$" manage=off
-yabai -m rule --add app="^Zoom$" manage=off
-yabai -m rule --add app="^Discord$" title="(Friends|Nitro)" manage=off
-yabai -m rule --add app="^Microsoft Teams" manage=off
-
-# Development tools popups
-yabai -m rule --add app="^Raycast$" manage=off
-yabai -m rule --add app="^Alfred$" manage=off
-yabai -m rule --add app="^1Password" manage=off
-
-# Media
-yabai -m rule --add app="^QuickTime Player$" manage=off
-yabai -m rule --add app="^Preview$" manage=off
-yabai -m rule --add app="^Music$" manage=off
-yabai -m rule --add app="^Podcasts$" manage=off
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# SIGNALS - Auto-fix problematic windows
-# ─────────────────────────────────────────────────────────────────────────────────
-
-# Re-tile windows when a problematic app closes a popup
-yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus recent" label="focus_recent_on_destroy"
 
 echo "yabai configuration loaded.."
