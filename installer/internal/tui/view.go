@@ -217,11 +217,14 @@ func (m Model) renderSelection() string {
 			continue
 		}
 
-		// Informational notes (non-selectable)
-		if strings.HasPrefix(opt, "ℹ️") || strings.HasPrefix(opt, "        ") {
-			s.WriteString(MutedStyle.Render("  " + opt))
-			s.WriteString("\n")
-			continue
+		// Informational notes (non-selectable) - only on AI Assistants screen
+		// These are multi-line notes, not action items like "Learn about..."
+		if m.Screen == ScreenAIAssistants {
+			if strings.HasPrefix(opt, "ℹ️  Note:") || strings.HasPrefix(opt, "        ") {
+				s.WriteString(MutedStyle.Render("  " + opt))
+				s.WriteString("\n")
+				continue
+			}
 		}
 
 		// Blank lines (spacing)

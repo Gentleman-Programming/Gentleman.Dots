@@ -19,7 +19,7 @@ func (m Model) handleAIAssistantsKeys(key string) (tea.Model, tea.Cmd) {
 			for m.Cursor >= 0 && m.Cursor < len(options) {
 				opt := options[m.Cursor]
 				if strings.HasPrefix(opt, "───") ||
-					strings.HasPrefix(opt, "ℹ️") ||
+					strings.HasPrefix(opt, "ℹ️  Note:") || // Specific info note pattern
 					strings.HasPrefix(opt, "        ") || // Info note continuation
 					opt == "" { // Blank line
 					if m.Cursor > 0 {
@@ -39,7 +39,7 @@ func (m Model) handleAIAssistantsKeys(key string) (tea.Model, tea.Cmd) {
 			for m.Cursor < len(options) {
 				opt := options[m.Cursor]
 				if strings.HasPrefix(opt, "───") ||
-					strings.HasPrefix(opt, "ℹ️") ||
+					strings.HasPrefix(opt, "ℹ️  Note:") || // Specific info note pattern
 					strings.HasPrefix(opt, "        ") || // Info note continuation
 					opt == "" { // Blank line
 					if m.Cursor < len(options)-1 {
