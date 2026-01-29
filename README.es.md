@@ -36,7 +36,8 @@
 
 Una configuración completa de entorno de desarrollo que incluye:
 
-* **Neovim** con LSP, autocompletado y asistentes de IA (Claude Code, Gemini, OpenCode)
+* **Neovim** con LSP, autocompletado y asistentes de IA
+* **Asistentes de IA para programación**: OpenCode, Kilo Code (próximamente), Continue.dev (próximamente), Aider (próximamente)
 * **Shells**: Fish, Zsh, Nushell
 * **Multiplexores de terminal**: Tmux, Zellij
 * **Emuladores de terminal**: Alacritty, WezTerm, Kitty, Ghostty
@@ -103,6 +104,11 @@ cd ~
 > **Tip:** Después de la instalación, reiniciá Termux para aplicar la fuente y luego ejecutá `tmux` o `zellij` para iniciar el entorno configurado.
 
 El instalador TUI te guía para seleccionar tus herramientas preferidas y maneja toda la configuración automáticamente.
+
+**Instalación Selectiva**: Cada paso de configuración (Terminal, Shell, Window Manager, Neovim, Asistentes de IA) incluye una opción "Saltar este paso". Esto te permite:
+- Instalar solo componentes específicos (por ejemplo, solo Asistentes de IA)
+- Mantener tus configuraciones existentes intactas
+- Personalizar tu configuración exactamente como querés
 
 > **Usuarios de Windows:** primero debés configurar WSL. Ver la [Guía de instalación manual](docs/manual-installation.md#windows-wsl).
 
@@ -193,6 +199,17 @@ Podés iniciarlo desde el menú principal: **Vim Mastery Trainer**
 | Herramienta  | Descripción                            |
 | ------------ | -------------------------------------- |
 | **Starship** | Prompt multi-shell con integración Git |
+
+### Asistentes de IA para programación
+
+| Herramienta     | Estado          | Descripción                                         |
+| --------------- | --------------- | --------------------------------------------------- |
+| **OpenCode**    | ✅ Disponible    | Completado y generación de código con contexto      |
+| **Kilo Code**   | 🚧 Próximamente | Asistente de IA liviano y optimizado                |
+| **Continue.dev** | 🚧 Próximamente | Autopiloto open-source para desarrollo              |
+| **Aider**       | 🚧 Próximamente | Pair programming con IA desde la terminal           |
+
+El instalador configura automáticamente los asistentes de IA seleccionados con skills desde `GentlemanClaude/skills/`.
 
 ---
 

@@ -12,6 +12,8 @@ func TestHandleBackupConfirmKeys(t *testing.T) {
 	t.Run("should navigate with up/down keys", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
+		m.Choices = UserChoices{Shell: "fish"} // Ensures 3 options
 		m.Cursor = 0
 
 		// Press down
@@ -70,7 +72,7 @@ func TestHandleBackupConfirmKeys(t *testing.T) {
 			Shell:    "fish",
 			Terminal: "none",
 		}
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 
 		result, _ := m.handleBackupConfirmKeys("enter")
 		newModel := result.(Model)
@@ -110,7 +112,9 @@ func TestHandleBackupConfirmKeys(t *testing.T) {
 	t.Run("should go to MainMenu when selecting cancel", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.Cursor = 2 // Cancel
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
+		m.Choices = UserChoices{Shell: "fish"} // Ensures 3 options
+		m.Cursor = 2 // Cancel (3rd option)
 
 		result, _ := m.handleBackupConfirmKeys("enter")
 		newModel := result.(Model)

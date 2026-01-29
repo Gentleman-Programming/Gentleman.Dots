@@ -33,7 +33,8 @@
 
 A complete development environment configuration including:
 
-- **Neovim** with LSP, autocompletion, and AI assistants (Claude Code, Gemini, OpenCode)
+- **Neovim** with LSP, autocompletion, and AI assistants
+- **AI Coding Assistants**: OpenCode, Kilo Code (coming soon), Continue.dev (coming soon), Aider (coming soon)
 - **Shells**: Fish, Zsh, Nushell
 - **Terminal Multiplexers**: Tmux, Zellij
 - **Terminal Emulators**: Alacritty, WezTerm, Kitty, Ghostty
@@ -98,6 +99,11 @@ cd ~
 > **Tip:** After installation, restart Termux to apply the font, then run `tmux` or `zellij` to start your configured environment.
 
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
+
+**Selective Installation**: Each configuration step (Terminal, Shell, Window Manager, Neovim, AI Assistants) includes a "Skip this step" option. This allows you to:
+- Only install specific components (e.g., just AI Assistants)
+- Keep your existing configurations intact
+- Customize your setup exactly how you want it
 
 > **Windows users:** You must set up WSL first. See the [Manual Installation Guide](docs/manual-installation.md#windows-wsl).
 
@@ -188,6 +194,17 @@ Launch it from the main menu: **Vim Mastery Trainer**
 | Tool | Description |
 |------|-------------|
 | **Starship** | Cross-shell prompt with Git integration |
+
+### AI Coding Assistants
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| **OpenCode** | ✅ Available | Context-aware code completions and generation |
+| **Kilo Code** | 🚧 Coming Soon | Lightweight, performance-focused AI assistant |
+| **Continue.dev** | 🚧 Coming Soon | Open-source autopilot for development |
+| **Aider** | 🚧 Coming Soon | Terminal-based AI pair programming |
+
+The installer automatically configures your selected AI assistants with skills from `GentlemanClaude/skills/`.
 
 ---
 
