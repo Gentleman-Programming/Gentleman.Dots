@@ -11,6 +11,7 @@ return {
     "nvim-lua/plenary.nvim",
   },
   opts = {
+    legacy_commands = false,
     workspaces = {
       {
         name = "GentlemanNotes", -- Name of the workspace
