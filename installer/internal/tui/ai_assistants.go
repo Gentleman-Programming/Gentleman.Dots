@@ -81,59 +81,45 @@ Note: Automatically installed when you select Neovim.`,
 			},
 		},
 		{
-			ID:          "kilocode",
-			Name:        "Kilo Code",
-			Description: "Lightweight AI assistant for Neovim",
-			LongDesc: `Kilo Code is a lightweight AI coding assistant focused on:
-  • Minimal resource usage
-  • Fast response times
-  • Neovim integration
-  • Local-first approach
+			ID:          "gemini-cli",
+			Name:        "Gemini CLI",
+			Description: "Google Gemini AI CLI with terminal and Neovim support",
+			LongDesc: `Gemini CLI provides Google's Gemini AI in your terminal:
+  • Official Google CLI for Gemini models
+  • Terminal-native chat interface
+  • Integration with Neovim via gemini.lua plugin
+  • Multiple Gemini models support (Pro, Flash, etc.)
+  • Free tier available
 
-Status: Coming soon!`,
-			Available:    false,
+Requires: Node.js/npm (for CLI installation)
+Note: Automatically installed when you select Neovim.`,
+			Available:    true,
 			SkillsPath:   "",
-			ConfigPath:   ".config/kilocode",
-			InstallCmd:   "",
+			ConfigPath:   "",
+			InstallCmd:   "npm install -g @google/gemini-cli",
 			RequiresNvim: true,
 			Skills:       []string{},
 			ConfigFiles:  []string{},
 		},
 		{
-			ID:          "continue",
-			Name:        "Continue.dev",
-			Description: "Open-source autopilot for VS Code & JetBrains",
-			LongDesc: `Continue.dev is an open-source AI coding assistant featuring:
-  • Support for multiple LLMs (GPT-4, Claude, Llama, etc.)
-  • Custom context providers
-  • VS Code & JetBrains integration
-  • Self-hosted option
+			ID:          "copilot-cli",
+			Name:        "GitHub Copilot CLI",
+			Description: "GitHub Copilot CLI with terminal and Neovim support",
+			LongDesc: `GitHub Copilot CLI brings AI pair programming to your terminal:
+  • Official GitHub CLI for Copilot
+  • Terminal-native AI assistance
+  • Integration with Neovim via copilot.lua and copilot-chat.lua
+  • Code suggestions and completions
+  • Chat interface for questions
+  • Multi-language support
 
-Status: Coming soon!`,
-			Available:    false,
-			SkillsPath:   "",
-			ConfigPath:   ".continue",
-			InstallCmd:   "",
-			RequiresNvim: false,
-			Skills:       []string{},
-			ConfigFiles:  []string{},
-		},
-		{
-			ID:          "aider",
-			Name:        "Aider",
-			Description: "AI pair programming in your terminal",
-			LongDesc: `Aider is a terminal-based AI pair programmer with:
-  • Deep Git integration
-  • Support for GPT-4, Claude, and more
-  • Automatic commit messages
-  • Edit existing code in place
-
-Status: Coming soon!`,
-			Available:    false,
+Requires: GitHub Copilot subscription + Node.js/npm
+Note: Automatically installed when you select Neovim.`,
+			Available:    true,
 			SkillsPath:   "",
 			ConfigPath:   "",
-			InstallCmd:   "pip install aider-chat",
-			RequiresNvim: false,
+			InstallCmd:   "npm install -g @github/copilot",
+			RequiresNvim: true,
 			Skills:       []string{},
 			ConfigFiles:  []string{},
 		},

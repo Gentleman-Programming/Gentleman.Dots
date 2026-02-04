@@ -135,7 +135,7 @@ func TestRenderComplete_MultipleAIAssistants(t *testing.T) {
 	m.Screen = ScreenComplete
 	m.Choices.OS = "darwin"
 	m.Choices.Shell = "fish"
-	m.Choices.AIAssistants = []string{"opencode", "continue"}
+	m.Choices.AIAssistants = []string{"opencode", "gemini-cli"}
 	m.SkippedSteps = make(map[Screen]bool)
 	m.SkippedSteps[ScreenTerminalSelect] = true
 	m.SkippedSteps[ScreenShellSelect] = false
@@ -155,8 +155,8 @@ func TestRenderComplete_MultipleAIAssistants(t *testing.T) {
 	if !strings.Contains(output, "✓ AI Assistant: OpenCode") {
 		t.Error("Should show AI Assistant: OpenCode")
 	}
-	if !strings.Contains(output, "✓ AI Assistant: Continue.dev") {
-		t.Error("Should show AI Assistant: Continue.dev")
+	if !strings.Contains(output, "✓ AI Assistant: Gemini CLI") {
+		t.Error("Should show AI Assistant: Gemini CLI")
 	}
 
 	// Must show shell exec command

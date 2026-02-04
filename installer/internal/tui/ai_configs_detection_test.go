@@ -72,9 +72,9 @@ func TestGetConfigsToOverwrite_AIAssistantSkipped(t *testing.T) {
 func TestGetConfigsToOverwrite_MultipleAIAssistants(t *testing.T) {
 	m := NewModel()
 
-	// User selects BOTH OpenCode and Continue.dev
+	// User selects BOTH OpenCode and Gemini CLI
 	m.Choices.OS = "darwin"
-	m.Choices.AIAssistants = []string{"opencode", "continue"}
+	m.Choices.AIAssistants = []string{"opencode", "gemini-cli"}
 	m.SkippedSteps = make(map[Screen]bool)
 	m.SkippedSteps[ScreenTerminalSelect] = true
 	m.SkippedSteps[ScreenShellSelect] = true
@@ -85,7 +85,7 @@ func TestGetConfigsToOverwrite_MultipleAIAssistants(t *testing.T) {
 	// Simulate existing configs for BOTH
 	m.ExistingConfigs = []string{
 		"opencode: /Users/test/.config/opencode",
-		"continue: /Users/test/.continue",
+		"gemini-cli: /Users/test/.config/gemini",
 	}
 
 	configs := m.GetConfigsToOverwrite()
@@ -97,21 +97,21 @@ func TestGetConfigsToOverwrite_MultipleAIAssistants(t *testing.T) {
 
 	// Check both are present (order doesn't matter)
 	hasOpenCode := false
-	hasContinue := false
+	hasGemini := false
 	for _, config := range configs {
 		if config == "opencode: /Users/test/.config/opencode" {
 			hasOpenCode = true
 		}
-		if config == "continue: /Users/test/.continue" {
-			hasContinue = true
+		if config == "gemini-cli: /Users/test/.config/gemini" {
+			hasGemini = true
 		}
 	}
 
 	if !hasOpenCode {
 		t.Error("Expected OpenCode config in list")
 	}
-	if !hasContinue {
-		t.Error("Expected Continue.dev config in list")
+	if !hasGemini {
+		t.Error("Expected Gemini CLI config in list")
 	}
 }
 

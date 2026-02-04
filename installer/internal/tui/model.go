@@ -304,16 +304,18 @@ func (m Model) GetCurrentOptions() []string {
 		// Build options list from available AI assistants
 		opts := make([]string, 0)
 
-		// If Neovim is being installed, show informational note about Claude Code
+		// If Neovim is being installed, show informational note about included plugins
 		if m.Choices.InstallNvim {
-			opts = append(opts, "ℹ️  Note: Claude Code is installed automatically with Neovim")
-			opts = append(opts, "         (required for AI features)")
+			opts = append(opts, "ℹ️  Note: The following AI assistants are included with Neovim:")
+			opts = append(opts, "         • Claude Code (claude-code.lua)")
+			opts = append(opts, "         • Gemini CLI (gemini.lua)")
+			opts = append(opts, "         • GitHub Copilot CLI (copilot.lua + copilot-chat.lua)")
 			opts = append(opts, "") // Blank line for spacing
 		}
 
 		for _, ai := range m.AIAssistantsList {
-			// Skip Claude Code if Neovim is being installed (it's automatic)
-			if ai.ID == "claudecode" && m.Choices.InstallNvim {
+			// Skip AI assistants that require Neovim if Neovim is being installed
+			if ai.RequiresNvim && m.Choices.InstallNvim {
 				continue
 			}
 
@@ -740,8 +742,10 @@ func (m Model) GetInstallationSummary() []string {
 		summary = append(summary, "✗ Neovim (skipped)")
 	} else if m.Choices.InstallNvim {
 		summary = append(summary, "✓ Neovim: LazyVim configuration")
-		// Claude Code is automatically installed with Neovim
+		// AI assistants that require Neovim are automatically installed
 		summary = append(summary, "✓ AI Assistant: Claude Code (with Neovim)")
+		summary = append(summary, "✓ AI Assistant: Gemini CLI (with Neovim)")
+		summary = append(summary, "✓ AI Assistant: GitHub Copilot CLI (with Neovim)")
 	}
 
 	// AI Assistants
@@ -749,8 +753,15 @@ func (m Model) GetInstallationSummary() []string {
 		summary = append(summary, "✗ AI Assistants (skipped)")
 	} else if len(m.Choices.AIAssistants) > 0 {
 		for _, aiID := range m.Choices.AIAssistants {
-			// Skip Claude Code if Neovim is being installed (already shown above)
-			if aiID == "claudecode" && m.Choices.InstallNvim {
+			// Skip AI assistants that require Neovim if Neovim is being installed (already shown above)
+			skipBecauseNvim := false
+			for _, ai := range m.AIAssistantsList {
+				if ai.ID == aiID && ai.RequiresNvim && m.Choices.InstallNvim {
+					skipBecauseNvim = true
+					break
+				}
+			}
+			if skipBecauseNvim {
 				continue
 			}
 
@@ -823,12 +834,12 @@ func (m Model) GetConfigsToOverwrite() []string {
 		case "opencode":
 			// Only if user chose OpenCode and didn't skip AI assistants
 			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "opencode")
-		case "kilocode":
-			// Only if user chose Kilo Code and didn't skip AI assistants
-			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "kilocode")
-		case "continue":
-			// Only if user chose Continue.dev and didn't skip AI assistants
-			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "continue")
+		case "gemini-cli":
+			// Only if user chose Gemini CLI and didn't skip AI assistants
+			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "gemini-cli")
+		case "copilot-cli":
+			// Only if user chose GitHub Copilot CLI and didn't skip AI assistants
+			shouldInclude = !m.SkippedSteps[ScreenAIAssistants] && sliceContains(m.Choices.AIAssistants, "copilot-cli")
 		}
 
 		if shouldInclude {

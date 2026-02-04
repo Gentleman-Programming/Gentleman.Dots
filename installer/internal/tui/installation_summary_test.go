@@ -24,6 +24,9 @@ func TestGetInstallationSummary_AllComponents(t *testing.T) {
 		"✓ Shell: Fish",
 		"✓ Multiplexer: Tmux",
 		"✓ Neovim: LazyVim configuration",
+		"✓ AI Assistant: Claude Code (with Neovim)",
+		"✓ AI Assistant: Gemini CLI (with Neovim)",
+		"✓ AI Assistant: GitHub Copilot CLI (with Neovim)",
 		"✓ AI Assistant: OpenCode",
 	}
 
@@ -175,7 +178,7 @@ func TestGetInstallationSummary_AllSkipped(t *testing.T) {
 // TestGetConfigsToOverwrite_OnlyRelevantConfigs tests config filtering
 func TestGetConfigsToOverwrite_OnlyRelevantConfigs(t *testing.T) {
 	m := NewModel()
-	
+
 	// Simulate existing configs
 	m.ExistingConfigs = []string{
 		"fish: /home/user/.config/fish",
@@ -184,22 +187,22 @@ func TestGetConfigsToOverwrite_OnlyRelevantConfigs(t *testing.T) {
 		"tmux: /home/user/.tmux.conf",
 		"nvim: /home/user/.config/nvim",
 	}
-	
+
 	// User only chose Fish and skipped everything else
 	m.Choices.Shell = "fish"
 	m.SkippedSteps[ScreenTerminalSelect] = true
 	m.SkippedSteps[ScreenWMSelect] = true
 	m.SkippedSteps[ScreenNvimSelect] = true
 	m.SkippedSteps[ScreenAIAssistants] = true
-	
+
 	configs := m.GetConfigsToOverwrite()
-	
+
 	// Should only show fish config, not zsh, tmux, or nvim
 	if len(configs) != 1 {
 		t.Errorf("Expected 1 config to overwrite, got %d: %v", len(configs), configs)
 		return
 	}
-	
+
 	if !strings.Contains(configs[0], "fish") {
 		t.Errorf("Expected fish config, got: %s", configs[0])
 	}
@@ -208,7 +211,7 @@ func TestGetConfigsToOverwrite_OnlyRelevantConfigs(t *testing.T) {
 // TestGetConfigsToOverwrite_ZshConfigs tests zsh-related configs
 func TestGetConfigsToOverwrite_ZshConfigs(t *testing.T) {
 	m := NewModel()
-	
+
 	// Simulate existing configs
 	m.ExistingConfigs = []string{
 		"fish: /home/user/.config/fish",
@@ -216,27 +219,27 @@ func TestGetConfigsToOverwrite_ZshConfigs(t *testing.T) {
 		"oh-my-zsh: /home/user/.oh-my-zsh",
 		"zsh_p10k: /home/user/.p10k.zsh",
 	}
-	
+
 	// User chose Zsh
 	m.Choices.Shell = "zsh"
 	m.SkippedSteps[ScreenTerminalSelect] = true
 	m.SkippedSteps[ScreenWMSelect] = true
 	m.SkippedSteps[ScreenNvimSelect] = true
 	m.SkippedSteps[ScreenAIAssistants] = true
-	
+
 	configs := m.GetConfigsToOverwrite()
-	
+
 	// Should show zsh, oh-my-zsh, and zsh_p10k (but NOT fish)
 	if len(configs) != 3 {
 		t.Errorf("Expected 3 configs to overwrite, got %d: %v", len(configs), configs)
 		return
 	}
-	
+
 	hasZsh := false
 	hasOhMyZsh := false
 	hasP10k := false
 	hasFish := false
-	
+
 	for _, cfg := range configs {
 		if strings.Contains(cfg, "zsh:") {
 			hasZsh = true
@@ -251,7 +254,7 @@ func TestGetConfigsToOverwrite_ZshConfigs(t *testing.T) {
 			hasFish = true
 		}
 	}
-	
+
 	if !hasZsh || !hasOhMyZsh || !hasP10k {
 		t.Error("Missing expected zsh-related configs")
 	}
@@ -263,23 +266,23 @@ func TestGetConfigsToOverwrite_ZshConfigs(t *testing.T) {
 // TestGetConfigsToOverwrite_NoConfigs tests when nothing will be overwritten
 func TestGetConfigsToOverwrite_NoConfigs(t *testing.T) {
 	m := NewModel()
-	
+
 	// User skipped everything
 	m.SkippedSteps[ScreenTerminalSelect] = true
 	m.SkippedSteps[ScreenShellSelect] = true
 	m.SkippedSteps[ScreenWMSelect] = true
 	m.SkippedSteps[ScreenNvimSelect] = true
 	m.SkippedSteps[ScreenAIAssistants] = true
-	
+
 	// But has existing configs
 	m.ExistingConfigs = []string{
 		"fish: /home/user/.config/fish",
 		"tmux: /home/user/.tmux.conf",
 		"nvim: /home/user/.config/nvim",
 	}
-	
+
 	configs := m.GetConfigsToOverwrite()
-	
+
 	// Should be empty since user skipped everything
 	if len(configs) != 0 {
 		t.Errorf("Expected 0 configs to overwrite, got %d: %v", len(configs), configs)

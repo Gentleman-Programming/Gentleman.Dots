@@ -74,8 +74,8 @@ func TestNavigationBackwardsAndChangeSelection(t *testing.T) {
 		if m.Screen != ScreenAIAssistants {
 			t.Fatalf("Expected ScreenAIAssistants, got %v", m.Screen)
 		}
-		// Toggle OpenCode (cursor 0)
-		m.Cursor = 0
+		// Toggle OpenCode (cursor 1 - after Claude Code)
+		m.Cursor = 1
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeySpace})
 		m = result.(Model)
 		if !m.SelectedAIAssistants["opencode"] {
