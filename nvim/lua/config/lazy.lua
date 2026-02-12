@@ -50,6 +50,9 @@ require("lazy").setup({
     -- { import = "lazyvim.plugins.extras.editor.snacks_explorer" },
     { import = "lazyvim.plugins.extras.editor.snacks_picker" },
 
+    -- Debgugging plugins
+    { import = "lazyvim.plugins.extras.dap.core" },
+
     -- Formatting plugins
     { import = "lazyvim.plugins.extras.formatting.biome" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
@@ -60,12 +63,6 @@ require("lazy").setup({
     -- Language support plugins
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.markdown" },
-    { import = "lazyvim.plugins.extras.lang.typescript" },
-    { import = "lazyvim.plugins.extras.lang.angular" },
-    { import = "lazyvim.plugins.extras.lang.astro" },
-    { import = "lazyvim.plugins.extras.lang.go" },
-    { import = "lazyvim.plugins.extras.lang.nix" },
-    { import = "lazyvim.plugins.extras.lang.toml" },
 
     -- Coding plugins
     { import = "lazyvim.plugins.extras.coding.mini-surround" },
@@ -77,7 +74,6 @@ require("lazy").setup({
 
     -- AI plugins
     { import = "lazyvim.plugins.extras.ai.copilot" },
-    { import = "lazyvim.plugins.extras.ai.copilot-chat" },
 
     -- Import/override with your plugins
     { import = "plugins" },

@@ -1,8 +1,6 @@
 {
   "extras": [
     "lazyvim.plugins.extras.coding.mini-surround",
-    "lazyvim.plugins.extras.dap.core",
-    "lazyvim.plugins.extras.lang.tailwind",
     "lazyvim.plugins.extras.util.mini-hipatterns"
   ],
   "news": {

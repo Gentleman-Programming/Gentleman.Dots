@@ -11,13 +11,14 @@ return {
     "nvim-lua/plenary.nvim",
   },
   opts = {
+    legacy_commands = false,
     workspaces = {
       {
         name = "GentlemanNotes", -- Name of the workspace
         path = os.getenv("HOME") .. "/.config/obsidian", -- Path to the notes directory
       },
     },
-    completition = {
+    completion = {
       cmp = true,
     },
     picker = {
@@ -27,7 +28,9 @@ return {
     -- Optional, define your own callbacks to further customize behavior.
     callbacks = {
       -- Runs anytime you enter the buffer for a note.
-      enter_note = function(client, note)
+      -- NOTE: Breaking change in obsidian.nvim - callback now receives only (note), not (client, note)
+      enter_note = function(note)
+        if not note then return end
         -- Setup keymaps for obsidian notes
         vim.keymap.set("n", "gf", function()
           return require("obsidian").util.gf_passthrough()
