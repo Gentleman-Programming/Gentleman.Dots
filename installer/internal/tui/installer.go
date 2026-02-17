@@ -1063,14 +1063,8 @@ func stepInstallNvim(m *Model) error {
 	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/tweakcc-theme.json"), filepath.Join(claudeDir, "tweakcc-theme.json"))
-	// Copy skills (excluding prowler-* which are work-specific)
-	skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
-	for _, skill := range skillsToCopy {
-		skillSrc := filepath.Join(repoDir, "GentlemanClaude/skills", skill)
-		skillDst := filepath.Join(claudeDir, "skills", skill)
-		system.EnsureDir(skillDst)
-		system.CopyFile(filepath.Join(skillSrc, "SKILL.md"), filepath.Join(skillDst, "SKILL.md"))
-	}
+	// Copy all skills
+	system.CopyDir(filepath.Join(repoDir, "GentlemanClaude", "skills"), filepath.Join(claudeDir, "skills"))
 	SendLog(stepID, "⚙️ Copied CLAUDE.md")
 	SendLog(stepID, "📊 Copied statusline.sh")
 	SendLog(stepID, "🎨 Copied output styles")
