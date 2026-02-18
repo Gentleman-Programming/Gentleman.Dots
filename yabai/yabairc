@@ -74,7 +74,9 @@ yabai -m rule --add app="^Disk Utility$" manage=off
 yabai -m rule --add app="^Font File Browser$" manage=off
 yabai -m rule --add app="^System Information$" manage=off
 
-# Slack - only system dialogs float
+# Slack - huddles, calls, and popups cause issues
+yabai -m rule --add app="^Slack$" title="Huddle" manage=off layer=normal
+yabai -m rule --add app="^Slack$" title="(Call|Screen)" manage=off layer=normal
 yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off layer=normal
 yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off layer=normal
 
