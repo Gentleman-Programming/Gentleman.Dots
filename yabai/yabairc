@@ -58,44 +58,12 @@ yabai -m space 6 --label teleprompter 2>/dev/null || true
 yabai -m space 7 --label arzopa 2>/dev/null || true
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# WINDOW RULES - Apps that don't play well with tiling
+# WINDOW RULES - Only launchers/overlays that truly need floating
 # ─────────────────────────────────────────────────────────────────────────────────
 
-# System apps
-yabai -m rule --add app="^Finder$" manage=off
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Keychain Access$" manage=off
-yabai -m rule --add app="^Archive Utility$" manage=off
-yabai -m rule --add app="^App Store$" manage=off
-yabai -m rule --add app="^Activity Monitor$" manage=off
-yabai -m rule --add app="^Disk Utility$" manage=off
-yabai -m rule --add app="^Font File Browser$" manage=off
-yabai -m rule --add app="^System Information$" manage=off
-
-# Slack - huddles, calls, and popups cause issues
-yabai -m rule --add app="^Slack$" title="Huddle" manage=off layer=normal
-yabai -m rule --add app="^Slack$" title="(Call|Screen)" manage=off layer=normal
-yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off layer=normal
-yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off layer=normal
-
-# Communication apps with problematic windows
-yabai -m rule --add app="^zoom.us$" manage=off layer=normal
-yabai -m rule --add app="^Zoom$" manage=off layer=normal
-yabai -m rule --add app="^Discord$" title="(Friends|Nitro)" manage=off
-yabai -m rule --add app="^Microsoft Teams" manage=off layer=normal
-
-# Development tools popups
 yabai -m rule --add app="^Raycast$" manage=off
 yabai -m rule --add app="^Alfred$" manage=off
 yabai -m rule --add app="^1Password" manage=off
-
-# Media
-yabai -m rule --add app="^QuickTime Player$" manage=off
-yabai -m rule --add app="^Preview$" manage=off
-yabai -m rule --add app="^Podcasts$" manage=off
-yabai -m rule --add app="^VLC$" manage=off
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # SIGNALS - Auto-fix problematic windows

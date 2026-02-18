@@ -66,18 +66,14 @@ alt - tab : yabai -m space --focus recent
 # Move workspace to monitor (alt + shift + tab)
 alt + shift - tab : yabai -m window --display next; yabai -m display --focus next
 
-# Special commands (using ctrl+alt+cmd as prefix for "service mode" actions)
-# Reload config
-ctrl + alt + cmd - r : yabai --restart-service; skhd --restart-service
+# Special commands
+# Reload config (alt + shift + r)
+alt + shift - r : yabai --restart-service; skhd --restart-service
 
-# Balance layout
-ctrl + alt + cmd - b : yabai -m space --balance
+# Balance layout (alt + shift + b)
+alt + shift - b : yabai -m space --balance
 
-# Toggle floating
-ctrl + alt + cmd - f : yabai -m window --toggle float
+# Toggle floating (alt + ctrl + f)
+alt + ctrl - f : yabai -m window --toggle float
 
-# Warp windows
-ctrl + alt + cmd - h : yabai -m window --warp west
-ctrl + alt + cmd - j : yabai -m window --warp south
-ctrl + alt + cmd - k : yabai -m window --warp north
-ctrl + alt + cmd - l : yabai -m window --warp east
+
