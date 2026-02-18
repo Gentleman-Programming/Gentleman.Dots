@@ -75,14 +75,14 @@ yabai -m rule --add app="^Font File Browser$" manage=off
 yabai -m rule --add app="^System Information$" manage=off
 
 # Slack - only system dialogs float
-yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off
-yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off
+yabai -m rule --add app="^Slack$" subrole="AXDialog" manage=off layer=normal
+yabai -m rule --add app="^Slack$" subrole="AXSystemDialog" manage=off layer=normal
 
 # Communication apps with problematic windows
-yabai -m rule --add app="^zoom.us$" manage=off
-yabai -m rule --add app="^Zoom$" manage=off
+yabai -m rule --add app="^zoom.us$" manage=off layer=normal
+yabai -m rule --add app="^Zoom$" manage=off layer=normal
 yabai -m rule --add app="^Discord$" title="(Friends|Nitro)" manage=off
-yabai -m rule --add app="^Microsoft Teams" manage=off
+yabai -m rule --add app="^Microsoft Teams" manage=off layer=normal
 
 # Development tools popups
 yabai -m rule --add app="^Raycast$" manage=off
