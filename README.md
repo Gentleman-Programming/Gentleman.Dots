@@ -743,6 +743,7 @@ The following skills auto-load based on context:
 | `django-drf` | Django REST Framework |
 | `playwright` | E2E testing |
 | `pytest` | Python testing |
+| `sdd-*` | Agent-team SDD workflow (`init`, `explore`, `propose`, `spec`, `design`, `tasks`, `apply`, `verify`, `archive`) |
 
 ### OpenCode Configuration
 
@@ -840,6 +841,34 @@ export ANTHROPIC_API_KEY="your-api-key-here"
 ```
 
 **Location:** `~/.config/opencode/opencode.json`
+
+### OpenCode SDD Orchestrator (Agent Teams)
+
+This setup also includes an `sdd-orchestrator` agent with the same Gentleman personality as `gentleman`, plus delegate-only SDD orchestration behavior.
+
+Recommended usage flow:
+
+1. Start OpenCode in your project:
+
+   ```bash
+   opencode .
+   ```
+
+2. Open the agent picker (`Tab`) and select `sdd-orchestrator`
+
+3. Run SDD commands:
+
+   ```text
+   /sdd:init
+   /sdd:new <change-name>
+   /sdd:continue
+   ```
+
+4. Switch back to `gentleman` (Tab) for day-to-day coding.
+
+Artifact store recommendation:
+- Use `artifact_store.mode: engram` (recommended) - https://github.com/gentleman-programming/engram
+- `auto` fallback order: user-requested files -> engram -> existing openspec -> none
 
 ---
 
