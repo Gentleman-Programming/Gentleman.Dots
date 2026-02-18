@@ -69,7 +69,7 @@ yabai -m rule --add app="^1Password" manage=off
 # SIGNALS - Auto-fix problematic windows
 # ─────────────────────────────────────────────────────────────────────────────────
 
-# Re-tile windows when a problematic app closes a popup
-yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus recent" label="focus_recent_on_destroy"
+# Focus next window when one is closed
+yabai -m signal --add event=window_destroyed action="yabai -m window --focus recent || yabai -m window --focus first" label="focus_on_destroy"
 
 echo "yabai configuration loaded.."
