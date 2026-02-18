@@ -40,35 +40,7 @@ These skills are copied to user's Claude/OpenCode config via the installer.
 | `django-drf` | Django REST Framework | [GentlemanClaude/skills/django-drf](GentlemanClaude/skills/django-drf/SKILL.md) |
 | `playwright` | Playwright E2E testing | [GentlemanClaude/skills/playwright](GentlemanClaude/skills/playwright/SKILL.md) |
 | `pytest` | Python pytest patterns | [GentlemanClaude/skills/pytest](GentlemanClaude/skills/pytest/SKILL.md) |
-| `vitest` | Vitest + React Testing Library | [GentlemanClaude/skills/vitest](GentlemanClaude/skills/vitest/SKILL.md) |
-| `tdd` | Test-Driven Development workflow | [GentlemanClaude/skills/tdd](GentlemanClaude/skills/tdd/SKILL.md) |
-| `pr-review` | GitHub PR review | [GentlemanClaude/skills/pr-review](GentlemanClaude/skills/pr-review/SKILL.md) |
-| `chained-pr` | Chained/stacked PRs workflow | [GentlemanClaude/skills/chained-pr](GentlemanClaude/skills/chained-pr/SKILL.md) |
-| `jira-epic` | Jira epic management | [GentlemanClaude/skills/jira-epic](GentlemanClaude/skills/jira-epic/SKILL.md) |
-| `jira-task` | Jira story/task management | [GentlemanClaude/skills/jira-task](GentlemanClaude/skills/jira-task/SKILL.md) |
-| `notion-adr` | Architecture Decision Records in Notion | [GentlemanClaude/skills/notion-adr](GentlemanClaude/skills/notion-adr/SKILL.md) |
-| `notion-prd` | Product Requirement Documents in Notion | [GentlemanClaude/skills/notion-prd](GentlemanClaude/skills/notion-prd/SKILL.md) |
-| `notion-product-brain` | Product ideation in Notion | [GentlemanClaude/skills/notion-product-brain](GentlemanClaude/skills/notion-product-brain/SKILL.md) |
-| `notion-rfc` | RFCs in Notion | [GentlemanClaude/skills/notion-rfc](GentlemanClaude/skills/notion-rfc/SKILL.md) |
-| `notion-to-jira` | Bridge Notion RFCs to Jira | [GentlemanClaude/skills/notion-to-jira](GentlemanClaude/skills/notion-to-jira/SKILL.md) |
-| `transcript-processor` | Meeting transcript processing | [GentlemanClaude/skills/transcript-processor](GentlemanClaude/skills/transcript-processor/SKILL.md) |
 | `skill-creator` | Create new AI agent skills | [GentlemanClaude/skills/skill-creator](GentlemanClaude/skills/skill-creator/SKILL.md) |
-
-### SDD (Spec-Driven Development)
-
-Sub-agent skills used by the SDD orchestrator for structured planning and implementation.
-
-| Skill | Description | Source |
-|-------|-------------|--------|
-| `sdd-init` | Bootstrap openspec/ directory | [GentlemanClaude/skills/sdd-init](GentlemanClaude/skills/sdd-init/SKILL.md) |
-| `sdd-explore` | Investigate ideas before committing | [GentlemanClaude/skills/sdd-explore](GentlemanClaude/skills/sdd-explore/SKILL.md) |
-| `sdd-propose` | Create change proposals | [GentlemanClaude/skills/sdd-propose](GentlemanClaude/skills/sdd-propose/SKILL.md) |
-| `sdd-spec` | Write specifications | [GentlemanClaude/skills/sdd-spec](GentlemanClaude/skills/sdd-spec/SKILL.md) |
-| `sdd-design` | Technical design documents | [GentlemanClaude/skills/sdd-design](GentlemanClaude/skills/sdd-design/SKILL.md) |
-| `sdd-tasks` | Implementation task checklists | [GentlemanClaude/skills/sdd-tasks](GentlemanClaude/skills/sdd-tasks/SKILL.md) |
-| `sdd-apply` | Implement tasks, write code | [GentlemanClaude/skills/sdd-apply](GentlemanClaude/skills/sdd-apply/SKILL.md) |
-| `sdd-verify` | Validate implementation | [GentlemanClaude/skills/sdd-verify](GentlemanClaude/skills/sdd-verify/SKILL.md) |
-| `sdd-archive` | Sync specs and archive | [GentlemanClaude/skills/sdd-archive](GentlemanClaude/skills/sdd-archive/SKILL.md) |
 
 ## Auto-invoke Skills
 
@@ -83,9 +55,6 @@ When performing these actions, **ALWAYS** invoke the corresponding skill FIRST:
 | Adding OS support | `gentleman-system` | Detection priority, command execution patterns |
 | Writing Go tests | `go-testing` | Table-driven tests, teatest patterns |
 | Creating new skill | `skill-creator` | Skill structure, naming, frontmatter |
-| Starting new feature/change | `sdd-propose` | Structured planning before coding |
-| Writing specs/requirements | `sdd-spec` | Spec format and scenarios |
-| Implementing from specs | `sdd-apply` | Task-driven implementation |
 
 ## How Skills Work
 
@@ -106,15 +75,6 @@ skills/                              # Repository-specific skills
 GentlemanClaude/skills/              # User-installable skills
 ├── react-19/SKILL.md                # Copied to ~/.claude/skills/
 ├── typescript/SKILL.md
-├── sdd-init/SKILL.md                # SDD sub-agent skills
-├── sdd-explore/SKILL.md
-├── sdd-propose/SKILL.md
-├── sdd-spec/SKILL.md
-├── sdd-design/SKILL.md
-├── sdd-tasks/SKILL.md
-├── sdd-apply/SKILL.md
-├── sdd-verify/SKILL.md
-├── sdd-archive/SKILL.md
 └── ...
 ```
 
