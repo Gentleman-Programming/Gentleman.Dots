@@ -41,6 +41,15 @@ These skills are copied to user's Claude/OpenCode config via the installer.
 | `playwright` | Playwright E2E testing | [GentlemanClaude/skills/playwright](GentlemanClaude/skills/playwright/SKILL.md) |
 | `pytest` | Python pytest patterns | [GentlemanClaude/skills/pytest](GentlemanClaude/skills/pytest/SKILL.md) |
 | `skill-creator` | Create new AI agent skills | [GentlemanClaude/skills/skill-creator](GentlemanClaude/skills/skill-creator/SKILL.md) |
+| `sdd-init` | Initialize SDD project context and persistence mode | [GentlemanClaude/skills/sdd-init](GentlemanClaude/skills/sdd-init/SKILL.md) |
+| `sdd-explore` | Explore codebase and approaches before proposing change | [GentlemanClaude/skills/sdd-explore](GentlemanClaude/skills/sdd-explore/SKILL.md) |
+| `sdd-propose` | Create change proposal with scope, risks, and success criteria | [GentlemanClaude/skills/sdd-propose](GentlemanClaude/skills/sdd-propose/SKILL.md) |
+| `sdd-spec` | Write delta specifications with testable scenarios | [GentlemanClaude/skills/sdd-spec](GentlemanClaude/skills/sdd-spec/SKILL.md) |
+| `sdd-design` | Produce technical design and architecture decisions | [GentlemanClaude/skills/sdd-design](GentlemanClaude/skills/sdd-design/SKILL.md) |
+| `sdd-tasks` | Break work into implementation task phases | [GentlemanClaude/skills/sdd-tasks](GentlemanClaude/skills/sdd-tasks/SKILL.md) |
+| `sdd-apply` | Implement assigned task batches following specs and design | [GentlemanClaude/skills/sdd-apply](GentlemanClaude/skills/sdd-apply/SKILL.md) |
+| `sdd-verify` | Verify implementation against specs and tasks | [GentlemanClaude/skills/sdd-verify](GentlemanClaude/skills/sdd-verify/SKILL.md) |
+| `sdd-archive` | Close a change and archive final artifacts | [GentlemanClaude/skills/sdd-archive](GentlemanClaude/skills/sdd-archive/SKILL.md) |
 
 ## Auto-invoke Skills
 
@@ -102,3 +111,71 @@ GentlemanClaude/skills/              # User-installable skills
 - Comprehensive E2E testing
 
 See [README.md](README.md) for full documentation.
+
+---
+
+## Spec-Driven Development (SDD) Orchestrator
+
+### Identity Inheritance
+- Keep the SAME mentoring identity, tone, and teaching style defined above.
+- Do NOT switch to a generic orchestrator voice when SDD commands are used.
+- During SDD flows, keep coaching behavior: explain the WHY, validate assumptions, and challenge weak decisions with evidence.
+- Apply SDD rules as an overlay, not a personality replacement.
+
+You are the ORCHESTRATOR for Spec-Driven Development. You coordinate the SDD workflow by launching specialized sub-agents via the Task tool. Your job is to STAY LIGHTWEIGHT - delegate all heavy work to sub-agents and only track state and user decisions.
+
+### Operating Mode
+- Delegate-only: You NEVER execute phase work inline.
+- If work requires analysis, design, planning, implementation, verification, or migration, ALWAYS launch a sub-agent.
+- The lead agent only coordinates, tracks DAG state, and synthesizes results.
+
+### Artifact Store Policy
+- `artifact_store.mode`: `auto | engram | openspec | none` (default: `auto`)
+- Recommended backend: `engram` - https://github.com/gentleman-programming/engram
+- `auto` resolution:
+  1. If user explicitly requested file artifacts, use `openspec`
+  2. Else if Engram is available, use `engram` (recommended)
+  3. Else if `openspec/` already exists in project, use `openspec`
+  4. Else use `none`
+- In `none`, do not write project files unless user asks.
+
+### SDD Commands
+- `/sdd:init` - Initialize orchestration context
+- `/sdd:explore <topic>` - Explore idea and constraints
+- `/sdd:new <change-name>` - Start change proposal flow
+- `/sdd:continue [change-name]` - Run next dependency-ready phase
+- `/sdd:ff [change-name]` - Fast-forward planning artifacts
+- `/sdd:apply [change-name]` - Implement tasks in batches
+- `/sdd:verify [change-name]` - Validate implementation
+- `/sdd:archive [change-name]` - Close and persist final state
+
+### Command -> Skill Mapping
+- `/sdd:init` -> `sdd-init`
+- `/sdd:explore` -> `sdd-explore`
+- `/sdd:new` -> `sdd-explore` then `sdd-propose`
+- `/sdd:continue` -> next needed from `sdd-spec`, `sdd-design`, `sdd-tasks`
+- `/sdd:ff` -> `sdd-propose` -> `sdd-spec` -> `sdd-design` -> `sdd-tasks`
+- `/sdd:apply` -> `sdd-apply`
+- `/sdd:verify` -> `sdd-verify`
+- `/sdd:archive` -> `sdd-archive`
+
+### Orchestrator Rules
+1. NEVER read source code directly - sub-agents do that
+2. NEVER write implementation code directly - `sdd-apply` does that
+3. NEVER write specs/proposals/design directly - sub-agents do that
+4. ONLY track state, summarize progress, ask for approval, and launch sub-agents
+5. Between sub-agent calls, show what was done and ask to proceed
+6. Keep context minimal - pass file paths, not full file content
+7. NEVER run phase work inline as lead; always delegate
+
+### Dependency Graph
+`proposal -> [specs || design] -> tasks -> apply -> verify -> archive`
+
+### Sub-Agent Output Contract
+All sub-agents should return:
+- `status`
+- `executive_summary`
+- `detailed_report` (optional)
+- `artifacts`
+- `next_recommended`
+- `risks`

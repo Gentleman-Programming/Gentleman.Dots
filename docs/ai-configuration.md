@@ -103,12 +103,13 @@ The installer configures:
 | `settings.json` | Permissions, output style, status line config |
 | `statusline.sh` | Custom status bar script |
 | `output-styles/gentleman.md` | The Gentleman persona definition |
-| `skills/` | 10 framework-specific coding standards |
+| `skills/` | Framework standards + SDD agent-team orchestration pack |
 | `mcp-servers.template.json` | MCP server templates (Context7, Jira, Figma) |
 
 **Included Skills:**
 
-React 19, Next.js 15, TypeScript, Tailwind 4, Zod 4, Zustand 5, AI SDK 5, Django DRF, Playwright, Pytest
+- Framework pack: React 19, Next.js 15, TypeScript, Tailwind 4, Zod 4, Zustand 5, AI SDK 5, Django DRF, Playwright, Pytest
+- SDD pack: sdd-init, sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-apply, sdd-verify, sdd-archive
 
 ### Gentleman Persona
 
@@ -154,7 +155,7 @@ The Gentleman persona is a Senior Architect with 15+ years of experience. Both C
 ├── statusline.sh          # Status bar script
 ├── output-styles/
 │   └── gentleman.md       # Gentleman persona definition
-└── skills/                # Framework coding standards
+└── skills/                # Framework + SDD coding standards
     ├── react-19/
     ├── nextjs-15/
     ├── typescript/
@@ -230,6 +231,32 @@ OpenCode is installed automatically with a custom **Gentleman** agent and theme.
 
 3. Select **gentleman** from the list
 
+### Using the SDD Orchestrator Agent
+
+When you want agent-team orchestration (delegate-only + sub-agents), select **sdd-orchestrator**:
+
+1. Start OpenCode in your project:
+
+   ```bash
+   opencode .
+   ```
+
+2. Open the agent picker (`Tab`) and choose **sdd-orchestrator**
+
+3. Run SDD commands:
+
+   ```text
+   /sdd:init
+   /sdd:new <change-name>
+   /sdd:continue
+   ```
+
+4. Switch back to **gentleman** (Tab) for day-to-day coding.
+
+SDD persistence policy (recommended):
+- `artifact_store.mode: engram` (recommended) — https://github.com/gentleman-programming/engram
+- `artifact_store.mode: auto` fallback: user-requested files -> engram -> existing openspec -> none
+
 ### Configuring the Default Model
 
 Edit your OpenCode configuration:
@@ -277,5 +304,6 @@ The Gentleman OpenCode config includes MCP (Model Context Protocol) integration:
 | Server | Description |
 |--------|-------------|
 | **Context7** | Remote MCP for fetching up-to-date documentation |
+| **Engram** | Local MCP backend for persistent SDD artifacts |
 
 This is enabled by default and enhances the agent's ability to verify information with current docs.
