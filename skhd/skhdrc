@@ -1,10 +1,10 @@
 # skhd configuration migrated from AeroSpace
 
-# Focus windows (alt + ctrl + hjkl) - with fallback to recent for floating windows
-alt + ctrl - h : yabai -m window --focus west || yabai -m window --focus recent
-alt + ctrl - j : yabai -m window --focus south || yabai -m window --focus recent
-alt + ctrl - k : yabai -m window --focus north || yabai -m window --focus recent
-alt + ctrl - l : yabai -m window --focus east || yabai -m window --focus recent
+# Focus windows (alt + ctrl + hjkl) - stay in current space
+alt + ctrl - h : yabai -m window --focus west
+alt + ctrl - j : yabai -m window --focus south
+alt + ctrl - k : yabai -m window --focus north
+alt + ctrl - l : yabai -m window --focus east
 
 # Escape from floating window to last tiled window (alt + ctrl + space)
 alt + ctrl - space : yabai -m window --focus recent
@@ -75,5 +75,4 @@ alt + shift - b : yabai -m space --balance
 
 # Toggle floating (alt + ctrl + f)
 alt + ctrl - f : yabai -m window --toggle float
-
 
