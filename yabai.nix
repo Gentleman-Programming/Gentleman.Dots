@@ -5,7 +5,7 @@
     # Disable automatic space reordering based on most recent use
     # This is CRITICAL for yabai/sketchybar to work correctly with numbered spaces
     echo "Configuring Mission Control settings..."
-    defaults write com.apple.dock mru-spaces -bool false
+    /usr/bin/defaults write com.apple.dock mru-spaces -bool false
     killall Dock 2>/dev/null || true
 
     echo "Copying Yabai configuration..."

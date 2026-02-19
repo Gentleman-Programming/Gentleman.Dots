@@ -100,11 +100,11 @@ import * as Gentleman from "./themes/gentleman";|' "$THEMES_FILE"
     echo "🍎 Configuring macOS settings..."
     
     # Auto-hide dock
-    defaults write com.apple.dock autohide -bool true
+    /usr/bin/defaults write com.apple.dock autohide -bool true
     
     # Auto-hide menu bar (Always)
-    defaults write NSGlobalDomain _HIHideMenuBar -bool false
-    defaults write NSGlobalDomain AppleMenuBarVisibleInFullscreen -bool true
+    /usr/bin/defaults write NSGlobalDomain _HIHideMenuBar -bool false
+    /usr/bin/defaults write NSGlobalDomain AppleMenuBarVisibleInFullscreen -bool true
     
     # Restart Dock to apply changes
     killall Dock 2>/dev/null || true
