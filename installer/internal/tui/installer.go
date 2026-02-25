@@ -1294,14 +1294,64 @@ func writeNvimLeaderConfig(m *Model) error {
 	// Add experience level as a comment for future reference
 	sb.WriteString(fmt.Sprintf("-- Experience level: %s\n\n", m.Choices.Experience))
 
-	// If leader is comma, we need to fix flash.nvim navigation
-	if leader == "comma" {
-		sb.WriteString("-- Conflict resolution: flash.nvim uses ',' and ';' for navigation.\n")
-		sb.WriteString("-- Since leader is ',', we remap flash jump to '\\'\n")
-		sb.WriteString("vim.keymap.set(\"n\", \"\\\\\", function() require(\"flash\").jump() end, { desc = \"Flash Jump\" })\n\n")
-	}
-
 	// Prepend to existing content or just write if empty
 	newContent := sb.String() + content
-	return os.WriteFile(optionsPath, []byte(newContent), 0644)
+	if err := os.WriteFile(optionsPath, []byte(newContent), 0644); err != nil {
+		return err
+	}
+
+	// Handle flash.nvim conflict if leader is comma
+	if leader == "comma" {
+		return writeFlashFixConfig()
+	}
+
+	return nil
+}
+
+// writeFlashFixConfig creates a plugin override for flash.nvim when leader is comma
+func writeFlashFixConfig() error {
+	homeDir := os.Getenv("HOME")
+	// Ensure we are writing to the correct Neovim config path
+	pluginsDir := filepath.Join(homeDir, ".config", "nvim", "lua", "plugins")
+	fixPath := filepath.Join(pluginsDir, "flash_fix.lua")
+
+	// Ensure the directory exists (it should after CopyDir, but let's be safe)
+	if err := os.MkdirAll(pluginsDir, 0755); err != nil {
+		return fmt.Errorf("failed to create plugins directory: %w", err)
+	}
+
+	flashConfig := `return {
+  {
+    "folke/flash.nvim",
+    opts = {
+      modes = {
+        char = {
+          jump_labels = true,
+          -- Ensure "_" is included in the keys that flash listens to
+          keys = { "f", "F", "t", "T", ";", "_" },
+          char_actions = function(motion)
+            return {
+              [";"] = "next", -- Use the ";" action for forward
+              ["_"] = "prev", -- Use the "_" action for backward
+            }
+          end,
+        },
+        search = {
+          -- Use the 'keys' table for search (/) mode overrides
+          enabled = true,
+          keys = {
+            [";"] = "next",
+            ["_"] = "prev",
+          },
+        },
+      },
+    },
+  },
+}
+`
+	if err := os.WriteFile(fixPath, []byte(flashConfig), 0644); err != nil {
+		return fmt.Errorf("failed to write flash_fix.lua: %w", err)
+	}
+
+	return nil
 }
