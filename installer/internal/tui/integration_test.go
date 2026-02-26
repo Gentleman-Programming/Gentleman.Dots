@@ -96,7 +96,7 @@ func TestFullInstallationFlow(t *testing.T) {
 		}
 
 		// Select "Yes" for Nvim (cursor at 0)
-		// This should either go to BackupConfirm (if existing configs) or Installing
+		// This should go to AI Tools selection (non-Termux)
 		result, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 		m = result.(Model)
 
@@ -104,9 +104,8 @@ func TestFullInstallationFlow(t *testing.T) {
 			t.Fatal("Expected InstallNvim to be true")
 		}
 
-		// Screen depends on existing configs
-		if m.Screen != ScreenBackupConfirm && m.Screen != ScreenInstalling {
-			t.Fatalf("Expected ScreenBackupConfirm or ScreenInstalling, got %v", m.Screen)
+		if m.Screen != ScreenAIToolsSelect {
+			t.Fatalf("Expected ScreenAIToolsSelect, got %v", m.Screen)
 		}
 	})
 }

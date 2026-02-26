@@ -67,6 +67,8 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallNvim(m)
 	case "aitools":
 		return stepInstallAITools(m)
+	case "aiframework":
+		return stepInstallAIFramework(m)
 	case "cleanup":
 		return stepCleanup(m)
 	case "setshell":
@@ -1045,50 +1047,49 @@ func stepInstallNvim(m *Model) error {
 	return nil
 }
 
+// hasAITool checks if a tool is in the selected AI tools list
+func hasAITool(tools []string, name string) bool {
+	for _, t := range tools {
+		if t == name {
+			return true
+		}
+	}
+	return false
+}
+
 func stepInstallAITools(m *Model) error {
 	homeDir := os.Getenv("HOME")
 	repoDir := "Gentleman.Dots"
 	stepID := "aitools"
 
-	// Install Claude Code (optional, don't fail on error)
-	// Skip on Termux - Claude Code doesn't support Android
-	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Installing Claude Code (optional)...")
+	// Install and configure Claude Code
+	if hasAITool(m.Choices.AITools, "claude") {
+		SendLog(stepID, "Installing Claude Code...")
 		system.RunWithLogs(`curl -fsSL https://claude.ai/install.sh | bash`, nil, func(line string) {
 			SendLog(stepID, line)
 		})
-	} else {
-		SendLog(stepID, "Skipping Claude Code (not supported on Termux)")
-	}
 
-	// Configure Claude Code
-	SendLog(stepID, "Configuring Claude Code...")
-	claudeDir := filepath.Join(homeDir, ".claude")
-	system.EnsureDir(claudeDir)
-	system.EnsureDir(filepath.Join(claudeDir, "output-styles"))
-	system.EnsureDir(filepath.Join(claudeDir, "skills"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/CLAUDE.md"), filepath.Join(claudeDir, "CLAUDE.md"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/settings.json"), filepath.Join(claudeDir, "settings.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/statusline.sh"), filepath.Join(claudeDir, "statusline.sh"))
-	system.Run(fmt.Sprintf("chmod +x %s", filepath.Join(claudeDir, "statusline.sh")), nil)
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/tweakcc-theme.json"), filepath.Join(claudeDir, "tweakcc-theme.json"))
-	// Copy skills (excluding prowler-* which are work-specific)
-	skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
-	for _, skill := range skillsToCopy {
-		skillSrc := filepath.Join(repoDir, "GentlemanClaude/skills", skill)
-		skillDst := filepath.Join(claudeDir, "skills", skill)
-		system.EnsureDir(skillDst)
-		system.CopyFile(filepath.Join(skillSrc, "SKILL.md"), filepath.Join(skillDst, "SKILL.md"))
-	}
-	SendLog(stepID, "⚙️ Copied CLAUDE.md")
-	SendLog(stepID, "📊 Copied statusline.sh")
-	SendLog(stepID, "🎨 Copied output styles")
-	SendLog(stepID, "🧠 Copied Claude skills")
+		SendLog(stepID, "Configuring Claude Code...")
+		claudeDir := filepath.Join(homeDir, ".claude")
+		system.EnsureDir(claudeDir)
+		system.EnsureDir(filepath.Join(claudeDir, "output-styles"))
+		system.EnsureDir(filepath.Join(claudeDir, "skills"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/CLAUDE.md"), filepath.Join(claudeDir, "CLAUDE.md"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/settings.json"), filepath.Join(claudeDir, "settings.json"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/statusline.sh"), filepath.Join(claudeDir, "statusline.sh"))
+		system.Run(fmt.Sprintf("chmod +x %s", filepath.Join(claudeDir, "statusline.sh")), nil)
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/tweakcc-theme.json"), filepath.Join(claudeDir, "tweakcc-theme.json"))
+		skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
+		for _, skill := range skillsToCopy {
+			skillSrc := filepath.Join(repoDir, "GentlemanClaude/skills", skill)
+			skillDst := filepath.Join(claudeDir, "skills", skill)
+			system.EnsureDir(skillDst)
+			system.CopyFile(filepath.Join(skillSrc, "SKILL.md"), filepath.Join(skillDst, "SKILL.md"))
+		}
+		SendLog(stepID, "⚙️ Copied CLAUDE.md, statusline, output styles, skills")
 
-	// Apply tweakcc theme (only if Claude Code was installed)
-	if !m.SystemInfo.IsTermux {
 		SendLog(stepID, "Applying tweakcc theme...")
 		result := system.Run("npx tweakcc --apply", nil)
 		if result.Error == nil {
@@ -1098,29 +1099,77 @@ func stepInstallAITools(m *Model) error {
 		}
 	}
 
-	// Install OpenCode (optional, don't fail on error)
-	// Skip on Termux - OpenCode doesn't support Android
-	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Installing OpenCode (optional)...")
+	// Install and configure OpenCode
+	if hasAITool(m.Choices.AITools, "opencode") {
+		SendLog(stepID, "Installing OpenCode...")
 		system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
 			SendLog(stepID, line)
 		})
-	} else {
-		SendLog(stepID, "Skipping OpenCode (not supported on Termux)")
+
+		SendLog(stepID, "Configuring OpenCode...")
+		openCodeDir := filepath.Join(homeDir, ".config/opencode")
+		system.EnsureDir(openCodeDir)
+		system.EnsureDir(filepath.Join(openCodeDir, "themes"))
+		system.EnsureDir(filepath.Join(openCodeDir, "skill"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
+		system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
+		system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
+		SendLog(stepID, "🧠 Copied OpenCode config and skills")
 	}
 
-	// Configure OpenCode
-	SendLog(stepID, "Configuring OpenCode...")
-	openCodeDir := filepath.Join(homeDir, ".config/opencode")
-	system.EnsureDir(openCodeDir)
-	system.EnsureDir(filepath.Join(openCodeDir, "themes"))
-	system.EnsureDir(filepath.Join(openCodeDir, "skill"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
-	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
-	SendLog(stepID, "🧠 Copied OpenCode skills")
-
 	SendLog(stepID, "✓ AI tools configured")
+	return nil
+}
+
+func stepInstallAIFramework(m *Model) error {
+	stepID := "aiframework"
+
+	SendLog(stepID, "Cloning project-starter-framework...")
+	result := system.RunWithLogs(
+		"git clone --depth 1 https://github.com/Sobrebr/project-starter-framework.git /tmp/project-starter-framework-install",
+		nil, func(line string) { SendLog(stepID, line) },
+	)
+	if result.Error != nil {
+		return wrapStepError("aiframework", "Install AI Framework",
+			"Failed to clone project-starter-framework", result.Error)
+	}
+
+	// Build the setup-global.sh command
+	setupCmd := "/tmp/project-starter-framework-install/scripts/setup-global.sh --auto --skip-install"
+
+	// Determine which CLIs to configure based on selected AI tools
+	var clis []string
+	if hasAITool(m.Choices.AITools, "claude") {
+		clis = append(clis, "claude")
+	}
+	if hasAITool(m.Choices.AITools, "opencode") {
+		clis = append(clis, "opencode")
+	}
+	if len(clis) > 0 {
+		setupCmd += " --clis=" + strings.Join(clis, ",")
+	}
+
+	// Add preset or modules flag
+	if m.Choices.AIFrameworkPreset != "" {
+		setupCmd += " --preset=" + m.Choices.AIFrameworkPreset
+	} else if len(m.Choices.AIFrameworkModules) > 0 {
+		setupCmd += " --modules=" + strings.Join(m.Choices.AIFrameworkModules, ",")
+	}
+
+	SendLog(stepID, "Running framework setup...")
+	SendLog(stepID, fmt.Sprintf("Command: %s", setupCmd))
+	result = system.RunWithLogs(setupCmd, nil, func(line string) {
+		SendLog(stepID, line)
+	})
+	if result.Error != nil {
+		return wrapStepError("aiframework", "Install AI Framework",
+			"Framework setup failed", result.Error)
+	}
+
+	// Cleanup cloned framework repo
+	system.Run("rm -rf /tmp/project-starter-framework-install", nil)
+
+	SendLog(stepID, "✓ AI framework configured")
 	return nil
 }
 

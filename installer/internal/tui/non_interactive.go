@@ -107,9 +107,14 @@ func buildStepsForChoices(m *Model) []InstallStep {
 		steps = append(steps, InstallStep{ID: "nvim", Name: "Install Neovim configuration"})
 	}
 
-	// AI Tools (Claude Code + OpenCode)
-	if m.Choices.InstallNvim {
+	// AI Tools
+	if len(m.Choices.AITools) > 0 {
 		steps = append(steps, InstallStep{ID: "aitools", Name: "Install AI tools"})
+	}
+
+	// AI Framework
+	if m.Choices.InstallAIFramework {
+		steps = append(steps, InstallStep{ID: "aiframework", Name: "Install AI framework"})
 	}
 
 	// Set shell as default

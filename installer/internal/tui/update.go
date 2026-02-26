@@ -253,8 +253,11 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenMainMenu:
 		return m.handleMainMenuKeys(key)
 
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenGhosttyWarning:
 		return m.handleSelectionKeys(key)
+
+	case ScreenAIFrameworkModules:
+		return m.handleAIModulesKeys(key)
 
 	case ScreenLearnTerminals, ScreenLearnShells, ScreenLearnWM, ScreenLearnNvim:
 		return m.handleLearnMenuKeys(key)
@@ -342,15 +345,15 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	switch m.Screen {
 	// Installation wizard screens - go back through the flow
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkModules:
 		return m.goBackInstallStep()
 	case ScreenGhosttyWarning:
 		// Go back to terminal selection
 		m.Screen = ScreenTerminalSelect
 		m.Cursor = 0
 	case ScreenBackupConfirm:
-		// Go back to Nvim selection (not abort)
-		m.Screen = ScreenNvimSelect
+		// Go back to last AI screen
+		m.Screen = ScreenAIFrameworkConfirm
 		m.Cursor = 0
 	// Content/Learn screens
 	case ScreenKeymapCategory:
@@ -553,6 +556,27 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
 		m.Choices.InstallNvim = false
+
+	case ScreenAIToolsSelect:
+		m.Screen = ScreenNvimSelect
+		m.Cursor = 0
+		m.Choices.AITools = nil
+
+	case ScreenAIFrameworkConfirm:
+		m.Screen = ScreenAIToolsSelect
+		m.Cursor = 0
+		m.Choices.InstallAIFramework = false
+
+	case ScreenAIFrameworkPreset:
+		m.Screen = ScreenAIFrameworkConfirm
+		m.Cursor = 0
+		m.Choices.AIFrameworkPreset = ""
+
+	case ScreenAIFrameworkModules:
+		m.Screen = ScreenAIFrameworkPreset
+		m.Cursor = 0
+		m.Choices.AIFrameworkModules = nil
+		m.AIModuleSelected = nil
 	}
 
 	return m, nil
@@ -678,19 +702,135 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenNvimSelect:
 		m.Choices.InstallNvim = m.Cursor == 0
-		// Detect existing configs before proceeding
-		m.ExistingConfigs = system.DetectExistingConfigs()
-		if len(m.ExistingConfigs) > 0 {
-			// Show backup confirmation screen
-			m.Screen = ScreenBackupConfirm
+		// Proceed to AI tools selection (skip on Termux)
+		if m.SystemInfo.IsTermux {
+			// Termux doesn't support AI tools, skip to backup/install
+			return m.proceedToBackupOrInstall()
+		}
+		m.Screen = ScreenAIToolsSelect
+		m.Cursor = 0
+
+	case ScreenAIToolsSelect:
+		switch m.Cursor {
+		case 0: // Claude Code + OpenCode
+			m.Choices.AITools = []string{"claude", "opencode"}
+		case 1: // Claude Code only
+			m.Choices.AITools = []string{"claude"}
+		case 2: // OpenCode only
+			m.Choices.AITools = []string{"opencode"}
+		case 3: // None
+			m.Choices.AITools = nil
+		}
+		// If any AI tools selected, ask about framework
+		if len(m.Choices.AITools) > 0 {
+			m.Screen = ScreenAIFrameworkConfirm
 			m.Cursor = 0
 		} else {
-			// No existing configs, proceed directly
-			m.SetupInstallSteps()
-			m.Screen = ScreenInstalling
-			m.CurrentStep = 0
-			return m, func() tea.Msg { return installStartMsg{} }
+			// No AI tools, skip framework too
+			m.Choices.InstallAIFramework = false
+			return m.proceedToBackupOrInstall()
 		}
+
+	case ScreenAIFrameworkConfirm:
+		m.Choices.InstallAIFramework = m.Cursor == 0
+		if m.Choices.InstallAIFramework {
+			m.Screen = ScreenAIFrameworkPreset
+			m.Cursor = 0
+		} else {
+			return m.proceedToBackupOrInstall()
+		}
+
+	case ScreenAIFrameworkPreset:
+		presets := []string{"minimal", "frontend", "backend", "fullstack", "data", "complete"}
+		if m.Cursor < len(presets) {
+			m.Choices.AIFrameworkPreset = presets[m.Cursor]
+			m.Choices.AIFrameworkModules = nil
+			return m.proceedToBackupOrInstall()
+		}
+		// Skip separator (index 6)
+		if m.Cursor == 7 { // Custom
+			m.Choices.AIFrameworkPreset = ""
+			// Initialize module selection toggles
+			moduleOpts := m.GetCurrentOptions() // Will switch to ScreenAIFrameworkModules
+			_ = moduleOpts
+			m.AIModuleSelected = make([]bool, 27) // 27 module options (before separator)
+			m.Screen = ScreenAIFrameworkModules
+			m.Cursor = 0
+		}
+	}
+
+	return m, nil
+}
+
+// proceedToBackupOrInstall handles the transition from the last wizard screen to installation
+func (m Model) proceedToBackupOrInstall() (tea.Model, tea.Cmd) {
+	m.ExistingConfigs = system.DetectExistingConfigs()
+	if len(m.ExistingConfigs) > 0 {
+		m.Screen = ScreenBackupConfirm
+		m.Cursor = 0
+	} else {
+		m.SetupInstallSteps()
+		m.Screen = ScreenInstalling
+		m.CurrentStep = 0
+		return m, func() tea.Msg { return installStartMsg{} }
+	}
+	return m, nil
+}
+
+// moduleIDMap maps module option index to manifest module ID
+var moduleIDMap = []string{
+	"scripts-project", "scripts-skills", "scripts-quality", "scripts-catalog",
+	"hooks-security", "hooks-git", "hooks-productivity", "hooks-validation",
+	"agents-development", "agents-quality", "agents-infrastructure", "agents-business", "agents-data-ai", "agents-specialized",
+	"skills-frontend", "skills-backend", "skills-infrastructure", "skills-data", "skills-workflow", "skills-testing", "skills-documentation",
+	"commands-git", "commands-refactoring", "commands-testing", "commands-workflows",
+	"sdd", "mcp",
+}
+
+func (m Model) handleAIModulesKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+	lastModuleIdx := len(moduleIDMap) - 1 // Last toggleable module index
+	confirmIdx := len(options) - 1        // "Confirm selection" is last option
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			// Skip separator
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		if m.Cursor <= lastModuleIdx {
+			// Toggle module selection
+			if m.AIModuleSelected != nil && m.Cursor < len(m.AIModuleSelected) {
+				m.AIModuleSelected[m.Cursor] = !m.AIModuleSelected[m.Cursor]
+			}
+		} else if m.Cursor == confirmIdx {
+			// Confirm — collect selected modules
+			var selected []string
+			for i, sel := range m.AIModuleSelected {
+				if sel && i < len(moduleIDMap) {
+					selected = append(selected, moduleIDMap[i])
+				}
+			}
+			m.Choices.AIFrameworkModules = selected
+			if len(selected) == 0 {
+				// No modules selected, skip framework
+				m.Choices.InstallAIFramework = false
+			}
+			return m.proceedToBackupOrInstall()
+		}
+	case "esc", "backspace":
+		return m.goBackInstallStep()
 	}
 
 	return m, nil
@@ -1196,8 +1336,14 @@ func (m Model) handleBackupConfirmKeys(key string) (tea.Model, tea.Cmd) {
 			m.Choices = UserChoices{}
 		}
 	case "esc", "backspace":
-		// Go back to Nvim selection
-		m.Screen = ScreenNvimSelect
+		// Go back to the last AI screen in the wizard flow
+		if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework {
+			m.Screen = ScreenAIFrameworkPreset
+		} else if len(m.Choices.AITools) > 0 {
+			m.Screen = ScreenAIFrameworkConfirm
+		} else {
+			m.Screen = ScreenAIToolsSelect
+		}
 		m.Cursor = 0
 	}
 

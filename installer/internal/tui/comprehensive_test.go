@@ -1001,8 +1001,8 @@ func TestBackupConfirmEscape(t *testing.T) {
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEsc})
 	newModel := result.(Model)
 
-	if newModel.Screen != ScreenNvimSelect {
-		t.Errorf("Escape should go back to NvimSelect, got %v", newModel.Screen)
+	if newModel.Screen != ScreenAIFrameworkConfirm {
+		t.Errorf("Escape should go back to AIFrameworkConfirm, got %v", newModel.Screen)
 	}
 }
 

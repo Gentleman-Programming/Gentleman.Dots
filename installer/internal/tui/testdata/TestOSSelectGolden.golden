@@ -1,13 +1,13 @@
-[?25l[?2004h]2;Gentleman.Dots Installer                                                        [K
-  ● OS → ○ Terminal → ○ Font → ○ Shell → ○ WM → ○ Nvim  [K
-                                                        [K
-  Step 1: Select Your Operating System                  [K
-                                                        [K
-  Detected: macOS                                       [K
-                                                        [K
-    ▸ macOS (detected)                                  [K
-        Linux                                           [K
-        Termux                                          [K
-                                                        [K
-                                                        [K
-  ↑/k up • ↓/j down • [Enter] select • [Esc] back       [K[12A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
+[?25l[?2004h]2;Gentleman.Dots Installer                                                                                
+  ● OS → ○ Terminal → ○ Font → ○ Shell → ○ WM → ○ Nvim → ○ AI Tools → ○ Framewor
+                                                                                
+  Step 1: Select Your Operating System                                          
+                                                                                
+  Detected: Debian/Ubuntu                                                       
+                                                                                
+    ▸ macOS                                                                     
+        Linux (detected)                                                        
+        Termux                                                                  
+                                                                                
+                                                                                
+  ↑/k up • ↓/j down • [Enter] select • [Esc] back                               [12A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

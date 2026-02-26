@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
@@ -47,6 +48,11 @@ const (
 	ScreenBackupConfirm
 	ScreenRestoreBackup
 	ScreenRestoreConfirm
+	// AI Framework screens
+	ScreenAIToolsSelect      // Select which AI coding tools to install
+	ScreenAIFrameworkConfirm // Confirm AI framework installation
+	ScreenAIFrameworkPreset  // Select framework preset (minimal, frontend, etc.)
+	ScreenAIFrameworkModules // Select individual framework modules
 	// Warning screens
 	ScreenGhosttyWarning // Warning about Ghostty compatibility on Debian/Ubuntu
 	// Vim Trainer screens
@@ -88,6 +94,11 @@ type UserChoices struct {
 	WindowMgr    string // "tmux", "zellij", "none"
 	InstallNvim  bool
 	CreateBackup bool // Whether to backup existing configs
+	// AI Tools and Framework
+	AITools             []string // Selected AI tools: "claude", "opencode"
+	InstallAIFramework  bool     // Whether to install project-starter-framework
+	AIFrameworkPreset   string   // Preset: "minimal", "frontend", "backend", "fullstack", "data", "complete"
+	AIFrameworkModules  []string // Individual module names when preset is "custom"
 }
 
 // Model is the main application state
@@ -143,6 +154,8 @@ type Model struct {
 	TrainerInput       string               // User's input for current exercise
 	TrainerLastCorrect bool                 // Was last answer correct
 	TrainerMessage     string               // Feedback message to display
+	// AI Framework module selection (multi-select toggle)
+	AIModuleSelected []bool // Toggle state for each module in ScreenAIFrameworkModules
 	// Leader key mode (like Vim's <space> leader)
 	LeaderMode bool // True when waiting for next key after <space>
 }
@@ -286,6 +299,53 @@ func (m Model) GetCurrentOptions() []string {
 		return []string{"Tmux", "Zellij", "None", "─────────────", "ℹ️  Learn about multiplexers"}
 	case ScreenNvimSelect:
 		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
+	case ScreenAIToolsSelect:
+		return []string{"Claude Code + OpenCode (recommended)", "Claude Code only", "OpenCode only", "None"}
+	case ScreenAIFrameworkConfirm:
+		return []string{"Yes, install AI Framework", "No, skip framework"}
+	case ScreenAIFrameworkPreset:
+		return []string{
+			"🎯 Minimal — Core + git commands only",
+			"🖥️  Frontend — React, Vue, Angular, testing, security hooks",
+			"⚙️  Backend — APIs, databases, microservices, security hooks",
+			"🔄 Fullstack — Frontend + Backend + infra + all commands",
+			"📊 Data — Data engineering, ML/AI, analytics",
+			"📦 Complete — Everything included",
+			"─────────────",
+			"🔧 Custom — Pick individual modules",
+		}
+	case ScreenAIFrameworkModules:
+		return []string{
+			"Scripts: project init & sync",
+			"Scripts: skills management",
+			"Scripts: quality & validation",
+			"Scripts: catalog generation",
+			"Hooks: security (block-dangerous, secret-scanner)",
+			"Hooks: git (commit-guard)",
+			"Hooks: productivity (context-loader, model-router)",
+			"Hooks: validation (skill-validator, workflow)",
+			"Agents: development",
+			"Agents: quality & testing",
+			"Agents: infrastructure",
+			"Agents: business & product",
+			"Agents: data & AI",
+			"Agents: specialized",
+			"Skills: frontend",
+			"Skills: backend",
+			"Skills: infrastructure",
+			"Skills: data & databases",
+			"Skills: workflow & productivity",
+			"Skills: testing",
+			"Skills: documentation",
+			"Commands: git",
+			"Commands: refactoring",
+			"Commands: testing",
+			"Commands: workflows",
+			"SDD (Spec-Driven Development)",
+			"MCP servers",
+			"─────────────",
+			"✅ Confirm selection",
+		}
 	case ScreenBackupConfirm:
 		return []string{
 			"✅ Install with Backup (recommended)",
@@ -384,6 +444,14 @@ func (m Model) GetScreenTitle() string {
 		return "Step 5: Choose Window Manager"
 	case ScreenNvimSelect:
 		return "Step 6: Neovim Configuration"
+	case ScreenAIToolsSelect:
+		return "Step 7: AI Coding Tools"
+	case ScreenAIFrameworkConfirm:
+		return "Step 8: AI Framework"
+	case ScreenAIFrameworkPreset:
+		return "Step 8: Choose Framework Preset"
+	case ScreenAIFrameworkModules:
+		return "Step 8: Select Framework Modules"
 	case ScreenBackupConfirm:
 		return "⚠️  Existing Configs Detected"
 	case ScreenRestoreBackup:
@@ -482,6 +550,14 @@ func (m Model) GetScreenDescription() string {
 		return "Terminal multiplexer for managing sessions"
 	case ScreenNvimSelect:
 		return "Includes LSP, TreeSitter, and Gentleman config"
+	case ScreenAIToolsSelect:
+		return "AI-powered coding assistants for your terminal"
+	case ScreenAIFrameworkConfirm:
+		return "Agents, skills, hooks, and commands for AI coding tools"
+	case ScreenAIFrameworkPreset:
+		return "Presets bundle agents, skills, hooks, and commands by role"
+	case ScreenAIFrameworkModules:
+		return "Toggle modules with Enter. Scroll with j/k."
 	case ScreenGhosttyWarning:
 		return "Ghostty installation may fail on Ubuntu/Debian.\nThe installer script only supports certain versions."
 	default:
@@ -601,12 +677,26 @@ func (m *Model) SetupInstallSteps() {
 	}
 
 	// AI Tools: Claude Code + OpenCode (not interactive)
-	// Previously part of stepInstallNvim, now a separate step
-	if m.Choices.InstallNvim {
+	if len(m.Choices.AITools) > 0 {
+		toolNames := strings.Join(m.Choices.AITools, " + ")
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "aitools",
 			Name:        "Install AI Tools",
-			Description: "Claude Code + OpenCode",
+			Description: toolNames,
+			Status:      StatusPending,
+		})
+	}
+
+	// AI Framework (not interactive)
+	if m.Choices.InstallAIFramework {
+		presetLabel := m.Choices.AIFrameworkPreset
+		if presetLabel == "" {
+			presetLabel = "custom"
+		}
+		m.Steps = append(m.Steps, InstallStep{
+			ID:          "aiframework",
+			Name:        "Install AI Framework",
+			Description: "Preset: " + presetLabel,
 			Status:      StatusPending,
 		})
 	}

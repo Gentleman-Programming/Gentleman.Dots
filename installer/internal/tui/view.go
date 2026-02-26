@@ -62,8 +62,10 @@ func (m Model) View() string {
 		s.WriteString(m.renderWelcome())
 	case ScreenMainMenu:
 		s.WriteString(m.renderMainMenu())
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenGhosttyWarning:
 		s.WriteString(m.renderSelection())
+	case ScreenAIFrameworkModules:
+		s.WriteString(m.renderAIModuleSelection())
 	case ScreenLearnTerminals:
 		s.WriteString(m.renderLearnTerminals())
 	case ScreenLearnShells:
@@ -229,7 +231,7 @@ func (m Model) renderSelection() string {
 }
 
 func (m Model) renderStepProgress() string {
-	steps := []string{"OS", "Terminal", "Font", "Shell", "WM", "Nvim"}
+	steps := []string{"OS", "Terminal", "Font", "Shell", "WM", "Nvim", "AI Tools", "Framework"}
 	currentIdx := 0
 
 	switch m.Screen {
@@ -245,6 +247,10 @@ func (m Model) renderStepProgress() string {
 		currentIdx = 4
 	case ScreenNvimSelect:
 		currentIdx = 5
+	case ScreenAIToolsSelect:
+		currentIdx = 6
+	case ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkModules:
+		currentIdx = 7
 	}
 
 	var parts []string
@@ -263,6 +269,57 @@ func (m Model) renderStepProgress() string {
 	}
 
 	return strings.Join(parts, MutedStyle.Render(" → "))
+}
+
+func (m Model) renderAIModuleSelection() string {
+	var s strings.Builder
+
+	// Progress indicator
+	s.WriteString(m.renderStepProgress())
+	s.WriteString("\n\n")
+
+	// Title
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(m.GetScreenDescription()))
+	s.WriteString("\n\n")
+
+	// Options with checkboxes
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		// Separator line
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+
+		// Show checkbox for toggleable modules
+		checkbox := "[ ] "
+		if m.AIModuleSelected != nil && i < len(m.AIModuleSelected) && m.AIModuleSelected[i] {
+			checkbox = "[✓] "
+		}
+
+		// "Confirm selection" doesn't get a checkbox
+		if strings.HasPrefix(opt, "✅") {
+			checkbox = ""
+		}
+
+		s.WriteString(style.Render(cursor + checkbox + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] toggle/confirm • [Esc] back"))
+
+	return s.String()
 }
 
 func (m Model) renderLearnTerminals() string {
