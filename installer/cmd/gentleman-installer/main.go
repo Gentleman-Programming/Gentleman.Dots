@@ -26,6 +26,10 @@ type cliFlags struct {
 	nvim           bool
 	font           bool
 	backup         bool
+	aiTools        string
+	aiFramework    bool
+	aiPreset       string
+	aiModules      string
 }
 
 func parseFlags() *cliFlags {
@@ -45,6 +49,10 @@ func parseFlags() *cliFlags {
 	flag.BoolVar(&flags.nvim, "nvim", false, "Install Neovim configuration")
 	flag.BoolVar(&flags.font, "font", false, "Install Nerd Font")
 	flag.BoolVar(&flags.backup, "backup", true, "Backup existing configs (default: true)")
+	flag.StringVar(&flags.aiTools, "ai-tools", "", "AI tools: claude,opencode (comma-separated)")
+	flag.BoolVar(&flags.aiFramework, "ai-framework", false, "Install AI coding framework")
+	flag.StringVar(&flags.aiPreset, "ai-preset", "", "Framework preset: minimal, frontend, backend, fullstack, data, complete")
+	flag.StringVar(&flags.aiModules, "ai-modules", "", "Framework modules (comma-separated, use --list-modules for names)")
 
 	flag.Parse()
 	return flags
@@ -130,14 +138,52 @@ func runNonInteractive(flags *cliFlags) error {
 		wm = "none"
 	}
 
+	// Parse AI tools
+	var aiTools []string
+	if flags.aiTools != "" {
+		validAITools := map[string]bool{"claude": true, "opencode": true}
+		for _, tool := range strings.Split(flags.aiTools, ",") {
+			tool = strings.TrimSpace(strings.ToLower(tool))
+			if !validAITools[tool] {
+				return fmt.Errorf("invalid AI tool: %s (valid: claude, opencode)", tool)
+			}
+			aiTools = append(aiTools, tool)
+		}
+	}
+
+	// Validate AI preset
+	aiPreset := strings.ToLower(flags.aiPreset)
+	validPresets := map[string]bool{"minimal": true, "frontend": true, "backend": true, "fullstack": true, "data": true, "complete": true, "": true}
+	if !validPresets[aiPreset] {
+		return fmt.Errorf("invalid AI preset: %s (valid: minimal, frontend, backend, fullstack, data, complete)", aiPreset)
+	}
+
+	// Parse AI modules
+	var aiModules []string
+	if flags.aiModules != "" {
+		for _, mod := range strings.Split(flags.aiModules, ",") {
+			mod = strings.TrimSpace(mod)
+			if mod != "" {
+				aiModules = append(aiModules, mod)
+			}
+		}
+	}
+
+	// Determine if framework should be installed
+	installFramework := flags.aiFramework || aiPreset != "" || len(aiModules) > 0
+
 	// Create choices
 	choices := tui.UserChoices{
-		Terminal:     terminal,
-		Shell:        shell,
-		WindowMgr:    wm,
-		InstallNvim:  flags.nvim,
-		InstallFont:  flags.font,
-		CreateBackup: flags.backup,
+		Terminal:           terminal,
+		Shell:              shell,
+		WindowMgr:          wm,
+		InstallNvim:        flags.nvim,
+		InstallFont:        flags.font,
+		CreateBackup:       flags.backup,
+		AITools:            aiTools,
+		InstallAIFramework: installFramework,
+		AIFrameworkPreset:  aiPreset,
+		AIFrameworkModules: aiModules,
 	}
 
 	fmt.Println("🚀 Gentleman.Dots Non-Interactive Installer")
@@ -148,6 +194,18 @@ func runNonInteractive(flags *cliFlags) error {
 	fmt.Printf("  Neovim:      %v\n", choices.InstallNvim)
 	fmt.Printf("  Font:        %v\n", choices.InstallFont)
 	fmt.Printf("  Backup:      %v\n", choices.CreateBackup)
+	if len(choices.AITools) > 0 {
+		fmt.Printf("  AI Tools:    %s\n", strings.Join(choices.AITools, ", "))
+	}
+	if choices.InstallAIFramework {
+		if choices.AIFrameworkPreset != "" {
+			fmt.Printf("  AI Framework: preset=%s\n", choices.AIFrameworkPreset)
+		} else if len(choices.AIFrameworkModules) > 0 {
+			fmt.Printf("  AI Framework: modules=%s\n", strings.Join(choices.AIFrameworkModules, ","))
+		} else {
+			fmt.Printf("  AI Framework: yes\n")
+		}
+	}
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println()
 
@@ -204,12 +262,21 @@ Non-Interactive Options:
   --font               Install Nerd Font
   --backup=false       Disable config backup (default: true)
 
+AI Options:
+  --ai-tools=<tools>   AI tools (comma-separated): claude, opencode
+  --ai-framework       Install AI coding framework
+  --ai-preset=<name>   Framework preset: minimal, frontend, backend, fullstack, data, complete
+  --ai-modules=<mods>  Framework modules (comma-separated)
+
 Examples:
   # Interactive TUI
   gentleman.dots
 
   # Non-interactive with Fish + Zellij + Neovim
   gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
+
+  # Full setup with AI tools and framework
+  gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode --ai-preset=fullstack
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux
