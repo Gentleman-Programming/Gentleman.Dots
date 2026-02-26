@@ -36,21 +36,51 @@ gh pr view {number} --json title,body,files,additions,deletions,author
 gh pr diff {number} --patch
 ```
 
-### Phase 2: Read Current Codebase
+### Phase 2: Load Project Skills (MANDATORY)
+
+Before reviewing ANY code, check if the repo has project-specific skills that define conventions. These are your review criteria — not just generic best practices.
+
+**How to find them:**
+1. Check `AGENTS.md` at the repo root — it lists all available skills and auto-invoke rules
+2. Check `skills/` directory for project-specific skill files
+3. If the repo has an `AGENTS.md` with an Auto-invoke Skills table, read it
+
+**For each PR, load the skills that match the changed files:**
+
+| Files Changed | Skills to Load |
+|---------------|----------------|
+| `api/` (models, views, serializers) | project API skill + `django-drf` |
+| `api/` (tests) | project API test skill + `pytest` |
+| `ui/` (components, pages) | project UI skill + `react-19` + `nextjs-15` + `tailwind-4` |
+| `ui/` (tests) | project UI test skill + `playwright` |
+| `ui/` (schemas) | `zod-4` |
+| `ui/` (stores) | `zustand-5` |
+| Types/interfaces | `typescript` |
+
+**Review against project conventions, not just general quality.** Check:
+- Does the file structure match what the project skill defines?
+- Are naming conventions followed? (serializer names, component placement, test structure)
+- Are the right patterns used? (service layer vs serializer logic, Server Components vs Client)
+- Do tests follow the project's test patterns? (fixtures, assertions, POM for E2E)
+
+If no project skills exist, fall back to generic best practices.
+
+### Phase 3: Read Current Codebase
 
 Before reviewing diffs, **always read the current code** to understand context:
 - Main entry points
 - Files being modified
 - Related modules
 
-### Phase 3: Analyze Each PR
+### Phase 4: Analyze Each PR
 
 For each PR, evaluate these factors:
 
 | Factor | What to Check |
 |--------|---------------|
+| **Project Conventions** | Does it follow the project skills? Structure, naming, patterns |
 | **Code Quality** | Clean code, no duplication, proper error handling |
-| **Tests** | Are there tests? Do they cover the changes? |
+| **Tests** | Are there tests? Do they follow the project's test patterns? |
 | **Breaking Changes** | Does it break existing functionality? |
 | **Conflicts** | Will it conflict with other open PRs? |
 | **Commit Hygiene** | Clean history, no test files, proper messages |
