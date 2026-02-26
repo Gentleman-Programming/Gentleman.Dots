@@ -600,6 +600,17 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
+	// AI Tools: Claude Code + OpenCode (not interactive)
+	// Previously part of stepInstallNvim, now a separate step
+	if m.Choices.InstallNvim {
+		m.Steps = append(m.Steps, InstallStep{
+			ID:          "aitools",
+			Name:        "Install AI Tools",
+			Description: "Claude Code + OpenCode",
+			Status:      StatusPending,
+		})
+	}
+
 	// Set default shell (interactive - chsh needs password)
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "setshell",

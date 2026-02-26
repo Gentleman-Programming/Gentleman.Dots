@@ -65,6 +65,8 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallWM(m)
 	case "nvim":
 		return stepInstallNvim(m)
+	case "aitools":
+		return stepInstallAITools(m)
 	case "cleanup":
 		return stepCleanup(m)
 	case "setshell":
@@ -1039,6 +1041,15 @@ func stepInstallNvim(m *Model) error {
 			err)
 	}
 
+	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
+	return nil
+}
+
+func stepInstallAITools(m *Model) error {
+	homeDir := os.Getenv("HOME")
+	repoDir := "Gentleman.Dots"
+	stepID := "aitools"
+
 	// Install Claude Code (optional, don't fail on error)
 	// Skip on Termux - Claude Code doesn't support Android
 	if !m.SystemInfo.IsTermux {
@@ -1109,7 +1120,7 @@ func stepInstallNvim(m *Model) error {
 	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
 	SendLog(stepID, "🧠 Copied OpenCode skills")
 
-	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
+	SendLog(stepID, "✓ AI tools configured")
 	return nil
 }
 
