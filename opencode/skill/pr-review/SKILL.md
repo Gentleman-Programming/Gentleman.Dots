@@ -145,31 +145,60 @@ All green?               → MERGE
 - PR written in Spanish → Reply in Spanish
 - PR written in English → Reply in English
 
-### Comment Structure
+### Comment Style: Concise & Human
 
-```markdown
-Hey {Name}! / ¡Hola {Name}! {Positive feedback about the PR}
+Write review comments like a senior engineer talking to a colleague — direct, clear, no fluff. NOT like a template.
 
-{Brief context if needed}
+**Rules:**
+- Lead with the issues, numbered. No greetings, no "Hey {Name}!".
+- Each issue: **bold the problem** in one phrase, then explain in 1-2 plain sentences. Include the concrete fix inline.
+- End with 1-2 sentences acknowledging what's good. Don't force it — only if something genuinely stood out.
+- No emojis in the review body. No `##` headings. No horizontal rules. Just numbered points and a closing line.
+- No "Solution" sections — the fix goes inline with the issue description.
+- Keep it short. If you can say it in one sentence, don't use two.
 
-## {Problem Category}
+### Approve Format
 
-{Explanation of the issue with code example}
+One sentence — what's good, ship it. Optionally a follow-up note.
 
-## Solution
-
-```bash
-{Concrete fix}
+```
+Clean refactor, all spec requirements covered, 28 tests. Ship it.
 ```
 
----
-
-{Closing - what happens after they fix it}
+```
+Well done. Service layer pattern, anti-enumeration, rate limiting, 32 tests. Synchronous email is fine for MVP.
 ```
 
-**Examples:**
-- Spanish PR → "¡Hola Juan! Gracias por el PR, el análisis está muy bien hecho 👏"
-- English PR → "Hey John! Thanks for the PR, the analysis is well done 👏"
+```
+Solid. Fire-and-forget with proper timeouts, 5 tests. One note: the spec still says single-field payload but code sends {type, data} — code is better, update the spec in a follow-up.
+```
+
+### Request Changes Format
+
+```
+Two things to address:
+
+1. **UpdateModelMixin exposes PUT** — you only need PATCH here. Add `http_method_names = ["get", "patch", "head", "options"]` to the ViewSet so PUT isn't accidentally exposed.
+
+2. **partner_id in refresh token** — `get_token()` adds partner_id to the refresh token, and the access inherits from it, so it ends up in both. The design doc says access only. Either move the claim injection to `validate()` on the access token, or update the design doc if you're ok with it being in both.
+
+Everything else looks solid — sign-in guards correctly use 403, is_staff is in the serializer, tests are thorough. Nice work on the service layer separation.
+```
+
+```
+One thing — in partner-kickoff/SKILL.md, the Step 5 heading is sitting between Step 9 and Step 11. Looks like it didn't get renumbered when the workflow was restructured. Move it to the right position or renumber.
+
+The verify skill itself is well-structured — clear verdict rules, good fresh-context pattern.
+```
+
+### Anti-patterns to AVOID
+
+- "Hey John! Thanks for the PR, the analysis is well done" — skip the greeting, get to the point
+- "## Problem Category" / "## Solution" headings — too formal, use numbered list
+- Long code blocks showing the fix — one line inline is enough
+- "Great job! Just a few minor things..." — empty praise before criticism
+- Emojis anywhere in the review body
+- Repeating what the PR description already says
 
 ## Commands
 
