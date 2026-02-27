@@ -11,6 +11,7 @@
 * [¿Qué es esto?](#qué-es-esto)
 * [Inicio rápido](#inicio-rápido)
 * [Plataformas soportadas](#plataformas-soportadas)
+* [🤖 Herramientas IA y Framework](#-herramientas-ia-y-framework)
 * [🎮 Entrenador de Maestría en Vim](#-entrenador-de-maestría-en-vim)
 * [Documentación](#documentación)
 * [Resumen de herramientas](#resumen-de-herramientas)
@@ -37,6 +38,8 @@
 Una configuración completa de entorno de desarrollo que incluye:
 
 * **Neovim** con LSP, autocompletado y asistentes de IA (Claude Code, Gemini, OpenCode)
+* **Herramientas IA**: Claude Code, OpenCode, Gemini CLI, GitHub Copilot con configs, skills y temas
+* **Framework IA**: 203 módulos (80 agentes, 85 skills, 10 hooks, 20 comandos, 6 servidores MCP) con selección por preset o personalizada
 * **Shells**: Fish, Zsh, Nushell
 * **Multiplexores de terminal**: Tmux, Zellij
 * **Emuladores de terminal**: Alacritty, WezTerm, Kitty, Ghostty
@@ -122,6 +125,42 @@ El instalador TUI te guía para seleccionar tus herramientas preferidas y maneja
 
 ---
 
+## 🤖 Herramientas IA y Framework
+
+El instalador incluye un sistema completo de integración con IA (Pasos 7-8):
+
+### Herramientas IA (Paso 7)
+
+Selección múltiple de 4 herramientas de IA:
+
+| Herramienta | Qué se instala |
+|-------------|---------------|
+| **Claude Code** | Binario + CLAUDE.md + persona Gentleman + 10+ skills + tema Kanagawa |
+| **OpenCode** | Binario + agente Gentleman + orquestador SDD + tema |
+| **Gemini CLI** | CLI vía npm |
+| **GitHub Copilot** | Extensión gh |
+
+### Framework IA (Paso 8)
+
+Elegí un preset o personalizá entre **203 módulos** en 6 categorías:
+
+| Categoría | Módulos | Ejemplos |
+|-----------|--------:|---------|
+| 🪝 Hooks | 10 | Secret Scanner, Commit Guard, Model Router |
+| ⚡ Comandos | 20 | Git Commit, PR Review, TDD, Refactoring |
+| 🤖 Agentes | 80 | React Pro, DevOps Engineer, Security Auditor |
+| 🎯 Skills | 85 | FastAPI, Spring Boot 4, Kubernetes, PyTorch |
+| 📐 SDD | 2 | OpenSpec, Agent Teams Lite |
+| 🔌 MCP | 6 | Context7, Engram, Jira, Figma, Notion |
+
+**Presets**: Minimal, Frontend, Backend, Fullstack, Data, Complete
+
+**Elección SDD**: Instalá [OpenSpec](https://github.com/JNZader/project-starter-framework) (SDD basado en archivos), [Agent Teams Lite](https://github.com/Gentleman-Programming/agent-teams-lite) (SDD liviano con 9 sub-agentes), o ambos.
+
+**Scroll con viewport**: Las listas largas (Skills: 85, Agents: 80) scrollean dentro de la terminal con indicadores `▲`/`▼`.
+
+---
+
 ## 🎮 Entrenador de Maestría en Vim
 
 ¡Aprendé Vim de forma divertida! El instalador incluye un entrenador interactivo estilo RPG con:
@@ -144,15 +183,18 @@ Podés iniciarlo desde el menú principal: **Vim Mastery Trainer**
 
 ## Documentación
 
-| Documento                                                     | Descripción                                          |
-| ------------------------------------------------------------- | ---------------------------------------------------- |
-| [Guía del instalador TUI](docs/tui-installer.md)              | Funciones interactivas, navegación, backup y restore |
-| [Instalación manual](docs/manual-installation.md)             | Configuración paso a paso para todas las plataformas |
-| [Keymaps de Neovim](docs/neovim-keymaps.md)                   | Referencia completa de atajos                        |
-| [Configuración de IA](docs/ai-configuration.md)               | Claude Code, OpenCode, Copilot y más                 |
-| [Especificación del entrenador Vim](docs/vim-trainer-spec.md) | Detalles técnicos del entrenador                     |
-| [Testing con Docker](docs/docker-testing.md)                  | Tests E2E con contenedores                           |
-| [Contribuir](docs/contributing.md)                            | Setup de desarrollo, sistema de skills y releases    |
+| Documento                                                          | Descripción                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Guía del instalador TUI](docs/tui-installer.md)                   | Funciones interactivas, navegación, backup y restore        |
+| [Herramientas IA y Framework](docs/ai-tools-integration.md)        | Selección de IA, presets, drill-down por categoría, flags CLI |
+| [Módulos del Framework IA](docs/ai-framework-modules.md)           | Referencia completa de los 203 módulos en 6 categorías      |
+| [Agent Teams Lite](docs/agent-teams-lite.md)                       | Framework SDD liviano con 9 sub-agentes                     |
+| [Configuración de IA](docs/ai-configuration.md)                    | Claude Code, OpenCode, Copilot y más                        |
+| [Instalación manual](docs/manual-installation.md)                  | Configuración paso a paso para todas las plataformas        |
+| [Keymaps de Neovim](docs/neovim-keymaps.md)                        | Referencia completa de atajos                               |
+| [Especificación del entrenador Vim](docs/vim-trainer-spec.md)      | Detalles técnicos del entrenador                            |
+| [Testing con Docker](docs/docker-testing.md)                       | Tests E2E con contenedores                                  |
+| [Contribuir](docs/contributing.md)                                 | Setup de desarrollo, sistema de skills y releases           |
 
 ---
 

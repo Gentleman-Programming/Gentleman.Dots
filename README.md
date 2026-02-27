@@ -8,6 +8,7 @@
 - [What is this?](#what-is-this)
 - [Quick Start](#quick-start)
 - [Supported Platforms](#supported-platforms)
+- [AI Tools & Framework](#-ai-tools--framework)
 - [Vim Mastery Trainer](#-vim-mastery-trainer)
 - [Documentation](#documentation)
 - [Tools Overview](#tools-overview)
@@ -34,6 +35,8 @@
 A complete development environment configuration including:
 
 - **Neovim** with LSP, autocompletion, and AI assistants (Claude Code, Gemini, OpenCode)
+- **AI Tools**: Claude Code, OpenCode, Gemini CLI, GitHub Copilot with configs, skills, and themes
+- **AI Framework**: 203 modules (80 agents, 85 skills, 10 hooks, 20 commands, 6 MCP servers) with preset or custom selection
 - **Shells**: Fish, Zsh, Nushell
 - **Terminal Multiplexers**: Tmux, Zellij
 - **Terminal Emulators**: Alacritty, WezTerm, Kitty, Ghostty
@@ -117,6 +120,42 @@ The TUI guides you through selecting your preferred tools and handles all the co
 
 ---
 
+## 🤖 AI Tools & Framework
+
+The installer includes a complete AI integration system (Steps 7-8):
+
+### AI Tools (Step 7)
+
+Multi-select from 4 AI coding tools:
+
+| Tool | What Gets Installed |
+|------|-------------------|
+| **Claude Code** | Binary + CLAUDE.md + Gentleman persona + 10+ skills + Kanagawa theme |
+| **OpenCode** | Binary + Gentleman agent + SDD orchestrator + theme |
+| **Gemini CLI** | CLI via npm |
+| **GitHub Copilot** | gh extension |
+
+### AI Framework (Step 8)
+
+Choose a preset or customize from **203 modules** across 6 categories:
+
+| Category | Modules | Examples |
+|----------|--------:|---------|
+| 🪝 Hooks | 10 | Secret Scanner, Commit Guard, Model Router |
+| ⚡ Commands | 20 | Git Commit, PR Review, TDD, Refactoring |
+| 🤖 Agents | 80 | React Pro, DevOps Engineer, Security Auditor |
+| 🎯 Skills | 85 | FastAPI, Spring Boot 4, Kubernetes, PyTorch |
+| 📐 SDD | 2 | OpenSpec, Agent Teams Lite |
+| 🔌 MCP | 6 | Context7, Engram, Jira, Figma, Notion |
+
+**Presets**: Minimal, Frontend, Backend, Fullstack, Data, Complete
+
+**SDD Choice**: Install [OpenSpec](https://github.com/JNZader/project-starter-framework) (file-based SDD), [Agent Teams Lite](https://github.com/Gentleman-Programming/agent-teams-lite) (lightweight SDD with 9 sub-agents), or both.
+
+**Viewport Scrolling**: Long lists (Skills: 85, Agents: 80) scroll within the terminal with `▲`/`▼` indicators.
+
+---
+
 ## 🎮 Vim Mastery Trainer
 
 Learn Vim the fun way! The installer includes an interactive RPG-style trainer with:
@@ -142,9 +181,12 @@ Launch it from the main menu: **Vim Mastery Trainer**
 | Document | Description |
 |----------|-------------|
 | [TUI Installer Guide](docs/tui-installer.md) | Interactive installer features, navigation, backup/restore |
+| [AI Tools & Framework](docs/ai-tools-integration.md) | AI tools selection, framework presets, category drill-down, CLI flags |
+| [AI Framework Modules](docs/ai-framework-modules.md) | Complete reference of all 203 modules across 6 categories |
+| [Agent Teams Lite](docs/agent-teams-lite.md) | Lightweight SDD framework with 9 sub-agents |
+| [AI Configuration](docs/ai-configuration.md) | Claude Code, OpenCode, Copilot, and other AI assistants |
 | [Manual Installation](docs/manual-installation.md) | Step-by-step manual setup for all platforms |
 | [Neovim Keymaps](docs/neovim-keymaps.md) | Complete reference of all keybindings |
-| [AI Configuration](docs/ai-configuration.md) | Claude Code, OpenCode, Copilot, and other AI assistants |
 | [Vim Trainer Spec](docs/vim-trainer-spec.md) | Technical specification for the Vim Mastery Trainer |
 | [Docker Testing](docs/docker-testing.md) | E2E testing with Docker containers |
 | [Contributing](docs/contributing.md) | Development setup, skills system, E2E tests, release process |

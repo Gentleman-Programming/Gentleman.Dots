@@ -75,8 +75,12 @@ From the main menu you can access:
 4. **Shell**: Choose Nushell, Fish, Zsh, or None
 5. **Window Manager**: Select Tmux, Zellij, or None
 6. **Neovim**: Configure LazyVim with LSP and AI assistants
-7. **Backup Confirmation**: Option to backup existing configs before overwriting
-8. **Installation**: Watch real-time progress
+7. **AI Tools**: Multi-select Claude Code, OpenCode, Gemini CLI, GitHub Copilot
+8. **AI Framework**: Choose preset or custom module selection (203 modules across 6 categories)
+9. **Backup Confirmation**: Option to backup existing configs before overwriting
+10. **Installation**: Watch real-time progress
+
+> See [AI Tools & Framework Integration](ai-tools-integration.md) for detailed documentation on steps 7-8, including the category drill-down UI, viewport scrolling, preset reference, and SDD choice.
 
 ### Keyboard Shortcuts
 
@@ -122,6 +126,11 @@ gentleman.dots --non-interactive --shell=<shell> [options]
 | `--nvim` | | Install Neovim configuration |
 | `--font` | | Install Nerd Font |
 | `--backup` | `true`/`false` | Backup existing configs (default: true) |
+| `--ai-tools` | `claude,opencode,gemini,copilot` | AI tools (comma-separated) |
+| `--ai-framework` | | Install AI coding framework |
+| `--ai-preset` | `minimal,frontend,backend,fullstack,data,complete` | Framework preset |
+| `--ai-modules` | `hooks,commands,skills,agents,sdd,mcp` | Framework features (comma-separated) |
+| `--agent-teams-lite` | | Install Agent Teams Lite SDD framework |
 
 ### Examples
 
@@ -137,6 +146,14 @@ gentleman.dots --test --non-interactive --shell=zsh --wm=tmux
 
 # Dry run to preview changes
 gentleman.dots --dry-run
+
+# Full setup with AI tools and framework
+gentleman.dots --non-interactive --shell=fish --nvim \
+  --ai-tools=claude,opencode --ai-preset=fullstack
+
+# Custom framework features with Agent Teams Lite
+gentleman.dots --non-interactive --shell=zsh --ai-tools=claude --ai-framework \
+  --ai-modules=hooks,skills --agent-teams-lite
 
 # Verbose output (shows all command logs)
 GENTLEMAN_VERBOSE=1 gentleman.dots --non-interactive --shell=fish --nvim

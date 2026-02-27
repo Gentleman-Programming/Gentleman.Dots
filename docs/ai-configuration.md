@@ -67,13 +67,20 @@ nvim ~/.config/nvim/lua/plugins/disabled.lua
 
 ## Required CLI Tools
 
-These are automatically installed by the installer script:
+These are automatically installed by the TUI installer (Step 7: AI Tools Selection):
 
-| Tool | Installation Command |
-|------|---------------------|
-| OpenCode CLI | `curl -fsSL https://opencode.ai/install \| bash` |
-| Claude Code CLI | `curl -fsSL https://claude.ai/install.sh \| bash` |
-| Gemini CLI | `brew install gemini-cli` |
+| Tool | Installation Command | Installer Support |
+|------|---------------------|-------------------|
+| Claude Code CLI | `curl -fsSL https://claude.ai/install.sh \| bash` | ✅ Full (binary + configs + skills + theme) |
+| OpenCode CLI | `curl -fsSL https://opencode.ai/install \| bash` | ✅ Full (binary + configs + theme) |
+| Gemini CLI | `npm install -g @google/gemini-cli` | ✅ Binary only |
+| GitHub Copilot CLI | `gh extension install github/gh-copilot` | ✅ Extension install |
+
+The installer also optionally configures the **AI Framework** (Step 8) with 203 modules across 6 categories: hooks, commands, agents, skills, SDD, and MCP servers.
+
+> See [AI Tools & Framework Integration](ai-tools-integration.md) for the full installation guide.
+> See [AI Framework Module Registry](ai-framework-modules.md) for the complete list of 203 modules.
+> See [Agent Teams Lite](agent-teams-lite.md) for the SDD orchestration framework.
 
 > Some services require API keys. Check each plugin's documentation for details.
 
@@ -307,3 +314,18 @@ The Gentleman OpenCode config includes MCP (Model Context Protocol) integration:
 | **Engram** | Local MCP backend for persistent SDD artifacts |
 
 This is enabled by default and enhances the agent's ability to verify information with current docs.
+
+---
+
+## SDD (Spec-Driven Development)
+
+The installer offers two SDD implementations that can be installed individually or together:
+
+| Implementation | Description | Install Method |
+|---------------|-------------|----------------|
+| **OpenSpec** | SDD from the project-starter-framework | `setup-global.sh --features=sdd` |
+| **Agent Teams Lite** | Lightweight SDD with 9 sub-agent skills | `agent-teams-lite/install.sh` |
+
+Both share the same 9 SDD phases: init, explore, propose, spec, design, tasks, apply, verify, archive.
+
+See [Agent Teams Lite](agent-teams-lite.md) for detailed comparison and usage.
