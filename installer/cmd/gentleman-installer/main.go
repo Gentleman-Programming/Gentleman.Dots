@@ -52,7 +52,7 @@ func parseFlags() *cliFlags {
 	flag.StringVar(&flags.aiTools, "ai-tools", "", "AI tools: claude,opencode,gemini,copilot (comma-separated)")
 	flag.BoolVar(&flags.aiFramework, "ai-framework", false, "Install AI coding framework")
 	flag.StringVar(&flags.aiPreset, "ai-preset", "", "Framework preset: minimal, frontend, backend, fullstack, data, complete")
-	flag.StringVar(&flags.aiModules, "ai-modules", "", "Framework modules (comma-separated, use --list-modules for names)")
+	flag.StringVar(&flags.aiModules, "ai-modules", "", "Framework features: hooks,commands,skills,agents,sdd,mcp (comma-separated)")
 
 	flag.Parse()
 	return flags
@@ -158,14 +158,19 @@ func runNonInteractive(flags *cliFlags) error {
 		return fmt.Errorf("invalid AI preset: %s (valid: minimal, frontend, backend, fullstack, data, complete)", aiPreset)
 	}
 
-	// Parse AI modules
+	// Parse AI features (modules flag accepts feature names: hooks,commands,skills,agents,sdd,mcp)
 	var aiModules []string
 	if flags.aiModules != "" {
+		validFeatures := map[string]bool{"hooks": true, "commands": true, "skills": true, "agents": true, "sdd": true, "mcp": true}
 		for _, mod := range strings.Split(flags.aiModules, ",") {
-			mod = strings.TrimSpace(mod)
-			if mod != "" {
-				aiModules = append(aiModules, mod)
+			mod = strings.TrimSpace(strings.ToLower(mod))
+			if mod == "" {
+				continue
 			}
+			if !validFeatures[mod] {
+				return fmt.Errorf("invalid AI feature: %s (valid: hooks, commands, skills, agents, sdd, mcp)", mod)
+			}
+			aiModules = append(aiModules, mod)
 		}
 	}
 
@@ -266,9 +271,8 @@ AI Options:
   --ai-tools=<tools>   AI tools (comma-separated): claude, opencode, gemini, copilot
   --ai-framework       Install AI coding framework
   --ai-preset=<name>   Framework preset: minimal, frontend, backend, fullstack, data, complete
-  --ai-modules=<mods>  Framework modules (comma-separated, granular IDs)
-                       Categories: scripts-*, hooks-*, agents-*, skill-*, commands-*
-                       Atomic: sdd, mcp (any sub-item selects the whole category)
+  --ai-modules=<feats> Framework features (comma-separated): hooks, commands, skills, agents, sdd, mcp
+                       Each feature installs ALL items in that category (91 agents, 85 skills, etc.)
 
 Examples:
   # Interactive TUI
@@ -277,12 +281,12 @@ Examples:
   # Non-interactive with Fish + Zellij + Neovim
   gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
 
-  # Full setup with AI tools and framework
+  # Full setup with AI tools and framework preset
   gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode,gemini,copilot --ai-preset=fullstack
 
-  # Custom modules with granular skill IDs
+  # Custom feature selection
   gentleman.dots --non-interactive --shell=zsh --ai-tools=claude --ai-framework \
-    --ai-modules=scripts-project,hooks-security,skill-react-19,skill-typescript,sdd
+    --ai-modules=hooks,skills,sdd,mcp
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

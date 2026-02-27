@@ -1181,11 +1181,29 @@ func stepInstallAIFramework(m *Model) error {
 		setupCmd += " --clis=" + strings.Join(clis, ",")
 	}
 
-	// Add preset or modules flag
+	// Add features flag — setup-global.sh uses --features=hooks,commands,skills,agents,sdd,mcp
+	var features []string
 	if m.Choices.AIFrameworkPreset != "" {
-		setupCmd += " --preset=" + m.Choices.AIFrameworkPreset
+		// Map presets to feature combinations
+		presetFeatures := map[string][]string{
+			"minimal":   {"hooks", "commands", "sdd"},
+			"frontend":  {"hooks", "commands", "skills", "agents", "sdd"},
+			"backend":   {"hooks", "commands", "skills", "agents", "sdd"},
+			"fullstack": {"hooks", "commands", "skills", "agents", "sdd", "mcp"},
+			"data":      {"hooks", "commands", "skills", "agents", "sdd", "mcp"},
+			"complete":  {"hooks", "commands", "skills", "agents", "sdd", "mcp"},
+		}
+		if f, ok := presetFeatures[m.Choices.AIFrameworkPreset]; ok {
+			features = f
+		} else {
+			features = []string{"hooks", "commands", "skills", "agents", "sdd", "mcp"}
+		}
 	} else if len(m.Choices.AIFrameworkModules) > 0 {
-		setupCmd += " --modules=" + strings.Join(m.Choices.AIFrameworkModules, ",")
+		// Custom selection — already feature-level IDs from collectSelectedFeatures
+		features = m.Choices.AIFrameworkModules
+	}
+	if len(features) > 0 {
+		setupCmd += " --features=" + strings.Join(features, ",")
 	}
 
 	SendLog(stepID, "Running framework setup...")

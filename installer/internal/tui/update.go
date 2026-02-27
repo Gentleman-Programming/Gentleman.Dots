@@ -798,63 +798,248 @@ type ModuleItem struct {
 	Label string // Display label in the TUI
 }
 
-// moduleCategories is the data-driven registry of all AI framework module categories
+// moduleCategories is the data-driven registry of all AI framework module categories.
+// Items mirror the real project-starter-framework repository structure.
+// setup-global.sh installs features at the category level (--features=hooks,skills,...).
 var moduleCategories = []ModuleCategory{
-	{
-		ID: "scripts", Label: "Scripts", Icon: "📜",
-		Items: []ModuleItem{
-			{ID: "scripts-project", Label: "Project init & sync"},
-			{ID: "scripts-skills", Label: "Skills management"},
-			{ID: "scripts-quality", Label: "Quality & validation"},
-			{ID: "scripts-catalog", Label: "Catalog generation"},
-		},
-	},
 	{
 		ID: "hooks", Label: "Hooks", Icon: "🪝",
 		Items: []ModuleItem{
-			{ID: "hooks-security", Label: "Security (block-dangerous, secret-scanner)"},
-			{ID: "hooks-git", Label: "Git (commit-guard)"},
-			{ID: "hooks-productivity", Label: "Productivity (context-loader, model-router)"},
-			{ID: "hooks-validation", Label: "Validation (skill-validator, workflow)"},
-		},
-	},
-	{
-		ID: "agents", Label: "Agents", Icon: "🤖",
-		Items: []ModuleItem{
-			{ID: "agents-development", Label: "Development"},
-			{ID: "agents-quality", Label: "Quality & testing"},
-			{ID: "agents-infrastructure", Label: "Infrastructure"},
-			{ID: "agents-business", Label: "Business & product"},
-			{ID: "agents-data-ai", Label: "Data & AI"},
-			{ID: "agents-specialized", Label: "Specialized"},
-		},
-	},
-	{
-		ID: "skills", Label: "Skills", Icon: "🎯",
-		Items: []ModuleItem{
-			{ID: "skill-react-19", Label: "React 19"},
-			{ID: "skill-nextjs-15", Label: "Next.js 15"},
-			{ID: "skill-typescript", Label: "TypeScript"},
-			{ID: "skill-tailwind-4", Label: "Tailwind CSS 4"},
-			{ID: "skill-zod-4", Label: "Zod 4"},
-			{ID: "skill-zustand-5", Label: "Zustand 5"},
-			{ID: "skill-ai-sdk-5", Label: "AI SDK 5"},
-			{ID: "skill-django-drf", Label: "Django DRF"},
-			{ID: "skill-playwright", Label: "Playwright"},
-			{ID: "skill-pytest", Label: "Pytest"},
-			{ID: "skill-creator", Label: "Skill Creator"},
-			{ID: "skill-jira-epic", Label: "Jira Epic"},
-			{ID: "skill-jira-task", Label: "Jira Task"},
-			{ID: "skill-pr-review", Label: "PR Review"},
+			{ID: "block-dangerous-commands", Label: "Block Dangerous Commands"},
+			{ID: "commit-guard", Label: "Commit Guard"},
+			{ID: "context-loader", Label: "Context Loader"},
+			{ID: "improve-prompt", Label: "Improve Prompt"},
+			{ID: "learning-log", Label: "Learning Log"},
+			{ID: "model-router", Label: "Model Router"},
+			{ID: "secret-scanner", Label: "Secret Scanner"},
+			{ID: "skill-validator", Label: "Skill Validator"},
+			{ID: "task-artifact", Label: "Task Artifact"},
+			{ID: "validate-workflow", Label: "Validate Workflow"},
 		},
 	},
 	{
 		ID: "commands", Label: "Commands", Icon: "⚡",
 		Items: []ModuleItem{
-			{ID: "commands-git", Label: "Git"},
-			{ID: "commands-refactoring", Label: "Refactoring"},
-			{ID: "commands-testing", Label: "Testing"},
-			{ID: "commands-workflows", Label: "Workflows"},
+			// Git
+			{ID: "git:changelog", Label: "Git: Changelog"},
+			{ID: "git:ci-local", Label: "Git: CI Local"},
+			{ID: "git:commit", Label: "Git: Commit"},
+			{ID: "git:fix-issue", Label: "Git: Fix Issue"},
+			{ID: "git:pr-create", Label: "Git: PR Create"},
+			{ID: "git:pr-review", Label: "Git: PR Review"},
+			{ID: "git:worktree", Label: "Git: Worktree"},
+			// Refactoring
+			{ID: "refactoring:cleanup", Label: "Refactoring: Cleanup"},
+			{ID: "refactoring:dead-code", Label: "Refactoring: Dead Code"},
+			{ID: "refactoring:extract", Label: "Refactoring: Extract"},
+			// Testing
+			{ID: "testing:e2e", Label: "Testing: E2E"},
+			{ID: "testing:tdd", Label: "Testing: TDD"},
+			{ID: "testing:test-coverage", Label: "Testing: Coverage"},
+			{ID: "testing:test-fix", Label: "Testing: Fix Tests"},
+			// Workflow
+			{ID: "workflow:generate-agents-md", Label: "Workflow: Generate Agents"},
+			{ID: "workflow:planning", Label: "Workflow: Planning"},
+			{ID: "workflows:compound", Label: "Workflows: Compound"},
+			{ID: "workflows:plan", Label: "Workflows: Plan"},
+			{ID: "workflows:review", Label: "Workflows: Review"},
+			{ID: "workflows:work", Label: "Workflows: Work"},
+		},
+	},
+	{
+		ID: "agents", Label: "Agents", Icon: "🤖",
+		Items: []ModuleItem{
+			// General
+			{ID: "orchestrator", Label: "General: Orchestrator"},
+			// Business
+			{ID: "business-api-designer", Label: "Business: API Designer"},
+			{ID: "business-business-analyst", Label: "Business: Business Analyst"},
+			{ID: "business-product-strategist", Label: "Business: Product Strategist"},
+			{ID: "business-project-manager", Label: "Business: Project Manager"},
+			{ID: "business-requirements-analyst", Label: "Business: Requirements Analyst"},
+			{ID: "business-technical-writer", Label: "Business: Technical Writer"},
+			// Creative
+			{ID: "creative-ux-designer", Label: "Creative: UX Designer"},
+			// Data & AI
+			{ID: "data-ai-ai-engineer", Label: "Data & AI: AI Engineer"},
+			{ID: "data-ai-analytics-engineer", Label: "Data & AI: Analytics Engineer"},
+			{ID: "data-ai-data-engineer", Label: "Data & AI: Data Engineer"},
+			{ID: "data-ai-data-scientist", Label: "Data & AI: Data Scientist"},
+			{ID: "data-ai-mlops-engineer", Label: "Data & AI: MLOps Engineer"},
+			{ID: "data-ai-prompt-engineer", Label: "Data & AI: Prompt Engineer"},
+			// Development
+			{ID: "development-angular-expert", Label: "Development: Angular Expert"},
+			{ID: "development-backend-architect", Label: "Development: Backend Architect"},
+			{ID: "development-database-specialist", Label: "Development: Database Specialist"},
+			{ID: "development-frontend-specialist", Label: "Development: Frontend Specialist"},
+			{ID: "development-fullstack-engineer", Label: "Development: Fullstack Engineer"},
+			{ID: "development-golang-pro", Label: "Development: Go Pro"},
+			{ID: "development-java-enterprise", Label: "Development: Java Enterprise"},
+			{ID: "development-javascript-pro", Label: "Development: JavaScript Pro"},
+			{ID: "development-nextjs-pro", Label: "Development: Next.js Pro"},
+			{ID: "development-python-pro", Label: "Development: Python Pro"},
+			{ID: "development-react-pro", Label: "Development: React Pro"},
+			{ID: "development-rust-pro", Label: "Development: Rust Pro"},
+			{ID: "development-spring-boot-4-expert", Label: "Development: Spring Boot 4"},
+			{ID: "development-typescript-pro", Label: "Development: TypeScript Pro"},
+			{ID: "development-vue-specialist", Label: "Development: Vue Specialist"},
+			// Infrastructure
+			{ID: "infrastructure-cloud-architect", Label: "Infrastructure: Cloud Architect"},
+			{ID: "infrastructure-deployment-manager", Label: "Infrastructure: Deployment Manager"},
+			{ID: "infrastructure-devops-engineer", Label: "Infrastructure: DevOps Engineer"},
+			{ID: "infrastructure-incident-responder", Label: "Infrastructure: Incident Responder"},
+			{ID: "infrastructure-kubernetes-expert", Label: "Infrastructure: Kubernetes Expert"},
+			{ID: "infrastructure-monitoring-specialist", Label: "Infrastructure: Monitoring Specialist"},
+			{ID: "infrastructure-performance-engineer", Label: "Infrastructure: Performance Engineer"},
+			// Quality
+			{ID: "quality-accessibility-auditor", Label: "Quality: Accessibility Auditor"},
+			{ID: "quality-code-reviewer-compact", Label: "Quality: Code Reviewer (Compact)"},
+			{ID: "quality-code-reviewer", Label: "Quality: Code Reviewer"},
+			{ID: "quality-dependency-manager", Label: "Quality: Dependency Manager"},
+			{ID: "quality-e2e-test-specialist", Label: "Quality: E2E Test Specialist"},
+			{ID: "quality-performance-tester", Label: "Quality: Performance Tester"},
+			{ID: "quality-security-auditor", Label: "Quality: Security Auditor"},
+			{ID: "quality-test-engineer", Label: "Quality: Test Engineer"},
+			// Specialists
+			{ID: "specialists-api-designer", Label: "Specialists: API Designer"},
+			{ID: "specialists-backend-architect", Label: "Specialists: Backend Architect"},
+			{ID: "specialists-code-reviewer", Label: "Specialists: Code Reviewer"},
+			{ID: "specialists-db-optimizer", Label: "Specialists: DB Optimizer"},
+			{ID: "specialists-devops-engineer", Label: "Specialists: DevOps Engineer"},
+			{ID: "specialists-documentation-writer", Label: "Specialists: Documentation Writer"},
+			{ID: "specialists-frontend-developer", Label: "Specialists: Frontend Developer"},
+			{ID: "specialists-performance-analyst", Label: "Specialists: Performance Analyst"},
+			{ID: "specialists-refactor-specialist", Label: "Specialists: Refactor Specialist"},
+			{ID: "specialists-security-auditor", Label: "Specialists: Security Auditor"},
+			{ID: "specialists-test-engineer", Label: "Specialists: Test Engineer"},
+			{ID: "specialists-ux-consultant", Label: "Specialists: UX Consultant"},
+			// Specialized
+			{ID: "specialized-agent-generator", Label: "Specialized: Agent Generator"},
+			{ID: "specialized-blockchain-developer", Label: "Specialized: Blockchain Developer"},
+			{ID: "specialized-code-migrator", Label: "Specialized: Code Migrator"},
+			{ID: "specialized-context-manager", Label: "Specialized: Context Manager"},
+			{ID: "specialized-documentation-writer", Label: "Specialized: Documentation Writer"},
+			{ID: "specialized-ecommerce-expert", Label: "Specialized: E-Commerce Expert"},
+			{ID: "specialized-embedded-engineer", Label: "Specialized: Embedded Engineer"},
+			{ID: "specialized-error-detective", Label: "Specialized: Error Detective"},
+			{ID: "specialized-fintech-specialist", Label: "Specialized: Fintech Specialist"},
+			{ID: "specialized-freelance-planner", Label: "Specialized: Freelance Planner"},
+			{ID: "specialized-freelance-planner-v2", Label: "Specialized: Freelance Planner v2"},
+			{ID: "specialized-freelance-planner-v3", Label: "Specialized: Freelance Planner v3"},
+			{ID: "specialized-freelance-planner-v4", Label: "Specialized: Freelance Planner v4"},
+			{ID: "specialized-game-developer", Label: "Specialized: Game Developer"},
+			{ID: "specialized-healthcare-dev", Label: "Specialized: Healthcare Dev"},
+			{ID: "specialized-mobile-developer", Label: "Specialized: Mobile Developer"},
+			{ID: "specialized-parallel-plan-executor", Label: "Specialized: Parallel Plan Executor"},
+			{ID: "specialized-plan-executor", Label: "Specialized: Plan Executor"},
+			{ID: "specialized-solo-dev-planner", Label: "Specialized: Solo Dev Planner"},
+			{ID: "specialized-template-writer", Label: "Specialized: Template Writer"},
+			{ID: "specialized-test-runner", Label: "Specialized: Test Runner"},
+			{ID: "specialized-vibekanban-worker", Label: "Specialized: VibeKanban Worker"},
+			{ID: "specialized-wave-executor", Label: "Specialized: Wave Executor"},
+			{ID: "specialized-workflow-optimizer", Label: "Specialized: Workflow Optimizer"},
+		},
+	},
+	{
+		ID: "skills", Label: "Skills", Icon: "🎯",
+		Items: []ModuleItem{
+			// Backend (21)
+			{ID: "backend-api-gateway", Label: "Backend: API Gateway"},
+			{ID: "backend-bff-concepts", Label: "Backend: BFF Concepts"},
+			{ID: "backend-bff-spring", Label: "Backend: BFF Spring"},
+			{ID: "backend-chi-router", Label: "Backend: Chi Router"},
+			{ID: "backend-error-handling", Label: "Backend: Error Handling"},
+			{ID: "backend-exceptions-spring", Label: "Backend: Exceptions Spring"},
+			{ID: "backend-fastapi", Label: "Backend: FastAPI"},
+			{ID: "backend-gateway-spring", Label: "Backend: Gateway Spring"},
+			{ID: "backend-go-backend", Label: "Backend: Go Backend"},
+			{ID: "backend-gradle-multimodule", Label: "Backend: Gradle Multi-Module"},
+			{ID: "backend-graphql-concepts", Label: "Backend: GraphQL Concepts"},
+			{ID: "backend-graphql-spring", Label: "Backend: GraphQL Spring"},
+			{ID: "backend-grpc-concepts", Label: "Backend: gRPC Concepts"},
+			{ID: "backend-grpc-spring", Label: "Backend: gRPC Spring"},
+			{ID: "backend-jwt-auth", Label: "Backend: JWT Auth"},
+			{ID: "backend-notifications-concepts", Label: "Backend: Notifications"},
+			{ID: "backend-recommendations-concepts", Label: "Backend: Recommendations"},
+			{ID: "backend-search-concepts", Label: "Backend: Search Concepts"},
+			{ID: "backend-search-spring", Label: "Backend: Search Spring"},
+			{ID: "backend-spring-boot-4", Label: "Backend: Spring Boot 4"},
+			{ID: "backend-websockets", Label: "Backend: WebSockets"},
+			// Data & AI (11)
+			{ID: "data-ai-ai-ml", Label: "Data & AI: AI/ML"},
+			{ID: "data-ai-analytics-concepts", Label: "Data & AI: Analytics Concepts"},
+			{ID: "data-ai-analytics-spring", Label: "Data & AI: Analytics Spring"},
+			{ID: "data-ai-duckdb-analytics", Label: "Data & AI: DuckDB Analytics"},
+			{ID: "data-ai-langchain", Label: "Data & AI: LangChain"},
+			{ID: "data-ai-mlflow", Label: "Data & AI: MLflow"},
+			{ID: "data-ai-onnx-inference", Label: "Data & AI: ONNX Inference"},
+			{ID: "data-ai-powerbi", Label: "Data & AI: Power BI"},
+			{ID: "data-ai-pytorch", Label: "Data & AI: PyTorch"},
+			{ID: "data-ai-scikit-learn", Label: "Data & AI: scikit-learn"},
+			{ID: "data-ai-vector-db", Label: "Data & AI: Vector DB"},
+			// Database (6)
+			{ID: "database-graph-databases", Label: "Database: Graph Databases"},
+			{ID: "database-graph-spring", Label: "Database: Graph Spring"},
+			{ID: "database-pgx-postgres", Label: "Database: PGX Postgres"},
+			{ID: "database-redis-cache", Label: "Database: Redis Cache"},
+			{ID: "database-sqlite-embedded", Label: "Database: SQLite Embedded"},
+			{ID: "database-timescaledb", Label: "Database: TimescaleDB"},
+			// Docs (4)
+			{ID: "docs-api-documentation", Label: "Docs: API Documentation"},
+			{ID: "docs-docs-spring", Label: "Docs: Spring Docs"},
+			{ID: "docs-mustache-templates", Label: "Docs: Mustache Templates"},
+			{ID: "docs-technical-docs", Label: "Docs: Technical Docs"},
+			// Frontend (7)
+			{ID: "frontend-astro-ssr", Label: "Frontend: Astro SSR"},
+			{ID: "frontend-frontend-design", Label: "Frontend: Design Patterns"},
+			{ID: "frontend-frontend-web", Label: "Frontend: Web Development"},
+			{ID: "frontend-mantine-ui", Label: "Frontend: Mantine UI"},
+			{ID: "frontend-tanstack-query", Label: "Frontend: TanStack Query"},
+			{ID: "frontend-zod-validation", Label: "Frontend: Zod Validation"},
+			{ID: "frontend-zustand-state", Label: "Frontend: Zustand State"},
+			// Infrastructure (8)
+			{ID: "infra-chaos-engineering", Label: "Infrastructure: Chaos Engineering"},
+			{ID: "infra-chaos-spring", Label: "Infrastructure: Chaos Spring"},
+			{ID: "infra-devops-infra", Label: "Infrastructure: DevOps"},
+			{ID: "infra-docker-containers", Label: "Infrastructure: Docker"},
+			{ID: "infra-kubernetes", Label: "Infrastructure: Kubernetes"},
+			{ID: "infra-opentelemetry", Label: "Infrastructure: OpenTelemetry"},
+			{ID: "infra-traefik-proxy", Label: "Infrastructure: Traefik Proxy"},
+			{ID: "infra-woodpecker-ci", Label: "Infrastructure: Woodpecker CI"},
+			// Mobile (2)
+			{ID: "mobile-ionic-capacitor", Label: "Mobile: Ionic Capacitor"},
+			{ID: "mobile-mobile-ionic", Label: "Mobile: Mobile Ionic"},
+			// Prompt & Quality (2)
+			{ID: "prompt-improver", Label: "Prompt: Prompt Improver"},
+			{ID: "quality-ghagga-review", Label: "Quality: Ghagga Review"},
+			// References (5)
+			{ID: "references-hooks-patterns", Label: "References: Hooks Patterns"},
+			{ID: "references-mcp-servers", Label: "References: MCP Servers"},
+			{ID: "references-plugins-reference", Label: "References: Plugins Reference"},
+			{ID: "references-skills-reference", Label: "References: Skills Reference"},
+			{ID: "references-subagent-templates", Label: "References: Subagent Templates"},
+			// Systems & IoT (4)
+			{ID: "systems-modbus-protocol", Label: "Systems: Modbus Protocol"},
+			{ID: "systems-mqtt-rumqttc", Label: "Systems: MQTT rumqttc"},
+			{ID: "systems-rust-systems", Label: "Systems: Rust Systems"},
+			{ID: "systems-tokio-async", Label: "Systems: Tokio Async"},
+			// Testing (3)
+			{ID: "testing-playwright-e2e", Label: "Testing: Playwright E2E"},
+			{ID: "testing-testcontainers", Label: "Testing: Testcontainers"},
+			{ID: "testing-vitest-testing", Label: "Testing: Vitest Testing"},
+			// Workflow (12)
+			{ID: "workflow-ci-local-guide", Label: "Workflow: CI Local Guide"},
+			{ID: "workflow-claude-automation", Label: "Workflow: Claude Automation"},
+			{ID: "workflow-claude-md-improver", Label: "Workflow: CLAUDE.md Improver"},
+			{ID: "workflow-finish-dev-branch", Label: "Workflow: Finish Dev Branch"},
+			{ID: "workflow-git-github", Label: "Workflow: Git & GitHub"},
+			{ID: "workflow-git-workflow", Label: "Workflow: Git Workflow"},
+			{ID: "workflow-ide-plugins", Label: "Workflow: IDE Plugins"},
+			{ID: "workflow-ide-plugins-intellij", Label: "Workflow: IDE Plugins IntelliJ"},
+			{ID: "workflow-obsidian-brain", Label: "Workflow: Obsidian Brain"},
+			{ID: "workflow-git-worktrees", Label: "Workflow: Git Worktrees"},
+			{ID: "workflow-verification", Label: "Workflow: Verification"},
+			{ID: "workflow-wave-workflow", Label: "Workflow: Wave Workflow"},
 		},
 	},
 	{
@@ -884,32 +1069,24 @@ var moduleCategories = []ModuleCategory{
 	},
 }
 
-// collectSelectedModules converts the category selection map into module IDs for the installer.
-// For atomic categories (SDD, MCP), if ANY sub-item is selected, only the parent category ID is sent.
-func collectSelectedModules(sel map[string][]bool) []string {
-	var result []string
+// collectSelectedFeatures converts the category selection map into feature flags for setup-global.sh.
+// If ANY item within a category is selected, the category's feature flag is included.
+// setup-global.sh operates at the feature level: --features=hooks,skills,agents,sdd,mcp
+func collectSelectedFeatures(sel map[string][]bool) []string {
+	var features []string
 	for _, cat := range moduleCategories {
 		bools, ok := sel[cat.ID]
 		if !ok {
 			continue
 		}
-		if cat.IsAtomic {
-			// If any item selected, send parent ID
-			for _, b := range bools {
-				if b {
-					result = append(result, cat.ID)
-					break
-				}
-			}
-		} else {
-			for i, b := range bools {
-				if b && i < len(cat.Items) {
-					result = append(result, cat.Items[i].ID)
-				}
+		for _, b := range bools {
+			if b {
+				features = append(features, cat.ID)
+				break
 			}
 		}
 	}
-	return result
+	return features
 }
 
 func (m Model) handleAIToolsKeys(key string) (tea.Model, tea.Cmd) {
@@ -992,8 +1169,8 @@ func (m Model) handleAICategoriesKeys(key string) (tea.Model, tea.Cmd) {
 			m.Screen = ScreenAIFrameworkCategoryItems
 			m.Cursor = 0
 		} else if m.Cursor == confirmIdx {
-			// Confirm — collect all selected modules
-			m.Choices.AIFrameworkModules = collectSelectedModules(m.AICategorySelected)
+			// Confirm — collect selected features for setup-global.sh
+			m.Choices.AIFrameworkModules = collectSelectedFeatures(m.AICategorySelected)
 			if len(m.Choices.AIFrameworkModules) == 0 {
 				m.Choices.InstallAIFramework = false
 			}
