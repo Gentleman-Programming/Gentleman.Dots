@@ -96,10 +96,11 @@ type UserChoices struct {
 	InstallNvim  bool
 	CreateBackup bool // Whether to backup existing configs
 	// AI Tools and Framework
-	AITools             []string // Selected AI tools: "claude", "opencode"
-	InstallAIFramework  bool     // Whether to install project-starter-framework
-	AIFrameworkPreset   string   // Preset: "minimal", "frontend", "backend", "fullstack", "data", "complete"
-	AIFrameworkModules  []string // Individual module names when preset is "custom"
+	AITools              []string // Selected AI tools: "claude", "opencode"
+	InstallAIFramework   bool     // Whether to install project-starter-framework
+	AIFrameworkPreset    string   // Preset: "minimal", "frontend", "backend", "fullstack", "data", "complete"
+	AIFrameworkModules   []string // Individual module names when preset is "custom"
+	InstallAgentTeamsLite bool    // Whether to install agent-teams-lite SDD framework
 }
 
 // Model is the main application state
@@ -158,8 +159,9 @@ type Model struct {
 	// AI Tools multi-select toggle
 	AIToolSelected []bool // Toggle state for each tool in ScreenAIToolsSelect
 	// AI Framework category drill-down selection
-	AICategorySelected    map[string][]bool // Toggle state per category: categoryID → []bool for items
-	SelectedModuleCategory int              // Index into moduleCategories for current drill-down
+	AICategorySelected     map[string][]bool // Toggle state per category: categoryID → []bool for items
+	SelectedModuleCategory int               // Index into moduleCategories for current drill-down
+	CategoryItemsScroll    int               // Scroll offset for long item lists in category drill-down
 	// Leader key mode (like Vim's <space> leader)
 	LeaderMode bool // True when waiting for next key after <space>
 }

@@ -26,10 +26,11 @@ type cliFlags struct {
 	nvim           bool
 	font           bool
 	backup         bool
-	aiTools        string
-	aiFramework    bool
-	aiPreset       string
-	aiModules      string
+	aiTools          string
+	aiFramework      bool
+	aiPreset         string
+	aiModules        string
+	agentTeamsLite   bool
 }
 
 func parseFlags() *cliFlags {
@@ -53,6 +54,7 @@ func parseFlags() *cliFlags {
 	flag.BoolVar(&flags.aiFramework, "ai-framework", false, "Install AI coding framework")
 	flag.StringVar(&flags.aiPreset, "ai-preset", "", "Framework preset: minimal, frontend, backend, fullstack, data, complete")
 	flag.StringVar(&flags.aiModules, "ai-modules", "", "Framework features: hooks,commands,skills,agents,sdd,mcp (comma-separated)")
+	flag.BoolVar(&flags.agentTeamsLite, "agent-teams-lite", false, "Install Agent Teams Lite SDD framework")
 
 	flag.Parse()
 	return flags
@@ -175,20 +177,21 @@ func runNonInteractive(flags *cliFlags) error {
 	}
 
 	// Determine if framework should be installed
-	installFramework := flags.aiFramework || aiPreset != "" || len(aiModules) > 0
+	installFramework := flags.aiFramework || aiPreset != "" || len(aiModules) > 0 || flags.agentTeamsLite
 
 	// Create choices
 	choices := tui.UserChoices{
-		Terminal:           terminal,
-		Shell:              shell,
-		WindowMgr:          wm,
-		InstallNvim:        flags.nvim,
-		InstallFont:        flags.font,
-		CreateBackup:       flags.backup,
-		AITools:            aiTools,
-		InstallAIFramework: installFramework,
-		AIFrameworkPreset:  aiPreset,
-		AIFrameworkModules: aiModules,
+		Terminal:              terminal,
+		Shell:                 shell,
+		WindowMgr:             wm,
+		InstallNvim:           flags.nvim,
+		InstallFont:           flags.font,
+		CreateBackup:          flags.backup,
+		AITools:               aiTools,
+		InstallAIFramework:    installFramework,
+		AIFrameworkPreset:     aiPreset,
+		AIFrameworkModules:    aiModules,
+		InstallAgentTeamsLite: flags.agentTeamsLite,
 	}
 
 	fmt.Println("🚀 Gentleman.Dots Non-Interactive Installer")
@@ -209,6 +212,9 @@ func runNonInteractive(flags *cliFlags) error {
 			fmt.Printf("  AI Framework: modules=%s\n", strings.Join(choices.AIFrameworkModules, ","))
 		} else {
 			fmt.Printf("  AI Framework: yes\n")
+		}
+		if choices.InstallAgentTeamsLite {
+			fmt.Printf("  Agent Teams:  yes\n")
 		}
 	}
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -273,6 +279,7 @@ AI Options:
   --ai-preset=<name>   Framework preset: minimal, frontend, backend, fullstack, data, complete
   --ai-modules=<feats> Framework features (comma-separated): hooks, commands, skills, agents, sdd, mcp
                        Each feature installs ALL items in that category (91 agents, 85 skills, etc.)
+  --agent-teams-lite   Install Agent Teams Lite SDD framework (can combine with --ai-modules=sdd for both)
 
 Examples:
   # Interactive TUI
@@ -284,9 +291,9 @@ Examples:
   # Full setup with AI tools and framework preset
   gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode,gemini,copilot --ai-preset=fullstack
 
-  # Custom feature selection
+  # Custom feature selection with Agent Teams Lite
   gentleman.dots --non-interactive --shell=zsh --ai-tools=claude --ai-framework \
-    --ai-modules=hooks,skills,sdd,mcp
+    --ai-modules=hooks,skills --agent-teams-lite
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

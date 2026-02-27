@@ -1150,41 +1150,7 @@ func stepInstallAITools(m *Model) error {
 func stepInstallAIFramework(m *Model) error {
 	stepID := "aiframework"
 
-	// Clean up any leftover clone from a previous failed run
-	system.Run("rm -rf /tmp/project-starter-framework-install", nil)
-
-	SendLog(stepID, "Cloning project-starter-framework...")
-	result := system.RunWithLogs(
-		"git clone --depth 1 https://github.com/JNZader/project-starter-framework.git /tmp/project-starter-framework-install",
-		nil, func(line string) { SendLog(stepID, line) },
-	)
-	if result.Error != nil {
-		return wrapStepError("aiframework", "Install AI Framework",
-			"Failed to clone project-starter-framework", result.Error)
-	}
-
-	// Build the setup-global.sh command
-	setupCmd := "/tmp/project-starter-framework-install/scripts/setup-global.sh --auto --skip-install"
-
-	// Determine which CLIs to configure based on selected AI tools
-	var clis []string
-	if hasAITool(m.Choices.AITools, "claude") {
-		clis = append(clis, "claude")
-	}
-	if hasAITool(m.Choices.AITools, "opencode") {
-		clis = append(clis, "opencode")
-	}
-	if hasAITool(m.Choices.AITools, "gemini") {
-		clis = append(clis, "gemini")
-	}
-	if hasAITool(m.Choices.AITools, "copilot") {
-		clis = append(clis, "copilot")
-	}
-	if len(clis) > 0 {
-		setupCmd += " --clis=" + strings.Join(clis, ",")
-	}
-
-	// Add features flag — setup-global.sh uses --features=hooks,commands,skills,agents,sdd,mcp
+	// Determine which features to install via setup-global.sh
 	var features []string
 	if m.Choices.AIFrameworkPreset != "" {
 		// Map presets to feature combinations
@@ -1205,24 +1171,126 @@ func stepInstallAIFramework(m *Model) error {
 		// Custom selection — already feature-level IDs from collectSelectedFeatures
 		features = m.Choices.AIFrameworkModules
 	}
+
+	// Run project-starter-framework setup if there are features to install
 	if len(features) > 0 {
+		// Clean up any leftover clone from a previous failed run
+		system.Run("rm -rf /tmp/project-starter-framework-install", nil)
+
+		SendLog(stepID, "Cloning project-starter-framework...")
+		result := system.RunWithLogs(
+			"git clone --depth 1 https://github.com/JNZader/project-starter-framework.git /tmp/project-starter-framework-install",
+			nil, func(line string) { SendLog(stepID, line) },
+		)
+		if result.Error != nil {
+			return wrapStepError("aiframework", "Install AI Framework",
+				"Failed to clone project-starter-framework", result.Error)
+		}
+
+		// Build the setup-global.sh command
+		setupCmd := "/tmp/project-starter-framework-install/scripts/setup-global.sh --auto --skip-install"
+
+		// Determine which CLIs to configure based on selected AI tools
+		var clis []string
+		if hasAITool(m.Choices.AITools, "claude") {
+			clis = append(clis, "claude")
+		}
+		if hasAITool(m.Choices.AITools, "opencode") {
+			clis = append(clis, "opencode")
+		}
+		if hasAITool(m.Choices.AITools, "gemini") {
+			clis = append(clis, "gemini")
+		}
+		if hasAITool(m.Choices.AITools, "copilot") {
+			clis = append(clis, "copilot")
+		}
+		if len(clis) > 0 {
+			setupCmd += " --clis=" + strings.Join(clis, ",")
+		}
+
 		setupCmd += " --features=" + strings.Join(features, ",")
+
+		SendLog(stepID, "Running framework setup...")
+		SendLog(stepID, fmt.Sprintf("Command: %s", setupCmd))
+		result = system.RunWithLogs(setupCmd, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("aiframework", "Install AI Framework",
+				"Framework setup failed", result.Error)
+		}
+
+		// Cleanup cloned framework repo
+		system.Run("rm -rf /tmp/project-starter-framework-install", nil)
+
+		SendLog(stepID, "✓ AI framework configured")
 	}
 
-	SendLog(stepID, "Running framework setup...")
-	SendLog(stepID, fmt.Sprintf("Command: %s", setupCmd))
-	result = system.RunWithLogs(setupCmd, nil, func(line string) {
-		SendLog(stepID, line)
-	})
+	// Install Agent Teams Lite if selected (separate SDD framework)
+	if m.Choices.InstallAgentTeamsLite {
+		SendLog(stepID, "Installing Agent Teams Lite...")
+		if err := installAgentTeamsLite(m); err != nil {
+			SendLog(stepID, fmt.Sprintf("⚠️ Agent Teams Lite failed: %v (you can install manually)", err))
+		} else {
+			SendLog(stepID, "✓ Agent Teams Lite installed")
+		}
+	}
+
+	return nil
+}
+
+// installAgentTeamsLite clones the agent-teams-lite repo and runs install.sh for each selected AI tool.
+func installAgentTeamsLite(m *Model) error {
+	const repoURL = "https://github.com/Gentleman-Programming/agent-teams-lite.git"
+	const clonePath = "/tmp/agent-teams-lite-install"
+	stepID := "aiframework"
+
+	// Cleanup any leftover
+	system.Run("rm -rf "+clonePath, nil)
+
+	SendLog(stepID, "Cloning agent-teams-lite...")
+	result := system.RunWithLogs(
+		"git clone --depth 1 "+repoURL+" "+clonePath,
+		nil, func(line string) { SendLog(stepID, line) },
+	)
 	if result.Error != nil {
-		return wrapStepError("aiframework", "Install AI Framework",
-			"Framework setup failed", result.Error)
+		return fmt.Errorf("failed to clone agent-teams-lite: %w", result.Error)
 	}
 
-	// Cleanup cloned framework repo
-	system.Run("rm -rf /tmp/project-starter-framework-install", nil)
+	// Make install script executable
+	system.Run("chmod +x "+clonePath+"/scripts/install.sh", nil)
 
-	SendLog(stepID, "✓ AI framework configured")
+	// Map our AI tool IDs to agent-teams-lite agent names
+	agentMap := map[string]string{
+		"claude":  "claude-code",
+		"opencode": "opencode",
+		"gemini":  "gemini-cli",
+	}
+
+	installed := 0
+	for _, tool := range m.Choices.AITools {
+		agentName, ok := agentMap[tool]
+		if !ok {
+			continue
+		}
+		SendLog(stepID, fmt.Sprintf("Installing Agent Teams Lite for %s...", agentName))
+		installCmd := fmt.Sprintf("%s/scripts/install.sh --agent %s", clonePath, agentName)
+		result = system.RunWithLogs(installCmd, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			SendLog(stepID, fmt.Sprintf("⚠️ Agent Teams Lite install failed for %s", agentName))
+		} else {
+			installed++
+		}
+	}
+
+	// Cleanup
+	system.Run("rm -rf "+clonePath, nil)
+
+	if installed == 0 {
+		return fmt.Errorf("no AI tools could be configured with Agent Teams Lite")
+	}
 	return nil
 }
 

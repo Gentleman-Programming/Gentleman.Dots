@@ -383,9 +383,37 @@ func (m Model) renderAICategoryItems() string {
 	}
 	cat := moduleCategories[m.SelectedModuleCategory]
 
-	// Options with checkboxes
+	// Options with checkboxes — with viewport scrolling for long lists
 	options := m.GetCurrentOptions()
-	for i, opt := range options {
+
+	// Calculate visible area: reserve lines for progress(1)+blank(1)+title(1)+desc(1)+blank(1)+scroll(1)+blank(1)+help(1) = 8
+	visibleItems := m.Height - 8
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+	if visibleItems > len(options) {
+		visibleItems = len(options)
+	}
+
+	// Calculate scroll window around cursor
+	start := m.CategoryItemsScroll
+	end := start + visibleItems
+	if end > len(options) {
+		end = len(options)
+		start = end - visibleItems
+		if start < 0 {
+			start = 0
+		}
+	}
+
+	// Show scroll-up indicator
+	if start > 0 {
+		s.WriteString(MutedStyle.Render(fmt.Sprintf("  ▲ %d more above", start)))
+		s.WriteString("\n")
+	}
+
+	for i := start; i < end; i++ {
+		opt := options[i]
 		if strings.HasPrefix(opt, "───") {
 			s.WriteString(MutedStyle.Render(opt))
 			s.WriteString("\n")
@@ -411,6 +439,12 @@ func (m Model) renderAICategoryItems() string {
 		}
 
 		s.WriteString(style.Render(cursor + checkbox + opt))
+		s.WriteString("\n")
+	}
+
+	// Show scroll-down indicator
+	if end < len(options) {
+		s.WriteString(MutedStyle.Render(fmt.Sprintf("  ▼ %d more below", len(options)-end)))
 		s.WriteString("\n")
 	}
 

@@ -1043,17 +1043,10 @@ var moduleCategories = []ModuleCategory{
 		},
 	},
 	{
-		ID: "sdd", Label: "SDD (Spec-Driven Development)", Icon: "📐", IsAtomic: true,
+		ID: "sdd", Label: "SDD (Spec-Driven Development)", Icon: "📐", IsAtomic: false,
 		Items: []ModuleItem{
-			{ID: "sdd-init", Label: "Init"},
-			{ID: "sdd-explore", Label: "Explore"},
-			{ID: "sdd-propose", Label: "Propose"},
-			{ID: "sdd-spec", Label: "Spec"},
-			{ID: "sdd-design", Label: "Design"},
-			{ID: "sdd-tasks", Label: "Tasks"},
-			{ID: "sdd-apply", Label: "Apply"},
-			{ID: "sdd-verify", Label: "Verify"},
-			{ID: "sdd-archive", Label: "Archive"},
+			{ID: "sdd-openspec", Label: "OpenSpec (project-starter-framework)"},
+			{ID: "sdd-agent-teams", Label: "Agent Teams Lite"},
 		},
 	},
 	{
@@ -1072,11 +1065,23 @@ var moduleCategories = []ModuleCategory{
 // collectSelectedFeatures converts the category selection map into feature flags for setup-global.sh.
 // If ANY item within a category is selected, the category's feature flag is included.
 // setup-global.sh operates at the feature level: --features=hooks,skills,agents,sdd,mcp
+// Special case: SDD category — only "sdd-openspec" maps to "sdd" feature.
+// "sdd-agent-teams" is handled separately (different repo/installer).
 func collectSelectedFeatures(sel map[string][]bool) []string {
 	var features []string
 	for _, cat := range moduleCategories {
 		bools, ok := sel[cat.ID]
 		if !ok {
+			continue
+		}
+		// SDD category: only include "sdd" feature if OpenSpec is selected
+		if cat.ID == "sdd" {
+			for i, b := range bools {
+				if b && i < len(cat.Items) && cat.Items[i].ID == "sdd-openspec" {
+					features = append(features, "sdd")
+					break
+				}
+			}
 			continue
 		}
 		for _, b := range bools {
@@ -1087,6 +1092,25 @@ func collectSelectedFeatures(sel map[string][]bool) []string {
 		}
 	}
 	return features
+}
+
+// isAgentTeamsLiteSelected checks if "Agent Teams Lite" is selected in the SDD category.
+func isAgentTeamsLiteSelected(sel map[string][]bool) bool {
+	bools, ok := sel["sdd"]
+	if !ok {
+		return false
+	}
+	for _, cat := range moduleCategories {
+		if cat.ID != "sdd" {
+			continue
+		}
+		for i, b := range bools {
+			if b && i < len(cat.Items) && cat.Items[i].ID == "sdd-agent-teams" {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (m Model) handleAIToolsKeys(key string) (tea.Model, tea.Cmd) {
@@ -1168,10 +1192,13 @@ func (m Model) handleAICategoriesKeys(key string) (tea.Model, tea.Cmd) {
 			m.SelectedModuleCategory = m.Cursor
 			m.Screen = ScreenAIFrameworkCategoryItems
 			m.Cursor = 0
+			m.CategoryItemsScroll = 0
 		} else if m.Cursor == confirmIdx {
 			// Confirm — collect selected features for setup-global.sh
 			m.Choices.AIFrameworkModules = collectSelectedFeatures(m.AICategorySelected)
-			if len(m.Choices.AIFrameworkModules) == 0 {
+			// Check if Agent Teams Lite is selected in SDD category
+			m.Choices.InstallAgentTeamsLite = isAgentTeamsLiteSelected(m.AICategorySelected)
+			if len(m.Choices.AIFrameworkModules) == 0 && !m.Choices.InstallAgentTeamsLite {
 				m.Choices.InstallAIFramework = false
 			}
 			return m.proceedToBackupOrInstall()
@@ -1219,11 +1246,25 @@ func (m Model) handleAICategoryItemsKeys(key string) (tea.Model, tea.Cmd) {
 			// Back to categories — restore cursor to this category
 			m.Screen = ScreenAIFrameworkCategories
 			m.Cursor = m.SelectedModuleCategory
+			m.CategoryItemsScroll = 0
 		}
 	case "esc", "backspace":
 		// Back to categories — restore cursor to this category
 		m.Screen = ScreenAIFrameworkCategories
 		m.Cursor = m.SelectedModuleCategory
+		m.CategoryItemsScroll = 0
+	}
+
+	// Keep scroll in sync with cursor (viewport follows cursor)
+	visibleItems := m.Height - 8
+	if visibleItems < 5 {
+		visibleItems = 5
+	}
+	if m.Cursor < m.CategoryItemsScroll {
+		m.CategoryItemsScroll = m.Cursor
+	}
+	if m.Cursor >= m.CategoryItemsScroll+visibleItems {
+		m.CategoryItemsScroll = m.Cursor - visibleItems + 1
 	}
 
 	return m, nil

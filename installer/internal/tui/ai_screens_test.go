@@ -135,7 +135,7 @@ func TestModuleCategoriesItemCounts(t *testing.T) {
 		"commands": 20,
 		"agents":   80,
 		"skills":   85,
-		"sdd":      9,
+		"sdd":      2,
 		"mcp":      6,
 	}
 	for _, cat := range moduleCategories {
@@ -153,7 +153,7 @@ func TestModuleCategoriesItemCounts(t *testing.T) {
 func TestModuleCategoriesAtomicFlag(t *testing.T) {
 	for _, cat := range moduleCategories {
 		switch cat.ID {
-		case "sdd", "mcp":
+		case "mcp":
 			if !cat.IsAtomic {
 				t.Errorf("Category %s should be atomic", cat.ID)
 			}
@@ -331,9 +331,8 @@ func TestCollectSelectedFeaturesAtomic(t *testing.T) {
 	for _, cat := range moduleCategories {
 		sel[cat.ID] = make([]bool, len(cat.Items))
 	}
-	// Select some SDD sub-items — should produce "sdd"
+	// Select OpenSpec (index 0) in SDD — should produce "sdd"
 	sel["sdd"][0] = true
-	sel["sdd"][3] = true
 	// Select some MCP sub-items — should produce "mcp"
 	sel["mcp"][1] = true
 
@@ -347,6 +346,45 @@ func TestCollectSelectedFeaturesAtomic(t *testing.T) {
 	}
 	if result[1] != "mcp" {
 		t.Errorf("Expected second feature 'mcp', got %s", result[1])
+	}
+}
+
+func TestCollectSelectedFeaturesSDDAgentTeamsOnly(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select ONLY Agent Teams Lite (index 1) — should NOT produce "sdd" feature
+	sel["sdd"][1] = true
+
+	result := collectSelectedFeatures(sel)
+
+	for _, f := range result {
+		if f == "sdd" {
+			t.Error("Selecting only Agent Teams Lite should NOT produce 'sdd' feature")
+		}
+	}
+}
+
+func TestCollectSelectedFeaturesSDDBoth(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select BOTH OpenSpec and Agent Teams Lite
+	sel["sdd"][0] = true // OpenSpec → "sdd"
+	sel["sdd"][1] = true // Agent Teams Lite → no extra feature
+
+	result := collectSelectedFeatures(sel)
+
+	sddCount := 0
+	for _, f := range result {
+		if f == "sdd" {
+			sddCount++
+		}
+	}
+	if sddCount != 1 {
+		t.Errorf("Expected exactly 1 'sdd' feature, got %d in %v", sddCount, result)
 	}
 }
 
@@ -417,6 +455,97 @@ func TestAICategoryConfirmWithSelection(t *testing.T) {
 	}
 	if newModel.Choices.AIFrameworkModules[1] != "skills" {
 		t.Errorf("Expected 'skills', got %s", newModel.Choices.AIFrameworkModules[1])
+	}
+}
+
+func TestAICategoryConfirmAgentTeamsLite(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select only Agent Teams Lite in SDD
+	m.AICategorySelected["sdd"][1] = true
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAICategoriesKeys("enter")
+	newModel := result.(Model)
+
+	// No features for setup-global.sh
+	if len(newModel.Choices.AIFrameworkModules) != 0 {
+		t.Errorf("Expected 0 features, got %d: %v", len(newModel.Choices.AIFrameworkModules), newModel.Choices.AIFrameworkModules)
+	}
+	// But Agent Teams Lite flag should be set
+	if !newModel.Choices.InstallAgentTeamsLite {
+		t.Error("Expected InstallAgentTeamsLite to be true")
+	}
+	// And install should still proceed
+	if !newModel.Choices.InstallAIFramework {
+		t.Error("Expected InstallAIFramework to remain true when Agent Teams Lite selected")
+	}
+}
+
+func TestAICategoryConfirmBothSDDOptions(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select both OpenSpec and Agent Teams Lite
+	m.AICategorySelected["sdd"][0] = true // OpenSpec
+	m.AICategorySelected["sdd"][1] = true // Agent Teams Lite
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1
+
+	result, _ := m.handleAICategoriesKeys("enter")
+	newModel := result.(Model)
+
+	// Should have "sdd" in features
+	hasSDD := false
+	for _, f := range newModel.Choices.AIFrameworkModules {
+		if f == "sdd" {
+			hasSDD = true
+		}
+	}
+	if !hasSDD {
+		t.Error("Expected 'sdd' in features when OpenSpec selected")
+	}
+	// And Agent Teams Lite flag
+	if !newModel.Choices.InstallAgentTeamsLite {
+		t.Error("Expected InstallAgentTeamsLite to be true")
+	}
+}
+
+func TestIsAgentTeamsLiteSelected(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	// Nothing selected
+	if isAgentTeamsLiteSelected(sel) {
+		t.Error("Expected false when nothing selected")
+	}
+
+	// Only OpenSpec
+	sel["sdd"][0] = true
+	if isAgentTeamsLiteSelected(sel) {
+		t.Error("Expected false when only OpenSpec selected")
+	}
+
+	// Agent Teams Lite selected
+	sel["sdd"][1] = true
+	if !isAgentTeamsLiteSelected(sel) {
+		t.Error("Expected true when Agent Teams Lite selected")
 	}
 }
 
