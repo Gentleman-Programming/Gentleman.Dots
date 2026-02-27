@@ -259,8 +259,11 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenAIToolsSelect:
 		return m.handleAIToolsKeys(key)
 
-	case ScreenAIFrameworkModules:
-		return m.handleAIModulesKeys(key)
+	case ScreenAIFrameworkCategories:
+		return m.handleAICategoriesKeys(key)
+
+	case ScreenAIFrameworkCategoryItems:
+		return m.handleAICategoryItemsKeys(key)
 
 	case ScreenLearnTerminals, ScreenLearnShells, ScreenLearnWM, ScreenLearnNvim:
 		return m.handleLearnMenuKeys(key)
@@ -348,15 +351,23 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	switch m.Screen {
 	// Installation wizard screens - go back through the flow
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkModules:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkCategories, ScreenAIFrameworkCategoryItems:
 		return m.goBackInstallStep()
 	case ScreenGhosttyWarning:
 		// Go back to terminal selection
 		m.Screen = ScreenTerminalSelect
 		m.Cursor = 0
 	case ScreenBackupConfirm:
-		// Go back to last AI screen
-		m.Screen = ScreenAIFrameworkConfirm
+		// Go back to last AI screen in the wizard flow
+		if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework && m.AICategorySelected != nil {
+			m.Screen = ScreenAIFrameworkCategories
+		} else if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework {
+			m.Screen = ScreenAIFrameworkPreset
+		} else if len(m.Choices.AITools) > 0 {
+			m.Screen = ScreenAIFrameworkConfirm
+		} else {
+			m.Screen = ScreenAIToolsSelect
+		}
 		m.Cursor = 0
 	// Content/Learn screens
 	case ScreenKeymapCategory:
@@ -576,11 +587,16 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		m.Cursor = 0
 		m.Choices.AIFrameworkPreset = ""
 
-	case ScreenAIFrameworkModules:
+	case ScreenAIFrameworkCategories:
 		m.Screen = ScreenAIFrameworkPreset
 		m.Cursor = 0
 		m.Choices.AIFrameworkModules = nil
-		m.AIModuleSelected = nil
+		m.AICategorySelected = nil
+
+	case ScreenAIFrameworkCategoryItems:
+		// Back to categories — restore cursor to this category
+		m.Screen = ScreenAIFrameworkCategories
+		m.Cursor = m.SelectedModuleCategory
 	}
 
 	return m, nil
@@ -725,21 +741,24 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		}
 
 	case ScreenAIFrameworkPreset:
-		presets := []string{"minimal", "frontend", "backend", "fullstack", "data", "complete"}
-		if m.Cursor < len(presets) {
-			m.Choices.AIFrameworkPreset = presets[m.Cursor]
-			m.Choices.AIFrameworkModules = nil
-			return m.proceedToBackupOrInstall()
-		}
-		// Skip separator (index 6)
-		if m.Cursor == 7 { // Custom
+		if m.Cursor == 0 { // Custom — first option
 			m.Choices.AIFrameworkPreset = ""
-			// Initialize module selection toggles
-			moduleOpts := m.GetCurrentOptions() // Will switch to ScreenAIFrameworkModules
-			_ = moduleOpts
-			m.AIModuleSelected = make([]bool, 27) // 27 module options (before separator)
-			m.Screen = ScreenAIFrameworkModules
+			// Initialize category selection map
+			m.AICategorySelected = make(map[string][]bool)
+			for _, cat := range moduleCategories {
+				m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+			}
+			m.Screen = ScreenAIFrameworkCategories
 			m.Cursor = 0
+		} else if m.Cursor >= 2 && m.Cursor <= 7 {
+			// Presets at indices 2-7 (after separator at 1)
+			presets := []string{"minimal", "frontend", "backend", "fullstack", "data", "complete"}
+			presetIdx := m.Cursor - 2
+			if presetIdx < len(presets) {
+				m.Choices.AIFrameworkPreset = presets[presetIdx]
+				m.Choices.AIFrameworkModules = nil
+				return m.proceedToBackupOrInstall()
+			}
 		}
 	}
 
@@ -764,14 +783,133 @@ func (m Model) proceedToBackupOrInstall() (tea.Model, tea.Cmd) {
 // aiToolIDMap maps AI tool option index to tool ID
 var aiToolIDMap = []string{"claude", "opencode", "gemini", "copilot"}
 
-// moduleIDMap maps module option index to manifest module ID
-var moduleIDMap = []string{
-	"scripts-project", "scripts-skills", "scripts-quality", "scripts-catalog",
-	"hooks-security", "hooks-git", "hooks-productivity", "hooks-validation",
-	"agents-development", "agents-quality", "agents-infrastructure", "agents-business", "agents-data-ai", "agents-specialized",
-	"skills-frontend", "skills-backend", "skills-infrastructure", "skills-data", "skills-workflow", "skills-testing", "skills-documentation",
-	"commands-git", "commands-refactoring", "commands-testing", "commands-workflows",
-	"sdd", "mcp",
+// ModuleCategory groups related module items for the category drill-down UI
+type ModuleCategory struct {
+	ID       string       // Category identifier (e.g. "scripts")
+	Label    string       // Display name
+	Icon     string       // Emoji icon
+	Items    []ModuleItem // Individual selectable items
+	IsAtomic bool         // If true, selecting ANY sub-item sends the parent ID to the framework script
+}
+
+// ModuleItem represents a single selectable module within a category
+type ModuleItem struct {
+	ID    string // Module identifier sent to --modules flag
+	Label string // Display label in the TUI
+}
+
+// moduleCategories is the data-driven registry of all AI framework module categories
+var moduleCategories = []ModuleCategory{
+	{
+		ID: "scripts", Label: "Scripts", Icon: "📜",
+		Items: []ModuleItem{
+			{ID: "scripts-project", Label: "Project init & sync"},
+			{ID: "scripts-skills", Label: "Skills management"},
+			{ID: "scripts-quality", Label: "Quality & validation"},
+			{ID: "scripts-catalog", Label: "Catalog generation"},
+		},
+	},
+	{
+		ID: "hooks", Label: "Hooks", Icon: "🪝",
+		Items: []ModuleItem{
+			{ID: "hooks-security", Label: "Security (block-dangerous, secret-scanner)"},
+			{ID: "hooks-git", Label: "Git (commit-guard)"},
+			{ID: "hooks-productivity", Label: "Productivity (context-loader, model-router)"},
+			{ID: "hooks-validation", Label: "Validation (skill-validator, workflow)"},
+		},
+	},
+	{
+		ID: "agents", Label: "Agents", Icon: "🤖",
+		Items: []ModuleItem{
+			{ID: "agents-development", Label: "Development"},
+			{ID: "agents-quality", Label: "Quality & testing"},
+			{ID: "agents-infrastructure", Label: "Infrastructure"},
+			{ID: "agents-business", Label: "Business & product"},
+			{ID: "agents-data-ai", Label: "Data & AI"},
+			{ID: "agents-specialized", Label: "Specialized"},
+		},
+	},
+	{
+		ID: "skills", Label: "Skills", Icon: "🎯",
+		Items: []ModuleItem{
+			{ID: "skill-react-19", Label: "React 19"},
+			{ID: "skill-nextjs-15", Label: "Next.js 15"},
+			{ID: "skill-typescript", Label: "TypeScript"},
+			{ID: "skill-tailwind-4", Label: "Tailwind CSS 4"},
+			{ID: "skill-zod-4", Label: "Zod 4"},
+			{ID: "skill-zustand-5", Label: "Zustand 5"},
+			{ID: "skill-ai-sdk-5", Label: "AI SDK 5"},
+			{ID: "skill-django-drf", Label: "Django DRF"},
+			{ID: "skill-playwright", Label: "Playwright"},
+			{ID: "skill-pytest", Label: "Pytest"},
+			{ID: "skill-creator", Label: "Skill Creator"},
+			{ID: "skill-jira-epic", Label: "Jira Epic"},
+			{ID: "skill-jira-task", Label: "Jira Task"},
+			{ID: "skill-pr-review", Label: "PR Review"},
+		},
+	},
+	{
+		ID: "commands", Label: "Commands", Icon: "⚡",
+		Items: []ModuleItem{
+			{ID: "commands-git", Label: "Git"},
+			{ID: "commands-refactoring", Label: "Refactoring"},
+			{ID: "commands-testing", Label: "Testing"},
+			{ID: "commands-workflows", Label: "Workflows"},
+		},
+	},
+	{
+		ID: "sdd", Label: "SDD (Spec-Driven Development)", Icon: "📐", IsAtomic: true,
+		Items: []ModuleItem{
+			{ID: "sdd-init", Label: "Init"},
+			{ID: "sdd-explore", Label: "Explore"},
+			{ID: "sdd-propose", Label: "Propose"},
+			{ID: "sdd-spec", Label: "Spec"},
+			{ID: "sdd-design", Label: "Design"},
+			{ID: "sdd-tasks", Label: "Tasks"},
+			{ID: "sdd-apply", Label: "Apply"},
+			{ID: "sdd-verify", Label: "Verify"},
+			{ID: "sdd-archive", Label: "Archive"},
+		},
+	},
+	{
+		ID: "mcp", Label: "MCP Servers", Icon: "🔌", IsAtomic: true,
+		Items: []ModuleItem{
+			{ID: "mcp-context7", Label: "Context7"},
+			{ID: "mcp-engram", Label: "Engram"},
+			{ID: "mcp-jira", Label: "Jira"},
+			{ID: "mcp-atlassian", Label: "Atlassian"},
+			{ID: "mcp-figma", Label: "Figma"},
+			{ID: "mcp-notion", Label: "Notion"},
+		},
+	},
+}
+
+// collectSelectedModules converts the category selection map into module IDs for the installer.
+// For atomic categories (SDD, MCP), if ANY sub-item is selected, only the parent category ID is sent.
+func collectSelectedModules(sel map[string][]bool) []string {
+	var result []string
+	for _, cat := range moduleCategories {
+		bools, ok := sel[cat.ID]
+		if !ok {
+			continue
+		}
+		if cat.IsAtomic {
+			// If any item selected, send parent ID
+			for _, b := range bools {
+				if b {
+					result = append(result, cat.ID)
+					break
+				}
+			}
+		} else {
+			for i, b := range bools {
+				if b && i < len(cat.Items) {
+					result = append(result, cat.Items[i].ID)
+				}
+			}
+		}
+	}
+	return result
 }
 
 func (m Model) handleAIToolsKeys(key string) (tea.Model, tea.Cmd) {
@@ -827,16 +965,15 @@ func (m Model) handleAIToolsKeys(key string) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m Model) handleAIModulesKeys(key string) (tea.Model, tea.Cmd) {
+func (m Model) handleAICategoriesKeys(key string) (tea.Model, tea.Cmd) {
 	options := m.GetCurrentOptions()
-	lastModuleIdx := len(moduleIDMap) - 1 // Last toggleable module index
-	confirmIdx := len(options) - 1        // "Confirm selection" is last option
+	lastCategoryIdx := len(moduleCategories) - 1
+	confirmIdx := len(options) - 1
 
 	switch key {
 	case "up", "k":
 		if m.Cursor > 0 {
 			m.Cursor--
-			// Skip separator
 			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
 				m.Cursor--
 			}
@@ -849,28 +986,67 @@ func (m Model) handleAIModulesKeys(key string) (tea.Model, tea.Cmd) {
 			}
 		}
 	case "enter", " ":
-		if m.Cursor <= lastModuleIdx {
-			// Toggle module selection
-			if m.AIModuleSelected != nil && m.Cursor < len(m.AIModuleSelected) {
-				m.AIModuleSelected[m.Cursor] = !m.AIModuleSelected[m.Cursor]
-			}
+		if m.Cursor <= lastCategoryIdx {
+			// Drill into category
+			m.SelectedModuleCategory = m.Cursor
+			m.Screen = ScreenAIFrameworkCategoryItems
+			m.Cursor = 0
 		} else if m.Cursor == confirmIdx {
-			// Confirm — collect selected modules
-			var selected []string
-			for i, sel := range m.AIModuleSelected {
-				if sel && i < len(moduleIDMap) {
-					selected = append(selected, moduleIDMap[i])
-				}
-			}
-			m.Choices.AIFrameworkModules = selected
-			if len(selected) == 0 {
-				// No modules selected, skip framework
+			// Confirm — collect all selected modules
+			m.Choices.AIFrameworkModules = collectSelectedModules(m.AICategorySelected)
+			if len(m.Choices.AIFrameworkModules) == 0 {
 				m.Choices.InstallAIFramework = false
 			}
 			return m.proceedToBackupOrInstall()
 		}
 	case "esc", "backspace":
 		return m.goBackInstallStep()
+	}
+
+	return m, nil
+}
+
+func (m Model) handleAICategoryItemsKeys(key string) (tea.Model, tea.Cmd) {
+	if m.SelectedModuleCategory < 0 || m.SelectedModuleCategory >= len(moduleCategories) {
+		return m, nil
+	}
+	cat := moduleCategories[m.SelectedModuleCategory]
+	options := m.GetCurrentOptions()
+	lastItemIdx := len(cat.Items) - 1
+	backIdx := len(options) - 1
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		if m.Cursor <= lastItemIdx {
+			// Toggle item within category
+			bools := m.AICategorySelected[cat.ID]
+			if bools != nil && m.Cursor < len(bools) {
+				bools[m.Cursor] = !bools[m.Cursor]
+				m.AICategorySelected[cat.ID] = bools
+			}
+		} else if m.Cursor == backIdx {
+			// Back to categories — restore cursor to this category
+			m.Screen = ScreenAIFrameworkCategories
+			m.Cursor = m.SelectedModuleCategory
+		}
+	case "esc", "backspace":
+		// Back to categories — restore cursor to this category
+		m.Screen = ScreenAIFrameworkCategories
+		m.Cursor = m.SelectedModuleCategory
 	}
 
 	return m, nil
@@ -1377,7 +1553,10 @@ func (m Model) handleBackupConfirmKeys(key string) (tea.Model, tea.Cmd) {
 		}
 	case "esc", "backspace":
 		// Go back to the last AI screen in the wizard flow
-		if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework {
+		if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework && m.AICategorySelected != nil {
+			// Was in custom mode — go back to categories
+			m.Screen = ScreenAIFrameworkCategories
+		} else if len(m.Choices.AITools) > 0 && m.Choices.InstallAIFramework {
 			m.Screen = ScreenAIFrameworkPreset
 		} else if len(m.Choices.AITools) > 0 {
 			m.Screen = ScreenAIFrameworkConfirm

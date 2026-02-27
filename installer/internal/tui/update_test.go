@@ -120,18 +120,18 @@ func TestHandleBackupConfirmKeys(t *testing.T) {
 		}
 	})
 
-	t.Run("should go to AIFrameworkConfirm on escape (go back)", func(t *testing.T) {
+	t.Run("should go to AIToolsSelect on escape with no AI tools (go back)", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
 		m.Cursor = 0
 
 		// Note: ESC is handled by handleEscape(), not handleBackupConfirmKeys()
-		// BackupConfirm goes back to the AI framework confirm screen
+		// With no AI tools set, goes back to AI tools select
 		result, _ := m.handleEscape()
 		newModel := result.(Model)
 
-		if newModel.Screen != ScreenAIFrameworkConfirm {
-			t.Errorf("Expected ScreenAIFrameworkConfirm (go back), got %v", newModel.Screen)
+		if newModel.Screen != ScreenAIToolsSelect {
+			t.Errorf("Expected ScreenAIToolsSelect (go back, no AI tools), got %v", newModel.Screen)
 		}
 	})
 }

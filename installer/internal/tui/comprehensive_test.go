@@ -995,14 +995,28 @@ func TestBackupConfirmCancel(t *testing.T) {
 }
 
 func TestBackupConfirmEscape(t *testing.T) {
+	// With no AI tools, escape should go back to AI tools select
 	m := NewModel()
 	m.Screen = ScreenBackupConfirm
 
 	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyEsc})
 	newModel := result.(Model)
 
-	if newModel.Screen != ScreenAIFrameworkConfirm {
-		t.Errorf("Escape should go back to AIFrameworkConfirm, got %v", newModel.Screen)
+	if newModel.Screen != ScreenAIToolsSelect {
+		t.Errorf("Escape with no AI tools should go back to AIToolsSelect, got %v", newModel.Screen)
+	}
+
+	// With AI tools + framework, escape should go to preset
+	m2 := NewModel()
+	m2.Screen = ScreenBackupConfirm
+	m2.Choices.AITools = []string{"claude"}
+	m2.Choices.InstallAIFramework = true
+
+	result2, _ := m2.Update(tea.KeyMsg{Type: tea.KeyEsc})
+	newModel2 := result2.(Model)
+
+	if newModel2.Screen != ScreenAIFrameworkPreset {
+		t.Errorf("Escape with framework should go back to FrameworkPreset, got %v", newModel2.Screen)
 	}
 }
 

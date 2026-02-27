@@ -48,34 +48,401 @@ func TestAIFrameworkConfirmOptions(t *testing.T) {
 	}
 }
 
-func TestAIFrameworkPresetOptions(t *testing.T) {
+func TestAIFrameworkPresetCustomIsFirst(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIFrameworkPreset
 	opts := m.GetCurrentOptions()
 
-	// 6 presets + separator + custom = 8
+	// Custom first, separator, then 6 presets = 8
 	if len(opts) != 8 {
-		t.Fatalf("Expected 8 preset options (6 presets + separator + custom), got %d", len(opts))
+		t.Fatalf("Expected 8 preset options (custom + separator + 6 presets), got %d", len(opts))
 	}
-	if !strings.Contains(opts[0], "Minimal") {
-		t.Errorf("Expected first preset to be Minimal, got %s", opts[0])
+	if !strings.Contains(opts[0], "Custom") {
+		t.Errorf("Expected first option to be Custom, got %s", opts[0])
 	}
-	if !strings.Contains(opts[7], "Custom") {
-		t.Errorf("Expected last option to be Custom, got %s", opts[7])
+	if !strings.HasPrefix(opts[1], "───") {
+		t.Errorf("Expected separator at index 1, got %s", opts[1])
+	}
+	if !strings.Contains(opts[2], "Minimal") {
+		t.Errorf("Expected index 2 to be Minimal, got %s", opts[2])
 	}
 }
 
-func TestAIFrameworkModulesOptions(t *testing.T) {
-	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
-	opts := m.GetCurrentOptions()
+func TestAIFrameworkPresetSelection(t *testing.T) {
+	// Presets are at indices 2-7 (after Custom at 0 and separator at 1)
+	presets := []string{"minimal", "frontend", "backend", "fullstack", "data", "complete"}
+	for i, preset := range presets {
+		m := NewModel()
+		m.Screen = ScreenAIFrameworkPreset
+		m.Choices.AITools = []string{"claude"}
+		m.Choices.InstallAIFramework = true
+		m.Cursor = i + 2 // presets start at index 2
 
-	// 27 modules + separator + confirm = 29
-	if len(opts) != 29 {
-		t.Fatalf("Expected 29 module options (27 + separator + confirm), got %d", len(opts))
+		result, _ := m.handleSelection()
+		newModel := result.(Model)
+
+		if newModel.Choices.AIFrameworkPreset != preset {
+			t.Errorf("Cursor %d: expected preset %q, got %q", i+2, preset, newModel.Choices.AIFrameworkPreset)
+		}
+		// Should proceed to backup/install
+		if newModel.Screen != ScreenBackupConfirm && newModel.Screen != ScreenInstalling {
+			t.Errorf("Preset %s: expected ScreenBackupConfirm or ScreenInstalling, got %v", preset, newModel.Screen)
+		}
+	}
+}
+
+// --- Module Categories Tests ---
+
+func TestModuleCategoriesCount(t *testing.T) {
+	if len(moduleCategories) != 7 {
+		t.Errorf("Expected 7 module categories, got %d", len(moduleCategories))
+	}
+}
+
+func TestModuleCategoriesDataIntegrity(t *testing.T) {
+	seen := make(map[string]bool)
+	for _, cat := range moduleCategories {
+		if cat.ID == "" {
+			t.Error("Category has empty ID")
+		}
+		if cat.Label == "" {
+			t.Errorf("Category %s has empty Label", cat.ID)
+		}
+		if cat.Icon == "" {
+			t.Errorf("Category %s has empty Icon", cat.ID)
+		}
+		if len(cat.Items) == 0 {
+			t.Errorf("Category %s has no items", cat.ID)
+		}
+		for _, item := range cat.Items {
+			if item.ID == "" {
+				t.Errorf("Category %s has item with empty ID", cat.ID)
+			}
+			if item.Label == "" {
+				t.Errorf("Category %s item %s has empty Label", cat.ID, item.ID)
+			}
+			if seen[item.ID] {
+				t.Errorf("Duplicate item ID across categories: %s", item.ID)
+			}
+			seen[item.ID] = true
+		}
+	}
+}
+
+func TestModuleCategoriesItemCounts(t *testing.T) {
+	expected := map[string]int{
+		"scripts":  4,
+		"hooks":    4,
+		"agents":   6,
+		"skills":   14,
+		"commands": 4,
+		"sdd":      9,
+		"mcp":      6,
+	}
+	for _, cat := range moduleCategories {
+		exp, ok := expected[cat.ID]
+		if !ok {
+			t.Errorf("Unexpected category %s", cat.ID)
+			continue
+		}
+		if len(cat.Items) != exp {
+			t.Errorf("Category %s: expected %d items, got %d", cat.ID, exp, len(cat.Items))
+		}
+	}
+}
+
+func TestModuleCategoriesAtomicFlag(t *testing.T) {
+	for _, cat := range moduleCategories {
+		switch cat.ID {
+		case "sdd", "mcp":
+			if !cat.IsAtomic {
+				t.Errorf("Category %s should be atomic", cat.ID)
+			}
+		default:
+			if cat.IsAtomic {
+				t.Errorf("Category %s should NOT be atomic", cat.ID)
+			}
+		}
+	}
+}
+
+// --- Category Menu Tests ---
+
+func TestAICategoryMenuOptions(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	opts := m.GetCurrentOptions()
+	// 7 categories + separator + confirm = 9
+	if len(opts) != 9 {
+		t.Fatalf("Expected 9 category options (7 + separator + confirm), got %d: %v", len(opts), opts)
 	}
 	if !strings.Contains(opts[len(opts)-1], "Confirm") {
 		t.Errorf("Expected last option to be Confirm, got %s", opts[len(opts)-1])
+	}
+}
+
+func TestAICategoryMenuShowsCounts(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select 2 out of 4 scripts
+	m.AICategorySelected["scripts"][0] = true
+	m.AICategorySelected["scripts"][2] = true
+
+	opts := m.GetCurrentOptions()
+	// First option should be Scripts with (2/4 selected)
+	if !strings.Contains(opts[0], "(2/4 selected)") {
+		t.Errorf("Expected Scripts to show (2/4 selected), got %s", opts[0])
+	}
+	// Hooks should show (0/4 selected)
+	if !strings.Contains(opts[1], "(0/4 selected)") {
+		t.Errorf("Expected Hooks to show (0/4 selected), got %s", opts[1])
+	}
+}
+
+// --- Category Drill-Down Tests ---
+
+func TestAICategoryDrillDown(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0 // Scripts category
+
+	result, _ := m.handleAICategoriesKeys("enter")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategoryItems {
+		t.Errorf("Expected ScreenAIFrameworkCategoryItems, got %v", newModel.Screen)
+	}
+	if newModel.SelectedModuleCategory != 0 {
+		t.Errorf("Expected SelectedModuleCategory 0, got %d", newModel.SelectedModuleCategory)
+	}
+	if newModel.Cursor != 0 {
+		t.Errorf("Expected cursor reset to 0, got %d", newModel.Cursor)
+	}
+}
+
+func TestAICategoryItemsToggle(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 0 // Scripts
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0 // First item
+
+	// Toggle on
+	result, _ := m.handleAICategoryItemsKeys("enter")
+	newModel := result.(Model)
+	if !newModel.AICategorySelected["scripts"][0] {
+		t.Error("Expected first script item to be toggled ON")
+	}
+
+	// Toggle off
+	result, _ = newModel.handleAICategoryItemsKeys("enter")
+	newModel = result.(Model)
+	if newModel.AICategorySelected["scripts"][0] {
+		t.Error("Expected first script item to be toggled OFF")
+	}
+}
+
+func TestAICategoryItemsBack(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 2 // Agents
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	result, _ := m.handleAICategoryItemsKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
+	}
+	// Cursor should be preserved to the category we came from
+	if newModel.Cursor != 2 {
+		t.Errorf("Expected cursor preserved at 2 (Agents), got %d", newModel.Cursor)
+	}
+}
+
+func TestAICategoryItemsBackButton(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 1 // Hooks
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "← Back" button
+
+	result, _ := m.handleAICategoryItemsKeys("enter")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
+	}
+	if newModel.Cursor != 1 {
+		t.Errorf("Expected cursor preserved at 1 (Hooks), got %d", newModel.Cursor)
+	}
+}
+
+// --- collectSelectedModules Tests ---
+
+func TestCollectSelectedModulesNormal(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	sel["scripts"][0] = true  // scripts-project
+	sel["hooks"][1] = true    // hooks-git
+	sel["commands"][0] = true // commands-git
+
+	result := collectSelectedModules(sel)
+
+	expected := []string{"scripts-project", "hooks-git", "commands-git"}
+	if len(result) != len(expected) {
+		t.Fatalf("Expected %d modules, got %d: %v", len(expected), len(result), result)
+	}
+	for i, exp := range expected {
+		if result[i] != exp {
+			t.Errorf("Module %d: expected %q, got %q", i, exp, result[i])
+		}
+	}
+}
+
+func TestCollectSelectedModulesAtomic(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Select some SDD sub-items — should produce "sdd" (parent ID)
+	sel["sdd"][0] = true
+	sel["sdd"][3] = true
+	// Select some MCP sub-items — should produce "mcp" (parent ID)
+	sel["mcp"][1] = true
+
+	result := collectSelectedModules(sel)
+
+	if len(result) != 2 {
+		t.Fatalf("Expected 2 modules (sdd, mcp), got %d: %v", len(result), result)
+	}
+	if result[0] != "sdd" {
+		t.Errorf("Expected first module 'sdd', got %s", result[0])
+	}
+	if result[1] != "mcp" {
+		t.Errorf("Expected second module 'mcp', got %s", result[1])
+	}
+}
+
+func TestCollectSelectedModulesEmpty(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Nothing selected
+
+	result := collectSelectedModules(sel)
+
+	if len(result) != 0 {
+		t.Errorf("Expected empty slice, got %v", result)
+	}
+}
+
+func TestCollectSelectedModulesMixed(t *testing.T) {
+	sel := make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		sel[cat.ID] = make([]bool, len(cat.Items))
+	}
+	sel["scripts"][0] = true // scripts-project (normal)
+	sel["skills"][0] = true  // skill-react-19 (normal)
+	sel["sdd"][0] = true     // sdd (atomic → "sdd")
+	sel["mcp"][2] = true     // mcp (atomic → "mcp")
+
+	result := collectSelectedModules(sel)
+
+	if len(result) != 4 {
+		t.Fatalf("Expected 4 modules, got %d: %v", len(result), result)
+	}
+	// Order follows moduleCategories order: scripts, skills, sdd, mcp
+	if result[0] != "scripts-project" {
+		t.Errorf("Expected 'scripts-project', got %s", result[0])
+	}
+	if result[1] != "skill-react-19" {
+		t.Errorf("Expected 'skill-react-19', got %s", result[1])
+	}
+	if result[2] != "sdd" {
+		t.Errorf("Expected 'sdd', got %s", result[2])
+	}
+	if result[3] != "mcp" {
+		t.Errorf("Expected 'mcp', got %s", result[3])
+	}
+}
+
+// --- Category Confirm Tests ---
+
+func TestAICategoryConfirmWithSelection(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.AICategorySelected["scripts"][0] = true
+	m.AICategorySelected["hooks"][0] = true
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAICategoriesKeys("enter")
+	newModel := result.(Model)
+
+	if len(newModel.Choices.AIFrameworkModules) != 2 {
+		t.Fatalf("Expected 2 modules, got %d: %v", len(newModel.Choices.AIFrameworkModules), newModel.Choices.AIFrameworkModules)
+	}
+	if newModel.Choices.AIFrameworkModules[0] != "scripts-project" {
+		t.Errorf("Expected 'scripts-project', got %s", newModel.Choices.AIFrameworkModules[0])
+	}
+	if newModel.Choices.AIFrameworkModules[1] != "hooks-security" {
+		t.Errorf("Expected 'hooks-security', got %s", newModel.Choices.AIFrameworkModules[1])
+	}
+}
+
+func TestAICategoryConfirmEmpty(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1
+
+	result, _ := m.handleAICategoriesKeys("enter")
+	newModel := result.(Model)
+
+	if newModel.Choices.InstallAIFramework {
+		t.Error("Expected InstallAIFramework to be false when no modules selected")
 	}
 }
 
@@ -91,7 +458,8 @@ func TestAIScreenTitles(t *testing.T) {
 		{ScreenAIToolsSelect, "Step 7"},
 		{ScreenAIFrameworkConfirm, "Step 8"},
 		{ScreenAIFrameworkPreset, "Step 8"},
-		{ScreenAIFrameworkModules, "Step 8"},
+		{ScreenAIFrameworkCategories, "Step 8"},
+		{ScreenAIFrameworkCategoryItems, "Step 8"},
 	}
 
 	for _, tt := range tests {
@@ -100,6 +468,17 @@ func TestAIScreenTitles(t *testing.T) {
 		if !strings.Contains(title, tt.expect) {
 			t.Errorf("Screen %v: expected title containing %q, got %q", tt.screen, tt.expect, title)
 		}
+	}
+}
+
+func TestAICategoryItemsScreenTitle(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 0 // Scripts
+
+	title := m.GetScreenTitle()
+	if !strings.Contains(title, "Scripts") {
+		t.Errorf("Expected title to contain category name 'Scripts', got %q", title)
 	}
 }
 
@@ -292,114 +671,25 @@ func TestAIFrameworkConfirmNo(t *testing.T) {
 	}
 }
 
-func TestAIFrameworkPresetSelection(t *testing.T) {
-	presets := []string{"minimal", "frontend", "backend", "fullstack", "data", "complete"}
-	for i, preset := range presets {
-		m := NewModel()
-		m.Screen = ScreenAIFrameworkPreset
-		m.Choices.AITools = []string{"claude"}
-		m.Choices.InstallAIFramework = true
-		m.Cursor = i
-
-		result, _ := m.handleSelection()
-		newModel := result.(Model)
-
-		if newModel.Choices.AIFrameworkPreset != preset {
-			t.Errorf("Cursor %d: expected preset %q, got %q", i, preset, newModel.Choices.AIFrameworkPreset)
-		}
-		// Should proceed to backup/install
-		if newModel.Screen != ScreenBackupConfirm && newModel.Screen != ScreenInstalling {
-			t.Errorf("Preset %s: expected ScreenBackupConfirm or ScreenInstalling, got %v", preset, newModel.Screen)
-		}
-	}
-}
-
-func TestAIFrameworkPresetCustom(t *testing.T) {
+func TestAIFrameworkPresetCustomGoesToCategories(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIFrameworkPreset
 	m.Choices.AITools = []string{"claude"}
 	m.Choices.InstallAIFramework = true
-	m.Cursor = 7 // Custom
+	m.Cursor = 0 // Custom (first option)
 
 	result, _ := m.handleSelection()
 	newModel := result.(Model)
 
-	if newModel.Screen != ScreenAIFrameworkModules {
-		t.Errorf("Expected ScreenAIFrameworkModules, got %v", newModel.Screen)
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
 	}
-	if newModel.AIModuleSelected == nil {
-		t.Error("Expected AIModuleSelected to be initialized")
+	if newModel.AICategorySelected == nil {
+		t.Error("Expected AICategorySelected to be initialized")
 	}
-	if len(newModel.AIModuleSelected) != 27 {
-		t.Errorf("Expected 27 module toggles, got %d", len(newModel.AIModuleSelected))
-	}
-}
-
-// --- Module Multi-Select Tests ---
-
-func TestAIModulesToggle(t *testing.T) {
-	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
-	m.AIModuleSelected = make([]bool, 27)
-	m.Cursor = 0 // First module
-
-	// Toggle on
-	result, _ := m.handleAIModulesKeys("enter")
-	newModel := result.(Model)
-	if !newModel.AIModuleSelected[0] {
-		t.Error("Expected module 0 to be toggled ON")
-	}
-
-	// Toggle off
-	result, _ = newModel.handleAIModulesKeys("enter")
-	newModel = result.(Model)
-	if newModel.AIModuleSelected[0] {
-		t.Error("Expected module 0 to be toggled OFF")
-	}
-}
-
-func TestAIModulesConfirmWithSelection(t *testing.T) {
-	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
-	m.AIModuleSelected = make([]bool, 27)
-	m.AIModuleSelected[0] = true // scripts-project
-	m.AIModuleSelected[4] = true // hooks-security
-	m.Choices.AITools = []string{"claude"}
-	m.Choices.InstallAIFramework = true
-
-	opts := m.GetCurrentOptions()
-	m.Cursor = len(opts) - 1 // "Confirm selection"
-
-	result, _ := m.handleAIModulesKeys("enter")
-	newModel := result.(Model)
-
-	if len(newModel.Choices.AIFrameworkModules) != 2 {
-		t.Fatalf("Expected 2 selected modules, got %d: %v", len(newModel.Choices.AIFrameworkModules), newModel.Choices.AIFrameworkModules)
-	}
-	if newModel.Choices.AIFrameworkModules[0] != "scripts-project" {
-		t.Errorf("Expected first module 'scripts-project', got %s", newModel.Choices.AIFrameworkModules[0])
-	}
-	if newModel.Choices.AIFrameworkModules[1] != "hooks-security" {
-		t.Errorf("Expected second module 'hooks-security', got %s", newModel.Choices.AIFrameworkModules[1])
-	}
-}
-
-func TestAIModulesConfirmEmpty(t *testing.T) {
-	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
-	m.AIModuleSelected = make([]bool, 27)
-	m.Choices.AITools = []string{"claude"}
-	m.Choices.InstallAIFramework = true
-
-	opts := m.GetCurrentOptions()
-	m.Cursor = len(opts) - 1 // "Confirm selection"
-
-	result, _ := m.handleAIModulesKeys("enter")
-	newModel := result.(Model)
-
-	// No modules selected = skip framework
-	if newModel.Choices.InstallAIFramework {
-		t.Error("Expected InstallAIFramework to be false when no modules selected")
+	// Should have entries for all 7 categories
+	if len(newModel.AICategorySelected) != 7 {
+		t.Errorf("Expected 7 category entries, got %d", len(newModel.AICategorySelected))
 	}
 }
 
@@ -445,16 +735,36 @@ func TestAIFrameworkPresetGoBack(t *testing.T) {
 	}
 }
 
-func TestAIFrameworkModulesGoBack(t *testing.T) {
+func TestAICategoriesGoBack(t *testing.T) {
 	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
-	m.AIModuleSelected = make([]bool, 27)
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
 
 	result, _ := m.goBackInstallStep()
 	newModel := result.(Model)
 
 	if newModel.Screen != ScreenAIFrameworkPreset {
 		t.Errorf("Expected ScreenAIFrameworkPreset, got %v", newModel.Screen)
+	}
+	if newModel.AICategorySelected != nil {
+		t.Error("Expected AICategorySelected to be cleared on back")
+	}
+}
+
+func TestAICategoryItemsGoBack(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 3 // Skills
+	m.AICategorySelected = make(map[string][]bool)
+
+	result, _ := m.goBackInstallStep()
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
+	}
+	if newModel.Cursor != 3 {
+		t.Errorf("Expected cursor preserved at 3 (Skills), got %d", newModel.Cursor)
 	}
 }
 
@@ -541,28 +851,6 @@ func TestAIToolIDMapLength(t *testing.T) {
 	}
 }
 
-func TestModuleIDMapLength(t *testing.T) {
-	if len(moduleIDMap) != 27 {
-		t.Errorf("Expected 27 module IDs in moduleIDMap, got %d", len(moduleIDMap))
-	}
-}
-
-func TestModuleIDMapContainsExpected(t *testing.T) {
-	expected := []string{"scripts-project", "hooks-security", "agents-development", "skills-frontend", "commands-git", "sdd", "mcp"}
-	for _, e := range expected {
-		found := false
-		for _, id := range moduleIDMap {
-			if id == e {
-				found = true
-				break
-			}
-		}
-		if !found {
-			t.Errorf("Expected moduleIDMap to contain %q", e)
-		}
-	}
-}
-
 // --- hasAITool Helper Tests ---
 
 func TestHasAITool(t *testing.T) {
@@ -623,21 +911,48 @@ func TestRenderAIToolSelectionShowsCheckboxes(t *testing.T) {
 	}
 }
 
-func TestRenderAIModuleSelectionShowsCheckboxes(t *testing.T) {
+func TestRenderAICategoryItemsCheckboxes(t *testing.T) {
 	m := NewModel()
-	m.Screen = ScreenAIFrameworkModules
+	m.Screen = ScreenAIFrameworkCategoryItems
 	m.Width = 100
 	m.Height = 40
-	m.AIModuleSelected = make([]bool, 27)
-	m.AIModuleSelected[0] = true
+	m.SelectedModuleCategory = 0 // Scripts
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.AICategorySelected["scripts"][0] = true
 	m.Cursor = 0
 
-	rendered := m.renderAIModuleSelection()
+	rendered := m.renderAICategoryItems()
 
 	if !strings.Contains(rendered, "[✓]") {
 		t.Error("Expected rendered view to contain checked checkbox [✓]")
 	}
 	if !strings.Contains(rendered, "[ ]") {
 		t.Error("Expected rendered view to contain unchecked checkbox [ ]")
+	}
+}
+
+func TestRenderAICategoryMenuNoCounts(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.Width = 100
+	m.Height = 40
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0
+
+	rendered := m.renderAICategoryMenu()
+
+	// Should contain category names
+	if !strings.Contains(rendered, "Scripts") {
+		t.Error("Expected rendered view to contain 'Scripts'")
+	}
+	// Should NOT contain checkboxes (category menu uses cursor only)
+	if strings.Contains(rendered, "[✓]") || strings.Contains(rendered, "[ ]") {
+		t.Error("Category menu should NOT contain checkboxes")
 	}
 }

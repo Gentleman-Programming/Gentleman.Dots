@@ -266,7 +266,9 @@ AI Options:
   --ai-tools=<tools>   AI tools (comma-separated): claude, opencode, gemini, copilot
   --ai-framework       Install AI coding framework
   --ai-preset=<name>   Framework preset: minimal, frontend, backend, fullstack, data, complete
-  --ai-modules=<mods>  Framework modules (comma-separated)
+  --ai-modules=<mods>  Framework modules (comma-separated, granular IDs)
+                       Categories: scripts-*, hooks-*, agents-*, skill-*, commands-*
+                       Atomic: sdd, mcp (any sub-item selects the whole category)
 
 Examples:
   # Interactive TUI
@@ -277,6 +279,10 @@ Examples:
 
   # Full setup with AI tools and framework
   gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode,gemini,copilot --ai-preset=fullstack
+
+  # Custom modules with granular skill IDs
+  gentleman.dots --non-interactive --shell=zsh --ai-tools=claude --ai-framework \
+    --ai-modules=scripts-project,hooks-security,skill-react-19,skill-typescript,sdd
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

@@ -66,8 +66,10 @@ func (m Model) View() string {
 		s.WriteString(m.renderSelection())
 	case ScreenAIToolsSelect:
 		s.WriteString(m.renderAIToolSelection())
-	case ScreenAIFrameworkModules:
-		s.WriteString(m.renderAIModuleSelection())
+	case ScreenAIFrameworkCategories:
+		s.WriteString(m.renderAICategoryMenu())
+	case ScreenAIFrameworkCategoryItems:
+		s.WriteString(m.renderAICategoryItems())
 	case ScreenLearnTerminals:
 		s.WriteString(m.renderLearnTerminals())
 	case ScreenLearnShells:
@@ -251,7 +253,7 @@ func (m Model) renderStepProgress() string {
 		currentIdx = 5
 	case ScreenAIToolsSelect:
 		currentIdx = 6
-	case ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkModules:
+	case ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenAIFrameworkCategories, ScreenAIFrameworkCategoryItems:
 		currentIdx = 7
 	}
 
@@ -324,7 +326,7 @@ func (m Model) renderAIToolSelection() string {
 	return s.String()
 }
 
-func (m Model) renderAIModuleSelection() string {
+func (m Model) renderAICategoryMenu() string {
 	var s strings.Builder
 
 	// Progress indicator
@@ -337,10 +339,9 @@ func (m Model) renderAIModuleSelection() string {
 	s.WriteString(MutedStyle.Render(m.GetScreenDescription()))
 	s.WriteString("\n\n")
 
-	// Options with checkboxes
+	// Category list (no checkboxes — just cursor navigation)
 	options := m.GetCurrentOptions()
 	for i, opt := range options {
-		// Separator line
 		if strings.HasPrefix(opt, "───") {
 			s.WriteString(MutedStyle.Render(opt))
 			s.WriteString("\n")
@@ -354,14 +355,58 @@ func (m Model) renderAIModuleSelection() string {
 			style = SelectedStyle
 		}
 
-		// Show checkbox for toggleable modules
+		s.WriteString(style.Render(cursor + opt))
+		s.WriteString("\n")
+	}
+
+	s.WriteString("\n")
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] open/confirm • [Esc] back"))
+
+	return s.String()
+}
+
+func (m Model) renderAICategoryItems() string {
+	var s strings.Builder
+
+	// Progress indicator
+	s.WriteString(m.renderStepProgress())
+	s.WriteString("\n\n")
+
+	// Title
+	s.WriteString(TitleStyle.Render(m.GetScreenTitle()))
+	s.WriteString("\n")
+	s.WriteString(MutedStyle.Render(m.GetScreenDescription()))
+	s.WriteString("\n\n")
+
+	if m.SelectedModuleCategory < 0 || m.SelectedModuleCategory >= len(moduleCategories) {
+		return s.String()
+	}
+	cat := moduleCategories[m.SelectedModuleCategory]
+
+	// Options with checkboxes
+	options := m.GetCurrentOptions()
+	for i, opt := range options {
+		if strings.HasPrefix(opt, "───") {
+			s.WriteString(MutedStyle.Render(opt))
+			s.WriteString("\n")
+			continue
+		}
+
+		cursor := "  "
+		style := UnselectedStyle
+		if i == m.Cursor {
+			cursor = "▸ "
+			style = SelectedStyle
+		}
+
+		// Show checkbox for toggleable items
 		checkbox := "[ ] "
-		if m.AIModuleSelected != nil && i < len(m.AIModuleSelected) && m.AIModuleSelected[i] {
+		if bools, ok := m.AICategorySelected[cat.ID]; ok && i < len(bools) && bools[i] {
 			checkbox = "[✓] "
 		}
 
-		// "Confirm selection" doesn't get a checkbox
-		if strings.HasPrefix(opt, "✅") {
+		// "← Back" doesn't get a checkbox
+		if strings.HasPrefix(opt, "←") || strings.HasPrefix(opt, "✅") {
 			checkbox = ""
 		}
 
@@ -370,7 +415,7 @@ func (m Model) renderAIModuleSelection() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] toggle/confirm • [Esc] back"))
+	s.WriteString(HelpStyle.Render("↑/k up • ↓/j down • [Enter] toggle/back • [Esc] back"))
 
 	return s.String()
 }

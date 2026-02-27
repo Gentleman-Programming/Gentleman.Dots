@@ -52,7 +52,8 @@ const (
 	ScreenAIToolsSelect      // Select which AI coding tools to install
 	ScreenAIFrameworkConfirm // Confirm AI framework installation
 	ScreenAIFrameworkPreset  // Select framework preset (minimal, frontend, etc.)
-	ScreenAIFrameworkModules // Select individual framework modules
+	ScreenAIFrameworkCategories  // Select module category to drill into
+	ScreenAIFrameworkCategoryItems // Select individual items within a category
 	// Warning screens
 	ScreenGhosttyWarning // Warning about Ghostty compatibility on Debian/Ubuntu
 	// Vim Trainer screens
@@ -156,8 +157,9 @@ type Model struct {
 	TrainerMessage     string               // Feedback message to display
 	// AI Tools multi-select toggle
 	AIToolSelected []bool // Toggle state for each tool in ScreenAIToolsSelect
-	// AI Framework module selection (multi-select toggle)
-	AIModuleSelected []bool // Toggle state for each module in ScreenAIFrameworkModules
+	// AI Framework category drill-down selection
+	AICategorySelected    map[string][]bool // Toggle state per category: categoryID → []bool for items
+	SelectedModuleCategory int              // Index into moduleCategories for current drill-down
 	// Leader key mode (like Vim's <space> leader)
 	LeaderMode bool // True when waiting for next key after <space>
 }
@@ -307,47 +309,45 @@ func (m Model) GetCurrentOptions() []string {
 		return []string{"Yes, install AI Framework", "No, skip framework"}
 	case ScreenAIFrameworkPreset:
 		return []string{
+			"🔧 Custom — Pick individual modules",
+			"─────────────",
 			"🎯 Minimal — Core + git commands only",
 			"🖥️  Frontend — React, Vue, Angular, testing, security hooks",
 			"⚙️  Backend — APIs, databases, microservices, security hooks",
 			"🔄 Fullstack — Frontend + Backend + infra + all commands",
 			"📊 Data — Data engineering, ML/AI, analytics",
 			"📦 Complete — Everything included",
-			"─────────────",
-			"🔧 Custom — Pick individual modules",
 		}
-	case ScreenAIFrameworkModules:
-		return []string{
-			"Scripts: project init & sync",
-			"Scripts: skills management",
-			"Scripts: quality & validation",
-			"Scripts: catalog generation",
-			"Hooks: security (block-dangerous, secret-scanner)",
-			"Hooks: git (commit-guard)",
-			"Hooks: productivity (context-loader, model-router)",
-			"Hooks: validation (skill-validator, workflow)",
-			"Agents: development",
-			"Agents: quality & testing",
-			"Agents: infrastructure",
-			"Agents: business & product",
-			"Agents: data & AI",
-			"Agents: specialized",
-			"Skills: frontend",
-			"Skills: backend",
-			"Skills: infrastructure",
-			"Skills: data & databases",
-			"Skills: workflow & productivity",
-			"Skills: testing",
-			"Skills: documentation",
-			"Commands: git",
-			"Commands: refactoring",
-			"Commands: testing",
-			"Commands: workflows",
-			"SDD (Spec-Driven Development)",
-			"MCP servers",
-			"─────────────",
-			"✅ Confirm selection",
+	case ScreenAIFrameworkCategories:
+		opts := make([]string, 0, len(moduleCategories)+2)
+		for i, cat := range moduleCategories {
+			selected := 0
+			total := len(cat.Items)
+			if bools, ok := m.AICategorySelected[cat.ID]; ok {
+				for _, b := range bools {
+					if b {
+						selected++
+					}
+				}
+			}
+			opts = append(opts, fmt.Sprintf("%s %s (%d/%d selected)", cat.Icon, cat.Label, selected, total))
+			_ = i
 		}
+		opts = append(opts, "─────────────")
+		opts = append(opts, "✅ Confirm selection")
+		return opts
+	case ScreenAIFrameworkCategoryItems:
+		if m.SelectedModuleCategory < 0 || m.SelectedModuleCategory >= len(moduleCategories) {
+			return []string{}
+		}
+		cat := moduleCategories[m.SelectedModuleCategory]
+		opts := make([]string, 0, len(cat.Items)+2)
+		for _, item := range cat.Items {
+			opts = append(opts, item.Label)
+		}
+		opts = append(opts, "─────────────")
+		opts = append(opts, "← Back")
+		return opts
 	case ScreenBackupConfirm:
 		return []string{
 			"✅ Install with Backup (recommended)",
@@ -452,8 +452,14 @@ func (m Model) GetScreenTitle() string {
 		return "Step 8: AI Framework"
 	case ScreenAIFrameworkPreset:
 		return "Step 8: Choose Framework Preset"
-	case ScreenAIFrameworkModules:
-		return "Step 8: Select Framework Modules"
+	case ScreenAIFrameworkCategories:
+		return "Step 8: Select Module Categories"
+	case ScreenAIFrameworkCategoryItems:
+		if m.SelectedModuleCategory >= 0 && m.SelectedModuleCategory < len(moduleCategories) {
+			cat := moduleCategories[m.SelectedModuleCategory]
+			return fmt.Sprintf("Step 8: %s %s", cat.Icon, cat.Label)
+		}
+		return "Step 8: Select Modules"
 	case ScreenBackupConfirm:
 		return "⚠️  Existing Configs Detected"
 	case ScreenRestoreBackup:
@@ -558,8 +564,10 @@ func (m Model) GetScreenDescription() string {
 		return "Agents, skills, hooks, and commands for AI coding tools"
 	case ScreenAIFrameworkPreset:
 		return "Presets bundle agents, skills, hooks, and commands by role"
-	case ScreenAIFrameworkModules:
-		return "Toggle modules with Enter. Scroll with j/k."
+	case ScreenAIFrameworkCategories:
+		return "Select a category to configure its modules"
+	case ScreenAIFrameworkCategoryItems:
+		return "Toggle modules with Enter. Press Esc to go back."
 	case ScreenGhosttyWarning:
 		return "Ghostty installation may fail on Ubuntu/Debian.\nThe installer script only supports certain versions."
 	default:
