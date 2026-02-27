@@ -253,7 +253,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenMainMenu:
 		return m.handleMainMenuKeys(key)
 
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenGhosttyWarning:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenExperienceSelect, ScreenLeaderKeySelect, ScreenGhosttyWarning:
 		return m.handleSelectionKeys(key)
 
 	case ScreenLearnTerminals, ScreenLearnShells, ScreenLearnWM, ScreenLearnNvim:
@@ -342,7 +342,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) handleEscape() (tea.Model, tea.Cmd) {
 	switch m.Screen {
 	// Installation wizard screens - go back through the flow
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenExperienceSelect, ScreenLeaderKeySelect:
 		return m.goBackInstallStep()
 	case ScreenGhosttyWarning:
 		// Go back to terminal selection
@@ -553,6 +553,14 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
 		m.Choices.InstallNvim = false
+
+	case ScreenExperienceSelect:
+		m.Screen = ScreenNvimSelect
+		m.Cursor = 0
+
+	case ScreenLeaderKeySelect:
+		m.Screen = ScreenExperienceSelect
+		m.Cursor = 0
 	}
 
 	return m, nil
@@ -678,21 +686,56 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 
 	case ScreenNvimSelect:
 		m.Choices.InstallNvim = m.Cursor == 0
-		// Detect existing configs before proceeding
-		m.ExistingConfigs = system.DetectExistingConfigs()
-		if len(m.ExistingConfigs) > 0 {
-			// Show backup confirmation screen
-			m.Screen = ScreenBackupConfirm
+		if m.Choices.InstallNvim {
+			m.Screen = ScreenExperienceSelect
 			m.Cursor = 0
 		} else {
-			// No existing configs, proceed directly
-			m.SetupInstallSteps()
-			m.Screen = ScreenInstalling
-			m.CurrentStep = 0
-			return m, func() tea.Msg { return installStartMsg{} }
+			return m.proceedToBackupOrInstall()
 		}
+
+	case ScreenExperienceSelect:
+		switch m.Cursor {
+		case 0:
+			m.Choices.Experience = "beginner"
+		case 1:
+			m.Choices.Experience = "intermediate"
+		case 2:
+			m.Choices.Experience = "advanced"
+		}
+		m.Screen = ScreenLeaderKeySelect
+		m.Cursor = 0
+		return m, nil
+
+	case ScreenLeaderKeySelect:
+		switch m.Cursor {
+		case 0:
+			m.Choices.LeaderKey = "space"
+		case 1:
+			m.Choices.LeaderKey = "comma"
+		case 2:
+			m.Choices.LeaderKey = "backslash"
+		}
+		return m.proceedToBackupOrInstall()
 	}
 
+	return m, nil
+}
+
+// proceedToBackupOrInstall handles the transition after tool selection is complete
+func (m Model) proceedToBackupOrInstall() (tea.Model, tea.Cmd) {
+	// Detect existing configs before proceeding
+	m.ExistingConfigs = system.DetectExistingConfigs()
+	if len(m.ExistingConfigs) > 0 {
+		// Show backup confirmation screen
+		m.Screen = ScreenBackupConfirm
+		m.Cursor = 0
+	} else {
+		// No existing configs, proceed directly
+		m.SetupInstallSteps()
+		m.Screen = ScreenInstalling
+		m.CurrentStep = 0
+		return m, func() tea.Msg { return installStartMsg{} }
+	}
 	return m, nil
 }
 
