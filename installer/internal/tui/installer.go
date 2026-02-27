@@ -1152,7 +1152,7 @@ func stepInstallAIFramework(m *Model) error {
 
 	SendLog(stepID, "Cloning project-starter-framework...")
 	result := system.RunWithLogs(
-		"git clone --depth 1 https://github.com/Sobrebr/project-starter-framework.git /tmp/project-starter-framework-install",
+		"git clone --depth 1 https://github.com/JNZader/project-starter-framework.git /tmp/project-starter-framework-install",
 		nil, func(line string) { SendLog(stepID, line) },
 	)
 	if result.Error != nil {
