@@ -1150,6 +1150,9 @@ func stepInstallAITools(m *Model) error {
 func stepInstallAIFramework(m *Model) error {
 	stepID := "aiframework"
 
+	// Clean up any leftover clone from a previous failed run
+	system.Run("rm -rf /tmp/project-starter-framework-install", nil)
+
 	SendLog(stepID, "Cloning project-starter-framework...")
 	result := system.RunWithLogs(
 		"git clone --depth 1 https://github.com/JNZader/project-starter-framework.git /tmp/project-starter-framework-install",
