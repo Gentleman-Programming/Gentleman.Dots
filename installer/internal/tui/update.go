@@ -253,8 +253,11 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ScreenMainMenu:
 		return m.handleMainMenuKeys(key)
 
-	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIToolsSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenGhosttyWarning:
+	case ScreenOSSelect, ScreenTerminalSelect, ScreenFontSelect, ScreenShellSelect, ScreenWMSelect, ScreenNvimSelect, ScreenAIFrameworkConfirm, ScreenAIFrameworkPreset, ScreenGhosttyWarning:
 		return m.handleSelectionKeys(key)
+
+	case ScreenAIToolsSelect:
+		return m.handleAIToolsKeys(key)
 
 	case ScreenAIFrameworkModules:
 		return m.handleAIModulesKeys(key)
@@ -561,6 +564,7 @@ func (m Model) goBackInstallStep() (tea.Model, tea.Cmd) {
 		m.Screen = ScreenNvimSelect
 		m.Cursor = 0
 		m.Choices.AITools = nil
+		m.AIToolSelected = nil
 
 	case ScreenAIFrameworkConfirm:
 		m.Screen = ScreenAIToolsSelect
@@ -709,27 +713,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		}
 		m.Screen = ScreenAIToolsSelect
 		m.Cursor = 0
-
-	case ScreenAIToolsSelect:
-		switch m.Cursor {
-		case 0: // Claude Code + OpenCode
-			m.Choices.AITools = []string{"claude", "opencode"}
-		case 1: // Claude Code only
-			m.Choices.AITools = []string{"claude"}
-		case 2: // OpenCode only
-			m.Choices.AITools = []string{"opencode"}
-		case 3: // None
-			m.Choices.AITools = nil
-		}
-		// If any AI tools selected, ask about framework
-		if len(m.Choices.AITools) > 0 {
-			m.Screen = ScreenAIFrameworkConfirm
-			m.Cursor = 0
-		} else {
-			// No AI tools, skip framework too
-			m.Choices.InstallAIFramework = false
-			return m.proceedToBackupOrInstall()
-		}
+		m.AIToolSelected = make([]bool, len(aiToolIDMap))
 
 	case ScreenAIFrameworkConfirm:
 		m.Choices.InstallAIFramework = m.Cursor == 0
@@ -777,6 +761,9 @@ func (m Model) proceedToBackupOrInstall() (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// aiToolIDMap maps AI tool option index to tool ID
+var aiToolIDMap = []string{"claude", "opencode", "gemini", "copilot"}
+
 // moduleIDMap maps module option index to manifest module ID
 var moduleIDMap = []string{
 	"scripts-project", "scripts-skills", "scripts-quality", "scripts-catalog",
@@ -785,6 +772,59 @@ var moduleIDMap = []string{
 	"skills-frontend", "skills-backend", "skills-infrastructure", "skills-data", "skills-workflow", "skills-testing", "skills-documentation",
 	"commands-git", "commands-refactoring", "commands-testing", "commands-workflows",
 	"sdd", "mcp",
+}
+
+func (m Model) handleAIToolsKeys(key string) (tea.Model, tea.Cmd) {
+	options := m.GetCurrentOptions()
+	lastToolIdx := len(aiToolIDMap) - 1 // Last toggleable tool index
+	confirmIdx := len(options) - 1      // "Confirm selection" is last option
+
+	switch key {
+	case "up", "k":
+		if m.Cursor > 0 {
+			m.Cursor--
+			// Skip separator
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor > 0 {
+				m.Cursor--
+			}
+		}
+	case "down", "j":
+		if m.Cursor < len(options)-1 {
+			m.Cursor++
+			if strings.HasPrefix(options[m.Cursor], "───") && m.Cursor < len(options)-1 {
+				m.Cursor++
+			}
+		}
+	case "enter", " ":
+		if m.Cursor <= lastToolIdx {
+			// Toggle tool selection
+			if m.AIToolSelected != nil && m.Cursor < len(m.AIToolSelected) {
+				m.AIToolSelected[m.Cursor] = !m.AIToolSelected[m.Cursor]
+			}
+		} else if m.Cursor == confirmIdx {
+			// Confirm — collect selected tools
+			var selected []string
+			for i, sel := range m.AIToolSelected {
+				if sel && i < len(aiToolIDMap) {
+					selected = append(selected, aiToolIDMap[i])
+				}
+			}
+			m.Choices.AITools = selected
+			// If any AI tools selected, ask about framework
+			if len(m.Choices.AITools) > 0 {
+				m.Screen = ScreenAIFrameworkConfirm
+				m.Cursor = 0
+			} else {
+				// No AI tools, skip framework too
+				m.Choices.InstallAIFramework = false
+				return m.proceedToBackupOrInstall()
+			}
+		}
+	case "esc", "backspace":
+		return m.goBackInstallStep()
+	}
+
+	return m, nil
 }
 
 func (m Model) handleAIModulesKeys(key string) (tea.Model, tea.Cmd) {

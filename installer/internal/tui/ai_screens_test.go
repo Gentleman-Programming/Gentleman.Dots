@@ -14,14 +14,27 @@ func TestAIToolsSelectOptions(t *testing.T) {
 	m.Screen = ScreenAIToolsSelect
 	opts := m.GetCurrentOptions()
 
-	if len(opts) != 4 {
-		t.Fatalf("Expected 4 AI tools options, got %d: %v", len(opts), opts)
+	// 4 tools + separator + confirm = 6
+	if len(opts) != 6 {
+		t.Fatalf("Expected 6 AI tools options (4 tools + separator + confirm), got %d: %v", len(opts), opts)
 	}
-	if !strings.Contains(opts[0], "Claude Code + OpenCode") {
-		t.Errorf("Expected first option to mention both tools, got %s", opts[0])
+	if opts[0] != "Claude Code" {
+		t.Errorf("Expected first option 'Claude Code', got %s", opts[0])
 	}
-	if opts[3] != "None" {
-		t.Errorf("Expected last option 'None', got %s", opts[3])
+	if opts[1] != "OpenCode" {
+		t.Errorf("Expected second option 'OpenCode', got %s", opts[1])
+	}
+	if opts[2] != "Gemini CLI" {
+		t.Errorf("Expected third option 'Gemini CLI', got %s", opts[2])
+	}
+	if opts[3] != "GitHub Copilot" {
+		t.Errorf("Expected fourth option 'GitHub Copilot', got %s", opts[3])
+	}
+	if !strings.HasPrefix(opts[4], "───") {
+		t.Errorf("Expected separator at index 4, got %s", opts[4])
+	}
+	if !strings.Contains(opts[5], "Confirm") {
+		t.Errorf("Expected last option to be Confirm, got %s", opts[5])
 	}
 }
 
@@ -106,6 +119,12 @@ func TestNvimSelectToAIToolsTransition(t *testing.T) {
 	if newModel.Screen != ScreenAIToolsSelect {
 		t.Errorf("Expected ScreenAIToolsSelect, got %v", newModel.Screen)
 	}
+	if newModel.AIToolSelected == nil {
+		t.Error("Expected AIToolSelected to be initialized on transition")
+	}
+	if len(newModel.AIToolSelected) != len(aiToolIDMap) {
+		t.Errorf("Expected AIToolSelected length %d, got %d", len(aiToolIDMap), len(newModel.AIToolSelected))
+	}
 }
 
 func TestNvimSelectSkipToAITools(t *testing.T) {
@@ -124,28 +143,62 @@ func TestNvimSelectSkipToAITools(t *testing.T) {
 	}
 }
 
-func TestAIToolsSelectBothTools(t *testing.T) {
+// --- AI Tools Multi-Select Tests ---
+
+func TestAIToolsToggle(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIToolsSelect
-	m.Cursor = 0 // Claude Code + OpenCode
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.Cursor = 0 // Claude Code
 
-	result, _ := m.handleSelection()
+	// Toggle on
+	result, _ := m.handleAIToolsKeys("enter")
+	newModel := result.(Model)
+	if !newModel.AIToolSelected[0] {
+		t.Error("Expected tool 0 (Claude Code) to be toggled ON")
+	}
+
+	// Toggle off
+	result, _ = newModel.handleAIToolsKeys("enter")
+	newModel = result.(Model)
+	if newModel.AIToolSelected[0] {
+		t.Error("Expected tool 0 (Claude Code) to be toggled OFF")
+	}
+}
+
+func TestAIToolsSelectAllTools(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	// Select all tools
+	for i := range m.AIToolSelected {
+		m.AIToolSelected[i] = true
+	}
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAIToolsKeys("enter")
 	newModel := result.(Model)
 
-	if len(newModel.Choices.AITools) != 2 {
-		t.Fatalf("Expected 2 AI tools, got %d", len(newModel.Choices.AITools))
+	if len(newModel.Choices.AITools) != 4 {
+		t.Fatalf("Expected 4 AI tools, got %d: %v", len(newModel.Choices.AITools), newModel.Choices.AITools)
 	}
 	if newModel.Screen != ScreenAIFrameworkConfirm {
 		t.Errorf("Expected ScreenAIFrameworkConfirm, got %v", newModel.Screen)
 	}
 }
 
-func TestAIToolsSelectClaudeOnly(t *testing.T) {
+func TestAIToolsSelectSingleTool(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIToolsSelect
-	m.Cursor = 1 // Claude Code only
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.AIToolSelected[0] = true // Claude Code only
 
-	result, _ := m.handleSelection()
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAIToolsKeys("enter")
 	newModel := result.(Model)
 
 	if len(newModel.Choices.AITools) != 1 || newModel.Choices.AITools[0] != "claude" {
@@ -156,12 +209,43 @@ func TestAIToolsSelectClaudeOnly(t *testing.T) {
 	}
 }
 
+func TestAIToolsSelectGeminiAndCopilot(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.AIToolSelected[2] = true // Gemini CLI
+	m.AIToolSelected[3] = true // GitHub Copilot
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAIToolsKeys("enter")
+	newModel := result.(Model)
+
+	if len(newModel.Choices.AITools) != 2 {
+		t.Fatalf("Expected 2 AI tools, got %d: %v", len(newModel.Choices.AITools), newModel.Choices.AITools)
+	}
+	if newModel.Choices.AITools[0] != "gemini" {
+		t.Errorf("Expected first tool 'gemini', got %s", newModel.Choices.AITools[0])
+	}
+	if newModel.Choices.AITools[1] != "copilot" {
+		t.Errorf("Expected second tool 'copilot', got %s", newModel.Choices.AITools[1])
+	}
+	if newModel.Screen != ScreenAIFrameworkConfirm {
+		t.Errorf("Expected ScreenAIFrameworkConfirm, got %v", newModel.Screen)
+	}
+}
+
 func TestAIToolsSelectNone(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIToolsSelect
-	m.Cursor = 3 // None
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	// No tools toggled
 
-	result, _ := m.handleSelection()
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection"
+
+	result, _ := m.handleAIToolsKeys("enter")
 	newModel := result.(Model)
 
 	if len(newModel.Choices.AITools) != 0 {
@@ -278,8 +362,8 @@ func TestAIModulesConfirmWithSelection(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIFrameworkModules
 	m.AIModuleSelected = make([]bool, 27)
-	m.AIModuleSelected[0] = true  // scripts-project
-	m.AIModuleSelected[4] = true  // hooks-security
+	m.AIModuleSelected[0] = true // scripts-project
+	m.AIModuleSelected[4] = true // hooks-security
 	m.Choices.AITools = []string{"claude"}
 	m.Choices.InstallAIFramework = true
 
@@ -324,12 +408,16 @@ func TestAIModulesConfirmEmpty(t *testing.T) {
 func TestAIToolsSelectGoBack(t *testing.T) {
 	m := NewModel()
 	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
 
 	result, _ := m.goBackInstallStep()
 	newModel := result.(Model)
 
 	if newModel.Screen != ScreenNvimSelect {
 		t.Errorf("Expected ScreenNvimSelect, got %v", newModel.Screen)
+	}
+	if newModel.AIToolSelected != nil {
+		t.Error("Expected AIToolSelected to be cleared on back")
 	}
 }
 
@@ -445,7 +533,13 @@ func TestSetupInstallStepsWithoutAIFramework(t *testing.T) {
 	}
 }
 
-// --- Module ID Map Tests ---
+// --- ID Map Tests ---
+
+func TestAIToolIDMapLength(t *testing.T) {
+	if len(aiToolIDMap) != 4 {
+		t.Errorf("Expected 4 tool IDs in aiToolIDMap, got %d", len(aiToolIDMap))
+	}
+}
 
 func TestModuleIDMapLength(t *testing.T) {
 	if len(moduleIDMap) != 27 {
@@ -472,15 +566,21 @@ func TestModuleIDMapContainsExpected(t *testing.T) {
 // --- hasAITool Helper Tests ---
 
 func TestHasAITool(t *testing.T) {
-	tools := []string{"claude", "opencode"}
+	tools := []string{"claude", "opencode", "gemini", "copilot"}
 	if !hasAITool(tools, "claude") {
 		t.Error("Expected hasAITool to find 'claude'")
 	}
 	if !hasAITool(tools, "opencode") {
 		t.Error("Expected hasAITool to find 'opencode'")
 	}
-	if hasAITool(tools, "copilot") {
-		t.Error("Expected hasAITool NOT to find 'copilot'")
+	if !hasAITool(tools, "gemini") {
+		t.Error("Expected hasAITool to find 'gemini'")
+	}
+	if !hasAITool(tools, "copilot") {
+		t.Error("Expected hasAITool to find 'copilot'")
+	}
+	if hasAITool(tools, "cursor") {
+		t.Error("Expected hasAITool NOT to find 'cursor'")
 	}
 	if hasAITool(nil, "claude") {
 		t.Error("Expected hasAITool to return false for nil slice")
@@ -503,6 +603,25 @@ func TestProgressBarIncludesAISteps(t *testing.T) {
 }
 
 // --- View Render Tests ---
+
+func TestRenderAIToolSelectionShowsCheckboxes(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.Width = 100
+	m.Height = 40
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.AIToolSelected[0] = true // Claude Code checked
+	m.Cursor = 0
+
+	rendered := m.renderAIToolSelection()
+
+	if !strings.Contains(rendered, "[✓]") {
+		t.Error("Expected rendered view to contain checked checkbox [✓]")
+	}
+	if !strings.Contains(rendered, "[ ]") {
+		t.Error("Expected rendered view to contain unchecked checkbox [ ]")
+	}
+}
 
 func TestRenderAIModuleSelectionShowsCheckboxes(t *testing.T) {
 	m := NewModel()

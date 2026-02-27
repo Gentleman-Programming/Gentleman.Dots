@@ -154,6 +154,8 @@ type Model struct {
 	TrainerInput       string               // User's input for current exercise
 	TrainerLastCorrect bool                 // Was last answer correct
 	TrainerMessage     string               // Feedback message to display
+	// AI Tools multi-select toggle
+	AIToolSelected []bool // Toggle state for each tool in ScreenAIToolsSelect
 	// AI Framework module selection (multi-select toggle)
 	AIModuleSelected []bool // Toggle state for each module in ScreenAIFrameworkModules
 	// Leader key mode (like Vim's <space> leader)
@@ -300,7 +302,7 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenNvimSelect:
 		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
 	case ScreenAIToolsSelect:
-		return []string{"Claude Code + OpenCode (recommended)", "Claude Code only", "OpenCode only", "None"}
+		return []string{"Claude Code", "OpenCode", "Gemini CLI", "GitHub Copilot", "─────────────", "✅ Confirm selection"}
 	case ScreenAIFrameworkConfirm:
 		return []string{"Yes, install AI Framework", "No, skip framework"}
 	case ScreenAIFrameworkPreset:
@@ -551,7 +553,7 @@ func (m Model) GetScreenDescription() string {
 	case ScreenNvimSelect:
 		return "Includes LSP, TreeSitter, and Gentleman config"
 	case ScreenAIToolsSelect:
-		return "AI-powered coding assistants for your terminal"
+		return "Toggle tools with Enter. Confirm when ready."
 	case ScreenAIFrameworkConfirm:
 		return "Agents, skills, hooks, and commands for AI coding tools"
 	case ScreenAIFrameworkPreset:

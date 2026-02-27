@@ -49,7 +49,7 @@ func parseFlags() *cliFlags {
 	flag.BoolVar(&flags.nvim, "nvim", false, "Install Neovim configuration")
 	flag.BoolVar(&flags.font, "font", false, "Install Nerd Font")
 	flag.BoolVar(&flags.backup, "backup", true, "Backup existing configs (default: true)")
-	flag.StringVar(&flags.aiTools, "ai-tools", "", "AI tools: claude,opencode (comma-separated)")
+	flag.StringVar(&flags.aiTools, "ai-tools", "", "AI tools: claude,opencode,gemini,copilot (comma-separated)")
 	flag.BoolVar(&flags.aiFramework, "ai-framework", false, "Install AI coding framework")
 	flag.StringVar(&flags.aiPreset, "ai-preset", "", "Framework preset: minimal, frontend, backend, fullstack, data, complete")
 	flag.StringVar(&flags.aiModules, "ai-modules", "", "Framework modules (comma-separated, use --list-modules for names)")
@@ -141,11 +141,11 @@ func runNonInteractive(flags *cliFlags) error {
 	// Parse AI tools
 	var aiTools []string
 	if flags.aiTools != "" {
-		validAITools := map[string]bool{"claude": true, "opencode": true}
+		validAITools := map[string]bool{"claude": true, "opencode": true, "gemini": true, "copilot": true}
 		for _, tool := range strings.Split(flags.aiTools, ",") {
 			tool = strings.TrimSpace(strings.ToLower(tool))
 			if !validAITools[tool] {
-				return fmt.Errorf("invalid AI tool: %s (valid: claude, opencode)", tool)
+				return fmt.Errorf("invalid AI tool: %s (valid: claude, opencode, gemini, copilot)", tool)
 			}
 			aiTools = append(aiTools, tool)
 		}
@@ -263,7 +263,7 @@ Non-Interactive Options:
   --backup=false       Disable config backup (default: true)
 
 AI Options:
-  --ai-tools=<tools>   AI tools (comma-separated): claude, opencode
+  --ai-tools=<tools>   AI tools (comma-separated): claude, opencode, gemini, copilot
   --ai-framework       Install AI coding framework
   --ai-preset=<name>   Framework preset: minimal, frontend, backend, fullstack, data, complete
   --ai-modules=<mods>  Framework modules (comma-separated)
@@ -276,7 +276,7 @@ Examples:
   gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
 
   # Full setup with AI tools and framework
-  gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode --ai-preset=fullstack
+  gentleman.dots --non-interactive --shell=fish --nvim --ai-tools=claude,opencode,gemini,copilot --ai-preset=fullstack
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

@@ -1117,6 +1117,32 @@ func stepInstallAITools(m *Model) error {
 		SendLog(stepID, "🧠 Copied OpenCode config and skills")
 	}
 
+	// Install Gemini CLI
+	if hasAITool(m.Choices.AITools, "gemini") {
+		SendLog(stepID, "Installing Gemini CLI...")
+		result := system.RunWithLogs(`npm install -g @google/gemini-cli`, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			SendLog(stepID, "⚠️ Could not install Gemini CLI (run 'npm install -g @google/gemini-cli' manually)")
+		} else {
+			SendLog(stepID, "✓ Gemini CLI installed")
+		}
+	}
+
+	// Install GitHub Copilot CLI extension
+	if hasAITool(m.Choices.AITools, "copilot") {
+		SendLog(stepID, "Installing GitHub Copilot CLI...")
+		result := system.RunWithLogs(`gh extension install github/gh-copilot`, nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			SendLog(stepID, "⚠️ Could not install GitHub Copilot (run 'gh extension install github/gh-copilot' manually)")
+		} else {
+			SendLog(stepID, "✓ GitHub Copilot CLI installed")
+		}
+	}
+
 	SendLog(stepID, "✓ AI tools configured")
 	return nil
 }
@@ -1144,6 +1170,12 @@ func stepInstallAIFramework(m *Model) error {
 	}
 	if hasAITool(m.Choices.AITools, "opencode") {
 		clis = append(clis, "opencode")
+	}
+	if hasAITool(m.Choices.AITools, "gemini") {
+		clis = append(clis, "gemini")
+	}
+	if hasAITool(m.Choices.AITools, "copilot") {
+		clis = append(clis, "copilot")
 	}
 	if len(clis) > 0 {
 		setupCmd += " --clis=" + strings.Join(clis, ",")
