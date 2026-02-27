@@ -194,7 +194,7 @@ func runNonInteractive(flags *cliFlags) error {
 		InstallAgentTeamsLite: flags.agentTeamsLite,
 	}
 
-	fmt.Println("🚀 Gentleman.Dots Non-Interactive Installer")
+	fmt.Println("🚀 Javi.Dots Non-Interactive Installer")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Printf("  Terminal:    %s\n", choices.Terminal)
 	fmt.Printf("  Shell:       %s\n", choices.Shell)
@@ -247,7 +247,7 @@ func setupTestMode() {
 }
 
 func printHelp() {
-	fmt.Println(`gentleman.dots - TUI installer for Gentleman.Dots terminal environment
+	fmt.Println(`javi.dots - TUI installer for Javi.Dots terminal environment (fork of Gentleman.Dots)
 
 Usage:
   gentleman.dots [flags]

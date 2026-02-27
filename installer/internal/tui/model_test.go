@@ -142,7 +142,7 @@ func TestGetScreenTitle(t *testing.T) {
 		screen   Screen
 		expected string
 	}{
-		{ScreenWelcome, "Welcome to Gentleman.Dots Installer"},
+		{ScreenWelcome, "Welcome to Javi.Dots Installer"},
 		{ScreenOSSelect, "Step 1: Select Your Operating System"},
 		{ScreenTerminalSelect, "Step 2: Choose Terminal Emulator"},
 		{ScreenShellSelect, "Step 4: Choose Your Shell"},
