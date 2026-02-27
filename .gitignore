@@ -2,6 +2,7 @@
 installer/gentleman.dots
 installer/gentleman-test
 installer/dist/
+gentleman-dots
 
 # E2E test artifacts
 installer/e2e/gentleman-installer-*
@@ -12,3 +13,8 @@ CLAUDE.md
 GEMINI.md
 CODEX.md
 .github/copilot-instructions.md
+
+# Editor
+.history
+.idea
+.vscode

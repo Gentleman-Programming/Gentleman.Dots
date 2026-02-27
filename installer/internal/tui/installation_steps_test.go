@@ -3,6 +3,7 @@ package tui
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
@@ -15,14 +16,14 @@ func TestAllUserSelectionPaths(t *testing.T) {
 	osChoices := []string{"mac", "linux"}
 
 	// All possible terminal choices (varies by OS)
-	terminalChoicesMac := []string{"alacritty", "wezterm", "kitty", "ghostty", "none"}
-	terminalChoicesLinux := []string{"alacritty", "wezterm", "ghostty", "none"}
+	terminalChoicesMac := []string{"alacritty", "wezterm", "kitty", "ghostty", ""}
+	terminalChoicesLinux := []string{"alacritty", "wezterm", "ghostty", ""}
 
 	// All possible shell choices
 	shellChoices := []string{"fish", "zsh", "nushell"}
 
 	// All possible WM choices
-	wmChoices := []string{"tmux", "zellij", "none"}
+	wmChoices := []string{"tmux", "zellij", ""}
 
 	// All possible nvim choices
 	nvimChoices := []bool{true, false}
@@ -42,7 +43,8 @@ func TestAllUserSelectionPaths(t *testing.T) {
 					for _, nvim := range nvimChoices {
 						for _, font := range fontChoices {
 							// Skip font test if terminal is none
-							if terminal == "none" && font {
+							// Skip font selection if terminal is skipped (empty string)
+							if terminal == "" && font {
 								continue
 							}
 
@@ -522,10 +524,10 @@ func TestNavigationToEachScreen(t *testing.T) {
 		m.Screen = ScreenTerminalSelect
 		m.Choices.OS = "mac"
 
-		// Find None option
+		// Find Skip option
 		options := m.GetCurrentOptions()
 		for i, opt := range options {
-			if opt == "None" {
+			if strings.Contains(opt, "Skip this step") {
 				m.Cursor = i
 				break
 			}
@@ -533,7 +535,7 @@ func TestNavigationToEachScreen(t *testing.T) {
 
 		m, _ = simulateKeyPress(m, "enter")
 		if m.Screen != ScreenShellSelect {
-			t.Errorf("Expected ShellSelect when terminal=none, got %v", m.Screen)
+			t.Errorf("Expected ShellSelect when terminal skipped, got %v", m.Screen)
 		}
 	})
 
@@ -582,7 +584,6 @@ func TestEachTerminalSelection(t *testing.T) {
 		{"wezterm", 1, "wezterm"},
 		{"kitty", 2, "kitty"},
 		{"ghostty", 3, "ghostty"},
-		{"none", 4, "none"},
 	}
 
 	for _, tc := range terminalsMac {
@@ -607,7 +608,6 @@ func TestEachTerminalSelection(t *testing.T) {
 		{"alacritty", 0, "alacritty"},
 		{"wezterm", 1, "wezterm"},
 		{"ghostty", 2, "ghostty"},
-		{"none", 3, "none"},
 	}
 
 	for _, tc := range terminalsLinux {
@@ -660,7 +660,6 @@ func TestEachWMSelection(t *testing.T) {
 	}{
 		{"tmux", 0, "tmux"},
 		{"zellij", 1, "zellij"},
-		{"none", 2, "none"},
 	}
 
 	for _, tc := range wms {
@@ -736,7 +735,7 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("install with backup", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.SystemInfo = &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true}
 		m.Choices = UserChoices{OS: "mac", Shell: "fish"}
 		m.Cursor = 0 // Install with Backup
@@ -750,7 +749,7 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("install without backup", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
 		m.SystemInfo = &system.SystemInfo{OS: system.OSMac, HasBrew: true, HasXcode: true}
 		m.Choices = UserChoices{OS: "mac", Shell: "fish"}
 		m.Cursor = 1 // Install without Backup
@@ -764,8 +763,9 @@ func TestBackupOptions(t *testing.T) {
 	t.Run("cancel", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenBackupConfirm
-		m.ExistingConfigs = []string{"nvim: /test"}
-		m.Cursor = 2 // Cancel
+		m.ExistingConfigs = []string{"fish: /home/user/.config/fish"}
+		m.Choices = UserChoices{Shell: "fish"} // User chose fish, so 3 options available
+		m.Cursor = 2                           // Cancel
 
 		m, _ = simulateKeyPress(m, "enter")
 		if m.Screen != ScreenMainMenu {
