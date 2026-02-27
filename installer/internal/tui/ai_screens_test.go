@@ -1080,3 +1080,751 @@ func TestRenderAICategoryMenuNoCounts(t *testing.T) {
 		t.Error("Category menu should NOT contain checkboxes")
 	}
 }
+
+// ==========================================================================
+// Separator Skipping Tests
+// ==========================================================================
+
+func TestAIToolsSeparatorSkipDown(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.Cursor = len(aiToolIDMap) - 1 // Last tool (GitHub Copilot, index 3)
+
+	// Navigate down — should skip separator (index 4) and land on Confirm (index 5)
+	result, _ := m.handleAIToolsKeys("down")
+	newModel := result.(Model)
+
+	opts := newModel.GetCurrentOptions()
+	confirmIdx := len(opts) - 1
+	if newModel.Cursor != confirmIdx {
+		t.Errorf("Expected cursor to skip separator and land on Confirm (index %d), got %d", confirmIdx, newModel.Cursor)
+	}
+}
+
+func TestAIToolsSeparatorSkipUp(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "Confirm selection" (last index)
+
+	// Navigate up — should skip separator and land on last tool
+	result, _ := m.handleAIToolsKeys("up")
+	newModel := result.(Model)
+
+	if newModel.Cursor != len(aiToolIDMap)-1 {
+		t.Errorf("Expected cursor to skip separator and land on last tool (index %d), got %d", len(aiToolIDMap)-1, newModel.Cursor)
+	}
+}
+
+func TestAICategoriesSeparatorSkipDown(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = len(moduleCategories) - 1 // Last category (MCP, index 5)
+
+	// Navigate down — should skip separator and land on Confirm
+	result, _ := m.handleAICategoriesKeys("down")
+	newModel := result.(Model)
+
+	opts := m.GetCurrentOptions()
+	confirmIdx := len(opts) - 1
+	if newModel.Cursor != confirmIdx {
+		t.Errorf("Expected cursor at Confirm (index %d), got %d", confirmIdx, newModel.Cursor)
+	}
+}
+
+func TestAICategoriesSeparatorSkipUp(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // Confirm selection
+
+	// Navigate up — should skip separator
+	result, _ := m.handleAICategoriesKeys("up")
+	newModel := result.(Model)
+
+	if newModel.Cursor != len(moduleCategories)-1 {
+		t.Errorf("Expected cursor at last category (index %d), got %d", len(moduleCategories)-1, newModel.Cursor)
+	}
+}
+
+func TestAICategoryItemsSeparatorSkipDown(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 5 // MCP (6 items)
+	m.Height = 50
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	cat := moduleCategories[5]
+	m.Cursor = len(cat.Items) - 1 // Last MCP item
+
+	// Navigate down — should skip separator and land on "← Back"
+	result, _ := m.handleAICategoryItemsKeys("down")
+	newModel := result.(Model)
+
+	opts := m.GetCurrentOptions()
+	backIdx := len(opts) - 1
+	if newModel.Cursor != backIdx {
+		t.Errorf("Expected cursor at Back (index %d), got %d", backIdx, newModel.Cursor)
+	}
+}
+
+func TestAICategoryItemsSeparatorSkipUp(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 5 // MCP (6 items)
+	m.Height = 50
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	opts := m.GetCurrentOptions()
+	m.Cursor = len(opts) - 1 // "← Back"
+
+	// Navigate up — should skip separator
+	result, _ := m.handleAICategoryItemsKeys("up")
+	newModel := result.(Model)
+
+	cat := moduleCategories[5]
+	if newModel.Cursor != len(cat.Items)-1 {
+		t.Errorf("Expected cursor at last item (index %d), got %d", len(cat.Items)-1, newModel.Cursor)
+	}
+}
+
+// ==========================================================================
+// Vim-style Navigation (j/k) Tests
+// ==========================================================================
+
+func TestAIToolsVimNavigation(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.Cursor = 0
+
+	// k at top should stay at 0
+	result, _ := m.handleAIToolsKeys("k")
+	newModel := result.(Model)
+	if newModel.Cursor != 0 {
+		t.Errorf("k at top: expected cursor 0, got %d", newModel.Cursor)
+	}
+
+	// j should move down
+	result, _ = newModel.handleAIToolsKeys("j")
+	newModel = result.(Model)
+	if newModel.Cursor != 1 {
+		t.Errorf("j from 0: expected cursor 1, got %d", newModel.Cursor)
+	}
+
+	// k should move up
+	result, _ = newModel.handleAIToolsKeys("k")
+	newModel = result.(Model)
+	if newModel.Cursor != 0 {
+		t.Errorf("k from 1: expected cursor 0, got %d", newModel.Cursor)
+	}
+}
+
+// ==========================================================================
+// Scroll Sync Tests (viewport follows cursor)
+// ==========================================================================
+
+func TestCategoryItemsScrollSyncDown(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 3 // Skills (85 items)
+	m.Height = 20                // Small height to trigger scrolling
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0
+	m.CategoryItemsScroll = 0
+
+	// Navigate down past the visible area
+	visibleItems := m.Height - 8 // 12
+	for i := 0; i < visibleItems+2; i++ {
+		result, _ := m.handleAICategoryItemsKeys("down")
+		m = result.(Model)
+	}
+
+	// Cursor should be past visible area, scroll should have adjusted
+	if m.CategoryItemsScroll == 0 {
+		t.Error("Expected CategoryItemsScroll to advance when cursor moves past visible area")
+	}
+	if m.Cursor < m.CategoryItemsScroll || m.Cursor >= m.CategoryItemsScroll+visibleItems {
+		t.Errorf("Cursor %d should be within visible range [%d, %d)", m.Cursor, m.CategoryItemsScroll, m.CategoryItemsScroll+visibleItems)
+	}
+}
+
+func TestCategoryItemsScrollSyncUp(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 3 // Skills (85 items)
+	m.Height = 20
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	// Start with cursor and scroll offset in the middle
+	m.Cursor = 30
+	m.CategoryItemsScroll = 30
+
+	// Navigate up past the scroll offset
+	for i := 0; i < 5; i++ {
+		result, _ := m.handleAICategoryItemsKeys("up")
+		m = result.(Model)
+	}
+
+	// Scroll should follow cursor up
+	if m.CategoryItemsScroll > m.Cursor {
+		t.Errorf("Scroll (%d) should not be above cursor (%d)", m.CategoryItemsScroll, m.Cursor)
+	}
+}
+
+func TestCategoryItemsScrollMinimumVisible(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 0 // Hooks (10 items)
+	m.Height = 5                 // Very small — should cap at minimum 5 visible
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0
+	m.CategoryItemsScroll = 0
+
+	// Navigate down — scroll sync uses minimum 5 visible items
+	for i := 0; i < 7; i++ {
+		result, _ := m.handleAICategoryItemsKeys("down")
+		m = result.(Model)
+	}
+
+	// Should not crash or go negative
+	if m.CategoryItemsScroll < 0 {
+		t.Errorf("Scroll should not be negative, got %d", m.CategoryItemsScroll)
+	}
+}
+
+func TestCategoryItemsScrollResetOnScreenChange(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 3 // Skills
+	m.Height = 20
+	m.CategoryItemsScroll = 25 // Non-zero scroll
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	// Press esc to go back to categories
+	result, _ := m.handleAICategoryItemsKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.CategoryItemsScroll != 0 {
+		t.Errorf("Expected scroll reset to 0 on screen change, got %d", newModel.CategoryItemsScroll)
+	}
+}
+
+// ==========================================================================
+// handleEscape from BackupConfirm Tests
+// ==========================================================================
+
+func TestHandleEscapeFromBackupConfirmToCategories(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool) // Custom mode
+
+	result, _ := m.handleEscape()
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
+	}
+}
+
+func TestHandleEscapeFromBackupConfirmToPreset(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = nil // Preset mode (not custom)
+
+	result, _ := m.handleEscape()
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkPreset {
+		t.Errorf("Expected ScreenAIFrameworkPreset, got %v", newModel.Screen)
+	}
+}
+
+func TestHandleEscapeFromBackupConfirmToFrameworkConfirm(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = false
+
+	result, _ := m.handleEscape()
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkConfirm {
+		t.Errorf("Expected ScreenAIFrameworkConfirm, got %v", newModel.Screen)
+	}
+}
+
+func TestHandleEscapeFromBackupConfirmToAITools(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = nil // No AI tools
+
+	result, _ := m.handleEscape()
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIToolsSelect {
+		t.Errorf("Expected ScreenAIToolsSelect, got %v", newModel.Screen)
+	}
+}
+
+// ==========================================================================
+// handleBackupConfirmKeys esc Tests (same logic, different entry point)
+// ==========================================================================
+
+func TestBackupConfirmEscToCategories(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = make(map[string][]bool)
+
+	result, _ := m.handleBackupConfirmKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkCategories {
+		t.Errorf("Expected ScreenAIFrameworkCategories, got %v", newModel.Screen)
+	}
+}
+
+func TestBackupConfirmEscToPreset(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.AICategorySelected = nil
+
+	result, _ := m.handleBackupConfirmKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkPreset {
+		t.Errorf("Expected ScreenAIFrameworkPreset, got %v", newModel.Screen)
+	}
+}
+
+func TestBackupConfirmEscToFrameworkConfirm(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = []string{"opencode"}
+	m.Choices.InstallAIFramework = false
+
+	result, _ := m.handleBackupConfirmKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkConfirm {
+		t.Errorf("Expected ScreenAIFrameworkConfirm, got %v", newModel.Screen)
+	}
+}
+
+func TestBackupConfirmEscToAITools(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenBackupConfirm
+	m.Choices.AITools = nil
+
+	result, _ := m.handleBackupConfirmKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIToolsSelect {
+		t.Errorf("Expected ScreenAIToolsSelect, got %v", newModel.Screen)
+	}
+}
+
+// ==========================================================================
+// Out-of-Bounds Guard Tests
+// ==========================================================================
+
+func TestCategoryItemsOutOfBoundsGuard(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 999 // Invalid
+	m.Height = 40
+	m.AICategorySelected = make(map[string][]bool)
+
+	// Should not panic
+	result, _ := m.handleAICategoryItemsKeys("enter")
+	newModel := result.(Model)
+
+	// Should be a no-op
+	if newModel.Screen != ScreenAIFrameworkCategoryItems {
+		t.Errorf("Expected screen unchanged, got %v", newModel.Screen)
+	}
+}
+
+func TestCategoryItemsNegativeIndexGuard(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = -1 // Negative
+	m.Height = 40
+	m.AICategorySelected = make(map[string][]bool)
+
+	result, _ := m.handleAICategoryItemsKeys("down")
+	newModel := result.(Model)
+	_ = newModel // Should not panic
+}
+
+func TestGetCurrentOptionsOutOfBoundsCategory(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 999
+
+	opts := m.GetCurrentOptions()
+	if len(opts) != 0 {
+		t.Errorf("Expected empty options for invalid category, got %d items", len(opts))
+	}
+}
+
+func TestGetScreenTitleOutOfBoundsCategory(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = -1
+
+	title := m.GetScreenTitle()
+	if !strings.Contains(title, "Step 8") {
+		t.Errorf("Expected fallback title with 'Step 8', got %q", title)
+	}
+	if strings.Contains(title, "Hooks") || strings.Contains(title, "Skills") {
+		t.Error("Fallback title should not contain a category name")
+	}
+}
+
+// ==========================================================================
+// Nil/Empty Guard Tests
+// ==========================================================================
+
+func TestAIToolsToggleWithNilSelected(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = nil // nil slice
+	m.Cursor = 0
+
+	// Should not panic
+	result, _ := m.handleAIToolsKeys("enter")
+	newModel := result.(Model)
+	_ = newModel
+}
+
+func TestCategoryItemsToggleWithNilBools(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 0
+	m.Height = 40
+	m.AICategorySelected = make(map[string][]bool)
+	// Don't initialize "hooks" key
+	m.AICategorySelected["hooks"] = nil
+	m.Cursor = 0
+
+	// Should not panic
+	result, _ := m.handleAICategoryItemsKeys("enter")
+	newModel := result.(Model)
+	_ = newModel
+}
+
+func TestCollectSelectedFeaturesMissingKey(t *testing.T) {
+	sel := make(map[string][]bool)
+	// Only provide some categories, not all
+	sel["hooks"] = []bool{true, false, false, false, false, false, false, false, false, false}
+
+	// Should not panic — missing keys are skipped
+	result := collectSelectedFeatures(sel)
+
+	if len(result) != 1 || result[0] != "hooks" {
+		t.Errorf("Expected [hooks], got %v", result)
+	}
+}
+
+// ==========================================================================
+// GetScreenDescription Tests
+// ==========================================================================
+
+func TestAIScreenDescriptions(t *testing.T) {
+	tests := []struct {
+		screen Screen
+		expect string
+	}{
+		{ScreenAIToolsSelect, "Toggle tools"},
+		{ScreenAIFrameworkConfirm, "Agents, skills"},
+		{ScreenAIFrameworkPreset, "Presets bundle"},
+		{ScreenAIFrameworkCategories, "Select a category"},
+		{ScreenAIFrameworkCategoryItems, "Toggle modules"},
+	}
+
+	m := NewModel()
+	for _, tt := range tests {
+		m.Screen = tt.screen
+		desc := m.GetScreenDescription()
+		if !strings.Contains(desc, tt.expect) {
+			t.Errorf("Screen %v: expected description containing %q, got %q", tt.screen, tt.expect, desc)
+		}
+	}
+}
+
+// ==========================================================================
+// SetupInstallSteps Custom Preset Label Test
+// ==========================================================================
+
+func TestSetupInstallStepsCustomPresetLabel(t *testing.T) {
+	m := NewModel()
+	m.Choices.Shell = "fish"
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.Choices.AIFrameworkPreset = "" // Custom mode
+
+	m.SetupInstallSteps()
+
+	for _, step := range m.Steps {
+		if step.ID == "aiframework" {
+			if !strings.Contains(step.Description, "custom") {
+				t.Errorf("Expected custom preset label in description, got %q", step.Description)
+			}
+			return
+		}
+	}
+	t.Error("Expected aiframework step to exist")
+}
+
+// ==========================================================================
+// Termux AI Skip Test
+// ==========================================================================
+
+func TestTermuxSkipsAIScreens(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenNvimSelect
+	m.SystemInfo.IsTermux = true
+	m.Cursor = 0 // Yes, install Neovim
+
+	result, _ := m.handleSelection()
+	newModel := result.(Model)
+
+	// Should skip AI tools and go straight to backup/install
+	if newModel.Screen == ScreenAIToolsSelect {
+		t.Error("Termux should skip AI tools screen")
+	}
+	if newModel.Screen != ScreenBackupConfirm && newModel.Screen != ScreenInstalling {
+		t.Errorf("Expected ScreenBackupConfirm or ScreenInstalling for Termux, got %v", newModel.Screen)
+	}
+}
+
+// ==========================================================================
+// Preset Separator No-Op Test
+// ==========================================================================
+
+func TestPresetSeparatorIsNoOp(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkPreset
+	m.Choices.AITools = []string{"claude"}
+	m.Choices.InstallAIFramework = true
+	m.Cursor = 1 // Separator index
+
+	result, _ := m.handleSelection()
+	newModel := result.(Model)
+
+	// Should remain on same screen (no-op for separator)
+	if newModel.Screen != ScreenAIFrameworkPreset {
+		t.Errorf("Selecting separator should be no-op, but screen changed to %v", newModel.Screen)
+	}
+}
+
+// ==========================================================================
+// Render Viewport Scroll Indicators Tests
+// ==========================================================================
+
+func TestRenderCategoryItemsScrollIndicators(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.Width = 100
+	m.Height = 15 // Small enough to trigger scrolling for Skills (85 items)
+	m.SelectedModuleCategory = 3 // Skills
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0
+	m.CategoryItemsScroll = 0
+
+	rendered := m.renderAICategoryItems()
+
+	// At top: should NOT have "above" indicator but SHOULD have "below"
+	if strings.Contains(rendered, "more above") {
+		t.Error("At top of list, should not show 'more above' indicator")
+	}
+	if !strings.Contains(rendered, "more below") {
+		t.Error("With 85 items in small viewport, should show 'more below' indicator")
+	}
+}
+
+func TestRenderCategoryItemsScrollUpIndicator(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.Width = 100
+	m.Height = 15
+	m.SelectedModuleCategory = 3 // Skills (85 items)
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 40
+	m.CategoryItemsScroll = 35
+
+	rendered := m.renderAICategoryItems()
+
+	// In middle: should have both indicators
+	if !strings.Contains(rendered, "more above") {
+		t.Error("In middle of scrolled list, should show 'more above' indicator")
+	}
+	if !strings.Contains(rendered, "more below") {
+		t.Error("In middle of scrolled list, should show 'more below' indicator")
+	}
+}
+
+// ==========================================================================
+// Space Key vs Leader Mode Tests
+// ==========================================================================
+
+func TestSpaceActivatesLeaderModeOnAIScreens(t *testing.T) {
+	// Space should activate leader mode on AI screens, NOT toggle items
+	// This verifies that handleAIToolsKeys " " branch is unreachable via Update()
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+	m.Cursor = 0
+
+	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
+	newModel := result.(Model)
+
+	// Space should have activated leader mode, NOT toggled the tool
+	if !newModel.LeaderMode {
+		t.Error("Space should activate leader mode on AI tools screen")
+	}
+	if newModel.AIToolSelected[0] {
+		t.Error("Space should NOT toggle AI tool selection (leader mode intercepts)")
+	}
+}
+
+func TestSpaceActivatesLeaderModeOnCategoryItems(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.SelectedModuleCategory = 0
+	m.Height = 40
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+	m.Cursor = 0
+
+	result, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{' '}})
+	newModel := result.(Model)
+
+	if !newModel.LeaderMode {
+		t.Error("Space should activate leader mode on category items screen")
+	}
+	if newModel.AICategorySelected["hooks"][0] {
+		t.Error("Space should NOT toggle item selection (leader mode intercepts)")
+	}
+}
+
+// ==========================================================================
+// handleAIToolsKeys("esc") delegation test
+// ==========================================================================
+
+func TestAIToolsEscDelegatesToGoBack(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIToolsSelect
+	m.AIToolSelected = make([]bool, len(aiToolIDMap))
+
+	result, _ := m.handleAIToolsKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenNvimSelect {
+		t.Errorf("Expected esc to go back to ScreenNvimSelect, got %v", newModel.Screen)
+	}
+}
+
+func TestAICategoriesEscDelegatesToGoBack(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategories
+	m.AICategorySelected = make(map[string][]bool)
+
+	result, _ := m.handleAICategoriesKeys("esc")
+	newModel := result.(Model)
+
+	if newModel.Screen != ScreenAIFrameworkPreset {
+		t.Errorf("Expected esc to go back to ScreenAIFrameworkPreset, got %v", newModel.Screen)
+	}
+}
+
+// ==========================================================================
+// View() Dispatch for AI Screens
+// ==========================================================================
+
+func TestViewDispatchAIScreens(t *testing.T) {
+	screens := []struct {
+		screen Screen
+		expect string
+	}{
+		{ScreenAIToolsSelect, "AI Coding Tools"},
+		{ScreenAIFrameworkCategories, "Module Categories"},
+	}
+
+	for _, tt := range screens {
+		m := NewModel()
+		m.Screen = tt.screen
+		m.Width = 100
+		m.Height = 40
+		m.AIToolSelected = make([]bool, len(aiToolIDMap))
+		m.AICategorySelected = make(map[string][]bool)
+		for _, cat := range moduleCategories {
+			m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+		}
+
+		rendered := m.View()
+		if !strings.Contains(rendered, tt.expect) {
+			t.Errorf("View() for screen %v should contain %q", tt.screen, tt.expect)
+		}
+	}
+}
+
+func TestViewDispatchCategoryItems(t *testing.T) {
+	m := NewModel()
+	m.Screen = ScreenAIFrameworkCategoryItems
+	m.Width = 100
+	m.Height = 40
+	m.SelectedModuleCategory = 0 // Hooks
+	m.AICategorySelected = make(map[string][]bool)
+	for _, cat := range moduleCategories {
+		m.AICategorySelected[cat.ID] = make([]bool, len(cat.Items))
+	}
+
+	rendered := m.View()
+	if !strings.Contains(rendered, "Hooks") {
+		t.Error("View() for category items should contain category name 'Hooks'")
+	}
+}
