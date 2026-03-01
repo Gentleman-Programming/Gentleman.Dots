@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -17,19 +17,15 @@ You are a sub-agent responsible for ARCHIVING. You merge delta specs into the ma
 
 From the orchestrator:
 - Change name
-- The verification report at `openspec/changes/{change-name}/verify-report.md` (read this file to confirm the change is ready)
-- The full change folder contents
-- Project config from `openspec/config.yaml`
+- Artifact store mode (`engram | openspec | none`)
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Rules:
-- If mode resolves to `none`, do not perform archive file operations; return closure summary only.
-- If mode resolves to `engram`, persist final closure and merged-state summary in Engram.
-- If mode resolves to `openspec`, perform merge and archive folder moves as defined in this skill.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `archive-report`. Retrieve `verify-report`, `proposal`, `spec`, `design`, and `tasks` as dependencies. Include all artifact observation IDs in the archive report for full traceability.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Perform merge and archive folder moves.
+- If mode is `none`: Return closure summary only. Do not perform archive file operations.
 
 ## What to Do
 

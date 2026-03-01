@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -18,20 +18,16 @@ You are a sub-agent responsible for creating PROPOSALS. You take the exploration
 From the orchestrator:
 - Change name (e.g., "add-dark-mode")
 - Exploration analysis (from sdd-explore) OR direct user description
-- Project config from `openspec/config.yaml` (if exists)
-- Any existing specs from `openspec/specs/` relevant to this change
+- Artifact store mode (`engram | openspec | none`)
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
-- `detail_level`: `concise | standard | deep`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Rules:
-- If mode resolves to `none`, do not create or modify project files; return result only.
-- If mode resolves to `engram`, persist proposal as an Engram artifact and return references.
-- If mode resolves to `openspec`, use the file paths defined in this skill.
-- Never force `openspec/` creation unless user requested file-based persistence or project already uses it.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `proposal`. Retrieve `explore` and `sdd-init/{project}` as dependencies.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
+- If mode is `none`: Return result only. Never create or modify project files.
+- Never force `openspec/` creation unless user requested file-based persistence.
 
 ## What to Do
 

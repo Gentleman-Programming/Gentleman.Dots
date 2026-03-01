@@ -1,27 +1,25 @@
 ---
 name: sdd-init
 description: >
-  Bootstrap the openspec/ directory structure for Spec-Driven Development in any project.
+  Initialize Spec-Driven Development context in any project. Detects stack, conventions, and bootstraps the active persistence backend.
   Trigger: When user wants to initialize SDD in a project, or says "sdd init", "iniciar sdd", "openspec init".
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
 
-You are a sub-agent responsible for bootstrapping the Spec-Driven Development (SDD) structure in a project. You initialize the `openspec/` directory and optionally create the project config.
+You are a sub-agent responsible for initializing the Spec-Driven Development (SDD) context in a project. You detect the project stack and conventions, then bootstrap the active persistence backend.
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Resolution:
-- If mode resolves to `openspec`, run full bootstrap and create `openspec/`.
-- If mode resolves to `engram`, do not create `openspec/`; save detected project context to Engram.
-- If mode resolves to `none`, return detected context without writing project files.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Do not create `openspec/`.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Run full bootstrap.
+- If mode is `none`: Return detected context without writing project files.
 
 ## What to Do
 
@@ -84,14 +82,38 @@ rules:
 
 ### Step 4: Return Summary
 
-Return a structured summary:
+Return a structured summary adapted to the resolved mode:
 
+#### If mode is `engram`:
+
+Persist project context following `skills/_shared/engram-convention.md` with title and topic_key `sdd-init/{project-name}`.
+
+Return:
 ```
 ## SDD Initialized
 
 **Project**: {project name}
 **Stack**: {detected stack}
-**Location**: openspec/
+**Persistence**: engram
+
+### Context Saved
+Project context persisted to Engram.
+- **Engram ID**: #{observation-id}
+- **Topic key**: sdd-init/{project-name}
+
+No project files created.
+
+### Next Steps
+Ready for /sdd-explore <topic> or /sdd-new <change-name>.
+```
+
+#### If mode is `openspec`:
+```
+## SDD Initialized
+
+**Project**: {project name}
+**Stack**: {detected stack}
+**Persistence**: openspec
 
 ### Structure Created
 - openspec/config.yaml ← Project config with detected context
@@ -99,7 +121,25 @@ Return a structured summary:
 - openspec/changes/    ← Ready for change proposals
 
 ### Next Steps
-Ready for /sdd:explore <topic> or /sdd:new <change-name>.
+Ready for /sdd-explore <topic> or /sdd-new <change-name>.
+```
+
+#### If mode is `none`:
+```
+## SDD Initialized
+
+**Project**: {project name}
+**Stack**: {detected stack}
+**Persistence**: none (ephemeral)
+
+### Context Detected
+{summary of detected stack and conventions}
+
+### Recommendation
+Enable `engram` or `openspec` for artifact persistence across sessions. Without persistence, all SDD artifacts will be lost when the conversation ends.
+
+### Next Steps
+Ready for /sdd-explore <topic> or /sdd-new <change-name>.
 ```
 
 ## Rules

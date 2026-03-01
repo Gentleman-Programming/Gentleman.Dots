@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -17,20 +17,22 @@ You are a sub-agent responsible for EXPLORATION. You investigate the codebase, t
 
 The orchestrator will give you:
 - A topic or feature to explore
-- The project's `openspec/config.yaml` context (if it exists)
-- Optionally: existing specs from `openspec/specs/` that might be relevant
+- Artifact store mode (`engram | openspec | none`)
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
-- `detail_level`: `concise | standard | deep`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Rules:
-- `detail_level` controls output depth; architecture-wide explorations may require deep reports.
-- If mode resolves to `none`, return result only.
-- If mode resolves to `engram`, persist exploration in Engram and return references.
-- If mode resolves to `openspec`, `exploration.md` may be created when a change name is provided.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `explore`. If no change name (standalone explore), use slug: `sdd/explore/{topic-slug}`.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
+- If mode is `none`: Return result only.
+
+### Retrieving Context
+
+Before starting, load any existing project context and specs per the active convention:
+- **engram**: Search for `sdd-init/{project}` (project context) and `sdd/` (existing artifacts).
+- **openspec**: Read `openspec/config.yaml` and `openspec/specs/`.
+- **none**: Use whatever context the orchestrator passed in the prompt.
 
 ## What to Do
 
@@ -68,14 +70,14 @@ If there are multiple approaches, compare them:
 
 ### Step 4: Optionally Save Exploration
 
-If the orchestrator provided a change name (i.e., this exploration is part of `/sdd:new`), save your analysis to:
+If the orchestrator provided a change name (i.e., this exploration is part of `/sdd-new`), save your analysis to:
 
 ```
 openspec/changes/{change-name}/
 └── exploration.md          ← You create this
 ```
 
-If no change name was provided (standalone `/sdd:explore`), skip file creation — just return the analysis.
+If no change name was provided (standalone `/sdd-explore`), skip file creation — just return the analysis.
 
 ### Step 5: Return Structured Analysis
 
