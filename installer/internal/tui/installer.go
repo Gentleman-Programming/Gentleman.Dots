@@ -65,6 +65,8 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallWM(m)
 	case "nvim":
 		return stepInstallNvim(m)
+	case "ai":
+		return stepInstallAIAssistants(m)
 	case "cleanup":
 		return stepCleanup(m)
 	case "setshell":
@@ -1086,28 +1088,6 @@ func stepInstallNvim(m *Model) error {
 			SendLog(stepID, "⚠️ Could not apply tweakcc theme (run 'npx tweakcc --apply' manually)")
 		}
 	}
-
-	// Install OpenCode (optional, don't fail on error)
-	// Skip on Termux - OpenCode doesn't support Android
-	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Installing OpenCode (optional)...")
-		system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
-			SendLog(stepID, line)
-		})
-	} else {
-		SendLog(stepID, "Skipping OpenCode (not supported on Termux)")
-	}
-
-	// Configure OpenCode
-	SendLog(stepID, "Configuring OpenCode...")
-	openCodeDir := filepath.Join(homeDir, ".config/opencode")
-	system.EnsureDir(openCodeDir)
-	system.EnsureDir(filepath.Join(openCodeDir, "themes"))
-	system.EnsureDir(filepath.Join(openCodeDir, "skill"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
-	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
-	SendLog(stepID, "🧠 Copied OpenCode skills")
 
 	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
 	return nil

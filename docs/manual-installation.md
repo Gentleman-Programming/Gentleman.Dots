@@ -20,8 +20,9 @@ This guide walks you through manually setting up your development environment wi
   - [Install a Shell](#4-install-a-shell)
   - [Install Window Manager](#5-install-window-manager)
   - [Install Neovim](#6-install-neovim)
-  - [Set Default Shell](#7-set-default-shell)
-  - [Restart](#8-restart)
+  - [Install AI Coding Assistants](#7-install-ai-coding-assistants-optional)
+  - [Set Default Shell](#8-set-default-shell)
+  - [Restart](#9-restart)
 
 ---
 
@@ -375,7 +376,83 @@ mkdir -p /path/to/your/notes/templates
 #    path = "/path/to/your/notes",
 ```
 
-### 7. Set Default Shell
+### 7. Install AI Coding Assistants (Optional)
+
+The installer can set up AI coding assistants with pre-configured skills. You can install them manually:
+
+#### OpenCode
+
+```bash
+# 1. Install OpenCode (if not already installed)
+# Follow instructions at: https://opencode.ai/
+
+# 2. Create skills directory
+mkdir -p ~/.opencode/skills
+
+# 3. Copy skills from Gentleman.Dots
+cp -r ~/Gentleman.Dots/GentlemanClaude/skills/* ~/.opencode/skills/
+
+# 4. Verify installation
+ls ~/.opencode/skills/
+```
+
+#### Kilo Code (Coming Soon)
+
+```bash
+# 1. Install Kilo Code
+# (Installation instructions will be added when available)
+
+# 2. Create skills directory
+mkdir -p ~/.kilocode/skills
+
+# 3. Copy skills
+cp -r ~/Gentleman.Dots/GentlemanClaude/skills/* ~/.kilocode/skills/
+```
+
+#### Continue.dev (Coming Soon)
+
+```bash
+# 1. Install Continue.dev
+# Follow instructions at: https://continue.dev/
+
+# 2. Create skills directory
+mkdir -p ~/.continue/skills
+
+# 3. Copy skills
+cp -r ~/Gentleman.Dots/GentlemanClaude/skills/* ~/.continue/skills/
+```
+
+#### Aider (Coming Soon)
+
+```bash
+# 1. Install Aider
+# Follow instructions at: https://aider.chat/
+
+# 2. Create skills directory
+mkdir -p ~/.aider/skills
+
+# 3. Copy skills
+cp -r ~/Gentleman.Dots/GentlemanClaude/skills/* ~/.aider/skills/
+```
+
+**Available Skills:**
+
+The `GentlemanClaude/skills/` directory includes:
+- `react-19/` - React 19 patterns and best practices
+- `nextjs-15/` - Next.js 15 App Router and Server Components
+- `typescript/` - TypeScript patterns and generics
+- `tailwind-4/` - Tailwind CSS v4 utilities
+- `zod-4/` - Zod validation schemas
+- `zustand-5/` - Zustand state management
+- `ai-sdk-5/` - Vercel AI SDK
+- `django-drf/` - Django REST Framework
+- `playwright/` - Playwright E2E testing
+- `pytest/` - Python pytest patterns
+- `skill-creator/` - Create new AI agent skills
+
+Each assistant will automatically load these skills to provide context-aware coding assistance.
+
+### 8. Set Default Shell
 
 ```bash
 # Get path to your preferred shell (zsh, fish, or nu)
@@ -388,7 +465,7 @@ sudo chsh -s "$shell_path" "$USER"
 
 > **Note:** Replace `zsh` with `fish` or `nu` depending on which shell you installed.
 
-### 8. Restart
+### 9. Restart
 
 Close and reopen your terminal, or restart your computer/WSL instance for changes to take effect.
 
