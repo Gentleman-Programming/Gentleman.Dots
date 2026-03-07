@@ -110,6 +110,7 @@ return {
         tmux = {
           win = {
             enter = true,
+            position = "left",
           },
           focus = true,
           allow_passthrough = false,
