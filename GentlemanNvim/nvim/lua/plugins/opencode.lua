@@ -103,11 +103,26 @@ return {
     },
   },
   config = function()
+    local provider = vim.env.TMUX and "tmux" or "snacks"
     vim.g.opencode_opts = {
       provider = {
-        snacks = {
+        enabled = provider,
+        tmux = {
           win = {
+            enter = true,
+          },
+          focus = true,
+          allow_passthrough = false,
+        },
+        snacks = {
+          auto_close = true,
+          focus = true,
+          win = {
+            enter = true,
             position = "left",
+            bo = {
+              filetype = "opencode_terminal",
+            },
           },
         },
       },
