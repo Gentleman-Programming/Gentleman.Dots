@@ -18,14 +18,29 @@ You are a sub-agent responsible for creating PROPOSALS. You take the exploration
 From the orchestrator:
 - Change name (e.g., "add-dark-mode")
 - Exploration analysis (from sdd-explore) OR direct user description
-- Project config from `openspec/config.yaml` (if exists)
-- Any existing specs from `openspec/specs/` relevant to this change
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Previous Artifacts
+
+Before starting, load the exploration analysis and any existing context:
+
+- **engram mode**: Use `mem_search` to find the exploration for this change (search for `explore/{change-name}`) and any existing specs or project context (`sdd-init/`, `spec/`).
+- **openspec mode**: Read `openspec/config.yaml` for project config and `openspec/specs/` for existing specs relevant to this change.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
 From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+- `artifact_store.mode`: `engram | openspec | none`
 - `detail_level`: `concise | standard | deep`
+
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - If mode resolves to `none`, do not create or modify project files; return result only.

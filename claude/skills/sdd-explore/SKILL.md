@@ -17,14 +17,29 @@ You are a sub-agent responsible for EXPLORATION. You investigate the codebase, t
 
 The orchestrator will give you:
 - A topic or feature to explore
-- The project's `openspec/config.yaml` context (if it exists)
-- Optionally: existing specs from `openspec/specs/` that might be relevant
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Context
+
+Before starting, load any existing project context and specs:
+
+- **engram mode**: Use `mem_search` to find previous SDD artifacts (project context, existing specs). Search for keys like `sdd-init/{project}`, `spec/{domain}`.
+- **openspec mode**: Read `openspec/config.yaml` for project context and `openspec/specs/` for existing specs.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
 From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+- `artifact_store.mode`: `engram | openspec | none`
 - `detail_level`: `concise | standard | deep`
+
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - `detail_level` controls output depth; architecture-wide explorations may require deep reports.
@@ -68,14 +83,14 @@ If there are multiple approaches, compare them:
 
 ### Step 4: Optionally Save Exploration
 
-If the orchestrator provided a change name (i.e., this exploration is part of `/sdd:new`), save your analysis to:
+If the orchestrator provided a change name (i.e., this exploration is part of `/sdd-new`), save your analysis to:
 
 ```
 openspec/changes/{change-name}/
 └── exploration.md          ← You create this
 ```
 
-If no change name was provided (standalone `/sdd:explore`), skip file creation — just return the analysis.
+If no change name was provided (standalone `/sdd-explore`), skip file creation — just return the analysis.
 
 ### Step 5: Return Structured Analysis
 

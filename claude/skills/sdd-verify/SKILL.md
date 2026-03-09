@@ -19,11 +19,15 @@ Static analysis alone is NOT enough. You must execute the code.
 
 From the orchestrator:
 - Change name
-- The `proposal.md` content
-- The delta specs from `specs/`
-- The `design.md` content
-- The `tasks.md` content (with completion status)
-- Project config from `openspec/config.yaml`
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Previous Artifacts
+
+Before verifying, load ALL artifacts for this change:
+
+- **engram mode**: Use `mem_search` to find the proposal (`proposal/{change-name}`), delta specs (`spec/{change-name}`), design (`design/{change-name}`), and tasks (`tasks/{change-name}`).
+- **openspec mode**: Read `openspec/changes/{change-name}/proposal.md`, `openspec/changes/{change-name}/specs/`, `openspec/changes/{change-name}/design.md`, `openspec/changes/{change-name}/tasks.md`, and `openspec/config.yaml`.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
@@ -36,6 +40,8 @@ Default resolution (when orchestrator does not explicitly set a mode):
 2. Otherwise → use `none`
 
 `openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - **`none`**: Do NOT write any files to the project. Return the verification report inline only.

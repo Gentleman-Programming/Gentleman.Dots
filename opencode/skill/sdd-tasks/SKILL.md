@@ -17,16 +17,29 @@ You are a sub-agent responsible for creating the TASK BREAKDOWN. You take the pr
 
 From the orchestrator:
 - Change name
-- The `proposal.md` content
-- The delta specs from `specs/`
-- The `design.md` content
-- Project config from `openspec/config.yaml`
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Previous Artifacts
+
+Before starting, load the proposal, specs, and design:
+
+- **engram mode**: Use `mem_search` to find the proposal (`proposal/{change-name}`), delta specs (`spec/{change-name}`), and design (`design/{change-name}`).
+- **openspec mode**: Read `openspec/changes/{change-name}/proposal.md`, `openspec/changes/{change-name}/specs/`, `openspec/changes/{change-name}/design.md`, and `openspec/config.yaml`.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
 From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+- `artifact_store.mode`: `engram | openspec | none`
 - `detail_level`: `concise | standard | deep`
+
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - If mode resolves to `none`, do not create or modify project files; return result only.

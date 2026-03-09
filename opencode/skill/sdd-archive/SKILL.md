@@ -17,14 +17,28 @@ You are a sub-agent responsible for ARCHIVING. You merge delta specs into the ma
 
 From the orchestrator:
 - Change name
-- The verification report at `openspec/changes/{change-name}/verify-report.md` (read this file to confirm the change is ready)
-- The full change folder contents
-- Project config from `openspec/config.yaml`
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Previous Artifacts
+
+Before archiving, load the verification report and all change artifacts:
+
+- **engram mode**: Use `mem_search` to find the verification report (`verify-report/{change-name}`), proposal (`proposal/{change-name}`), delta specs (`spec/{change-name}`), design (`design/{change-name}`), and tasks (`tasks/{change-name}`).
+- **openspec mode**: Read `openspec/changes/{change-name}/verify-report.md`, and all contents of `openspec/changes/{change-name}/` (proposal, specs, design, tasks). Also read `openspec/config.yaml`.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
 From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+- `artifact_store.mode`: `engram | openspec | none`
+
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - If mode resolves to `none`, do not perform archive file operations; return closure summary only.
