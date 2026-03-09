@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "2.0"
+  version: "1.0"
 ---
 
 ## Purpose
@@ -19,13 +19,31 @@ From the orchestrator:
 - Change name
 - Artifact store mode (`engram | openspec | none`)
 
+### Retrieving Previous Artifacts
+
+Before archiving, load the verification report and all change artifacts:
+
+- **engram mode**: Use `mem_search` to find the verification report (`verify-report/{change-name}`), proposal (`proposal/{change-name}`), delta specs (`spec/{change-name}`), design (`design/{change-name}`), and tasks (`tasks/{change-name}`).
+- **openspec mode**: Read `openspec/changes/{change-name}/verify-report.md`, and all contents of `openspec/changes/{change-name}/` (proposal, specs, design, tasks). Also read `openspec/config.yaml`.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
+
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
+From the orchestrator:
+- `artifact_store.mode`: `engram | openspec | none`
 
-- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `archive-report`. Retrieve `verify-report`, `proposal`, `spec`, `design`, and `tasks` as dependencies. Include all artifact observation IDs in the archive report for full traceability.
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Perform merge and archive folder moves.
-- If mode is `none`: Return closure summary only. Do not perform archive file operations.
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
+
+Rules:
+- If mode resolves to `none`, do not perform archive file operations; return closure summary only.
+- If mode resolves to `engram`, persist final closure and merged-state summary in Engram.
+- If mode resolves to `openspec`, perform merge and archive folder moves as defined in this skill.
 
 ## What to Do
 

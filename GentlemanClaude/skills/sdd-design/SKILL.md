@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "2.0"
+  version: "1.0"
 ---
 
 ## Purpose
@@ -19,13 +19,32 @@ From the orchestrator:
 - Change name
 - Artifact store mode (`engram | openspec | none`)
 
+### Retrieving Previous Artifacts
+
+Before starting, load the proposal and specs (if available):
+
+- **engram mode**: Use `mem_search` to find the proposal (`proposal/{change-name}`) and delta specs (`spec/{change-name}`). If running in parallel with sdd-spec and specs aren't available yet, derive requirements from the proposal.
+- **openspec mode**: Read `openspec/changes/{change-name}/proposal.md`, `openspec/changes/{change-name}/specs/` for delta specs, and `openspec/config.yaml` for project config.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
+
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
+From the orchestrator:
+- `artifact_store.mode`: `engram | openspec | none`
+- `detail_level`: `concise | standard | deep`
 
-- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `design`. Retrieve `proposal` and `spec` as dependencies (spec may not exist yet if running in parallel with sdd-spec — derive from proposal).
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
-- If mode is `none`: Return result only. Never create or modify project files.
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
+
+Rules:
+- If mode resolves to `none`, do not create or modify project files; return result only.
+- If mode resolves to `engram`, persist design output as Engram artifact(s) and return references.
+- If mode resolves to `openspec`, use the file paths defined in this skill.
 
 ## What to Do
 

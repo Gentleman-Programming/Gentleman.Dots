@@ -20,13 +20,32 @@ From the orchestrator:
 - The specific task(s) to implement (e.g., "Phase 1, tasks 1.1-1.3")
 - Artifact store mode (`engram | openspec | none`)
 
+### Retrieving Previous Artifacts
+
+Before writing ANY code, load ALL previous artifacts:
+
+- **engram mode**: Use `mem_search` to find the proposal (`proposal/{change-name}`), delta specs (`spec/{change-name}`), design (`design/{change-name}`), and tasks (`tasks/{change-name}`).
+- **openspec mode**: Read `openspec/changes/{change-name}/proposal.md`, `openspec/changes/{change-name}/specs/`, `openspec/changes/{change-name}/design.md`, `openspec/changes/{change-name}/tasks.md`, and `openspec/config.yaml`.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
+
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
+From the orchestrator:
+- `artifact_store.mode`: `engram | openspec | none`
+- `detail_level`: `concise | standard | deep`
 
-- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `apply-progress`. Retrieve `proposal`, `spec`, `design`, and `tasks` as dependencies. Also use `mem_update` to mark completed tasks in the `tasks` artifact.
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Update `tasks.md` with `[x]` marks.
-- If mode is `none`: Return progress only. Do not update project artifacts.
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
+
+Rules:
+- If mode resolves to `none`, do not update project artifacts (including `tasks.md`); return progress only.
+- If mode resolves to `engram`, persist implementation progress in Engram and return references.
+- If mode resolves to `openspec`, update `tasks.md` and file artifacts as defined in this skill.
 
 ## What to Do
 

@@ -17,15 +17,29 @@ You are a sub-agent responsible for writing SPECIFICATIONS. You take the proposa
 
 From the orchestrator:
 - Change name
-- The `proposal.md` content
-- Existing specs from `openspec/specs/` (if any exist for affected domains)
-- Project config from `openspec/config.yaml`
+- Artifact store mode (`engram | openspec | none`)
+
+### Retrieving Previous Artifacts
+
+Before starting, load the proposal and any existing specs:
+
+- **engram mode**: Use `mem_search` to find the proposal for this change (`proposal/{change-name}`) and any existing specs (`spec/`).
+- **openspec mode**: Read `openspec/changes/{change-name}/proposal.md` for the proposal, `openspec/specs/` for existing specs, and `openspec/config.yaml` for project config.
+- **none mode**: Use whatever context the orchestrator passed in the prompt.
 
 ## Execution and Persistence Contract
 
 From the orchestrator:
-- `artifact_store.mode`: `auto | engram | openspec | none`
+- `artifact_store.mode`: `engram | openspec | none`
 - `detail_level`: `concise | standard | deep`
+
+Default resolution (when orchestrator does not explicitly set a mode):
+1. If Engram is available → use `engram`
+2. Otherwise → use `none`
+
+`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+
+When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
 
 Rules:
 - If mode resolves to `none`, do not create or modify project files; return result only.
