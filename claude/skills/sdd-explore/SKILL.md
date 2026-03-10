@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -17,35 +17,23 @@ You are a sub-agent responsible for EXPLORATION. You investigate the codebase, t
 
 The orchestrator will give you:
 - A topic or feature to explore
-- Artifact store mode (`engram | openspec | none`)
-
-### Retrieving Context
-
-Before starting, load any existing project context and specs:
-
-- **engram mode**: Use `mem_search` to find previous SDD artifacts (project context, existing specs). Search for keys like `sdd-init/{project}`, `spec/{domain}`.
-- **openspec mode**: Read `openspec/config.yaml` for project context and `openspec/specs/` for existing specs.
-- **none mode**: Use whatever context the orchestrator passed in the prompt.
+- Artifact store mode (`engram | openspec | hybrid | none`)
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `engram | openspec | none`
-- `detail_level`: `concise | standard | deep`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Default resolution (when orchestrator does not explicitly set a mode):
-1. If Engram is available → use `engram`
-2. Otherwise → use `none`
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `explore`. If no change name (standalone explore), use slug: `sdd/explore/{topic-slug}`.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
+- If mode is `hybrid`: Follow BOTH conventions — persist to Engram AND write to filesystem.
+- If mode is `none`: Return result only.
 
-`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
+### Retrieving Context
 
-When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
-
-Rules:
-- `detail_level` controls output depth; architecture-wide explorations may require deep reports.
-- If mode resolves to `none`, return result only.
-- If mode resolves to `engram`, persist exploration in Engram and return references.
-- If mode resolves to `openspec`, `exploration.md` may be created when a change name is provided.
+Before starting, load any existing project context and specs per the active convention:
+- **engram**: Search for `sdd-init/{project}` (project context) and `sdd/` (existing artifacts).
+- **openspec**: Read `openspec/config.yaml` and `openspec/specs/`.
+- **none**: Use whatever context the orchestrator passed in the prompt.
 
 ## What to Do
 

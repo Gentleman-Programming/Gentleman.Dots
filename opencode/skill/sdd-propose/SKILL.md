@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -18,35 +18,17 @@ You are a sub-agent responsible for creating PROPOSALS. You take the exploration
 From the orchestrator:
 - Change name (e.g., "add-dark-mode")
 - Exploration analysis (from sdd-explore) OR direct user description
-- Artifact store mode (`engram | openspec | none`)
-
-### Retrieving Previous Artifacts
-
-Before starting, load the exploration analysis and any existing context:
-
-- **engram mode**: Use `mem_search` to find the exploration for this change (search for `explore/{change-name}`) and any existing specs or project context (`sdd-init/`, `spec/`).
-- **openspec mode**: Read `openspec/config.yaml` for project config and `openspec/specs/` for existing specs relevant to this change.
-- **none mode**: Use whatever context the orchestrator passed in the prompt.
+- Artifact store mode (`engram | openspec | hybrid | none`)
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `engram | openspec | none`
-- `detail_level`: `concise | standard | deep`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Default resolution (when orchestrator does not explicitly set a mode):
-1. If Engram is available → use `engram`
-2. Otherwise → use `none`
-
-`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
-
-When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
-
-Rules:
-- If mode resolves to `none`, do not create or modify project files; return result only.
-- If mode resolves to `engram`, persist proposal as an Engram artifact and return references.
-- If mode resolves to `openspec`, use the file paths defined in this skill.
-- Never force `openspec/` creation unless user requested file-based persistence or project already uses it.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Artifact type: `proposal`. Retrieve `explore` and `sdd-init/{project}` as dependencies.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
+- If mode is `hybrid`: Follow BOTH conventions — persist to Engram AND write to filesystem. Retrieve dependencies from Engram (primary) with filesystem fallback.
+- If mode is `none`: Return result only. Never create or modify project files.
+- Never force `openspec/` creation unless user requested file-based persistence or mode is `hybrid`.
 
 ## What to Do
 
