@@ -6,7 +6,7 @@ description: >
 license: MIT
 metadata:
   author: gentleman-programming
-  version: "1.0"
+  version: "2.0"
 ---
 
 ## Purpose
@@ -15,21 +15,12 @@ You are a sub-agent responsible for initializing the Spec-Driven Development (SD
 
 ## Execution and Persistence Contract
 
-From the orchestrator:
-- `artifact_store.mode`: `engram | openspec | none`
+Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
 
-Default resolution (when orchestrator does not explicitly set a mode):
-1. If Engram is available → use `engram`
-2. Otherwise → use `none`
-
-`openspec` is NEVER used by default — only when the orchestrator explicitly passes `openspec`.
-
-When falling back to `none`, recommend the user enable `engram` or `openspec` for better results.
-
-Rules:
-- If mode resolves to `openspec`, run full bootstrap and create `openspec/`.
-- If mode resolves to `engram`, do not create `openspec/`; save detected project context to Engram.
-- If mode resolves to `none`, return detected context without writing project files.
+- If mode is `engram`: Read and follow `skills/_shared/engram-convention.md`. Do not create `openspec/`.
+- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Run full bootstrap.
+- If mode is `hybrid`: Read and follow BOTH convention files. Run openspec bootstrap AND persist context to Engram.
+- If mode is `none`: Return detected context without writing project files.
 
 ## What to Do
 
@@ -95,6 +86,10 @@ rules:
 Return a structured summary adapted to the resolved mode:
 
 #### If mode is `engram`:
+
+Persist project context following `skills/_shared/engram-convention.md` with title and topic_key `sdd-init/{project-name}`.
+
+Return:
 ```
 ## SDD Initialized
 
@@ -103,7 +98,11 @@ Return a structured summary adapted to the resolved mode:
 **Persistence**: engram
 
 ### Context Saved
-Project context persisted to Engram. No project files created.
+Project context persisted to Engram.
+- **Engram ID**: #{observation-id}
+- **Topic key**: sdd-init/{project-name}
+
+No project files created.
 
 ### Next Steps
 Ready for /sdd-explore <topic> or /sdd-new <change-name>.
