@@ -590,6 +590,14 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
+	// Engram (not interactive - brew/go install don't need password)
+	m.Steps = append(m.Steps, InstallStep{
+		ID:          "engram",
+		Name:        "Install Engram",
+		Description: "SDD memory backend",
+		Status:      StatusPending,
+	})
+
 	// Neovim (not interactive - brew doesn't need password)
 	if m.Choices.InstallNvim {
 		m.Steps = append(m.Steps, InstallStep{

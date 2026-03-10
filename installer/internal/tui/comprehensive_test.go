@@ -272,7 +272,7 @@ func TestSetupInstallStepsMinimal(t *testing.T) {
 	m.SetupInstallSteps()
 
 	// setshell step runs interactively to change the default shell with chsh
-	expectedSteps := []string{"clone", "shell", "setshell", "cleanup"}
+	expectedSteps := []string{"clone", "shell", "engram", "setshell", "cleanup"}
 	if len(m.Steps) != len(expectedSteps) {
 		t.Errorf("Expected %d steps, got %d", len(expectedSteps), len(m.Steps))
 		for _, s := range m.Steps {
@@ -397,7 +397,7 @@ func TestSetupInstallStepsFullInstall(t *testing.T) {
 	m.SetupInstallSteps()
 
 	// setshell step runs interactively to change the default shell with chsh
-	expectedIDs := []string{"backup", "clone", "homebrew", "xcode", "terminal", "font", "shell", "wm", "nvim", "setshell", "cleanup"}
+	expectedIDs := []string{"backup", "clone", "homebrew", "xcode", "terminal", "font", "shell", "wm", "engram", "nvim", "setshell", "cleanup"}
 	if len(m.Steps) != len(expectedIDs) {
 		t.Errorf("Expected %d steps, got %d", len(expectedIDs), len(m.Steps))
 	}

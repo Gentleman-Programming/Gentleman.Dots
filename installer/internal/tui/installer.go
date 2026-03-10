@@ -63,6 +63,8 @@ func executeStep(stepID string, m *Model) error {
 		return stepInstallShell(m)
 	case "wm":
 		return stepInstallWM(m)
+	case "engram":
+		return stepInstallEngram(m)
 	case "nvim":
 		return stepInstallNvim(m)
 	case "cleanup":
@@ -968,6 +970,57 @@ func stepInstallWM(m *Model) error {
 		SendLog(stepID, "✓ Zellij configured")
 	}
 
+	return nil
+}
+
+func stepInstallEngram(m *Model) error {
+	stepID := "engram"
+
+	if system.CommandExists("engram") {
+		SendLog(stepID, "Engram already installed, skipping...")
+		return nil
+	}
+
+	if m.SystemInfo.OS == system.OSMac || m.SystemInfo.HasBrew {
+		SendLog(stepID, "Adding Gentleman-Programming tap...")
+		result := system.RunBrewWithLogs("tap Gentleman-Programming/homebrew-tap", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("engram", "Install Engram",
+				"Failed to add Gentleman-Programming Homebrew tap",
+				result.Error)
+		}
+
+		SendLog(stepID, "Installing Engram via Homebrew...")
+		result = system.RunBrewWithLogs("install engram", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("engram", "Install Engram",
+				"Failed to install Engram via Homebrew",
+				result.Error)
+		}
+	} else {
+		// Linux without Homebrew: use go install
+		if !system.CommandExists("go") {
+			SendLog(stepID, "⚠️  Go is not installed — cannot install Engram")
+			SendLog(stepID, "Install Go from https://go.dev/dl/ and run: go install github.com/Gentleman-Programming/engram/cmd/engram@latest")
+			return nil
+		}
+
+		SendLog(stepID, "Installing Engram via go install...")
+		result := system.RunWithLogs("env CGO_ENABLED=0 go install github.com/Gentleman-Programming/engram/cmd/engram@latest", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		if result.Error != nil {
+			return wrapStepError("engram", "Install Engram",
+				"Failed to install Engram via go install",
+				result.Error)
+		}
+	}
+
+	SendLog(stepID, "✓ Engram installed successfully")
 	return nil
 }
 
