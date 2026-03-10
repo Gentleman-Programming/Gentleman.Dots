@@ -254,7 +254,12 @@ func TestBackupScreenGolden(t *testing.T) {
 	m.Width = 80
 	m.Height = 24
 	m.Screen = ScreenBackupConfirm
-	m.ExistingConfigs = []string{".config/nvim", ".zshrc", ".tmux.conf"}
+	m.ExistingConfigs = []string{"nvim: /home/user/.config/nvim", "zsh: /home/user/.zshrc", "tmux: /home/user/.tmux.conf"}
+	m.Choices = UserChoices{
+		InstallNvim: true,
+		Shell:       "zsh",
+		WindowMgr:   "tmux",
+	}
 
 	tm := teatest.NewTestModel(t, m,
 		teatest.WithInitialTermSize(80, 24),
@@ -741,8 +746,8 @@ func TestBackupFlowE2E(t *testing.T) {
 		tm.Send(tea.KeyMsg{Type: tea.KeyEnter})
 		time.Sleep(50 * time.Millisecond)
 
-		// Terminal Select -> None (skip terminal)
-		// Navigate to "None" option (usually last)
+		// Terminal Select -> Skip this step (skip terminal)
+		// Navigate to "Skip this step" option (after separator)
 		for i := 0; i < 5; i++ {
 			tm.Send(tea.KeyMsg{Type: tea.KeyDown})
 			time.Sleep(20 * time.Millisecond)
@@ -750,7 +755,7 @@ func TestBackupFlowE2E(t *testing.T) {
 		tm.Send(tea.KeyMsg{Type: tea.KeyEnter})
 		time.Sleep(50 * time.Millisecond)
 
-		// Should now be at Shell Select (skipped font because terminal=none)
+		// Should now be at Shell Select (skipped font because terminal was skipped)
 		teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
 			return bytes.Contains(bts, []byte("Shell")) ||
 				bytes.Contains(bts, []byte("Fish")) ||

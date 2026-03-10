@@ -346,6 +346,9 @@ func ConfigPaths() map[string]string {
 		"kitty":     home + "/.config/kitty",
 		"ghostty":   home + "/.config/ghostty",
 		"starship":  home + "/.config/starship.toml",
+		"opencode":  home + "/.config/opencode",
+		"kilocode":  home + "/.config/kilocode",
+		"continue":  home + "/.continue",
 	}
 }
 

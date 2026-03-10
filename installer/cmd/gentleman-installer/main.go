@@ -26,6 +26,7 @@ type cliFlags struct {
 	nvim           bool
 	font           bool
 	backup         bool
+	ai             string
 }
 
 func parseFlags() *cliFlags {
@@ -45,6 +46,7 @@ func parseFlags() *cliFlags {
 	flag.BoolVar(&flags.nvim, "nvim", false, "Install Neovim configuration")
 	flag.BoolVar(&flags.font, "font", false, "Install Nerd Font")
 	flag.BoolVar(&flags.backup, "backup", true, "Backup existing configs (default: true)")
+	flag.StringVar(&flags.ai, "ai", "", "AI assistants (comma-separated): opencode,kilocode,continue,aider")
 
 	flag.Parse()
 	return flags
@@ -130,6 +132,20 @@ func runNonInteractive(flags *cliFlags) error {
 		wm = "none"
 	}
 
+	// Parse AI assistants
+	var aiAssistants []string
+	if flags.ai != "" {
+		validAI := map[string]bool{"opencode": true, "kilocode": true, "continue": true, "aider": true}
+		assistants := strings.Split(flags.ai, ",")
+		for _, ai := range assistants {
+			ai = strings.TrimSpace(strings.ToLower(ai))
+			if !validAI[ai] {
+				return fmt.Errorf("invalid AI assistant: %s (valid: opencode, kilocode, continue, aider)", ai)
+			}
+			aiAssistants = append(aiAssistants, ai)
+		}
+	}
+
 	// Create choices
 	choices := tui.UserChoices{
 		Terminal:     terminal,
@@ -138,6 +154,7 @@ func runNonInteractive(flags *cliFlags) error {
 		InstallNvim:  flags.nvim,
 		InstallFont:  flags.font,
 		CreateBackup: flags.backup,
+		AIAssistants: aiAssistants,
 	}
 
 	fmt.Println("🚀 Gentleman.Dots Non-Interactive Installer")
@@ -148,6 +165,11 @@ func runNonInteractive(flags *cliFlags) error {
 	fmt.Printf("  Neovim:      %v\n", choices.InstallNvim)
 	fmt.Printf("  Font:        %v\n", choices.InstallFont)
 	fmt.Printf("  Backup:      %v\n", choices.CreateBackup)
+	if len(choices.AIAssistants) > 0 {
+		fmt.Printf("  AI Tools:    %s\n", strings.Join(choices.AIAssistants, ", "))
+	} else {
+		fmt.Printf("  AI Tools:    none\n")
+	}
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println()
 
@@ -203,6 +225,7 @@ Non-Interactive Options:
   --nvim               Install Neovim configuration
   --font               Install Nerd Font
   --backup=false       Disable config backup (default: true)
+  --ai=<list>          AI assistants (comma-separated): opencode,kilocode,continue,aider
 
 Examples:
   # Interactive TUI
@@ -210,6 +233,12 @@ Examples:
 
   # Non-interactive with Fish + Zellij + Neovim
   gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
+
+  # Non-interactive with OpenCode AI assistant
+  gentleman.dots --non-interactive --shell=zsh --nvim --ai=opencode
+
+  # Multiple AI assistants
+  gentleman.dots --non-interactive --shell=fish --ai=opencode,continue
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

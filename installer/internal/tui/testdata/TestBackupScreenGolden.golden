@@ -1,11 +1,18 @@
 [?25l[?2004h]2;Gentleman.Dots Installer                                                            [K
   ⚠️  Existing Configs Detected                             [K
                                                             [K
-  The following configs will be overwritten:                [K
+  📦 Installation Summary:                                  [K
                                                             [K
-    ⚠️  .config/nvim                                        [K
-    ⚠️  .zshrc                                              [K
-    ⚠️  .tmux.conf                                          [K
+    ✓ Shell: Zsh                                            [K
+    ✓ Multiplexer: Tmux                                     [K
+    ✓ Neovim: LazyVim configuration                         [K
+    ✗ AI Assistants (none selected)                         [K
+                                                            [K
+  ⚠️  The following configs will be overwritten:            [K
+                                                            [K
+    ⚠️  nvim: /home/user/.config/nvim                       [K
+    ⚠️  zsh: /home/user/.zshrc                              [K
+    ⚠️  tmux: /home/user/.tmux.conf                         [K
                                                             [K
   Creating a backup allows you to restore later if needed.  [K
                                                             [K
@@ -14,4 +21,4 @@
         ❌ Cancel                                           [K
                                                             [K
                                                             [K
-  ↑/k up • ↓/j down • [Enter] select • [Esc] back           [K[16A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l
+  ↑/k up • ↓/j down • [Enter] select • [Esc] back           [K[23A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

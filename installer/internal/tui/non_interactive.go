@@ -107,6 +107,11 @@ func buildStepsForChoices(m *Model) []InstallStep {
 		steps = append(steps, InstallStep{ID: "nvim", Name: "Install Neovim configuration"})
 	}
 
+	// AI Assistants
+	if len(m.Choices.AIAssistants) > 0 {
+		steps = append(steps, InstallStep{ID: "ai", Name: fmt.Sprintf("Install %d AI assistant(s)", len(m.Choices.AIAssistants))})
+	}
+
 	// Set shell as default
 	steps = append(steps, InstallStep{ID: "setshell", Name: "Set shell as default"})
 
