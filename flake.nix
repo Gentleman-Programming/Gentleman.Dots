@@ -56,6 +56,7 @@
             ./oil-scripts.nix  # Oil.nvim scripts configuration
             ./opencode.nix  # OpenCode AI assistant configuration
             ./claude.nix  # Claude Code CLI configuration
+            ./engram.nix  # Engram memory layer for AI agents
             ./yabai.nix  # Yabai window manager configuration
             ./skhd.nix  # Skhd hotkey daemon configuration
             # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
