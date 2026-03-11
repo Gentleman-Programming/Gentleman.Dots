@@ -1156,10 +1156,14 @@ func stepInstallNvim(m *Model) error {
 	openCodeDir := filepath.Join(homeDir, ".config/opencode")
 	system.EnsureDir(openCodeDir)
 	system.EnsureDir(filepath.Join(openCodeDir, "themes"))
-	system.EnsureDir(filepath.Join(openCodeDir, "skill"))
+	// Remove legacy skill/ directory if it exists (renamed to skills/)
+	if err := os.RemoveAll(filepath.Join(homeDir, ".config", "opencode", "skill")); err != nil {
+		SendLog(stepID, "Warning: could not remove legacy opencode/skill dir: "+err.Error())
+	}
+	system.EnsureDir(filepath.Join(openCodeDir, "skills"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
-	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skill"), filepath.Join(openCodeDir, "skill"))
+	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skills"), filepath.Join(openCodeDir, "skills"))
 	SendLog(stepID, "🧠 Copied OpenCode skills")
 
 	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
