@@ -157,7 +157,10 @@ EOF
 
 # Sync skills to OpenCode config directory
 sync_opencode() {
-    local opencode_dir="$HOME/.config/opencode/skill"
+    local opencode_dir="$HOME/.config/opencode/skills"
+
+    # Remove legacy skill/ directory if it exists (renamed to skills/)
+    rm -rf "$HOME/.config/opencode/skill"
 
     log_info "Syncing skills to OpenCode config..."
 

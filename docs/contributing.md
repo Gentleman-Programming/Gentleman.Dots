@@ -86,7 +86,7 @@ The repository uses a skills system to provide context to AI assistants (Claude,
 ./skills/setup.sh --copilot     # .github/copilot-instructions.md
 ./skills/setup.sh --codex       # CODEX.md
 ./skills/setup.sh --sync-claude # ~/.claude/skills/
-./skills/setup.sh --sync-opencode # ~/.config/opencode/skill/
+./skills/setup.sh --sync-opencode # ~/.config/opencode/skills/
 ```
 
 ### Skill Types
