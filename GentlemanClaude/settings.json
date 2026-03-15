@@ -1,33 +1,21 @@
 {
-  "outputStyle": "Gentleman",
   "attribution": {
     "commit": "",
     "pr": ""
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 0
+  "enabledPlugins": {
+    "engram@engram": true
   },
+  "extraKnownMarketplaces": {
+    "engram": {
+      "source": {
+        "repo": "Gentleman-Programming/engram",
+        "source": "github"
+      }
+    }
+  },
+  "outputStyle": "Gentleman",
   "permissions": {
-    "deny": [
-      "Read(.env)",
-      "Read(.env.*)",
-      "Read(.env.local)",
-      "Read(.env.production)",
-      "Read(.env.development)",
-      "Read(**/.env)",
-      "Read(**/.env.*)",
-      "Read(**/secrets/**)",
-      "Read(**/credentials.json)"
-    ],
-    "ask": [
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(git push --force:*)",
-      "Bash(git rebase:*)",
-      "Bash(git reset --hard:*)"
-    ],
     "allow": [
       "Read",
       "Edit",
@@ -97,7 +85,41 @@
       "Bash(nx:*)",
       "Bash(turbo:*)",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "mcp__plugin_engram_engram__mem_save",
+      "mcp__plugin_engram_engram__mem_search",
+      "mcp__plugin_engram_engram__mem_context",
+      "mcp__plugin_engram_engram__mem_save_prompt",
+      "mcp__plugin_engram_engram__mem_session_start",
+      "mcp__plugin_engram_engram__mem_session_end",
+      "mcp__plugin_engram_engram__mem_session_summary",
+      "mcp__plugin_engram_engram__mem_timeline",
+      "mcp__plugin_engram_engram__mem_get_observation",
+      "mcp__plugin_engram_engram__mem_update",
+      "mcp__plugin_engram_engram__mem_delete",
+      "mcp__plugin_engram_engram__mem_stats",
+      "mcp__plugin_engram_engram__mem_suggest_topic_key",
+      "mcp__plugin_engram_engram__mem_capture_passive"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git push --force:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)"
+    ],
+    "defaultMode": "bypassPermissions",
+    "deny": [
+      "rm -rf /",
+      "sudo rm -rf /",
+      ".env"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "statusLine": {
+    "command": "~/.claude/statusline.sh",
+    "padding": 0,
+    "type": "command"
+  },
+  "syntaxHighlightingDisabled": true
 }
