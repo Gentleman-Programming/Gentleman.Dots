@@ -73,15 +73,18 @@
       cp -f "$CLAUDE_SRC/mcp-servers.template.json" "$CLAUDE_DST/"
 
       if [ -f "$CLAUDE_JSON" ]; then
-        # Merge only context7 into existing ~/.claude.json (safe - no tokens needed)
-        ${pkgs.jq}/bin/jq --argjson ctx7 '{"context7":{"type":"http","url":"https://mcp.context7.com/mcp"}}' \
-          '.mcpServers = (.mcpServers // {}) + $ctx7' "$CLAUDE_JSON" > "$CLAUDE_JSON.tmp"
+        # Merge context7, engram, and notion into existing ~/.claude.json (safe - no tokens needed)
+        ${pkgs.jq}/bin/jq --argjson servers '{
+          "context7":{"type":"http","url":"https://mcp.context7.com/mcp"},
+          "engram":{"type":"stdio","command":"engram","args":["mcp"]},
+          "notion":{"type":"http","url":"https://mcp.notion.com/mcp"}
+        }' '.mcpServers = (.mcpServers // {}) + $servers' "$CLAUDE_JSON" > "$CLAUDE_JSON.tmp"
         mv "$CLAUDE_JSON.tmp" "$CLAUDE_JSON"
-        echo "📡 Merged context7 MCP server into ~/.claude.json"
+        echo "📡 Merged MCP servers (context7, engram, notion) into ~/.claude.json"
       else
-        # Create new ~/.claude.json with context7
-        echo '{"mcpServers":{"context7":{"type":"http","url":"https://mcp.context7.com/mcp"}}}' > "$CLAUDE_JSON"
-        echo "📡 Created ~/.claude.json with context7 MCP server"
+        # Create new ~/.claude.json with all MCP servers
+        echo '{"mcpServers":{"context7":{"type":"http","url":"https://mcp.context7.com/mcp"},"engram":{"type":"stdio","command":"engram","args":["mcp"]},"notion":{"type":"http","url":"https://mcp.notion.com/mcp"}}}' > "$CLAUDE_JSON"
+        echo "📡 Created ~/.claude.json with MCP servers (context7, engram, notion)"
       fi
       echo "💡 Other MCP servers (Jira, Figma) need tokens - see ~/.claude/mcp-servers.template.json"
     fi

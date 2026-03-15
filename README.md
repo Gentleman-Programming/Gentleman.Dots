@@ -40,10 +40,11 @@ This repository provides a complete, declarative development environment configu
 
 ### 🤖 AI Integrations
 
-- **Claude Code CLI**: Integrated AI coding assistant
-- **OpenCode**: AI assistant integration
+- **Claude Code CLI**: Primary AI coding assistant with 35 skills, SDD orchestrator workflow, Engram persistent memory, and custom Gentleman persona
+- **OpenCode**: Multi-model AI assistant with 12 agents (gentleman, sdd-orchestrator, dangerous-gentleman + 9 SDD sub-agents), same 35 skills, multi-provider support
+- **Engram**: Persistent memory system for cross-session context and SDD artifact storage
+- **MCP Servers**: Context7 (documentation), Notion (knowledge management)
 - **Gemini CLI**: Google's AI assistant (optional)
-- **Multiple AI providers**: Support for various AI coding assistants
 
 ### 🔧 System Utilities
 
@@ -93,7 +94,7 @@ The flake automatically handles system-specific configurations, installs all dep
 | **Terminals**       | Ghostty, WezTerm, Tmux, Zellij (optional) |
 | **Editor**          | Neovim (LazyVim) + Zed                    |
 | **Languages**       | Node.js, Rust, Go, with Volta management  |
-| **AI Tools**        | Claude Code, OpenCode, Gemini (opt.), multiple providers |
+| **AI Tools**        | Claude Code, OpenCode (12 agents), Engram, Context7, Notion MCP |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
 | **Window Manager**  | Yabai + Skhd, SketchyBar, Aerospace (opt) |
@@ -132,9 +133,10 @@ The flake automatically handles system-specific configurations, installs all dep
 │
 ├── # ─── AI Tools ───
 ├── claude.nix             # Claude Code CLI configuration
-├── claude/                # Claude settings, skills, themes, statusline
+├── claude/                # Claude settings, 35 skills, themes, statusline, output styles
 ├── opencode.nix           # OpenCode AI configuration
-├── opencode/              # OpenCode themes and skills
+├── opencode/              # OpenCode config, AGENTS.md, 35 skills, themes
+├── engram.nix             # Engram persistent memory configuration
 ├── gemini.nix             # Gemini CLI configuration (optional)
 │
 ├── # ─── Window Management (macOS) ───
@@ -551,6 +553,7 @@ Configurations are automatically deployed to:
 | **Television**    | `~/.config/television/`                  |
 | **Claude Code**   | `~/.claude/`                             |
 | **OpenCode**      | `~/.config/opencode/`                    |
+| **Engram**        | `~/go/bin/engram` (managed by `engram.nix`) |
 | **Yabai**         | `~/.config/yabai/`                       |
 | **Skhd**          | `~/.config/skhd/`                        |
 | **SketchyBar**    | `~/.config/sketchybar/`                  |
@@ -567,10 +570,11 @@ Configurations are automatically deployed to:
 
 ### 🤖 AI Development Features
 
-- **Claude Code Integration**: Native AI coding assistant
-- **Multiple AI Providers**: Support for various AI services
-- **Context-Aware**: AI tools integrated with your development workflow
-- **Productivity Focused**: AI assistants configured for maximum productivity
+- **Claude Code Integration**: Native AI coding assistant with 35 skills and SDD orchestrator
+- **OpenCode Multi-Agent**: 12 agents spanning multiple AI providers for SDD workflow
+- **Engram Memory**: Persistent cross-session memory for context and artifact storage
+- **MCP Servers**: Context7 for live documentation, Notion for knowledge management
+- **SDD Workflow**: Full Spec-Driven Development pipeline (explore → propose → spec → design → tasks → apply → verify → archive)
 
 ### 🎨 Theming & Customization
 
@@ -720,39 +724,102 @@ This configuration includes a complete Claude Code CLI setup with custom skills,
 
 | Feature | Description |
 |---------|-------------|
-| **CLAUDE.md** | Custom system instructions and personality |
-| **Skills** | Framework-specific coding patterns (React 19, Next.js 15, etc.) |
+| **CLAUDE.md** | Custom system instructions and Gentleman persona |
+| **Skills** | 35 skills covering SDD workflow, frameworks, testing, and project patterns |
 | **Output Styles** | Custom response formatting (Gentleman style) |
 | **Themes** | Custom TweakCC theme for terminal |
 | **Statusline** | Custom status bar script |
-| **MCP Servers** | Template for Model Context Protocol servers |
+| **MCP Servers** | context7 (docs), engram (memory), notion (knowledge) |
 
 ### Included Skills
 
-The following skills auto-load based on context:
+Both Claude Code and OpenCode share the **exact same 35 skills**, organized by category:
 
-| Skill | Trigger |
-|-------|---------|
-| `react-19` | React components, hooks, JSX |
-| `nextjs-15` | App Router, Server Components |
-| `typescript` | Types, interfaces, generics |
-| `tailwind-4` | Tailwind CSS styling |
-| `zod-4` | Schema validation |
-| `zustand-5` | State management |
-| `ai-sdk-5` | Vercel AI SDK |
-| `django-drf` | Django REST Framework |
-| `playwright` | E2E testing |
-| `pytest` | Python testing |
-| `sdd-*` | Agent-team SDD workflow (`init`, `explore`, `propose`, `spec`, `design`, `tasks`, `apply`, `verify`, `archive`) |
-
-### OpenCode Configuration
-
-OpenCode also includes similar skills plus:
+**SDD Skills (9)** — Spec-Driven Development workflow:
 
 | Skill | Description |
 |-------|-------------|
-| `jira-epic` | Create Jira epics following standard format |
-| `jira-task` | Create Jira tasks following standard format |
+| `sdd-init` | Initialize SDD context in any project |
+| `sdd-explore` | Explore and investigate ideas before committing |
+| `sdd-propose` | Create a change proposal with intent and scope |
+| `sdd-spec` | Write specifications with requirements and scenarios |
+| `sdd-design` | Create technical design document |
+| `sdd-tasks` | Break down a change into implementation tasks |
+| `sdd-apply` | Implement tasks following specs and design |
+| `sdd-verify` | Validate implementation matches specs |
+| `sdd-archive` | Sync delta specs and archive completed changes |
+
+**Framework Skills (10)**:
+
+| Skill | Trigger |
+|-------|---------|
+| `react-19` | React components, hooks, JSX (React Compiler) |
+| `nextjs-15` | App Router, Server Components, Server Actions |
+| `typescript` | Types, interfaces, generics (strict mode) |
+| `tailwind-4` | Tailwind CSS 4 styling patterns |
+| `zod-4` | Zod 4 schema validation |
+| `zustand-5` | Zustand 5 state management |
+| `ai-sdk-5` | Vercel AI SDK 5 chat features |
+| `django-drf` | Django REST Framework ViewSets, Serializers |
+| `dotnet` | .NET 9 / ASP.NET Core Minimal APIs |
+| `scope-rule-architect-angular` | Angular 20+ Scope Rule architecture |
+
+**Testing Skills (3)**:
+
+| Skill | Trigger |
+|-------|---------|
+| `playwright` | E2E tests, Page Objects, selectors |
+| `pytest` | Python tests, fixtures, mocking |
+| `go-testing` | Go tests, Bubbletea TUI testing |
+
+**Workflow Skills (5)**:
+
+| Skill | Trigger |
+|-------|---------|
+| `skill-creator` | Creating new AI agent skills |
+| `skill-registry` | Update skill registry for project |
+| `pr-review` | Review GitHub PRs and issues |
+| `technical-review` | Review candidate submissions |
+| `homebrew-release` | Release workflow for Gentleman-Programming projects |
+
+**Project Skills (7)** — Gentleman.Dots specific:
+
+| Skill | Trigger |
+|-------|---------|
+| `gentleman-bubbletea` | Bubbletea TUI patterns in installer |
+| `gentleman-installer` | Installation step patterns |
+| `gentleman-system` | System detection and command execution |
+| `gentleman-trainer` | Vim Trainer RPG system patterns |
+| `gentleman-e2e` | Docker-based E2E testing |
+| `jira-epic` | Create Jira epics (Prowler standard format) |
+| `jira-task` | Create Jira tasks (Prowler standard format) |
+
+**Creative (1)**:
+
+| Skill | Trigger |
+|-------|---------|
+| `stream-deck` | Slide-deck presentations for streams and courses |
+
+### OpenCode Configuration
+
+OpenCode shares all 35 skills with Claude Code and additionally includes:
+
+- **12 agents** defined in `opencode.json`:
+  - `gentleman` — primary coding agent with Gentleman persona (primary)
+  - `sdd-orchestrator` — SDD orchestration with delegation-only behavior (primary)
+  - `dangerous-gentleman` — all permissions enabled, for complex automation
+  - 9 hidden SDD sub-agents, each using a different model:
+    - `sdd-apply` → claude-sonnet-4-6
+    - `sdd-archive` → gpt-5.4
+    - `sdd-design` → claude-opus-4-6
+    - `sdd-explore` → claude-sonnet-4-6
+    - `sdd-init` → claude-opus-4-6
+    - `sdd-propose` → gemini-3.1-pro-preview
+    - `sdd-spec` → gemini-3.1-pro-preview
+    - `sdd-tasks` → gemini-3.1-pro-preview
+    - `sdd-verify` → gpt-5.4
+- **AGENTS.md** — project-level agent instructions referenced by all agents via `{file:./AGENTS.md}`
+- **MCP Servers**: context7 (documentation), engram (persistent memory), notion (knowledge management)
 
 ---
 

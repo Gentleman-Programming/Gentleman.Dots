@@ -120,10 +120,16 @@
       echo "⚠️ Themes source not found: $OPENCODE_SRC/themes"
     fi
 
+    # Copy AGENTS.md (referenced by agents via {file:./AGENTS.md})
+    if [ -f "$OPENCODE_SRC/AGENTS.md" ]; then
+      cp -f "$OPENCODE_SRC/AGENTS.md" "$OPENCODE_DST/" 2>/dev/null || true
+      echo "📋 Copied AGENTS.md to $OPENCODE_DST"
+    fi
+
     # Copy skills
-    if [ -d "$OPENCODE_SRC/skill" ]; then
-      cp -rf "$OPENCODE_SRC/skill" "$OPENCODE_DST/" 2>/dev/null || true
-      echo "🧠 Copied OpenCode skills to $OPENCODE_DST/skill"
+    if [ -d "$OPENCODE_SRC/skills" ]; then
+      cp -rf "$OPENCODE_SRC/skills" "$OPENCODE_DST/" 2>/dev/null || true
+      echo "🧠 Copied OpenCode skills to $OPENCODE_DST/skills"
     fi
 
     # Check if OpenCode is already installed and working
