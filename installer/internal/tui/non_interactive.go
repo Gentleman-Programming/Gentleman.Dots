@@ -68,16 +68,16 @@ func buildStepsForChoices(m *Model) []InstallStep {
 		steps = append(steps, InstallStep{ID: "backup", Name: "Backup existing configs"})
 	}
 
-	// Clone repo
+	// Dependencies first (must run before clone so git is available on fresh Linux installs)
+	steps = append(steps, InstallStep{ID: "deps", Name: "Install dependencies"})
+
+	// Clone repo (after deps so git is available)
 	steps = append(steps, InstallStep{ID: "clone", Name: "Clone Gentleman.Dots repository"})
 
 	// Homebrew (for Mac and Debian/Ubuntu Linux - NOT Fedora/Arch which use native package managers)
 	if m.SystemInfo.OS == system.OSMac || m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux {
 		steps = append(steps, InstallStep{ID: "homebrew", Name: "Install/Update Homebrew"})
 	}
-
-	// Dependencies
-	steps = append(steps, InstallStep{ID: "deps", Name: "Install dependencies"})
 
 	// Xcode (Mac only)
 	if m.SystemInfo.OS == system.OSMac {

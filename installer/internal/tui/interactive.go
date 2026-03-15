@@ -149,7 +149,7 @@ echo ""
 sudo apt-get update
 echo ""
 echo "📦 Installing base dependencies..."
-sudo apt-get install -y build-essential curl file git unzip fontconfig
+sudo apt-get install -y build-essential curl file git unzip fontconfig procps
 echo ""
 echo "✅ Dependencies installed successfully!"
 echo ""

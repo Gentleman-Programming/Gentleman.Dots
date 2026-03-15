@@ -503,28 +503,9 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Always clone repo first (not interactive - just git clone)
-	m.Steps = append(m.Steps, InstallStep{
-		ID:          "clone",
-		Name:        "Clone Repository",
-		Description: "Downloading Gentleman.Dots",
-		Status:      StatusPending,
-	})
-
-	// Homebrew (interactive - first install needs password)
-	// Skip for Termux - it uses pkg instead
-	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux {
-		m.Steps = append(m.Steps, InstallStep{
-			ID:          "homebrew",
-			Name:        "Install Homebrew",
-			Description: "Package manager",
-			Status:      StatusPending,
-			Interactive: true,
-		})
-	}
-
 	// Dependencies based on OS
 	// Check both Choices.OS and SystemInfo for Termux detection (redundancy)
+	// Must run BEFORE clone and homebrew on Linux so git is available for clone
 	isTermux := m.Choices.OS == "termux" || m.SystemInfo.IsTermux
 	if m.Choices.OS == "linux" && !isTermux {
 		m.Steps = append(m.Steps, InstallStep{
@@ -548,6 +529,26 @@ func (m *Model) SetupInstallSteps() {
 			Name:        "Install Xcode CLI",
 			Description: "Developer tools",
 			Status:      StatusPending,
+		})
+	}
+
+	// Clone repo (after deps so git is available on fresh Linux installs)
+	m.Steps = append(m.Steps, InstallStep{
+		ID:          "clone",
+		Name:        "Clone Repository",
+		Description: "Downloading Gentleman.Dots",
+		Status:      StatusPending,
+	})
+
+	// Homebrew (interactive - first install needs password)
+	// Skip for Termux - it uses pkg instead
+	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux {
+		m.Steps = append(m.Steps, InstallStep{
+			ID:          "homebrew",
+			Name:        "Install Homebrew",
+			Description: "Package manager",
+			Status:      StatusPending,
+			Interactive: true,
 		})
 	}
 

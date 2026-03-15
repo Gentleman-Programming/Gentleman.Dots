@@ -257,7 +257,7 @@ func stepInstallDeps(m *Model) error {
 			"Failed to update apt package list",
 			result.Error)
 	}
-	result = system.RunSudo("apt-get install -y build-essential curl file git unzip fontconfig", nil)
+	result = system.RunSudo("apt-get install -y build-essential curl file git unzip fontconfig procps", nil)
 	if result.Error != nil {
 		return wrapStepError("deps", "Install Dependencies",
 			"Failed to install base dependencies on Debian/Ubuntu",
