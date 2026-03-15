@@ -328,9 +328,9 @@ brew install powerlevel10k
 ```bash
 brew install tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-mkdir -p ~/.tmux
-cp -r GentlemanTmux/.tmux/* ~/.tmux/
-cp GentlemanTmux/.tmux.conf ~/
+mkdir -p ~/.tmux/plugins
+cp -r GentlemanTmux/plugins/* ~/.tmux/plugins/
+cp GentlemanTmux/tmux.conf ~/.tmux.conf
 tmux new-session -d -s plugin-installation 'source ~/.tmux.conf; tmux run-shell ~/.tmux/plugins/tpm/bin/install_plugins'
 tmux kill-session -t plugin-installation
 ```
