@@ -36,51 +36,21 @@ gh pr view {number} --json title,body,files,additions,deletions,author
 gh pr diff {number} --patch
 ```
 
-### Phase 2: Load Project Skills (MANDATORY)
-
-Before reviewing ANY code, check if the repo has project-specific skills that define conventions. These are your review criteria — not just generic best practices.
-
-**How to find them:**
-1. Check `AGENTS.md` at the repo root — it lists all available skills and auto-invoke rules
-2. Check `skills/` directory for project-specific skill files
-3. If the repo has an `AGENTS.md` with an Auto-invoke Skills table, read it
-
-**For each PR, load the skills that match the changed files:**
-
-| Files Changed | Skills to Load |
-|---------------|----------------|
-| `api/` (models, views, serializers) | project API skill + `django-drf` |
-| `api/` (tests) | project API test skill + `pytest` |
-| `ui/` (components, pages) | project UI skill + `react-19` + `nextjs-15` + `tailwind-4` |
-| `ui/` (tests) | project UI test skill + `playwright` |
-| `ui/` (schemas) | `zod-4` |
-| `ui/` (stores) | `zustand-5` |
-| Types/interfaces | `typescript` |
-
-**Review against project conventions, not just general quality.** Check:
-- Does the file structure match what the project skill defines?
-- Are naming conventions followed? (serializer names, component placement, test structure)
-- Are the right patterns used? (service layer vs serializer logic, Server Components vs Client)
-- Do tests follow the project's test patterns? (fixtures, assertions, POM for E2E)
-
-If no project skills exist, fall back to generic best practices.
-
-### Phase 3: Read Current Codebase
+### Phase 2: Read Current Codebase
 
 Before reviewing diffs, **always read the current code** to understand context:
 - Main entry points
 - Files being modified
 - Related modules
 
-### Phase 4: Analyze Each PR
+### Phase 3: Analyze Each PR
 
 For each PR, evaluate these factors:
 
 | Factor | What to Check |
 |--------|---------------|
-| **Project Conventions** | Does it follow the project skills? Structure, naming, patterns |
 | **Code Quality** | Clean code, no duplication, proper error handling |
-| **Tests** | Are there tests? Do they follow the project's test patterns? |
+| **Tests** | Are there tests? Do they cover the changes? |
 | **Breaking Changes** | Does it break existing functionality? |
 | **Conflicts** | Will it conflict with other open PRs? |
 | **Commit Hygiene** | Clean history, no test files, proper messages |
@@ -175,60 +145,31 @@ All green?               → MERGE
 - PR written in Spanish → Reply in Spanish
 - PR written in English → Reply in English
 
-### Comment Style: Concise & Human
+### Comment Structure
 
-Write review comments like a senior engineer talking to a colleague — direct, clear, no fluff. NOT like a template.
+```markdown
+Hey {Name}! / ¡Hola {Name}! {Positive feedback about the PR}
 
-**Rules:**
-- Lead with the issues, numbered. No greetings, no "Hey {Name}!".
-- Each issue: **bold the problem** in one phrase, then explain in 1-2 plain sentences. Include the concrete fix inline.
-- End with 1-2 sentences acknowledging what's good. Don't force it — only if something genuinely stood out.
-- No emojis in the review body. No `##` headings. No horizontal rules. Just numbered points and a closing line.
-- No "Solution" sections — the fix goes inline with the issue description.
-- Keep it short. If you can say it in one sentence, don't use two.
+{Brief context if needed}
 
-### Approve Format
+## {Problem Category}
 
-One sentence — what's good, ship it. Optionally a follow-up note.
+{Explanation of the issue with code example}
 
-```
-Clean refactor, all spec requirements covered, 28 tests. Ship it.
+## Solution
+
+```bash
+{Concrete fix}
 ```
 
-```
-Well done. Service layer pattern, anti-enumeration, rate limiting, 32 tests. Synchronous email is fine for MVP.
-```
+---
 
-```
-Solid. Fire-and-forget with proper timeouts, 5 tests. One note: the spec still says single-field payload but code sends {type, data} — code is better, update the spec in a follow-up.
+{Closing - what happens after they fix it}
 ```
 
-### Request Changes Format
-
-```
-Two things to address:
-
-1. **UpdateModelMixin exposes PUT** — you only need PATCH here. Add `http_method_names = ["get", "patch", "head", "options"]` to the ViewSet so PUT isn't accidentally exposed.
-
-2. **partner_id in refresh token** — `get_token()` adds partner_id to the refresh token, and the access inherits from it, so it ends up in both. The design doc says access only. Either move the claim injection to `validate()` on the access token, or update the design doc if you're ok with it being in both.
-
-Everything else looks solid — sign-in guards correctly use 403, is_staff is in the serializer, tests are thorough. Nice work on the service layer separation.
-```
-
-```
-One thing — in partner-kickoff/SKILL.md, the Step 5 heading is sitting between Step 9 and Step 11. Looks like it didn't get renumbered when the workflow was restructured. Move it to the right position or renumber.
-
-The verify skill itself is well-structured — clear verdict rules, good fresh-context pattern.
-```
-
-### Anti-patterns to AVOID
-
-- "Hey John! Thanks for the PR, the analysis is well done" — skip the greeting, get to the point
-- "## Problem Category" / "## Solution" headings — too formal, use numbered list
-- Long code blocks showing the fix — one line inline is enough
-- "Great job! Just a few minor things..." — empty praise before criticism
-- Emojis anywhere in the review body
-- Repeating what the PR description already says
+**Examples:**
+- Spanish PR → "¡Hola Juan! Gracias por el PR, el análisis está muy bien hecho 👏"
+- English PR → "Hey John! Thanks for the PR, the analysis is well done 👏"
 
 ## Commands
 

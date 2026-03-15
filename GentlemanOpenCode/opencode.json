@@ -1,7 +1,196 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-anthropic-auth@latest", "opencode-gemini-auth@latest"],
+  "agent": {
+    "dangerous-gentleman": {
+      "description": "Gentleman with full permissions - no restrictions, no questions asked",
+      "mode": "all",
+      "permission": {
+        "bash": "allow",
+        "codesearch": "allow",
+        "doom_loop": "allow",
+        "edit": "allow",
+        "external_directory": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "lsp": "allow",
+        "question": "allow",
+        "read": "allow",
+        "skill": "allow",
+        "task": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
+      },
+      "prompt": "You are a Senior Architect with 15+ years of experience, Google Developer Expert (GDE) and Microsoft MVP. Passionate teacher who genuinely wants people to learn and grow.\n\nCORE PRINCIPLE - READ THIS FIRST:\nBe helpful FIRST. You're a MENTOR, not an interrogator. Simple questions get simple answers. Save the tough love for moments that ACTUALLY matter - architecture decisions, bad practices, real misconceptions. Don't challenge every single message or demand clarification on simple requests.\n\nCRITICAL - BE A GOOD PERSON:\nYou are warm, genuine, and caring. Use casual expressions NATURALLY, like a friend who wants to help. NEVER be sarcastic, mocking, or condescending. NEVER use air quotes around what the user says. NEVER make them feel stupid. You're passionate because you CARE about their growth, not because you want to show off or put them down.\n\nPREFERRED CLI TOOLS:\nUse modern tools over legacy: bat (not cat), rg (not grep), fd (not find), sd (not sed), eza (not ls). Install via brew if missing.\n\nLANGUAGE RULES:\n\nSPANISH INPUT → Rioplatense Spanish (voseo), warm and natural:\n- 'Bien', '¿Se entiende?', 'Ya te estoy diciendo', 'Es así de fácil'\n- 'Fantástico', 'Buenísimo'\n- 'Loco', 'Hermano' (friendly, not mocking)\n- 'Ponete las pilas', 'Locura'\n\nENGLISH INPUT → Same warm energy in English:\n- 'Here's the thing', 'And you know why?', 'I'm telling you right now'\n- 'It's that simple', 'Fantastic'\n- 'Dude', 'Come on', 'Let me be real', 'Seriously?'\n\nTONE:\nPassionate and direct, but from a place of CARING. You get frustrated with shortcuts because you KNOW they can do better. Use rhetorical questions. Use CAPS for emphasis. But always be WARM - you're helping a friend grow, not lecturing a subordinate.\n\nBEING A COLLABORATIVE PARTNER:\n- Help first, add context after if needed\n- If something seems technically wrong, verify - but don't interrogate simple questions\n- Correct errors explaining the technical WHY\n- Propose alternatives with tradeoffs",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "gentleman": {
+      "description": "Senior Architect mentor - helpful first, challenging when it matters",
+      "mode": "primary",
+      "prompt": "{file:./AGENTS.md}",
+      "tools": {
+        "edit": true,
+        "write": true
+      }
+    },
+    "sdd-apply": {
+      "description": "Implement code changes from task definitions",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "prompt": "You are an SDD sub-agent for the apply phase. Read your skill file at ~/.config/opencode/skills/sdd-apply/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-archive": {
+      "description": "Archive completed change artifacts",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "openai/gpt-5.4",
+      "prompt": "You are an SDD sub-agent for the archive phase. Read your skill file at ~/.config/opencode/skills/sdd-archive/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-design": {
+      "description": "Create technical design from proposals",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-6",
+      "prompt": "You are an SDD sub-agent for the design phase. Read your skill file at ~/.config/opencode/skills/sdd-design/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-explore": {
+      "description": "Investigate codebase and think through ideas",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "prompt": "You are an SDD sub-agent for the explore phase. Read your skill file at ~/.config/opencode/skills/sdd-explore/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-init": {
+      "description": "Bootstrap SDD context and project configuration",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-6",
+      "prompt": "You are an SDD sub-agent for the init phase. Read your skill file at ~/.config/opencode/skills/sdd-init/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-orchestrator": {
+      "description": "Agent Teams Orchestrator - coordinates sub-agents, never does work inline",
+      "mode": "primary",
+      "permission": {
+        "task": {
+          "*": "deny",
+          "sdd-*": "allow"
+        }
+      },
+      "prompt": "{file:./AGENTS.md}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-propose": {
+      "description": "Create change proposals from explorations",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "google/gemini-3.1-pro-preview",
+      "prompt": "You are an SDD sub-agent for the propose phase. Read your skill file at ~/.config/opencode/skills/sdd-propose/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-spec": {
+      "description": "Write detailed specifications from proposals",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "google/gemini-3.1-pro-preview",
+      "prompt": "You are an SDD sub-agent for the spec phase. Read your skill file at ~/.config/opencode/skills/sdd-spec/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-tasks": {
+      "description": "Break down specs and designs into implementation tasks",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "google/gemini-3.1-pro-preview",
+      "prompt": "You are an SDD sub-agent for the tasks phase. Read your skill file at ~/.config/opencode/skills/sdd-tasks/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "sdd-verify": {
+      "description": "Validate implementation against specs",
+      "hidden": true,
+      "mode": "subagent",
+      "model": "openai/gpt-5.4",
+      "prompt": "You are an SDD sub-agent for the verify phase. Read your skill file at ~/.config/opencode/skills/sdd-verify/SKILL.md and follow its instructions. It includes a Step 1 for loading the skill registry — do NOT skip it.",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "read": true,
+        "write": true
+      }
+    }
+  },
   "autoupdate": true,
+  "mcp": {
+    "context7": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "engram": {
+      "command": [
+        "engram",
+        "mcp"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
+  },
   "permission": {
     "bash": {
       "*": "allow",
@@ -14,46 +203,16 @@
     },
     "read": {
       "*": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
       "**/.env": "deny",
       "**/.env.*": "deny",
+      "**/credentials.json": "deny",
       "**/secrets/**": "deny",
-      "**/credentials.json": "deny"
+      "*.env": "deny",
+      "*.env.*": "deny"
     }
   },
-  "mcp": {
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "enabled": true
-    },
-    "engram": {
-      "command": ["engram", "mcp"],
-      "enabled": true,
-      "type": "local"
-    }
-  },
-  "agent": {
-    "gentleman": {
-      "mode": "primary",
-      "description": "Senior Architect mentor - helpful first, challenging when it matters",
-      "prompt": "{file:./AGENTS.md}",
-      "tools": {
-        "write": true,
-        "edit": true
-      }
-    },
-    "sdd-orchestrator": {
-      "mode": "all",
-      "description": "Gentleman personality + SDD delegate-only orchestrator",
-      "prompt": "{file:./AGENTS.md}",
-      "tools": {
-        "read": true,
-        "write": true,
-        "edit": true,
-        "bash": true
-      }
-    }
-  }
+  "plugin": [
+    "opencode-anthropic-auth@latest",
+    "opencode-gemini-auth@latest"
+  ]
 }

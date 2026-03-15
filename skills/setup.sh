@@ -171,8 +171,8 @@ sync_opencode() {
     fi
 
     # Copy AGENTS.md as the main instruction file
-    if [ -f "$REPO_ROOT/AGENTS.md" ]; then
-        cp "$REPO_ROOT/AGENTS.md" "$opencode_dir/AGENTS.md"
+    if [ -f "$REPO_ROOT/GentlemanOpenCode/AGENTS.md" ]; then
+        cp "$REPO_ROOT/GentlemanOpenCode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
         log_success "Copied AGENTS.md to OpenCode"
     fi
 

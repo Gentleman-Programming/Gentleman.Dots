@@ -77,25 +77,100 @@ When launching a sub-agent, the orchestrator MUST include persistence instructio
 
 **Non-SDD**:
 ```
-If you make important discoveries, decisions, or fix bugs, save them to engram
-via mem_save with project: '{project}'.
+PERSISTENCE (MANDATORY):
+If you make important discoveries, decisions, or fix bugs, you MUST save them
+to engram before returning:
+  mem_save(title: "{short description}", type: "{decision|bugfix|discovery|pattern}",
+           project: "{project}", content: "{What, Why, Where, Learned}")
+Do NOT return without saving what you learned. This is how the team builds
+persistent knowledge across sessions.
 ```
 
 **SDD (with dependencies)**:
 ```
 Artifact store mode: {engram|openspec|hybrid|none}
-Read these artifacts before starting:
-- {topic_key or file_path for each dependency}
-After completing your work, persist your artifact following the conventions
-in ~/.claude/skills/_shared/{engram|openspec}-convention.md.
+Read these artifacts before starting (two-step — search returns truncated previews):
+  mem_search(query: "sdd/{change-name}/{type}", project: "{project}") → get ID
+  mem_get_observation(id: {id}) → full content (REQUIRED for SDD dependencies)
+
+PERSISTENCE (MANDATORY — do NOT skip):
+After completing your work, you MUST call:
+  mem_save(
+    title: "sdd/{change-name}/{artifact-type}",
+    topic_key: "sdd/{change-name}/{artifact-type}",
+    type: "architecture",
+    project: "{project}",
+    content: "{your full artifact markdown}"
+  )
+If you return without calling mem_save, the next phase CANNOT find your artifact
+and the pipeline BREAKS.
 ```
 
 **SDD (no dependencies)**:
 ```
 Artifact store mode: {engram|openspec|hybrid|none}
-After completing your work, persist your artifact following the conventions
-in ~/.claude/skills/_shared/{engram|openspec}-convention.md.
+
+PERSISTENCE (MANDATORY — do NOT skip):
+After completing your work, you MUST call:
+  mem_save(
+    title: "sdd/{change-name}/{artifact-type}",
+    topic_key: "sdd/{change-name}/{artifact-type}",
+    type: "architecture",
+    project: "{project}",
+    content: "{your full artifact markdown}"
+  )
+If you return without calling mem_save, the next phase CANNOT find your artifact
+and the pipeline BREAKS.
 ```
+
+## Skill Registry
+
+The skill registry is a catalog of all available skills (user-level + project-level) that sub-agents read before starting any task. It is **infrastructure, not an SDD artifact** — it exists independently of any persistence mode.
+
+### Where the registry lives
+
+The registry is ALWAYS written to `.atl/skill-registry.md` in the project root, regardless of mode. If engram is available, it's ALSO saved there as a cross-session bonus.
+
+| Source | Location | Priority |
+|--------|----------|----------|
+| Engram | `topic_key: "skill-registry"` | Read FIRST (fast, cross-session) |
+| File | `.atl/skill-registry.md` | Fallback if engram not available |
+
+### How to generate/update
+
+Run the `skill-registry` skill, or run `sdd-init` (which includes registry generation).
+
+### Sub-agent skill loading protocol
+
+**EVERY sub-agent MUST check the skill registry as its FIRST step**, before starting any work:
+
+```
+1. Try engram first: mem_search(query: "skill-registry", project: "{project}")
+   → if found: mem_get_observation(id) → full registry
+2. If engram not available or not found: read .atl/skill-registry.md
+3. If neither exists: proceed without skills (not an error)
+4. From the registry, identify skills matching your task:
+   - Writing React code? → load react-19
+   - Reviewing a PR? → load pr-review
+   - Creating a Jira task? → load jira-task
+   - Writing tests? → load pytest/playwright
+5. Read those specific SKILL.md files
+6. Also read any project convention files listed in the registry (index files are already expanded — all referenced paths are in the table)
+7. THEN proceed with your actual task
+```
+
+The orchestrator MUST include this instruction in ALL sub-agent prompts:
+```
+SKILL LOADING (do this FIRST):
+Check for available skills:
+  1. Try: mem_search(query: "skill-registry", project: "{project}")
+  2. Fallback: read .atl/skill-registry.md
+Load and follow any skills relevant to your task.
+```
+
+### When the registry doesn't exist
+
+If neither engram nor the file has a registry, the sub-agent proceeds without skills. This is not an error — skills are optional enhancement. Recommend the user run `/skill-registry` or `/sdd-init` to generate it.
 
 ## Detail Level
 
