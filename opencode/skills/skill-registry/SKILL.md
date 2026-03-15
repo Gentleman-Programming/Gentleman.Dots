@@ -11,7 +11,7 @@ metadata:
 
 ## Purpose
 
-You generate or update the **skill registry** — a catalog of all available skills (user-level and project-level) that sub-agents read before starting any task. This ensures every sub-agent knows what skills exist and can load the relevant ones.
+You generate or update the **skill registry** — a catalog of all available skills (user-level and project-level) that the **orchestrator reads once per session** and uses to pass pre-resolved skill paths to sub-agents. Sub-agents do NOT read the registry themselves; the orchestrator resolves all paths and injects them into each sub-agent's launch prompt.
 
 ## When to Run
 
@@ -67,7 +67,7 @@ Build the registry markdown:
 ```markdown
 # Skill Registry
 
-As your FIRST step before starting any work, identify and load skills relevant to your task from this registry.
+**Orchestrator use only.** Read this registry once per session to resolve skill paths, then pass pre-resolved paths directly to each sub-agent's launch prompt. Sub-agents receive the path and load the skill directly — they do NOT read this registry.
 
 ## User Skills
 
@@ -134,7 +134,7 @@ mem_save(
 | {file} | {path} |
 
 ### Next Steps
-Sub-agents will automatically load relevant skills from this registry.
+The orchestrator reads this registry once per session and passes pre-resolved skill paths to sub-agents via their launch prompts.
 To update after installing/removing skills, run this again.
 ```
 

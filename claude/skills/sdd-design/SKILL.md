@@ -21,17 +21,21 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
-
 - If mode is `engram`:
 
   **CRITICAL: `mem_search` returns 300-char PREVIEWS, not full content. You MUST call `mem_get_observation(id)` for EVERY artifact. If you skip this, you will work with incomplete data and produce wrong design.**
 
   **STEP A — SEARCH** (get IDs only — content is truncated):
+
+  **Run all artifact searches in parallel** — call all mem_search calls simultaneously in a single response, then all mem_get_observation calls simultaneously in the next response. Do NOT search sequentially.
+
   1. `mem_search(query: "sdd/{change-name}/proposal", project: "{project}")` → save ID
   2. `mem_search(query: "sdd/{change-name}/spec", project: "{project}")` → save ID (optional — may not exist if running in parallel with sdd-spec)
 
   **STEP B — RETRIEVE FULL CONTENT** (mandatory for each found):
+
+  **Run all retrieval calls in parallel** — call all mem_get_observation calls simultaneously in a single response.
+
   3. `mem_get_observation(id: {proposal_id})` → full proposal content (REQUIRED)
   4. If spec found: `mem_get_observation(id: {spec_id})` → full spec content
 
@@ -47,7 +51,7 @@ Read and follow `skills/_shared/persistence-contract.md` for mode resolution rul
     content: "{your full design markdown}"
   )
   ```
-  `topic_key` enables upserts — saving again updates, not duplicates.
+  `topic_key` enables upserts — saving again updates, not duplicates. (Read `skills/_shared/sdd-phase-common.md`.)
 
   (See `skills/_shared/engram-convention.md` for full naming conventions.)
 - If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
@@ -56,15 +60,11 @@ Read and follow `skills/_shared/persistence-contract.md` for mode resolution rul
 
 ## What to Do
 
-### Step 1: Load Skill Registry
+### Step 1: Load Skills
 
-**Do this FIRST, before any other work.**
+The orchestrator provides your skill path in the launch prompt. Load it now. If no path was provided, proceed without additional skills.
 
-1. Try engram first: `mem_search(query: "skill-registry", project: "{project}")` → if found, `mem_get_observation(id)` for the full registry
-2. If engram not available or not found: read `.atl/skill-registry.md` from the project root
-3. If neither exists: proceed without skills (not an error)
-
-From the registry, identify and read any skills whose triggers match your task. Also read any project convention files listed in the registry.
+> Read `skills/_shared/sdd-phase-common.md` for the engram upsert note and return envelope format.
 
 ### Step 2: Read the Codebase
 
@@ -206,4 +206,5 @@ Ready for tasks (sdd-tasks).
 - Keep ASCII diagrams simple — clarity over beauty
 - Apply any `rules.design` from `openspec/config.yaml`
 - If you have open questions that BLOCK the design, say so clearly — don't guess
-- Return a structured envelope with: `status`, `executive_summary`, `detailed_report` (optional), `artifacts`, `next_recommended`, and `risks`
+- **Size budget**: Design artifact MUST be under 800 words. Architecture decisions as tables (option | tradeoff | decision). Code snippets only for non-obvious patterns.
+- Return a structured envelope with: `status`, `executive_summary`, `detailed_report` (optional), `artifacts`, `next_recommended`, and `risks` (read `skills/_shared/sdd-phase-common.md` for the full envelope spec)

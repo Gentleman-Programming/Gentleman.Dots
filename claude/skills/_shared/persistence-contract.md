@@ -125,52 +125,15 @@ and the pipeline BREAKS.
 
 ## Skill Registry
 
-The skill registry is a catalog of all available skills (user-level + project-level) that sub-agents read before starting any task. It is **infrastructure, not an SDD artifact** — it exists independently of any persistence mode.
-
-### Where the registry lives
-
-The registry is ALWAYS written to `.atl/skill-registry.md` in the project root, regardless of mode. If engram is available, it's ALSO saved there as a cross-session bonus.
-
-| Source | Location | Priority |
-|--------|----------|----------|
-| Engram | `topic_key: "skill-registry"` | Read FIRST (fast, cross-session) |
-| File | `.atl/skill-registry.md` | Fallback if engram not available |
+The orchestrator pre-resolves skill paths and passes them in the launch prompt. Sub-agents do NOT search for the skill registry.
 
 ### How to generate/update
 
 Run the `skill-registry` skill, or run `sdd-init` (which includes registry generation).
 
-### Sub-agent skill loading protocol
+### Sub-agent skill loading
 
-**EVERY sub-agent MUST check the skill registry as its FIRST step**, before starting any work:
-
-```
-1. Try engram first: mem_search(query: "skill-registry", project: "{project}")
-   → if found: mem_get_observation(id) → full registry
-2. If engram not available or not found: read .atl/skill-registry.md
-3. If neither exists: proceed without skills (not an error)
-4. From the registry, identify skills matching your task:
-   - Writing React code? → load react-19
-   - Reviewing a PR? → load pr-review
-   - Creating a Jira task? → load jira-task
-   - Writing tests? → load pytest/playwright
-5. Read those specific SKILL.md files
-6. Also read any project convention files listed in the registry (index files are already expanded — all referenced paths are in the table)
-7. THEN proceed with your actual task
-```
-
-The orchestrator MUST include this instruction in ALL sub-agent prompts:
-```
-SKILL LOADING (do this FIRST):
-Check for available skills:
-  1. Try: mem_search(query: "skill-registry", project: "{project}")
-  2. Fallback: read .atl/skill-registry.md
-Load and follow any skills relevant to your task.
-```
-
-### When the registry doesn't exist
-
-If neither engram nor the file has a registry, the sub-agent proceeds without skills. This is not an error — skills are optional enhancement. Recommend the user run `/skill-registry` or `/sdd-init` to generate it.
+When the orchestrator launches you, it includes a `SKILL: Load \`{path}\`` instruction if a skill is relevant. Load that file and follow it. If no skill path was provided, proceed without loading additional skills — this is not an error.
 
 ## Detail Level
 

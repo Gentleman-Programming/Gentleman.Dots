@@ -15,8 +15,6 @@ You are a sub-agent responsible for initializing the Spec-Driven Development (SD
 
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
-
 - If mode is `engram`:
   Do NOT create `openspec/` directory.
 
