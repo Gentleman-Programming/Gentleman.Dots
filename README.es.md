@@ -1,22 +1,20 @@
 # Gentleman.Dots
 
-> ℹ️ **Actualización (enero 2026)**: OpenCode ahora soporta suscripciones **Claude Max/Pro** mediante el plugin `opencode-anthropic-auth` (incluido en esta configuración).
-> Tanto **Claude Code** como **OpenCode** funcionan con tu suscripción de Claude.
-> *Nota: este workaround es estable por ahora, pero Anthropic podría bloquearlo en el futuro.*
+> 🤖 **NUEVO**: La capa de desarrollo con IA ahora tiene su propio instalador — [**AI Gentle Stack (gentle-ai)**](https://github.com/Gentleman-Programming/gentle-ai). Configura Claude Code, OpenCode, Gemini CLI, Cursor y VS Code Copilot con memoria persistente, workflow SDD, skills y la personalidad Gentleman. Instalá Gentleman.Dots primero, después ejecutá `gentle-ai` para la capa de IA.
 
 📄 Leer en: [English](README.md) | **Español**
 
 ## Tabla de Contenidos
 
-* [¿Qué es esto?](#qué-es-esto)
-* [Inicio rápido](#inicio-rápido)
-* [Plataformas soportadas](#plataformas-soportadas)
-* [🎮 Entrenador de Maestría en Vim](#-entrenador-de-maestría-en-vim)
-* [Documentación](#documentación)
-* [Resumen de herramientas](#resumen-de-herramientas)
-* [Bleeding Edge](#bleeding-edge)
-* [Estructura del proyecto](#estructura-del-proyecto)
-* [Soporte](#soporte)
+- [¿Qué es esto?](#qué-es-esto)
+- [Inicio rápido](#inicio-rápido)
+- [Plataformas soportadas](#plataformas-soportadas)
+- [Capa de Desarrollo con IA](#-capa-de-desarrollo-con-ia)
+- [Entrenador de Maestría en Vim](#-entrenador-de-maestría-en-vim)
+- [Documentación](#documentación)
+- [Resumen de herramientas](#resumen-de-herramientas)
+- [Bleeding Edge](#bleeding-edge)
+- [Soporte](#soporte)
 
 ---
 
@@ -36,10 +34,11 @@
 
 Una configuración completa de entorno de desarrollo que incluye:
 
-* **Neovim** con LSP, autocompletado y asistentes de IA (Claude Code, Gemini, OpenCode)
-* **Shells**: Fish, Zsh, Nushell
-* **Multiplexores de terminal**: Tmux, Zellij
-* **Emuladores de terminal**: Alacritty, WezTerm, Kitty, Ghostty
+- **Neovim** con LSP, autocompletado e integración con IA
+- **Shells**: Fish, Zsh, Nushell
+- **Multiplexores de terminal**: Tmux, Zellij
+- **Emuladores de terminal**: Alacritty, WezTerm, Kitty, Ghostty
+- **Configs de Agentes IA**: Configuraciones base para Claude Code y OpenCode (se instalan mediante [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai))
 
 ---
 
@@ -74,37 +73,13 @@ chmod +x gentleman.dots
 
 ### Opción 3: Termux (Android)
 
-Termux requiere compilar el instalador localmente (la cross-compilación de Go a Android tiene limitaciones).
+Termux requiere compilar localmente. Consultá la [Guía de instalación en Termux](docs/manual-installation.md#termux) para las instrucciones completas.
 
-```bash
-# 1. Instalar dependencias
-pkg update && pkg upgrade
-pkg install git golang
+---
 
-# 2. Clonar el repositorio
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
-cd Gentleman.Dots/installer
+> **Usuarios de Tmux:** Después de la instalación, abrí tmux y presioná `prefix + I` (I mayúscula) para instalar los plugins con TPM. Esto asegura que el tema y los plugins carguen correctamente.
 
-# 3. Compilar y ejecutar
-go build -o ~/gentleman-installer ./cmd/gentleman-installer
-cd ~
-./gentleman-installer
-```
-
-| Soporte en Termux                 | Estado                                               |
-| --------------------------------- | ---------------------------------------------------- |
-| Shells (Fish, Zsh, Nushell)       | ✅ Disponible                                         |
-| Multiplexores (Tmux, Zellij)      | ✅ Disponible                                         |
-| Neovim con configuración completa | ✅ Disponible                                         |
-| Nerd Fonts                        | ✅ Instaladas automáticamente en `~/.termux/font.ttf` |
-| Emuladores de terminal            | ❌ No aplica                                          |
-| Homebrew                          | ❌ Usa `pkg`                                          |
-
-> **Tip:** Después de la instalación, reiniciá Termux para aplicar la fuente y luego ejecutá `tmux` o `zellij` para iniciar el entorno configurado.
-
-El instalador TUI te guía para seleccionar tus herramientas preferidas y maneja toda la configuración automáticamente.
-
-> **Usuarios de Windows:** primero debés configurar WSL. Ver la [Guía de instalación manual](docs/manual-installation.md#windows-wsl).
+> **Usuarios de Windows:** Primero tenés que configurar WSL. Consultá la [Guía de instalación manual](docs/manual-installation.md#windows-wsl).
 
 ---
 
@@ -122,12 +97,59 @@ El instalador TUI te guía para seleccionar tus herramientas preferidas y maneja
 
 ---
 
+## 🤖 Capa de Desarrollo con IA
+
+Gentleman.Dots configura tu **entorno de desarrollo** (editor, shells, terminales). Para la **capa de desarrollo con IA** (agentes, memoria, skills, workflow), usá el proyecto complementario:
+
+### [AI Gentle Stack (gentle-ai)](https://github.com/Gentleman-Programming/gentle-ai)
+
+```bash
+brew install Gentleman-Programming/tap/gentle-ai
+gentle-ai
+```
+
+Configura tus agentes de IA con todo lo que necesitan:
+
+| Componente | Qué hace |
+|-----------|----------|
+| **Engram** | Memoria persistente entre sesiones (servidor MCP) |
+| **SDD Workflow** | Spec-Driven Development con sub-agentes orquestados |
+| **Skills** | 24 librerías de patrones (React 19, Next.js 15, TypeScript, Tailwind 4, etc.) |
+| **Context7** | Documentación actualizada de librerías vía MCP |
+| **Persona** | Estilo de enseñanza Gentleman para las respuestas de IA |
+| **Permisos** | Defaults de seguridad para todos los agentes |
+
+### Agentes soportados
+
+| Agente | Single Agent | Multi Agent |
+|--------|:----------:|:-----------:|
+| **Claude Code** | ✅ | ✅ |
+| **OpenCode** | ✅ | ✅ |
+| **Gemini CLI** | ✅ | ✅ |
+| **Cursor** | ✅ | — |
+| **VS Code Copilot** | ✅ | — |
+
+> **Single agent**: Un orquestador maneja todas las fases SDD.
+> **Multi agent**: Un sub-agente dedicado por fase con ruteo individual de modelos (ej: Claude Opus para diseño, Gemini para specs, GPT para verificación).
+
+### Qué vive dónde
+
+| | Este repo (Gentleman.Dots) | gentle-ai |
+|--|---------------------------|-----------|
+| **Propósito** | Entorno de desarrollo (editores, shells, terminales) | Capa de desarrollo con IA (agentes, memoria, skills) |
+| **Instala** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configura Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
+| **Configs base** | `GentlemanClaude/`, `GentlemanOpenCode/` | Lee de este repo + sus propios assets |
+
+Instalá Gentleman.Dots primero para tu entorno de desarrollo, después `gentle-ai` para la capa de IA.
+
+---
+
 ## 🎮 Entrenador de Maestría en Vim
 
 ¡Aprendé Vim de forma divertida! El instalador incluye un entrenador interactivo estilo RPG con:
 
-| Módulo                   | Teclas cubiertas                         |
-| ------------------------ | ---------------------------------------- |
+| Módulo                   | Teclas cubiertas                          |
+| ------------------------ | ----------------------------------------- |
 | 🔤 Movimiento horizontal | `w`, `e`, `b`, `f`, `t`, `0`, `$`, `^`   |
 | ↕️ Movimiento vertical   | `j`, `k`, `G`, `gg`, `{`, `}`            |
 | 📦 Objetos de texto      | `iw`, `aw`, `i"`, `a(`, `it`, `at`       |
@@ -144,55 +166,28 @@ Podés iniciarlo desde el menú principal: **Vim Mastery Trainer**
 
 ## Documentación
 
-| Documento                                                     | Descripción                                          |
-| ------------------------------------------------------------- | ---------------------------------------------------- |
-| [Guía del instalador TUI](docs/tui-installer.md)              | Funciones interactivas, navegación, backup y restore |
-| [Instalación manual](docs/manual-installation.md)             | Configuración paso a paso para todas las plataformas |
-| [Keymaps de Neovim](docs/neovim-keymaps.md)                   | Referencia completa de atajos                        |
-| [Configuración de IA](docs/ai-configuration.md)               | Claude Code, OpenCode, Copilot y más                 |
-| [Especificación del entrenador Vim](docs/vim-trainer-spec.md) | Detalles técnicos del entrenador                     |
-| [Testing con Docker](docs/docker-testing.md)                  | Tests E2E con contenedores                           |
-| [Contribuir](docs/contributing.md)                            | Setup de desarrollo, sistema de skills y releases    |
+| Documento                                                     | Descripción                                                                    |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Guía del instalador TUI](docs/tui-installer.md)              | Funciones interactivas, navegación, backup y restore                           |
+| [Instalación manual](docs/manual-installation.md)             | Configuración paso a paso para todas las plataformas                           |
+| [Keymaps de Neovim](docs/neovim-keymaps.md)                   | Referencia completa de atajos                                                  |
+| [Configuración de IA](docs/ai-configuration.md)               | Claude Code, OpenCode, Copilot y más                                           |
+| [Especificación del entrenador Vim](docs/vim-trainer-spec.md) | Detalles técnicos del entrenador                                               |
+| [Testing con Docker](docs/docker-testing.md)                  | Tests E2E con contenedores                                                     |
+| [Contribuir](docs/contributing.md)                            | Setup de desarrollo, sistema de skills y releases                              |
+| [AI Gentle Stack](https://github.com/Gentleman-Programming/gentle-ai) | Instalador de capa IA — Engram, SDD, Skills, Persona (repo separado) |
 
 ---
 
 ## Resumen de herramientas
 
-### Emuladores de terminal
+- **Emuladores de terminal**: Ghostty, Kitty, WezTerm, Alacritty
+- **Shells**: Nushell, Fish, Zsh (+ Powerlevel10k)
+- **Multiplexores**: Tmux, Zellij
+- **Editor**: Neovim (LazyVim con LSP, completado e IA)
+- **Prompt**: Starship
 
-| Herramienta   | Descripción                                  |
-| ------------- | -------------------------------------------- |
-| **Ghostty**   | Acelerado por GPU, nativo y ultra rápido     |
-| **Kitty**     | Rico en funcionalidades, renderizado por GPU |
-| **WezTerm**   | Configurable con Lua, multiplataforma        |
-| **Alacritty** | Minimalista, escrito en Rust                 |
-
-### Shells
-
-| Herramienta | Descripción                                |
-| ----------- | ------------------------------------------ |
-| **Nushell** | Datos estructurados y pipelines modernos   |
-| **Fish**    | Amigable y con excelentes defaults         |
-| **Zsh**     | Altamente personalizable, compatible POSIX |
-
-### Multiplexores
-
-| Herramienta | Descripción                           |
-| ----------- | ------------------------------------- |
-| **Tmux**    | Probado en batalla, ampliamente usado |
-| **Zellij**  | Moderno, plugins WebAssembly          |
-
-### Editor
-
-| Herramienta | Descripción                             |
-| ----------- | --------------------------------------- |
-| **Neovim**  | Config LazyVim con LSP, completado e IA |
-
-### Prompts
-
-| Herramienta  | Descripción                            |
-| ------------ | -------------------------------------- |
-| **Starship** | Prompt multi-shell con integración Git |
+> Consultá la [Referencia de herramientas](docs/tools.md) para descripciones detalladas de cada herramienta.
 
 ---
 
@@ -206,43 +201,12 @@ Contiene configuraciones de vanguardia que luego pasan a `main` cuando se estabi
 
 ---
 
-## Estructura del proyecto
-
-```
-Gentleman.Dots/
-├── installer/               # Instalador TUI en Go
-│   ├── cmd/                 # Punto de entrada
-│   ├── internal/            # TUI, sistema y entrenador
-│   └── e2e/                 # Tests E2E con Docker
-├── docs/                    # Documentación
-├── skills/                  # Skills de agentes IA
-│
-├── GentlemanNvim/           # Configuración Neovim
-├── GentlemanClaude/         # Config Claude Code + skills
-├── GentlemanOpenCode/       # Config OpenCode
-│
-├── GentlemanFish/
-├── GentlemanZsh/
-├── GentlemanNushell/
-├── GentlemanTmux/
-├── GentlemanZellij/
-│
-├── GentlemanGhostty/
-├── GentlemanKitty/
-├── alacritty.toml
-├── .wezterm.lua
-│
-└── starship.toml
-```
-
----
-
 ## Soporte
 
-* **Issues**: GitHub Issues
-* **Discord**: Gentleman Programming Community
-* **YouTube**: @GentlemanProgramming
-* **Twitch**: GentlemanProgramming
+- **Issues**: [GitHub Issues](https://github.com/Gentleman-Programming/Gentleman.Dots/issues)
+- **Discord**: [Gentleman Programming Community](https://discord.gg/gentleman-programming)
+- **YouTube**: [@GentlemanProgramming](https://youtube.com/@GentlemanProgramming)
+- **Twitch**: [GentlemanProgramming](https://twitch.tv/GentlemanProgramming)
 
 ---
 

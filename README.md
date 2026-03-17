@@ -14,7 +14,6 @@
 - [Documentation](#documentation)
 - [Tools Overview](#tools-overview)
 - [Bleeding Edge](#bleeding-edge)
-- [Project Structure](#project-structure)
 - [Support](#support)
 
 ---
@@ -72,33 +71,7 @@ chmod +x gentleman.dots
 
 ### Option 3: Termux (Android)
 
-Termux requires building the installer locally (Go cross-compilation to Android has limitations).
-
-```bash
-# 1. Install dependencies
-pkg update && pkg upgrade
-pkg install git golang
-
-# 2. Clone the repository
-git clone https://github.com/Gentleman-Programming/Gentleman.Dots.git
-cd Gentleman.Dots/installer
-
-# 3. Build and run
-go build -o ~/gentleman-installer ./cmd/gentleman-installer
-cd ~
-./gentleman-installer
-```
-
-| Termux Support | Status |
-|----------------|--------|
-| Shells (Fish, Zsh, Nushell) | ✅ Available |
-| Multiplexers (Tmux, Zellij) | ✅ Available |
-| Neovim with full config | ✅ Available |
-| Nerd Fonts | ✅ Auto-installed to `~/.termux/font.ttf` |
-| Terminal emulators | ❌ Not applicable |
-| Homebrew | ❌ Uses `pkg` instead |
-
-> **Tip:** After installation, restart Termux to apply the font, then run `tmux` or `zellij` to start your configured environment.
+Termux requires building locally. See the [Termux Installation Guide](docs/manual-installation.md#termux) for full instructions.
 
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
 
@@ -206,41 +179,13 @@ Launch it from the main menu: **Vim Mastery Trainer**
 
 ## Tools Overview
 
-### Terminal Emulators
+- **Terminal Emulators**: Ghostty, Kitty, WezTerm, Alacritty
+- **Shells**: Nushell, Fish, Zsh (+ Powerlevel10k)
+- **Multiplexers**: Tmux, Zellij
+- **Editor**: Neovim (LazyVim with LSP, completions, AI)
+- **Prompt**: Starship
 
-| Tool | Description |
-|------|-------------|
-| **Ghostty** | GPU-accelerated, native, blazing fast |
-| **Kitty** | Feature-rich, GPU-based rendering |
-| **WezTerm** | Lua-configurable, cross-platform |
-| **Alacritty** | Minimal, Rust-based, lightweight |
-
-### Shells
-
-| Tool | Description |
-|------|-------------|
-| **Nushell** | Structured data, modern syntax, pipelines |
-| **Fish** | User-friendly, great defaults, no config needed |
-| **Zsh** | Highly customizable, POSIX-compatible, Powerlevel10k |
-
-### Multiplexers
-
-| Tool | Description |
-|------|-------------|
-| **Tmux** | Battle-tested, widely used, lots of plugins |
-| **Zellij** | Modern, WebAssembly plugins, floating panes |
-
-### Editor
-
-| Tool | Description |
-|------|-------------|
-| **Neovim** | LazyVim config with LSP, completions, AI |
-
-### Prompts
-
-| Tool | Description |
-|------|-------------|
-| **Starship** | Cross-shell prompt with Git integration |
+> See [Tools Reference](docs/tools.md) for detailed descriptions of each tool.
 
 ---
 
@@ -251,45 +196,6 @@ Want the latest experimental features from my daily workflow (macOS only)?
 Check out the [`nix-migration` branch](https://github.com/Gentleman-Programming/Gentleman.Dots/tree/nix-migration).
 
 This branch contains cutting-edge configurations that eventually make their way to `main` once stable.
-
----
-
-## Project Structure
-
-```
-Gentleman.Dots/
-├── installer/               # Go TUI installer source
-│   ├── cmd/                 # Entry point
-│   ├── internal/            # TUI, system, and trainer packages
-│   └── e2e/                 # Docker-based E2E tests
-├── docs/                    # Documentation
-│
-├── GentlemanNvim/           # Neovim configuration (LazyVim)
-│
-├── GentlemanClaude/         # Claude Code config assets (installed via gentle-ai)
-│   ├── CLAUDE.md            # Persona + Agent Teams + Engram + SDD orchestrator
-│   ├── settings.json        # Permissions, plugins, status line
-│   ├── output-styles/       # Custom output style
-│   └── skills/              # 24 installable skills (React, TS, SDD, etc.)
-├── GentlemanOpenCode/       # OpenCode config assets (installed via gentle-ai)
-│   ├── opencode.json        # Single-agent default config
-│   └── themes/              # Kanagawa-style theme
-├── skills/                  # Repo-specific AI agent skills (Bubbletea, Trainer, etc.)
-├── AGENTS.md                # Single source of truth for all AI assistants
-│
-├── GentlemanFish/           # Fish shell config
-├── GentlemanZsh/            # Zsh + Oh-My-Zsh + Powerlevel10k
-├── GentlemanNushell/        # Nushell config
-├── GentlemanTmux/           # Tmux config
-├── GentlemanZellij/         # Zellij config
-│
-├── GentlemanGhostty/        # Ghostty terminal config
-├── GentlemanKitty/          # Kitty terminal config
-├── alacritty.toml           # Alacritty config
-├── .wezterm.lua             # WezTerm config
-│
-└── starship.toml            # Starship prompt config
-```
 
 ---
 
