@@ -20,15 +20,15 @@ return {
     checkbox = {
       enabled = true,
       unchecked = {
-        icon = "󰄱 ",
+        icon = "󰄱     ",
         highlight = "RenderMarkdownUnchecked",
       },
       checked = {
-        icon = "󰱒 ",
+        icon = "󰱒     ",
         highlight = "RenderMarkdownChecked",
       },
       custom = {
-        todo = { raw = "[-]", rendered = "󰥔 ", highlight = "RenderMarkdownTodo" },
+        todo = { raw = "[-]", rendered = "󰥔     ", highlight = "RenderMarkdownTodo" },
       },
     },
   },
