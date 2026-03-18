@@ -183,10 +183,7 @@
       "url": "https://mcp.context7.com/mcp"
     },
     "engram": {
-      "command": [
-        "engram",
-        "mcp"
-      ],
+      "command": ["engram", "mcp"],
       "enabled": true,
       "type": "local"
     }
@@ -211,8 +208,5 @@
       "*.env.*": "deny"
     }
   },
-  "plugin": [
-    "opencode-anthropic-auth@latest",
-    "opencode-gemini-auth@latest"
-  ]
+  "plugin": ["opencode-gemini-auth@latest"]
 }
