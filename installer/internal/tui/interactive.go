@@ -9,6 +9,13 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const interactiveContinuePrompt = `if [ -t 0 ] && [ -r /dev/tty ]; then
+    echo "Press Enter to continue..."
+    if ! IFS= read -r dummy < /dev/tty; then
+        echo "Continuing without confirmation prompt."
+    fi
+fi`
+
 // needsExecProcessMsg signals that we need to run tea.ExecProcess
 type needsExecProcessMsg struct {
 	stepID string
@@ -89,12 +96,11 @@ done
 # Source it now
 eval "$(%s/bin/brew shellenv)"
 
-echo ""
-echo "✅ Homebrew installed successfully!"
-echo ""
-echo "Press Enter to continue..."
-read dummy
-`, brewPrefix, brewPrefix)
+	echo ""
+	echo "✅ Homebrew installed successfully!"
+	echo ""
+	%s
+	`, brewPrefix, brewPrefix, interactiveContinuePrompt)
 
 	return script, nil
 }

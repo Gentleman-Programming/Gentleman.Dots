@@ -145,6 +145,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for i := range m.Steps {
 			if m.Steps[i].ID == msg.stepID {
 				if msg.err != nil {
+					msg.err = describeInteractiveStepError(msg.stepID, msg.err)
 					m.Steps[i].Status = StatusFailed
 					m.Steps[i].Error = msg.err
 					m.Screen = ScreenError
@@ -168,6 +169,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+func describeInteractiveStepError(stepID string, err error) error {
+	if err == nil {
+		return nil
+	}
+
+	if stepID == "homebrew" {
+		if system.CommandExists("brew") {
+			return fmt.Errorf("Homebrew installed, but post-install shell setup did not complete cleanly: %w", err)
+		}
+
+		return fmt.Errorf("Homebrew installation command failed: %w", err)
+	}
+
+	return err
 }
 
 // execInteractiveCmd creates a tea.Cmd that runs an interactive process
