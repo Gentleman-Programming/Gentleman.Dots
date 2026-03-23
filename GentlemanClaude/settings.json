@@ -110,9 +110,14 @@
     ],
     "defaultMode": "bypassPermissions",
     "deny": [
-      "rm -rf /",
-      "sudo rm -rf /",
-      ".env"
+      "Bash(rm -rf /)",
+      "Bash(sudo rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo rm -rf /*)",
+      "Bash(cat:*.env*)",
+      "Edit(*.env*)",
+      "Read(*.env*)",
+      "Write(*.env*)"
     ]
   },
   "skipDangerousModePermissionPrompt": true,
