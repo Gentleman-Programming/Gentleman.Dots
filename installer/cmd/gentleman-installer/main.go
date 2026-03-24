@@ -11,7 +11,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var Version = "1.0.0"
+var Version = "dev"
 
 // CLI flags for non-interactive mode
 type cliFlags struct {
