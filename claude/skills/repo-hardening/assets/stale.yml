@@ -1,0 +1,53 @@
+# .github/workflows/stale.yml
+# Marks inactive issues and PRs as stale, then closes them.
+# Tune days-before-stale and days-before-close to match your project's traffic.
+#
+# Recommended defaults:
+#   Active project:    30 stale / 14 close
+#   Low-traffic:       60 stale / 30 close
+#   High-traffic OSS:  14 stale / 7  close
+
+name: Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Issue settings
+          stale-issue-message: >
+            This issue has been inactive for 30 days. If it's still relevant,
+            please leave a comment with updated context or reproduction steps.
+            It will be closed in 14 days if there's no activity.
+          close-issue-message: >
+            Closing this issue due to inactivity. Feel free to reopen it with
+            updated information if the problem persists.
+          stale-issue-label: 'status:stale'
+          days-before-issue-stale: 30
+          days-before-issue-close: 14
+
+          # PR settings
+          stale-pr-message: >
+            This PR has been inactive for 30 days. Please rebase on main and push
+            an update, or it will be closed in 14 days.
+          close-pr-message: >
+            Closing this PR due to inactivity. Feel free to reopen it when you're
+            ready to continue.
+          stale-pr-label: 'status:stale'
+          days-before-pr-stale: 30
+          days-before-pr-close: 14
+
+          # Never auto-close approved or critical issues, or PRs in progress
+          exempt-issue-labels: 'status:approved,status:in-progress,priority:critical,priority:high'
+          exempt-pr-labels: 'status:in-progress'
+
+          # Exempt issues with assignees (someone is actively working on it)
+          exempt-assignees: true

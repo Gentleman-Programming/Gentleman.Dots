@@ -1,0 +1,7 @@
+{
+  "args": [
+    "mcp",
+    "--tools=agent"
+  ],
+  "command": "/opt/homebrew/Cellar/engram/1.10.4/bin/engram"
+}

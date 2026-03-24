@@ -1,33 +1,21 @@
 {
-  "outputStyle": "Gentleman",
   "attribution": {
     "commit": "",
     "pr": ""
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 0
+  "enabledPlugins": {
+    "engram@engram": true
   },
+  "extraKnownMarketplaces": {
+    "engram": {
+      "source": {
+        "repo": "Gentleman-Programming/engram",
+        "source": "github"
+      }
+    }
+  },
+  "outputStyle": "Gentleman",
   "permissions": {
-    "deny": [
-      "Read(.env)",
-      "Read(.env.*)",
-      "Read(.env.local)",
-      "Read(.env.production)",
-      "Read(.env.development)",
-      "Read(**/.env)",
-      "Read(**/.env.*)",
-      "Read(**/secrets/**)",
-      "Read(**/credentials.json)"
-    ],
-    "ask": [
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(git push --force:*)",
-      "Bash(git rebase:*)",
-      "Bash(git reset --hard:*)"
-    ],
     "allow": [
       "Read",
       "Edit",
@@ -110,7 +98,33 @@
       "mcp__plugin_engram_engram__mem_update",
       "mcp__plugin_engram_engram__mem_delete",
       "mcp__plugin_engram_engram__mem_stats",
-      "mcp__plugin_engram_engram__mem_suggest_topic_key"
+      "mcp__plugin_engram_engram__mem_suggest_topic_key",
+      "mcp__plugin_engram_engram__mem_capture_passive"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git push --force:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)"
+    ],
+    "defaultMode": "bypassPermissions",
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(sudo rm -rf ~)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Edit(.env)",
+      "Edit(.env.*)"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "statusLine": {
+    "command": "~/.claude/statusline.sh",
+    "padding": 0,
+    "type": "command"
+  },
+  "syntaxHighlightingDisabled": true
 }
