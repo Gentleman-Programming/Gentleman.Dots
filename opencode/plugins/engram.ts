@@ -20,7 +20,7 @@ import type { Plugin } from "@opencode-ai/plugin"
 
 const ENGRAM_PORT = parseInt(process.env.ENGRAM_PORT ?? "7437")
 const ENGRAM_URL = `http://127.0.0.1:${ENGRAM_PORT}`
-const ENGRAM_BIN = process.env.ENGRAM_BIN ?? Bun.which("engram") ?? "/opt/homebrew/Cellar/engram/1.10.4/bin/engram"
+const ENGRAM_BIN = process.env.ENGRAM_BIN ?? Bun.which("engram") ?? "/opt/homebrew/Cellar/engram/1.10.9/bin/engram"
 
 // Engram's own MCP tools — don't count these as "tool calls" for session stats
 const ENGRAM_TOOLS = new Set([
@@ -319,33 +319,45 @@ export const Engram: Plugin = async (ctx) => {
         }
       }
 
-      // --- User Message: capture prompts ---
-      if (event.type === "message.updated") {
-        const msg = event.properties as any
-        if (msg?.role === "user" && msg?.content) {
-          // message.updated doesn't give sessionID directly,
-          // use the most recently known session
-          const sessionId =
-            [...knownSessions].pop() ?? "unknown-session"
+    },
 
-          const content =
-            typeof msg.content === "string"
-              ? msg.content
-              : JSON.stringify(msg.content)
+    // ─── User Prompt Capture ──────────────────────────────────────
+    // chat.message is called once per user message, before the LLM sees it.
+    // input.sessionID is always reliable here (no knownSessions workaround).
+    // output.message is typed as UserMessage (role:"user" already guaranteed).
+    // output.parts contains TextPart[] with the actual message text.
 
-          // Only capture non-trivial prompts (>10 chars)
-          if (content.length > 10) {
-            await ensureSession(sessionId)
-            await engramFetch("/prompts", {
-              method: "POST",
-              body: {
-                session_id: sessionId,
-                content: stripPrivateTags(truncate(content, 2000)),
-                project,
-              },
-            })
-          }
-        }
+    "chat.message": async (input, output) => {
+      // Skip sub-agent sessions — they inflate session counts (issue #116)
+      if (subAgentSessions.has(input.sessionID)) return
+
+      const sessionId = input.sessionID
+
+      // Extract text from parts (type:"text")
+      const content = output.parts
+        .filter((p) => p.type === "text")
+        .map((p) => (p as any).text ?? "")
+        .join("\n")
+        .trim()
+
+      // Also fallback to summary if parts yield nothing
+      const fallback = !content && output.message.summary
+        ? `${output.message.summary.title ?? ""}\n${output.message.summary.body ?? ""}`.trim()
+        : ""
+
+      const finalContent = content || fallback
+
+      // Only capture non-trivial prompts (>10 chars)
+      if (finalContent.length > 10) {
+        await ensureSession(sessionId)
+        await engramFetch("/prompts", {
+          method: "POST",
+          body: {
+            session_id: sessionId,
+            content: stripPrivateTags(truncate(finalContent, 2000)),
+            project,
+          },
+        })
       }
     },
 

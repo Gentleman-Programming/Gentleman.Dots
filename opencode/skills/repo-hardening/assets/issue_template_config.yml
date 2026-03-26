@@ -1,0 +1,9 @@
+# .github/ISSUE_TEMPLATE/config.yml
+# Disable blank issues — force use of templates
+# Add a Discussions link so questions go to the right place
+
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions (questions, ideas, show & tell)
+    url: https://github.com/<owner>/<repo>/discussions
+    about: For questions, ideas, or general discussion — please use Discussions instead of Issues.

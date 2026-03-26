@@ -76,9 +76,6 @@ sketchybar --default \
 # ─────────────────────────────────────────────────────────────────────────────────
 # Add yabai events
 sketchybar --add event yabai_space_changed
-sketchybar --add event yabai_window_created
-sketchybar --add event yabai_window_destroyed
-sketchybar --add event yabai_window_moved
 
 for sid in $(seq 1 10); do
   sketchybar --add space space.$sid left \
@@ -102,10 +99,7 @@ for sid in $(seq 1 10); do
       click_script="yabai -m space --focus $sid" \
     --subscribe space.$sid \
       space_change \
-      yabai_space_changed \
-      yabai_window_created \
-      yabai_window_destroyed \
-      yabai_window_moved
+      yabai_space_changed
 done
 
 # ─────────────────────────────────────────────────────────────────────────────────

@@ -16,6 +16,8 @@ metadata:
 - User says "homebrew-tap" or "formula"
 - After creating a git tag in GGA or Gentleman.Dots repos
 
+Before running any `gh release create` or `gh release edit` command with markdown content, also load `release-note-safety`.
+
 ## Supported Projects
 
 | Project | Repo | Formula | Tag Format | Type |

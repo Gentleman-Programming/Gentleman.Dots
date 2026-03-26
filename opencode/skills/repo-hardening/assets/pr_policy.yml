@@ -1,0 +1,55 @@
+# .github/workflows/pr-policy.yml
+# Enforces contribution process gates on every PR.
+# Requirements: PR body must reference a closing issue + must have a type:* label.
+
+name: PR Policy Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, labeled, unlabeled]
+
+jobs:
+  check-linked-issue:
+    name: Require linked issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR body for issue reference
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if ! echo "$PR_BODY" | grep -qiE '(closes|fixes|resolves)[[:space:]]+#[0-9]+'; then
+            echo ""
+            echo "❌ This PR must reference a closing issue."
+            echo ""
+            echo "Add one of the following to the PR description:"
+            echo "  Closes #42"
+            echo "  Fixes #42"
+            echo "  Resolves #42"
+            echo ""
+            echo "If no approved issue exists yet, open one first and wait for maintainer approval."
+            exit 1
+          fi
+          echo "✅ Linked issue found."
+
+  check-type-label:
+    name: Require type label
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for type:* label
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          if ! echo "$LABELS" | grep -q '"type:'; then
+            echo ""
+            echo "❌ This PR must have exactly one type:* label."
+            echo ""
+            echo "Add one of the following labels:"
+            echo "  type:bug       — fixing broken behavior"
+            echo "  type:feature   — adding new behavior"
+            echo "  type:docs      — documentation only"
+            echo "  type:chore     — internal refactor, deps, tooling"
+            echo "  type:security  — security-relevant fix"
+            echo ""
+            exit 1
+          fi
+          echo "✅ type:* label found."

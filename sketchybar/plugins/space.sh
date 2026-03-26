@@ -15,15 +15,10 @@ ANIM_CURVE="tanh"
 # Get space ID from item name (space.1 -> 1)
 SPACE_ID=${NAME#space.}
 
-# Get apps in this space from yabai, join with " | "
-APPS=$(yabai -m query --windows --space $SPACE_ID 2>/dev/null | jq -r '.[].app' 2>/dev/null | sort -u | head -3 | paste -sd '|' - | sed 's/|/ | /g')
+# Check if this space has any windows (lightweight check)
+HAS_WINDOWS=$(yabai -m query --windows --space $SPACE_ID 2>/dev/null | jq -r 'length' 2>/dev/null)
 
-# Build label with app names
-if [ -n "$APPS" ]; then
-  LABEL="$SPACE_ID · $APPS"
-else
-  LABEL="$SPACE_ID"
-fi
+LABEL="$SPACE_ID"
 
 # Check if this space is selected - animate the transition
 if [ "$SELECTED" = "true" ]; then
@@ -33,7 +28,7 @@ if [ "$SELECTED" = "true" ]; then
     label.font="IosevkaTerm NF:Bold:12.0" \
     background.border_color=$ACCENT
 else
-  if [ -n "$APPS" ]; then
+  if [ -n "$HAS_WINDOWS" ] && [ "$HAS_WINDOWS" -gt 0 ] 2>/dev/null; then
     sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set $NAME \
       label="$LABEL" \
       label.color=$WHITE \
