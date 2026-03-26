@@ -127,7 +127,7 @@
     },
     "sdd-orchestrator": {
       "description": "Gentleman personality + SDD delegate-only orchestrator",
-      "mode": "primary",
+      "mode": "all",
       "permission": {
         "task": {
           "*": "deny",

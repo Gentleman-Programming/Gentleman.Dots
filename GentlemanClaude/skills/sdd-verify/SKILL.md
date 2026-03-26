@@ -23,48 +23,17 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-- If mode is `engram`:
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
 
-  **CRITICAL: `mem_search` returns 300-char PREVIEWS, not full content. You MUST call `mem_get_observation(id)` for EVERY artifact. If you skip this, you will verify against incomplete specs and miss issues.**
-
-  **STEP A — SEARCH** (get IDs only — content is truncated):
-  1. `mem_search(query: "sdd/{change-name}/proposal", project: "{project}")` → save ID
-  2. `mem_search(query: "sdd/{change-name}/spec", project: "{project}")` → save ID
-  3. `mem_search(query: "sdd/{change-name}/design", project: "{project}")` → save ID
-  4. `mem_search(query: "sdd/{change-name}/tasks", project: "{project}")` → save ID
-
-  **STEP B — RETRIEVE FULL CONTENT** (mandatory for each):
-  5. `mem_get_observation(id: {proposal_id})` → full proposal
-  6. `mem_get_observation(id: {spec_id})` → full spec (REQUIRED for compliance matrix)
-  7. `mem_get_observation(id: {design_id})` → full design
-  8. `mem_get_observation(id: {tasks_id})` → full tasks
-
-  **DO NOT use search previews as source material.**
-
-  **Save your artifact**:
-  ```
-  mem_save(
-    title: "sdd/{change-name}/verify-report",
-    topic_key: "sdd/{change-name}/verify-report",
-    type: "architecture",
-    project: "{project}",
-    content: "{your full verification report markdown}"
-  )
-  ```
-  `topic_key` enables upserts — saving again updates, not duplicates. (Read `skills/_shared/sdd-phase-common.md`.)
-
-  (See `skills/_shared/engram-convention.md` for full naming conventions.)
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Save to `openspec/changes/{change-name}/verify-report.md`.
-- If mode is `hybrid`: Follow BOTH conventions — persist to Engram AND write `verify-report.md` to filesystem.
-- If mode is `none`: Return the verification report inline only. Never write files.
+- **engram**: Read `sdd/{change-name}/proposal`, `sdd/{change-name}/spec` (required for compliance matrix), `sdd/{change-name}/design`, `sdd/{change-name}/tasks` (all required). Save as `sdd/{change-name}/verify-report`.
+- **openspec**: Read and follow `skills/_shared/openspec-convention.md`. Save to `openspec/changes/{change-name}/verify-report.md`.
+- **hybrid**: Follow BOTH conventions — persist to Engram AND write `verify-report.md` to filesystem.
+- **none**: Return the verification report inline only. Never write files.
 
 ## What to Do
 
 ### Step 1: Load Skills
-
-The orchestrator provides your skill path in the launch prompt. Load it now. If no path was provided, proceed without additional skills.
-
-> Read `skills/_shared/sdd-phase-common.md` for the engram upsert note and return envelope format.
+Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
 
 ### Step 2: Check Completeness
 
@@ -205,11 +174,10 @@ A spec scenario is only considered COMPLIANT when there is a test that passed pr
 
 ### Step 7: Persist Verification Report
 
-Persist the report according to the resolved `artifact_store.mode`, following the conventions in `skills/_shared/`:
-
-- **engram**: Use `engram-convention.md` — artifact type `verify-report`
-- **openspec**: Write to `openspec/changes/{change-name}/verify-report.md`
-- **none**: Return the full report inline, do NOT write any files
+Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+- artifact: `verify-report`
+- topic_key: `sdd/{change-name}/verify-report`
+- type: `architecture`
 
 ### Step 8: Return Summary
 
@@ -312,4 +280,4 @@ Return to the orchestrator the same content you wrote to `verify-report.md`:
 - DO NOT fix any issues — only report them. The orchestrator decides what to do.
 - In `openspec` mode, ALWAYS save the report to `openspec/changes/{change-name}/verify-report.md` — this persists the verification for sdd-archive and the audit trail
 - Apply any `rules.verify` from `openspec/config.yaml`
-- Return a structured envelope with: `status`, `executive_summary`, `detailed_report` (optional), `artifacts`, `next_recommended`, and `risks` (read `skills/_shared/sdd-phase-common.md` for the full envelope spec)
+- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.

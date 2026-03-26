@@ -22,45 +22,18 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
 
-- If mode is `engram`:
-
-  **Read dependencies** (two-step — search returns truncated previews):
-  1. `mem_search(query: "sdd/{change-name}/explore", project: "{project}")` → get observation ID (optional — may not exist)
-  2. If found: `mem_get_observation(id: {id})` → full exploration content
-  3. `mem_search(query: "sdd-init/{project}", project: "{project}")` → project context (optional)
-  4. If found: `mem_get_observation(id: {id})` → full project context
-
-  **Save your artifact**:
-  ```
-  mem_save(
-    title: "sdd/{change-name}/proposal",
-    topic_key: "sdd/{change-name}/proposal",
-    type: "architecture",
-    project: "{project}",
-    content: "{your full proposal markdown}"
-  )
-  ```
-  `topic_key` enables upserts — saving again updates, not duplicates.
-
-  (See `skills/_shared/engram-convention.md` for full naming conventions.)
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`.
-- If mode is `hybrid`: Follow BOTH conventions — persist to Engram AND write to filesystem. Retrieve dependencies from Engram (primary) with filesystem fallback.
-- If mode is `none`: Return result only. Never create or modify project files.
+- **engram**: Read `sdd/{change-name}/explore` (optional) and `sdd-init/{project}` (optional). Save artifact as `sdd/{change-name}/proposal`.
+- **openspec**: Read and follow `skills/_shared/openspec-convention.md`.
+- **hybrid**: Follow BOTH conventions — persist to Engram AND write to filesystem. Retrieve dependencies from Engram (primary) with filesystem fallback.
+- **none**: Return result only. Never create or modify project files.
 - Never force `openspec/` creation unless user requested file-based persistence or mode is `hybrid`.
 
 ## What to Do
 
-### Step 1: Load Skill Registry
-
-**Do this FIRST, before any other work.**
-
-1. Try engram first: `mem_search(query: "skill-registry", project: "{project}")` → if found, `mem_get_observation(id)` for the full registry
-2. If engram not available or not found: read `.atl/skill-registry.md` from the project root
-3. If neither exists: proceed without skills (not an error)
-
-From the registry, identify and read any skills whose triggers match your task. Also read any project convention files listed in the registry.
+### Step 1: Load Skills
+Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
 
 ### Step 2: Create Change Directory
 
@@ -137,22 +110,10 @@ Reference the recommended approach from exploration if available.}
 
 **This step is MANDATORY — do NOT skip it.**
 
-If mode is `engram`:
-```
-mem_save(
-  title: "sdd/{change-name}/proposal",
-  topic_key: "sdd/{change-name}/proposal",
-  type: "architecture",
-  project: "{project}",
-  content: "{your full proposal markdown from Step 4}"
-)
-```
-
-If mode is `openspec` or `hybrid`: the file was already written in Step 4.
-
-If mode is `hybrid`: also call `mem_save` as above (write to BOTH backends).
-
-If you skip this step, the next phase (sdd-spec) will NOT be able to find your proposal and the pipeline BREAKS.
+Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+- artifact: `proposal`
+- topic_key: `sdd/{change-name}/proposal`
+- type: `architecture`
 
 ### Step 6: Return Summary
 
@@ -183,4 +144,5 @@ Ready for specs (sdd-spec) or design (sdd-design).
 - Every proposal MUST have success criteria
 - Use concrete file paths in "Affected Areas" when possible
 - Apply any `rules.proposal` from `openspec/config.yaml`
-- Return a structured envelope with: `status`, `executive_summary`, `detailed_report` (optional), `artifacts`, `next_recommended`, and `risks`
+- **Size budget**: Proposal artifact MUST be under 400 words. Use bullet points and tables over prose. Headers organize, not explain.
+- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.

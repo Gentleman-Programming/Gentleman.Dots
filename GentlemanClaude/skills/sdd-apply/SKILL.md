@@ -22,59 +22,17 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-Read and follow `skills/_shared/persistence-contract.md` for mode resolution rules.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
 
-- If mode is `engram`:
-
-  **CRITICAL: `mem_search` returns 300-char PREVIEWS, not full content. You MUST call `mem_get_observation(id)` for EVERY artifact. If you skip this, you will work with incomplete specs and produce wrong code.**
-
-  **STEP A — SEARCH** (get IDs only — content is truncated):
-  1. `mem_search(query: "sdd/{change-name}/proposal", project: "{project}")` → save ID
-  2. `mem_search(query: "sdd/{change-name}/spec", project: "{project}")` → save ID
-  3. `mem_search(query: "sdd/{change-name}/design", project: "{project}")` → save ID
-  4. `mem_search(query: "sdd/{change-name}/tasks", project: "{project}")` → save ID (keep this ID for updates)
-
-  **STEP B — RETRIEVE FULL CONTENT** (mandatory for each):
-  5. `mem_get_observation(id: {proposal_id})` → full proposal
-  6. `mem_get_observation(id: {spec_id})` → full spec
-  7. `mem_get_observation(id: {design_id})` → full design
-  8. `mem_get_observation(id: {tasks_id})` → full tasks
-
-  **DO NOT use search previews as source material.**
-
-  **Mark tasks complete** (update the tasks artifact as you go):
-  ```
-  mem_update(id: {tasks-observation-id}, content: "{updated tasks with [x] marks}")
-  ```
-
-  **Save progress artifact**:
-  ```
-  mem_save(
-    title: "sdd/{change-name}/apply-progress",
-    topic_key: "sdd/{change-name}/apply-progress",
-    type: "architecture",
-    project: "{project}",
-    content: "{your implementation progress report}"
-  )
-  ```
-  `topic_key` enables upserts — saving again updates, not duplicates.
-
-  (See `skills/_shared/engram-convention.md` for advanced operations.)
-- If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Update `tasks.md` with `[x]` marks.
-- If mode is `hybrid`: Follow BOTH conventions — persist progress to Engram (`mem_update` for tasks) AND update `tasks.md` with `[x]` marks on filesystem.
-- If mode is `none`: Return progress only. Do not update project artifacts.
+- **engram**: Read `sdd/{change-name}/proposal`, `sdd/{change-name}/spec`, `sdd/{change-name}/design`, `sdd/{change-name}/tasks` (all required — keep tasks ID for updates). Mark tasks complete via `mem_update(id: {tasks-observation-id}, content: "...")`. Save progress as `sdd/{change-name}/apply-progress`.
+- **openspec**: Read and follow `skills/_shared/openspec-convention.md`. Update `tasks.md` with `[x]` marks.
+- **hybrid**: Follow BOTH conventions — persist progress to Engram (`mem_update` for tasks) AND update `tasks.md` with `[x]` marks on filesystem.
+- **none**: Return progress only. Do not update project artifacts.
 
 ## What to Do
 
-### Step 1: Load Skill Registry
-
-**Do this FIRST, before any other work.**
-
-1. Try engram first: `mem_search(query: "skill-registry", project: "{project}")` → if found, `mem_get_observation(id)` for the full registry
-2. If engram not available or not found: read `.atl/skill-registry.md` from the project root
-3. If neither exists: proceed without skills (not an error)
-
-From the registry, identify and read any skills whose triggers match your task. Also read any project convention files listed in the registry.
+### Step 1: Load Skills
+Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
 
 ### Step 2: Read Context
 
@@ -174,27 +132,11 @@ Update `tasks.md` — change `- [ ]` to `- [x]` for completed tasks:
 
 **This step is MANDATORY — do NOT skip it.**
 
-If mode is `engram`:
-1. Update the tasks artifact with completion marks:
-   ```
-   mem_update(id: {tasks-observation-id}, content: "{updated tasks with [x] marks}")
-   ```
-2. Save progress report:
-   ```
-   mem_save(
-     title: "sdd/{change-name}/apply-progress",
-     topic_key: "sdd/{change-name}/apply-progress",
-     type: "architecture",
-     project: "{project}",
-     content: "{your implementation progress report}"
-   )
-   ```
-
-If mode is `openspec` or `hybrid`: tasks.md was already updated in Step 4.
-
-If mode is `hybrid`: also call `mem_save` and `mem_update` as above.
-
-If you skip this step, sdd-verify will NOT be able to find your progress and the pipeline BREAKS.
+Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+- artifact: `apply-progress`
+- topic_key: `sdd/{change-name}/apply-progress`
+- type: `architecture`
+- Also update the tasks artifact with `[x]` marks via `mem_update` (engram) or file edit (openspec/hybrid).
 
 ### Step 6: Return Summary
 
@@ -253,4 +195,4 @@ If none, say "None."}
 - Apply any `rules.apply` from `openspec/config.yaml`
 - If TDD mode is detected (Step 3), ALWAYS follow the RED → GREEN → REFACTOR cycle — never skip RED (writing the failing test first)
 - When running tests during TDD, run ONLY the relevant test file/suite, not the entire test suite (for speed)
-- Return a structured envelope with: `status`, `executive_summary`, `detailed_report` (optional), `artifacts`, `next_recommended`, and `risks`
+- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.

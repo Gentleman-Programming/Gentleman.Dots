@@ -84,8 +84,8 @@ metadata:
 | Type | Pattern | Examples |
 |------|---------|----------|
 | Generic skill | `{technology}` | `pytest`, `playwright`, `typescript` |
-| Prowler-specific | `prowler-{component}` | `prowler-api`, `prowler-ui`, `prowler-sdk-check` |
-| Testing skill | `prowler-test-{component}` | `prowler-test-sdk`, `prowler-test-api` |
+| Project-specific | `{project}-{component}` | `myapp-api`, `myapp-ui` |
+| Testing skill | `{project}-test-{component}` | `myapp-test-sdk`, `myapp-test-api` |
 | Workflow skill | `{action}-{target}` | `skill-creator`, `jira-task` |
 
 ---
@@ -100,17 +100,7 @@ Link to existing docs?      → references/
 Link to external guides?    → references/ (with local path)
 ```
 
-**Key Rule**: `references/` should point to LOCAL files (`docs/developer-guide/*.mdx`), not web URLs.
-
----
-
-## Decision: Prowler-Specific vs Generic
-
-```
-Patterns apply to ANY project?     → Generic skill (e.g., pytest, typescript)
-Patterns are Prowler-specific?     → prowler-{name} skill
-Generic skill needs Prowler info?  → Add references/ pointing to Prowler docs
-```
+**Key Rule**: `references/` should point to LOCAL files, not web URLs.
 
 ---
 
@@ -120,7 +110,7 @@ Generic skill needs Prowler info?  → Add references/ pointing to Prowler docs
 |-------|----------|-------------|
 | `name` | Yes | Skill identifier (lowercase, hyphens) |
 | `description` | Yes | What + Trigger in one block |
-| `license` | Yes | Always `Apache-2.0` for Prowler |
+| `license` | Yes | Always `Apache-2.0` |
 | `metadata.author` | Yes | `gentleman-programming` |
 | `metadata.version` | Yes | Semantic version as string |
 
