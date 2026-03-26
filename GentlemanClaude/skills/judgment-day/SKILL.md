@@ -22,6 +22,22 @@ metadata:
 
 ## Critical Patterns
 
+### Pattern 0: Skill Resolution (BEFORE launching judges)
+
+Follow the **Skill Resolver Protocol** (`_shared/skill-resolver.md`) before launching ANY sub-agent:
+
+1. Obtain the skill registry (engram → `.atl/skill-registry.md` from the project root → skip if none)
+2. Identify the target files/scope — what code will the judges review?
+3. Match relevant skills from the registry's **Compact Rules** by:
+   - **Code context**: file extensions/paths of the target (e.g., `.tsx` → react-19, typescript)
+   - **Task context**: "review code" → framework/language skills; "create PR" → branch-pr skill
+4. Build a `## Project Standards (auto-resolved)` block with the matching compact rules
+5. Inject this block into BOTH Judge prompts AND the Fix Agent prompt (identical for all)
+
+This ensures judges review against project-specific standards, not just generic best practices.
+
+**If no registry exists**: warn the user ("No skill registry found — judges will review without project-specific standards. Run `skill-registry` to fix this.") and proceed with generic review only.
+
 ### Pattern 1: Parallel Blind Review
 
 - Launch **TWO** sub-agents via `delegate` (async, parallel — never sequential)
@@ -62,7 +78,9 @@ User asks for "judgment day"
 │   └── NO → ask user to specify scope before proceeding
 │
 ▼
-Launch Judge A + Judge B in parallel (delegate, async)
+Resolve skills (Pattern 0): read registry → match by code + task context → build Project Standards block
+▼
+Launch Judge A + Judge B in parallel (delegate, async) — with Project Standards injected
 ▼
 Wait for both to complete (delegation_read both)
 ▼
@@ -104,13 +122,17 @@ You are an adversarial code reviewer. Your ONLY job is to find problems.
 ## Target
 {describe target: files, feature, architecture, component}
 
+{if compact rules were resolved in Pattern 0, inject the following block — otherwise OMIT this entire section}
+## Project Standards (auto-resolved)
+{paste matching compact rules blocks from the skill registry}
+
 ## Review Criteria
 - Correctness: Does the code do what it claims? Are there logical errors?
 - Edge cases: What inputs or states aren't handled?
 - Error handling: Are errors caught, propagated, and logged properly?
 - Performance: Any N+1 queries, inefficient loops, unnecessary allocations?
 - Security: Any injection risks, exposed secrets, improper auth checks?
-- Naming & conventions: Does it follow the project's established patterns?
+- Naming & conventions: Does it follow the project's established patterns AND the Project Standards above?
 {if user provided custom criteria, add here}
 
 ## Return Format
@@ -121,6 +143,8 @@ Each finding:
 - File: path/to/file.ext (line N if applicable)
 - Description: What is wrong and why it matters
 - Suggested fix: one-line description of the fix (not code, just intent)
+
+Always include at the end: **Skill Resolution**: {injected|fallback-registry|fallback-path|none} — {details}
 
 If you find NO issues, return:
 VERDICT: CLEAN — No issues found.
@@ -138,6 +162,10 @@ You are a surgical fix agent. You apply ONLY the confirmed issues listed below.
 ## Confirmed Issues to Fix
 {paste the confirmed findings table from the verdict synthesis}
 
+{if compact rules were resolved in Pattern 0, inject the following block — otherwise OMIT this entire section}
+## Project Standards (auto-resolved)
+{paste matching compact rules blocks from the skill registry}
+
 ## Context
 - Original review criteria: {paste same criteria used for judges}
 - Target: {same target description}
@@ -151,6 +179,8 @@ You are a surgical fix agent. You apply ONLY the confirmed issues listed below.
 Return a summary:
 ## Fixes Applied
 - [file:line] — {what was fixed}
+
+**Skill Resolution**: {injected|fallback-registry|fallback-path|none} — {details}
 ```
 
 ---
@@ -169,8 +199,8 @@ Return a summary:
 | Naming mismatch in handler.go:15 | ❌ | ✅ | SUGGESTION | Suspect (B only) |
 | Error swallowed in db.go:201 | ✅ | ✅ | CRITICAL | Confirmed |
 
-**Confirmed issues**: 2 CRITICAL  
-**Suspect issues**: 1 WARNING, 1 SUGGESTION  
+**Confirmed issues**: 2 CRITICAL
+**Suspect issues**: 1 WARNING, 1 SUGGESTION
 **Contradictions**: none
 
 ### Fixes Applied (Round {N})

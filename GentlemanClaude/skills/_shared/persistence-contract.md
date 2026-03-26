@@ -115,11 +115,11 @@ If you return without calling mem_save, the next phase CANNOT find your artifact
 
 ## Skill Registry
 
-The orchestrator pre-resolves skill paths and passes them in the launch prompt. Sub-agents use the paths provided; if none were provided, they fall back to self-discovery via the skill registry.
+The orchestrator pre-resolves compact rules from the skill registry and injects them as `## Project Standards (auto-resolved)` in your launch prompt. Sub-agents do NOT read the registry or individual SKILL.md files — rules arrive pre-digested.
 
 To generate/update: run the `skill-registry` skill, or run `sdd-init`.
 
-Sub-agent skill loading: when the orchestrator launches you, it includes `SKILL: Load \`{path}\`` if a skill is relevant. Load that file and follow it. If no skill path was provided, proceed without — this is not an error.
+Sub-agent skill loading: check for a `## Project Standards (auto-resolved)` block in your prompt — if present, follow those rules. If not present, check for `SKILL: Load` instructions as a fallback. If neither exists, proceed without — this is not an error.
 
 ## Detail Level
 

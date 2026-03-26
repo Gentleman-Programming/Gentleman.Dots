@@ -117,7 +117,7 @@ proposal -> specs --> tasks -> apply -> verify -> archive
 ```
 
 ### Result Contract
-Each phase returns: `status`, `executive_summary`, `artifacts`, `next_recommended`, `risks`.
+Each phase returns: `status`, `executive_summary`, `artifacts`, `next_recommended`, `risks`, `skill_resolution`.
 
 <!-- gentle-ai:sdd-model-assignments -->
 ## Model Assignments
@@ -141,17 +141,30 @@ Read this table at session start (or before first delegation), cache it for the 
 
 ### Sub-Agent Launch Pattern
 
-ALL sub-agent launch prompts MUST include pre-resolved skill references:
-```
-  SKILL: Load `{skill-path}` before starting.
-```
-The orchestrator resolves skill paths from the registry ONCE (at session start or first delegation) and passes the exact path to each sub-agent. Sub-agents use the paths provided; if none were provided, they fall back to self-discovery via the skill registry. Also reads the Model Assignments table once per session, caches `phase → alias`, includes that alias in every Agent tool call via `model`.
+ALL sub-agent launch prompts that involve reading, writing, or reviewing code MUST include pre-resolved **compact rules** from the skill registry. Follow the **Skill Resolver Protocol** (see `_shared/skill-resolver.md` in the skills directory).
+
+The orchestrator resolves skills from the registry ONCE (at session start or first delegation), caches the compact rules, and injects matching rules into each sub-agent's prompt. Also reads the Model Assignments table once per session, caches `phase → alias`, includes that alias in every Agent tool call via `model`.
 
 Orchestrator skill resolution (do once per session):
-1. `mem_search(query: "skill-registry", project: "{project}")` → get registry
-2. Cache skill-name → path mapping for the session
-3. For each sub-agent launch: `SKILL: Load \`{resolved-path}\` before starting.`
-4. If no registry exists, skip — sub-agent proceeds with its phase skill only.
+1. `mem_search(query: "skill-registry", project: "{project}")` → `mem_get_observation(id)` for full registry content
+2. Fallback: read `.atl/skill-registry.md` if engram not available
+3. Cache the **Compact Rules** section and the **User Skills** trigger table
+4. If no registry exists, warn user and proceed without project-specific standards
+
+For each sub-agent launch:
+1. Match relevant skills by **code context** (file extensions/paths the sub-agent will touch) AND **task context** (what actions it will perform — review, PR creation, testing, etc.)
+2. Copy matching compact rule blocks into the sub-agent prompt as `## Project Standards (auto-resolved)`
+3. Inject BEFORE the sub-agent's task-specific instructions
+
+**Key rule**: inject compact rules TEXT, not paths. Sub-agents do NOT read SKILL.md files or the registry — rules arrive pre-digested. This is compaction-safe because each delegation re-reads the registry if the cache is lost.
+
+### Skill Resolution Feedback
+
+After every delegation that returns a result, check the `skill_resolution` field:
+- `injected` → all good, skills were passed correctly
+- `fallback-registry`, `fallback-path`, or `none` → skill cache was lost (likely compaction). Re-read the registry immediately and inject compact rules in all subsequent delegations.
+
+This is a self-correction mechanism. Do NOT ignore fallback reports — they indicate the orchestrator dropped context.
 
 ### Sub-Agent Context Protocol
 
@@ -162,7 +175,7 @@ Sub-agents get a fresh context with NO memory. The orchestrator controls context
 - Read context: orchestrator searches engram (`mem_search`) for relevant prior context and passes it in the sub-agent prompt. Sub-agent does NOT search engram itself.
 - Write context: sub-agent MUST save significant discoveries, decisions, or bug fixes to engram via `mem_save` before returning. Sub-agent has full detail — save before returning, not after.
 - Always add to sub-agent prompt: `"If you make important discoveries, decisions, or fix bugs, save them to engram via mem_save with project: '{project}'."`
-- Skills: orchestrator pre-resolves skill paths from the registry and passes them directly. Sub-agents fall back to self-discovery if none provided.
+- Skills: orchestrator resolves compact rules from the registry and injects them as `## Project Standards (auto-resolved)` in the sub-agent prompt. Sub-agents do NOT read SKILL.md files or the registry — they receive rules pre-digested.
 
 #### SDD Phases
 
