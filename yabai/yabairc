@@ -16,7 +16,7 @@ yabai -m config window_opacity               on
 yabai -m config window_opacity_duration      0.2
 yabai -m config active_window_opacity        1.0
 yabai -m config normal_window_opacity        0.95
-yabai -m config window_animation_duration    0.25
+yabai -m config window_animation_duration    0.0
 yabai -m config window_animation_easing      ease_out_circ
 yabai -m config insert_feedback_color        0xff61afef
 yabai -m config split_ratio                  0.50
@@ -29,12 +29,7 @@ yabai -m config mouse_drop_action            swap
 # SketchyBar integration
 yabai -m config external_bar                 all:45:0
 
-# SketchyBar signals - trigger updates on workspace/window changes
-yabai -m signal --add event=space_changed action="sketchybar --trigger yabai_space_changed" label="sketchybar_space_changed"
-yabai -m signal --add event=window_created action="sketchybar --trigger yabai_window_created" label="sketchybar_window_created"
-yabai -m signal --add event=window_destroyed action="sketchybar --trigger yabai_window_destroyed" label="sketchybar_window_destroyed"
-yabai -m signal --add event=window_moved action="sketchybar --trigger yabai_window_moved" label="sketchybar_window_moved"
-yabai -m signal --add event=window_focused action="sketchybar --trigger yabai_space_changed" label="sketchybar_window_focused"
+# SketchyBar signals removed - sketchybar uses native space_change event
 
 # general space settings - beautiful spacing
 yabai -m config layout                       bsp

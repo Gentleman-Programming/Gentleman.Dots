@@ -74,9 +74,6 @@ sketchybar --default \
 # ─────────────────────────────────────────────────────────────────────────────────
 # SPACES (YABAI WORKSPACES)
 # ─────────────────────────────────────────────────────────────────────────────────
-# Add yabai events
-sketchybar --add event yabai_space_changed
-
 for sid in $(seq 1 10); do
   sketchybar --add space space.$sid left \
     --set space.$sid \
@@ -97,9 +94,7 @@ for sid in $(seq 1 10); do
       background.drawing=on \
       script="$PLUGIN_DIR/space.sh" \
       click_script="yabai -m space --focus $sid" \
-    --subscribe space.$sid \
-      space_change \
-      yabai_space_changed
+    --subscribe space.$sid space_change
 done
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -178,7 +173,7 @@ sketchybar --add item datetime right \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
-    update_freq=10 \
+    update_freq=30 \
     script="$PLUGIN_DIR/datetime.sh" \
     click_script="open -a Calendar"
 
@@ -205,28 +200,6 @@ sketchybar --add item meeting right \
     click_script="open -a Calendar"
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# MUSIC
-# ─────────────────────────────────────────────────────────────────────────────────
-sketchybar --add item music right \
-  --set music \
-    icon="MUS" \
-    icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$GREEN \
-    icon.padding_left=10 \
-    icon.padding_right=4 \
-    label.padding_right=10 \
-    label.max_chars=17 \
-    scroll_texts=on \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
-    background.border_width=1 \
-    background.corner_radius=4 \
-    background.height=24 \
-    update_freq=3 \
-    script="$PLUGIN_DIR/music.sh" \
-    click_script="open -a Spotify"
-
-# ─────────────────────────────────────────────────────────────────────────────────
 # VOLUME
 # ─────────────────────────────────────────────────────────────────────────────────
 sketchybar --add item volume right \
@@ -249,48 +222,6 @@ sketchybar --add item volume right \
   --subscribe volume volume_change
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# MIC (microphone status) - click to toggle mute
-# ─────────────────────────────────────────────────────────────────────────────────
-sketchybar --add item mic right \
-  --set mic \
-    icon="MIC" \
-    icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$DIM \
-    icon.padding_left=10 \
-    icon.padding_right=4 \
-    label.padding_right=10 \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
-    background.border_width=1 \
-    background.corner_radius=4 \
-    background.height=24 \
-    update_freq=5 \
-    script="$PLUGIN_DIR/mic.sh" \
-    click_script="$PLUGIN_DIR/mic_toggle.sh"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# GITHUB NOTIFICATIONS
-# ─────────────────────────────────────────────────────────────────────────────────
-sketchybar --add item github right \
-  --set github \
-    icon="GH" \
-    icon.font="IosevkaTerm NF:Bold:12.0" \
-    icon.color=$WHITE \
-    icon.padding_left=10 \
-    icon.padding_right=4 \
-    label.padding_right=10 \
-    label.width=25 \
-    label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
-    background.border_width=1 \
-    background.corner_radius=4 \
-    background.height=24 \
-    update_freq=120 \
-    script="$PLUGIN_DIR/github.sh" \
-    click_script="open https://github.com/notifications"
-
-# ─────────────────────────────────────────────────────────────────────────────────
 # CPU
 # ─────────────────────────────────────────────────────────────────────────────────
 sketchybar --add item cpu right \
@@ -308,7 +239,7 @@ sketchybar --add item cpu right \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
-    update_freq=3 \
+    update_freq=5 \
     script="$PLUGIN_DIR/cpu.sh" \
     click_script="open -a 'Activity Monitor'"
 
@@ -330,7 +261,7 @@ sketchybar --add item gpu right \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
-    update_freq=5 \
+    update_freq=10 \
     script="$PLUGIN_DIR/gpu.sh" \
     click_script="open -a 'Activity Monitor'"
 
@@ -352,7 +283,7 @@ sketchybar --add item ram right \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
-    update_freq=5 \
+    update_freq=10 \
     script="$PLUGIN_DIR/ram.sh" \
     click_script="open -a 'Activity Monitor'" \
   

@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Front App - shows the currently focused application with icon + smooth fade
-
-# Animation settings
-ANIM_DURATION=6
-ANIM_CURVE="tanh"
+# Front App - instant update, no animation
 
 if [ "$SENDER" = "front_app_switched" ]; then
-  sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set $NAME \
-    label="$INFO" \
-    icon.background.image="app.$INFO"
+  sketchybar --set $NAME label="$INFO" icon.background.image="app.$INFO"
 fi

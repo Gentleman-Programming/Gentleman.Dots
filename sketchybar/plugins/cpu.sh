@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# CPU - displays current CPU usage percentage with color based on load
+# CPU - ps-based (19ms) instead of top (500ms)
 
 RED=0xffcb7c94
 YELLOW=0xffffe066
 CYAN=0xff7aa89f
 
-CPU=$(top -l 1 -n 0 | grep "CPU usage" | awk '{print int($3)}')
+NCPU=$(sysctl -n hw.ncpu)
+CPU=$(ps -A -o %cpu | awk -v n="$NCPU" '{s+=$1} END {v=s/n; if(v>100)v=100; printf "%d",v}')
 
-# Color based on usage
 if [ "$CPU" -ge 80 ]; then
   COLOR=$RED
 elif [ "$CPU" -ge 50 ]; then
