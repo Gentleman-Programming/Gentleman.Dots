@@ -23,9 +23,18 @@
     mkdir -p "$CLAUDE_DST/skills"
 
     # Copy CLAUDE.md (global instructions)
+    # Guard: if third-party markers are present (agent-teams-lite, gentle-ai),
+    # skip the overwrite to preserve the user's orchestrator configuration.
+    # Users without markers get the standard cp -f behavior (backward-compatible).
     if [ -f "$CLAUDE_SRC/CLAUDE.md" ]; then
-      cp -f "$CLAUDE_SRC/CLAUDE.md" "$CLAUDE_DST/"
-      echo "⚙️ Copied CLAUDE.md"
+      if grep -q "BEGIN:agent-teams-lite\|BEGIN:gentle-ai" "$CLAUDE_DST/CLAUDE.md" 2>/dev/null; then
+        echo "⚠️  CLAUDE.md has third-party markers (agent-teams-lite / gentle-ai)"
+        echo "   Skipping cp to preserve orchestrator configuration."
+        echo "   To apply Dots changes: run 'gentle-ai setup' or 'agent-teams-lite/scripts/setup.sh'"
+      else
+        cp -f "$CLAUDE_SRC/CLAUDE.md" "$CLAUDE_DST/"
+        echo "⚙️ Copied CLAUDE.md"
+      fi
     fi
 
     # Copy statusline script
