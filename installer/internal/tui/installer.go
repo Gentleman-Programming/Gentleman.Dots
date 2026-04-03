@@ -154,27 +154,7 @@ func stepInstallHomebrew(m *Model) error {
 	}
 
 	SendLog(stepID, "Installing Homebrew package manager...")
-
-	// Download the installer to a temp file to ensure it runs with bash explicitly.
-	// Using command substitution (/bin/bash -c "$(curl ...)") can fail in non-TTY
-	// environments because the script may not detect bash correctly.
-	tmpScript := filepath.Join(os.TempDir(), "homebrew_install.sh")
-	dlResult := system.Run(
-		fmt.Sprintf("curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o %s", tmpScript),
-		nil,
-	)
-	if dlResult.Error != nil {
-		return wrapStepError("homebrew", "Download Homebrew installer",
-			"Failed to download Homebrew installer. Check your internet connection.",
-			dlResult.Error)
-	}
-	defer os.Remove(tmpScript)
-
-	// Run with NONINTERACTIVE=1 to prevent post-install prompts from exiting
-	// with status 1 in non-TTY environments (e.g. piped stdout/stderr in TUI mode).
-	result := system.RunWithLogs("/bin/bash "+tmpScript, &system.ExecOptions{
-		Env: []string{"NONINTERACTIVE=1"},
-	}, func(line string) {
+	result := system.RunWithLogs(`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`, nil, func(line string) {
 		SendLog(stepID, line)
 	})
 	if result.Error != nil {

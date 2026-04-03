@@ -70,13 +70,13 @@ func getHomebrewScript(m *Model) (string, error) {
 	}
 
 	brewPrefix := system.GetBrewPrefix()
-	script := fmt.Sprintf(`#!/bin/sh
+	script := fmt.Sprintf(`#!/bin/bash
 set -e
 echo ""
 echo "🍺 Installing Homebrew package manager..."
 echo "   (You may be prompted for your password)"
 echo ""
-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 echo ""
 echo "📝 Configuring shell to use Homebrew..."
