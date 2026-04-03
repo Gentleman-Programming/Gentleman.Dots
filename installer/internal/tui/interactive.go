@@ -327,10 +327,18 @@ echo ""
 echo "🔐 Changing default shell..."
 echo "   (You may need to enter your password)"
 echo ""
-chsh -s "$SHELL_PATH"
+if chsh -s "$SHELL_PATH" 2>/dev/null; then
+    echo ""
+    echo "✅ Default shell changed to $SHELL_PATH"
+elif sudo usermod -s "$SHELL_PATH" "$(whoami)" 2>/dev/null; then
+    echo ""
+    echo "✅ Default shell changed to $SHELL_PATH (via usermod)"
+else
+    echo ""
+    echo "⚠️  Could not change default shell automatically."
+    echo "   Run manually: chsh -s $SHELL_PATH"
+fi
 
-echo ""
-echo "✅ Default shell changed to $SHELL_PATH"
 echo "   Please log out and log back in for changes to take effect."
 echo ""
 echo "Press Enter to continue..."
