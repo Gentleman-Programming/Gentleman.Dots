@@ -13,8 +13,13 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, flake-utils, ... }:
     let
-      # Support macOS systems only
-      supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
+      # ─── Cross-platform ─── Support macOS and Linux systems
+      supportedSystems = [
+        "x86_64-darwin"
+        "aarch64-darwin"
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       
       # ─── User Configuration ───
       # Change this to your macOS username
@@ -32,16 +37,13 @@
             inherit system;
             config.allowUnfree = true;
           };
-        in
-        home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          
-          # Pass extraSpecialArgs to make unstablePkgs available in modules
-          extraSpecialArgs = {
-            inherit unstablePkgs;
-          };
-          
-          modules = [
+
+          # ─── Platform detection ───
+          isDarwin = pkgs.stdenv.isDarwin;
+
+          # ─── Cross-platform modules ───
+          # These modules work on both macOS and Linux
+          commonModules = [
             ./nushell.nix  # Nushell configuration
             ./ghostty.nix  # Ghostty configuration
             ./zed.nix  # Zed configuration
@@ -57,15 +59,44 @@
             ./opencode.nix  # OpenCode AI assistant configuration
             ./claude.nix  # Claude Code CLI configuration
             ./engram.nix  # Engram memory layer for AI agents
-            ./yabai.nix  # Yabai window manager configuration
-            ./skhd.nix  # Skhd hotkey daemon configuration
+          ];
+
+          # ─── macOS-only modules ───
+          # These modules depend on macOS-specific tools and APIs
+          darwinOnlyModules = [
+            ./yabai.nix  # Yabai window manager (macOS only)
+            ./skhd.nix  # Skhd hotkey daemon (macOS only)
             # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
-            ./sketchybar.nix  # SketchyBar status bar
-            ./raycast.nix  # Raycast scripts
+            ./sketchybar.nix  # SketchyBar status bar (macOS only)
+            ./raycast.nix  # Raycast scripts (macOS only)
+          ];
+
+          # ─── macOS-only packages ───
+          darwinOnlyPackages = with pkgs; [
+            yabai
+            skhd
+            unstablePkgs.sketchybar  # Use unstable for latest version
+          ];
+        in
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          
+          # Pass extraSpecialArgs to make unstablePkgs available in modules
+          extraSpecialArgs = {
+            inherit unstablePkgs;
+          };
+          
+          modules = commonModules
+            ++ pkgs.lib.optionals isDarwin darwinOnlyModules
+            ++ [
             {
               # Personal data
               home.username = username;
-              home.homeDirectory = "/Users/${username}";  # macOS home directory
+              # ─── Cross-platform ─── Conditional home directory
+              home.homeDirectory =
+                if isDarwin
+                then "/Users/${username}"
+                else "/home/${username}";
               home.stateVersion = "24.11";  # State version
 
               # Base packages that should be available everywhere
@@ -76,11 +107,6 @@
                 fish
                 zsh
                 nushell
-
-                # ─── Window management (macOS) ───
-                yabai
-                skhd
-                unstablePkgs.sketchybar  # Use unstable for latest version
 
                 # ─── Development tools ───
                 volta
@@ -113,7 +139,9 @@
 
                 # ─── Nerd Fonts ───
                 nerd-fonts.iosevka-term
-              ];
+              ]
+              # ─── macOS-only ─── Window management packages
+              ++ pkgs.lib.optionals isDarwin darwinOnlyPackages;
 
               # Enable programs explicitly (critical for binaries to appear)
               # All program enables are centralized here
@@ -139,12 +167,16 @@
     {
       # Home Manager configurations for each system
       homeConfigurations = {
-        # macOS system configurations
+        # ─── macOS system configurations ───
         "gentleman-macos-intel" = mkHomeConfiguration "x86_64-darwin";
         "gentleman-macos-arm" = mkHomeConfiguration "aarch64-darwin";
         
         # Default to Apple Silicon
         "gentleman" = mkHomeConfiguration "aarch64-darwin";
+
+        # ─── Linux system configurations ───
+        "gentleman-linux" = mkHomeConfiguration "x86_64-linux";
+        "gentleman-linux-arm" = mkHomeConfiguration "aarch64-linux";
       };
     };
 }
