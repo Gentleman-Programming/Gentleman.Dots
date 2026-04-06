@@ -49,6 +49,9 @@ const (
 	ScreenRestoreConfirm
 	// Warning screens
 	ScreenGhosttyWarning // Warning about Ghostty compatibility on Debian/Ubuntu
+	// Neovim specific screens
+	ScreenExperienceSelect // Select experience level
+	ScreenLeaderKeySelect  // Select leader key
 	// Vim Trainer screens
 	ScreenTrainerMenu       // Module selection
 	ScreenTrainerLesson     // Lesson mode
@@ -87,7 +90,9 @@ type UserChoices struct {
 	Shell        string // "fish", "zsh", "nushell"
 	WindowMgr    string // "tmux", "zellij", "none"
 	InstallNvim  bool
-	CreateBackup bool // Whether to backup existing configs
+	Experience   string // "beginner", "intermediate", "advanced"
+	LeaderKey    string // "space", "comma", "backslash"
+	CreateBackup bool   // Whether to backup existing configs
 }
 
 // Model is the main application state
@@ -155,7 +160,10 @@ func NewModel() Model {
 		Width:                   80,
 		Height:                  24,
 		SystemInfo:              system.Detect(),
-		Choices:                 UserChoices{},
+		Choices: UserChoices{
+			Experience: "intermediate",
+			LeaderKey:  "space",
+		},
 		Steps:                   []InstallStep{},
 		CurrentStep:             0,
 		Cursor:                  0,
@@ -286,6 +294,18 @@ func (m Model) GetCurrentOptions() []string {
 		return []string{"Tmux", "Zellij", "None", "─────────────", "ℹ️  Learn about multiplexers"}
 	case ScreenNvimSelect:
 		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
+	case ScreenExperienceSelect:
+		return []string{
+			"Beginner (I'm new to Vim)",
+			"Intermediate (I know the basics)",
+			"Advanced (Vim is my life)",
+		}
+	case ScreenLeaderKeySelect:
+		return []string{
+			"Space (Recommended)",
+			"Comma (,)",
+			"Backslash (\\)",
+		}
 	case ScreenBackupConfirm:
 		return []string{
 			"✅ Install with Backup (recommended)",
@@ -384,6 +404,10 @@ func (m Model) GetScreenTitle() string {
 		return "Step 5: Choose Window Manager"
 	case ScreenNvimSelect:
 		return "Step 6: Neovim Configuration"
+	case ScreenExperienceSelect:
+		return "Step 6a: Neovim Experience Level"
+	case ScreenLeaderKeySelect:
+		return "Step 6b: Select Leader Key"
 	case ScreenBackupConfirm:
 		return "⚠️  Existing Configs Detected"
 	case ScreenRestoreBackup:
@@ -482,6 +506,10 @@ func (m Model) GetScreenDescription() string {
 		return "Terminal multiplexer for managing sessions"
 	case ScreenNvimSelect:
 		return "Includes LSP, TreeSitter, and Gentleman config"
+	case ScreenExperienceSelect:
+		return "This will tailor the documentation and learning guides to your level"
+	case ScreenLeaderKeySelect:
+		return "The prefix key used for most custom shortcuts (Leader)"
 	case ScreenGhosttyWarning:
 		return "Ghostty installation may fail on Ubuntu/Debian.\nThe installer script only supports certain versions."
 	default:
