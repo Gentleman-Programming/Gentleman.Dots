@@ -774,6 +774,47 @@ func TestBackupOptions(t *testing.T) {
 	})
 }
 
+func TestStepBackupConfigs(t *testing.T) {
+	t.Run("backs up symlinked oh-my-zsh directory without failing", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		realOhMyZsh := filepath.Join(home, "ohmyzsh-real")
+		if err := os.MkdirAll(filepath.Join(realOhMyZsh, "themes"), 0o755); err != nil {
+			t.Fatalf("Failed to create real oh-my-zsh directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(realOhMyZsh, "themes", "gentleman.zsh-theme"), []byte("theme"), 0o644); err != nil {
+			t.Fatalf("Failed to create real oh-my-zsh file: %v", err)
+		}
+		if err := os.Symlink(realOhMyZsh, filepath.Join(home, ".oh-my-zsh")); err != nil {
+			t.Skipf("Symlinks not supported in this environment: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(home, ".zshrc"), []byte("export ZSH=~/.oh-my-zsh\n"), 0o644); err != nil {
+			t.Fatalf("Failed to create zshrc: %v", err)
+		}
+
+		m := NewModel()
+		m.ExistingConfigs = []string{
+			"oh-my-zsh: " + filepath.Join(home, ".oh-my-zsh"),
+			"zsh: " + filepath.Join(home, ".zshrc"),
+		}
+
+		err := stepBackupConfigs(&m)
+		if err != nil {
+			t.Fatalf("Expected backup step to succeed, got error: %v", err)
+		}
+		defer os.RemoveAll(m.BackupDir)
+
+		if _, err := os.Stat(filepath.Join(m.BackupDir, "oh-my-zsh", "themes", "gentleman.zsh-theme")); err != nil {
+			t.Fatalf("Expected oh-my-zsh backup to exist: %v", err)
+		}
+	})
+}
+
 // Helper functions
 func simulateKeyPress(m Model, key string) (Model, interface{}) {
 	var msg tea.Msg

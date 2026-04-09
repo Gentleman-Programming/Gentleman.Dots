@@ -167,8 +167,10 @@ The installer automatically detects existing configurations for:
 Backups are stored in your home directory with a timestamp:
 
 ```
-~/.gentleman-backup-YYYYMMDD-HHMMSS/
+~/.gentleman-backup-YYYY-MM-DD-HHMMSS/
 ```
+
+Directory-based configs such as `~/.oh-my-zsh` are backed up recursively, alongside single-file configs like `~/.zshrc`.
 
 ### Restoring a Backup
 
