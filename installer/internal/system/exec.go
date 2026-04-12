@@ -284,8 +284,19 @@ func RunPkgInstall(packages string, opts *ExecOptions, logFunc func(string)) *Ex
 
 // CopyFile copies a file from src to dst
 func CopyFile(src, dst string) error {
+	info, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if info.IsDir() {
+		return fmt.Errorf("copy file %s: source is a directory", src)
+	}
+
 	input, err := os.ReadFile(src)
 	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return err
 	}
 	return os.WriteFile(dst, input, 0644)
@@ -295,21 +306,44 @@ func CopyFile(src, dst string) error {
 func CopyDir(src, dst string) error {
 	// Clean paths - remove trailing /* or /. if present
 	src = strings.TrimSuffix(strings.TrimSuffix(src, "/*"), "/.")
+	walkRoot, err := filepath.EvalSymlinks(src)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return err
+		}
+		walkRoot = src
+	}
 
-	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+	rootInfo, err := os.Stat(walkRoot)
+	if err != nil {
+		return err
+	}
+	if !rootInfo.IsDir() {
+		return fmt.Errorf("copy dir %s: source is not a directory", src)
+	}
+	if err := os.MkdirAll(dst, rootInfo.Mode()); err != nil {
+		return err
+	}
+
+	return filepath.Walk(walkRoot, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		resolvedInfo, err := os.Stat(path)
 		if err != nil {
 			return err
 		}
 
 		// Calculate destination path
-		relPath, err := filepath.Rel(src, path)
+		relPath, err := filepath.Rel(walkRoot, path)
 		if err != nil {
 			return err
 		}
 		dstPath := filepath.Join(dst, relPath)
 
-		if info.IsDir() {
-			return os.MkdirAll(dstPath, info.Mode())
+		if resolvedInfo.IsDir() {
+			return os.MkdirAll(dstPath, resolvedInfo.Mode())
 		}
 
 		// Copy file

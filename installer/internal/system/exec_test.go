@@ -160,6 +160,77 @@ func TestCopyFile(t *testing.T) {
 			t.Error("Expected error for non-existent source")
 		}
 	})
+
+	t.Run("should error when source is a directory", func(t *testing.T) {
+		srcDir := t.TempDir()
+		dstFile := filepath.Join(t.TempDir(), "dest.txt")
+
+		err := CopyFile(srcDir, dstFile)
+		if err == nil {
+			t.Error("Expected error when source is a directory")
+		}
+	})
+}
+
+func TestCopyDir(t *testing.T) {
+	t.Run("should copy directory recursively", func(t *testing.T) {
+		srcDir := filepath.Join(t.TempDir(), "src")
+		dstDir := filepath.Join(t.TempDir(), "dst")
+
+		err := os.MkdirAll(filepath.Join(srcDir, "nested"), 0o755)
+		if err != nil {
+			t.Fatalf("Failed to create source directory: %v", err)
+		}
+		err = os.WriteFile(filepath.Join(srcDir, "nested", "config.txt"), []byte("hello"), 0o644)
+		if err != nil {
+			t.Fatalf("Failed to write source file: %v", err)
+		}
+
+		err = CopyDir(srcDir, dstDir)
+		if err != nil {
+			t.Fatalf("Unexpected error copying directory: %v", err)
+		}
+
+		data, err := os.ReadFile(filepath.Join(dstDir, "nested", "config.txt"))
+		if err != nil {
+			t.Fatalf("Failed to read copied file: %v", err)
+		}
+		if string(data) != "hello" {
+			t.Errorf("Expected copied content 'hello', got %q", string(data))
+		}
+	})
+
+	t.Run("should follow symlink to directory", func(t *testing.T) {
+		realDir := filepath.Join(t.TempDir(), "real")
+		linkDir := filepath.Join(t.TempDir(), "link")
+		dstDir := filepath.Join(t.TempDir(), "dst")
+
+		err := os.MkdirAll(realDir, 0o755)
+		if err != nil {
+			t.Fatalf("Failed to create real directory: %v", err)
+		}
+		err = os.WriteFile(filepath.Join(realDir, "theme.zsh"), []byte("prompt"), 0o644)
+		if err != nil {
+			t.Fatalf("Failed to write real directory file: %v", err)
+		}
+		err = os.Symlink(realDir, linkDir)
+		if err != nil {
+			t.Skipf("Symlinks not supported in this environment: %v", err)
+		}
+
+		err = CopyDir(linkDir, dstDir)
+		if err != nil {
+			t.Fatalf("Unexpected error copying symlinked directory: %v", err)
+		}
+
+		data, err := os.ReadFile(filepath.Join(dstDir, "theme.zsh"))
+		if err != nil {
+			t.Fatalf("Failed to read copied file from symlinked directory: %v", err)
+		}
+		if string(data) != "prompt" {
+			t.Errorf("Expected copied content 'prompt', got %q", string(data))
+		}
+	})
 }
 
 func TestConfigPaths(t *testing.T) {
@@ -324,6 +395,46 @@ func TestCreateBackup(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("should backup file and symlinked directory configs", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		realOhMyZsh := filepath.Join(home, "ohmyzsh-real")
+		if err := os.MkdirAll(filepath.Join(realOhMyZsh, "themes"), 0o755); err != nil {
+			t.Fatalf("Failed to create oh-my-zsh directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(realOhMyZsh, "themes", "gentleman.zsh-theme"), []byte("theme"), 0o644); err != nil {
+			t.Fatalf("Failed to create oh-my-zsh file: %v", err)
+		}
+		if err := os.Symlink(realOhMyZsh, filepath.Join(home, ".oh-my-zsh")); err != nil {
+			t.Skipf("Symlinks not supported in this environment: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(home, ".zshrc"), []byte("export ZSH=~/.oh-my-zsh\n"), 0o644); err != nil {
+			t.Fatalf("Failed to create .zshrc: %v", err)
+		}
+
+		backupDir, err := CreateBackup([]string{"oh-my-zsh: " + filepath.Join(home, ".oh-my-zsh"), "zsh: " + filepath.Join(home, ".zshrc")})
+		if err != nil {
+			t.Fatalf("Unexpected error creating backup: %v", err)
+		}
+		defer os.RemoveAll(backupDir)
+
+		if _, err := os.Stat(filepath.Join(backupDir, "oh-my-zsh", "themes", "gentleman.zsh-theme")); err != nil {
+			t.Fatalf("Expected backed up oh-my-zsh theme file: %v", err)
+		}
+		data, err := os.ReadFile(filepath.Join(backupDir, "zsh"))
+		if err != nil {
+			t.Fatalf("Expected backed up zsh file: %v", err)
+		}
+		if !strings.Contains(string(data), "oh-my-zsh") {
+			t.Errorf("Expected zsh backup to contain original content, got %q", string(data))
+		}
+	})
 }
 
 func TestRestoreBackup(t *testing.T) {
@@ -345,6 +456,54 @@ func TestRestoreBackup(t *testing.T) {
 		err := RestoreBackup(testBackupDir)
 		if err != nil {
 			t.Errorf("RestoreBackup should not error for empty backup: %v", err)
+		}
+	})
+
+	t.Run("should restore directory and file configs", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		backupDir := filepath.Join(home, ".gentleman-backup-restore-test")
+		if err := os.MkdirAll(filepath.Join(backupDir, "oh-my-zsh", "themes"), 0o755); err != nil {
+			t.Fatalf("Failed to create backup directory tree: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(backupDir, "oh-my-zsh", "themes", "gentleman.zsh-theme"), []byte("restored-theme"), 0o644); err != nil {
+			t.Fatalf("Failed to create backed up theme file: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(backupDir, "zsh"), []byte("restored-zshrc"), 0o644); err != nil {
+			t.Fatalf("Failed to create backed up zshrc file: %v", err)
+		}
+
+		if err := os.MkdirAll(filepath.Join(home, ".oh-my-zsh"), 0o755); err != nil {
+			t.Fatalf("Failed to create existing oh-my-zsh directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(home, ".zshrc"), []byte("old-zshrc"), 0o644); err != nil {
+			t.Fatalf("Failed to create existing zshrc file: %v", err)
+		}
+
+		err := RestoreBackup(backupDir)
+		if err != nil {
+			t.Fatalf("Unexpected error restoring backup: %v", err)
+		}
+
+		themeData, err := os.ReadFile(filepath.Join(home, ".oh-my-zsh", "themes", "gentleman.zsh-theme"))
+		if err != nil {
+			t.Fatalf("Failed to read restored theme: %v", err)
+		}
+		if string(themeData) != "restored-theme" {
+			t.Errorf("Expected restored theme content, got %q", string(themeData))
+		}
+
+		zshrcData, err := os.ReadFile(filepath.Join(home, ".zshrc"))
+		if err != nil {
+			t.Fatalf("Failed to read restored zshrc: %v", err)
+		}
+		if string(zshrcData) != "restored-zshrc" {
+			t.Errorf("Expected restored zshrc content, got %q", string(zshrcData))
 		}
 	})
 }
