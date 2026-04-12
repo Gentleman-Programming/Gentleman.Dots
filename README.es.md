@@ -215,3 +215,11 @@ Contiene configuraciones de vanguardia que luego pasan a `main` cuando se estabi
 Licencia MIT — libre de usar, modificar y compartir.
 
 **¡Feliz coding!** 🎩
+
+---
+
+## Contribuidores
+
+¡Gracias a todos los que contribuyeron a Gentleman.Dots!
+
+[![Contributors](https://contrib.rocks/image?repo=Gentleman-Programming/Gentleman.Dots)](https://github.com/Gentleman-Programming/Gentleman.Dots/graphs/contributors)

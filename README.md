@@ -213,3 +213,11 @@ This branch contains cutting-edge configurations that eventually make their way 
 MIT License - feel free to use, modify, and share.
 
 **Happy coding!** 🎩
+
+---
+
+## Contributors
+
+Thanks to everyone who has contributed to Gentleman.Dots!
+
+[![Contributors](https://contrib.rocks/image?repo=Gentleman-Programming/Gentleman.Dots)](https://github.com/Gentleman-Programming/Gentleman.Dots/graphs/contributors)
