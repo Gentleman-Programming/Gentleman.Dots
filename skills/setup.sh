@@ -12,7 +12,6 @@
 #   ./skills/setup.sh --gemini     # Generate GEMINI.md only
 #   ./skills/setup.sh --copilot    # Generate .github/copilot-instructions.md
 #   ./skills/setup.sh --codex      # Generate CODEX.md only
-#   ./skills/setup.sh --opencode   # Sync to OpenCode config
 #
 # ============================================================================
 
@@ -155,82 +154,6 @@ EOF
     log_success "Created $codex_file"
 }
 
-# Sync skills to OpenCode config directory
-sync_opencode() {
-    local opencode_dir="$HOME/.config/opencode/skills"
-
-    # Remove legacy skill/ directory if it exists (renamed to skills/)
-    rm -rf "$HOME/.config/opencode/skill"
-
-    log_info "Syncing skills to OpenCode config..."
-
-    if [ ! -d "$opencode_dir" ]; then
-        log_warning "OpenCode skill directory not found: $opencode_dir"
-        log_info "Creating directory..."
-        mkdir -p "$opencode_dir"
-    fi
-
-    # Copy AGENTS.md as the main instruction file
-    if [ -f "$REPO_ROOT/GentlemanOpenCode/AGENTS.md" ]; then
-        cp "$REPO_ROOT/GentlemanOpenCode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
-        log_success "Copied AGENTS.md to OpenCode"
-    fi
-
-    # Copy individual skills
-    local skills_dir="$REPO_ROOT/GentlemanClaude/skills"
-    if [ -d "$skills_dir" ]; then
-        for skill_dir in "$skills_dir"/*/; do
-            if [ -f "$skill_dir/SKILL.md" ]; then
-                skill_name=$(basename "$skill_dir")
-                mkdir -p "$opencode_dir/$skill_name"
-                cp "$skill_dir/SKILL.md" "$opencode_dir/$skill_name/SKILL.md"
-                log_info "  → Copied $skill_name"
-            fi
-        done
-        log_success "Synced all skills to OpenCode"
-    fi
-}
-
-# Sync skills to Claude Code config directory
-sync_claude_config() {
-    local claude_dir="$HOME/.claude/skills"
-
-    log_info "Syncing skills to Claude Code config..."
-
-    if [ ! -d "$claude_dir" ]; then
-        log_warning "Claude skills directory not found: $claude_dir"
-        log_info "Creating directory..."
-        mkdir -p "$claude_dir"
-    fi
-
-    # Copy individual skills
-    local skills_dir="$REPO_ROOT/GentlemanClaude/skills"
-    if [ -d "$skills_dir" ]; then
-        for skill_dir in "$skills_dir"/*/; do
-            if [ -f "$skill_dir/SKILL.md" ]; then
-                skill_name=$(basename "$skill_dir")
-                mkdir -p "$claude_dir/$skill_name"
-
-                # Remove existing file if read-only, then copy
-                local dest_file="$claude_dir/$skill_name/SKILL.md"
-                if [ -f "$dest_file" ]; then
-                    chmod u+w "$dest_file" 2>/dev/null || true
-                fi
-                cp -f "$skill_dir/SKILL.md" "$dest_file"
-
-                # Copy assets if they exist
-                if [ -d "$skill_dir/assets" ]; then
-                    chmod -R u+w "$claude_dir/$skill_name/assets" 2>/dev/null || true
-                    cp -rf "$skill_dir/assets" "$claude_dir/$skill_name/"
-                fi
-
-                log_info "  → Copied $skill_name"
-            fi
-        done
-        log_success "Synced all skills to ~/.claude/skills/"
-    fi
-}
-
 # Generate all formats for a single AGENTS.md
 generate_all_for_file() {
     local agents_file="$1"
@@ -279,13 +202,12 @@ show_menu() {
     echo "  ${CYAN}4)${NC} OpenAI Codex     (CODEX.md)"
     echo "  ${CYAN}5)${NC} All of the above"
     echo ""
-    echo "  ${CYAN}6)${NC} Sync to ~/.claude/skills/"
-    echo "  ${CYAN}7)${NC} Sync to OpenCode config"
-    echo "  ${CYAN}8)${NC} Sync to all user configs"
-    echo ""
     echo "  ${CYAN}0)${NC} Exit"
     echo ""
-    printf "Enter choice [0-8]: "
+    echo "  ${YELLOW}Note:${NC} AI tool configs (Claude Code, OpenCode) are now managed by"
+    echo "  gentle-ai: https://github.com/Gentleman-Programming/gentle-ai"
+    echo ""
+    printf "Enter choice [0-5]: "
 }
 
 handle_menu_choice() {
@@ -312,16 +234,6 @@ handle_menu_choice() {
             ;;
         5)
             generate_all_for_file "$agents_file"
-            ;;
-        6)
-            sync_claude_config
-            ;;
-        7)
-            sync_opencode
-            ;;
-        8)
-            sync_claude_config
-            sync_opencode
             ;;
         0)
             log_info "Exiting..."
@@ -356,16 +268,15 @@ Options:
   --copilot     Generate .github/copilot-instructions.md
   --codex       Generate CODEX.md from AGENTS.md
   --all         Generate all format-specific files
-  --sync-claude Sync skills to ~/.claude/skills/
-  --sync-opencode Sync skills to OpenCode config
-  --sync-all    Sync skills to all user config directories
   --help        Show this help message
+
+Note: AI tool configs (Claude Code, OpenCode) are now managed by
+  gentle-ai: https://github.com/Gentleman-Programming/gentle-ai
 
 Examples:
   ./skills/setup.sh              # Interactive menu
   ./skills/setup.sh --all        # Generate all formats
   ./skills/setup.sh --claude     # Claude Code only
-  ./skills/setup.sh --sync-all   # Sync to user configs
 EOF
 }
 
@@ -392,16 +303,6 @@ parse_args() {
             ;;
         --all)
             generate_all_for_file "$agents_file"
-            ;;
-        --sync-claude)
-            sync_claude_config
-            ;;
-        --sync-opencode)
-            sync_opencode
-            ;;
-        --sync-all)
-            sync_claude_config
-            sync_opencode
             ;;
         --help|-h)
             show_help

@@ -49,7 +49,6 @@ Gentleman.Dots/
 ├── skills/                       # Repository-specific AI skills
 │   ├── setup.sh                  # Sync script for AI assistants
 │   └── */SKILL.md                # Individual skills
-├── GentlemanClaude/              # Claude Code config + user skills
 ├── GentlemanNvim/                # Neovim configuration
 ├── GentlemanFish/                # Fish shell config
 ├── GentlemanZsh/                 # Zsh config
@@ -77,29 +76,25 @@ The repository uses a skills system to provide context to AI assistants (Claude,
 # Generate all formats (CLAUDE.md, GEMINI.md, etc.)
 ./skills/setup.sh --all
 
-# Sync to user config directories
-./skills/setup.sh --sync-all
-
 # Individual targets
 ./skills/setup.sh --claude      # CLAUDE.md
 ./skills/setup.sh --gemini      # GEMINI.md
 ./skills/setup.sh --copilot     # .github/copilot-instructions.md
 ./skills/setup.sh --codex       # CODEX.md
-./skills/setup.sh --sync-claude # ~/.claude/skills/
-./skills/setup.sh --sync-opencode # ~/.config/opencode/skills/
 ```
+
+> **Note:** User-facing AI tool configs (skills, persona, themes) are now managed by [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai).
 
 ### Skill Types
 
 | Type | Location | Purpose |
 |------|----------|---------|
 | Repository skills | `skills/` | For this codebase (bubbletea, trainer, etc.) |
-| User skills | `GentlemanClaude/skills/` | Installed to user's ~/.claude/skills/ |
 
 ### Creating a New Skill
 
 1. Load the skill-creator skill: `mcp_skill("skill-creator")`
-2. Create directory under appropriate location
+2. Create directory under `skills/`
 3. Add `SKILL.md` following the template
 4. Register in `AGENTS.md`
 5. Run `./skills/setup.sh --all`

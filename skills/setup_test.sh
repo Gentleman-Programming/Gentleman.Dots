@@ -207,8 +207,7 @@ test_skill_references_are_correct() {
     assert_file_contains "$REPO_ROOT/AGENTS.md" "skills/gentleman-bubbletea/SKILL.md"
     assert_file_contains "$REPO_ROOT/AGENTS.md" "skills/gentleman-trainer/SKILL.md"
 
-    # User skills should be in GentlemanClaude/skills/
-    assert_file_contains "$REPO_ROOT/AGENTS.md" "GentlemanClaude/skills/react-19"
+    # User skills are now managed by gentle-ai (no longer in this repo)
 }
 
 # ============================================================================
@@ -226,16 +225,8 @@ test_repo_skills_exist() {
     done
 }
 
-test_user_skills_exist() {
-    log_test "User skills exist in GentlemanClaude/skills/"
-
-    local skills=("react-19" "nextjs-15" "typescript" "tailwind-4" "zod-4"
-                  "zustand-5" "ai-sdk-5" "django-drf" "playwright" "pytest")
-
-    for skill in "${skills[@]}"; do
-        assert_file_exists "$REPO_ROOT/GentlemanClaude/skills/$skill/SKILL.md"
-    done
-}
+## User skills (react-19, typescript, etc.) are now managed by gentle-ai
+## https://github.com/Gentleman-Programming/gentle-ai
 
 # ============================================================================
 # Idempotency Tests
@@ -301,7 +292,6 @@ test_skill_references_are_correct
 
 # Skills existence tests
 test_repo_skills_exist
-test_user_skills_exist
 
 # Quality tests
 test_multiple_runs_are_idempotent

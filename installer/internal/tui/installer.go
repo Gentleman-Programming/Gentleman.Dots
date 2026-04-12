@@ -1092,182 +1092,31 @@ func stepInstallNvim(m *Model) error {
 			err)
 	}
 
-	// Install Claude Code (optional, don't fail on error)
+	// Install Claude Code CLI (optional, don't fail on error)
 	// Skip on Termux - Claude Code doesn't support Android
 	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Installing Claude Code (optional)...")
+		SendLog(stepID, "Installing Claude Code CLI (optional)...")
 		system.RunWithLogs(`curl -fsSL https://claude.ai/install.sh | bash`, nil, func(line string) {
 			SendLog(stepID, line)
 		})
+		// AI tool configs are managed by gentle-ai (https://github.com/gentleman-programming/gentle-ai)
 	} else {
 		SendLog(stepID, "Skipping Claude Code (not supported on Termux)")
 	}
 
-	// Configure Claude Code
-	SendLog(stepID, "Configuring Claude Code...")
-	claudeDir := filepath.Join(homeDir, ".claude")
-	system.EnsureDir(claudeDir)
-	system.EnsureDir(filepath.Join(claudeDir, "output-styles"))
-	system.EnsureDir(filepath.Join(claudeDir, "skills"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/CLAUDE.md"), filepath.Join(claudeDir, "CLAUDE.md"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/settings.json"), filepath.Join(claudeDir, "settings.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/statusline.sh"), filepath.Join(claudeDir, "statusline.sh"))
-	system.Run(fmt.Sprintf("chmod +x %s", filepath.Join(claudeDir, "statusline.sh")), nil)
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/output-styles/gentleman.md"), filepath.Join(claudeDir, "output-styles/gentleman.md"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/mcp-servers.template.json"), filepath.Join(claudeDir, "mcp-servers.template.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanClaude/tweakcc-theme.json"), filepath.Join(claudeDir, "tweakcc-theme.json"))
-	// Copy skills (excluding prowler-* which are work-specific)
-	skillsToCopy := []string{"ai-sdk-5", "django-drf", "nextjs-15", "playwright", "pytest", "react-19", "tailwind-4", "typescript", "zod-4", "zustand-5"}
-	for _, skill := range skillsToCopy {
-		skillSrc := filepath.Join(repoDir, "GentlemanClaude/skills", skill)
-		skillDst := filepath.Join(claudeDir, "skills", skill)
-		system.EnsureDir(skillDst)
-		system.CopyFile(filepath.Join(skillSrc, "SKILL.md"), filepath.Join(skillDst, "SKILL.md"))
-	}
-	SendLog(stepID, "⚙️ Copied CLAUDE.md")
-	SendLog(stepID, "📊 Copied statusline.sh")
-	SendLog(stepID, "🎨 Copied output styles")
-	SendLog(stepID, "🧠 Copied Claude skills")
-
-	// Apply tweakcc theme (only if Claude Code was installed)
-	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Applying tweakcc theme...")
-		result := system.Run("npx tweakcc --apply", nil)
-		if result.Error == nil {
-			SendLog(stepID, "🎨 Applied tweakcc theme")
-		} else {
-			SendLog(stepID, "⚠️ Could not apply tweakcc theme (run 'npx tweakcc --apply' manually)")
-		}
-	}
-
-	// Install OpenCode (optional, don't fail on error)
+	// Install OpenCode CLI (optional, don't fail on error)
 	// Skip on Termux - OpenCode doesn't support Android
 	if !m.SystemInfo.IsTermux {
-		SendLog(stepID, "Installing OpenCode (optional)...")
+		SendLog(stepID, "Installing OpenCode CLI (optional)...")
 		system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
 			SendLog(stepID, line)
 		})
+		// AI tool configs are managed by gentle-ai (https://github.com/gentleman-programming/gentle-ai)
 	} else {
 		SendLog(stepID, "Skipping OpenCode (not supported on Termux)")
 	}
 
-	// Configure OpenCode
-	SendLog(stepID, "Configuring OpenCode...")
-	openCodeDir := filepath.Join(homeDir, ".config/opencode")
-	system.EnsureDir(openCodeDir)
-	system.EnsureDir(filepath.Join(openCodeDir, "themes"))
-	// Remove legacy skill/ directory if it exists (renamed to skills/)
-	if err := os.RemoveAll(filepath.Join(homeDir, ".config", "opencode", "skill")); err != nil {
-		SendLog(stepID, "Warning: could not remove legacy opencode/skill dir: "+err.Error())
-	}
-	system.EnsureDir(filepath.Join(openCodeDir, "skills"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
-	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skills"), filepath.Join(openCodeDir, "skills"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/AGENTS.md"), filepath.Join(openCodeDir, "AGENTS.md"))
-	SendLog(stepID, "🧠 Copied OpenCode skills")
-
-	// Install background-agents plugin and its dependency.
-	// OpenCode auto-discovers plugins from ~/.config/opencode/plugins/ — no
-	// declaration in opencode.json is required. The package.json in
-	// ~/.config/opencode/ declares unique-names-generator so OpenCode's
-	// bundled bun can install it automatically at startup. We also run the
-	// install here so the plugin is ready immediately after setup.
-	if !m.SystemInfo.IsTermux {
-		if err := installOpenCodeBackgroundAgents(stepID, repoDir, openCodeDir); err != nil {
-			// Non-fatal: log the warning but don't fail the whole step.
-			// The plugin is optional; OpenCode works without it.
-			SendLog(stepID, "⚠️  background-agents plugin: "+err.Error())
-			SendLog(stepID, "   Run manually: cd ~/.config/opencode && bun add unique-names-generator")
-		}
-	} else {
-		SendLog(stepID, "Skipping background-agents plugin (not supported on Termux)")
-	}
-
 	SendLog(stepID, "✓ Neovim configured with Gentleman setup")
-	return nil
-}
-
-// installOpenCodeBackgroundAgents copies the background-agents plugin and
-// installs its npm dependency (unique-names-generator) into the OpenCode
-// config directory. OpenCode auto-discovers plugins from ~/.config/opencode/plugins/
-// at startup — no entry in opencode.json is needed.
-//
-// The package.json declares the dependency so OpenCode's bundled bun can keep
-// it installed across updates. We also run bun/npm here so the plugin is
-// usable immediately without restarting OpenCode.
-//
-// Install priority: bun (OpenCode's preferred runtime) → npm → soft skip.
-// Returns an error only when a package manager is found but the install fails.
-func installOpenCodeBackgroundAgents(stepID, repoDir, openCodeDir string) error {
-	pluginsDir := filepath.Join(openCodeDir, "plugins")
-	if err := os.MkdirAll(pluginsDir, 0o755); err != nil {
-		return fmt.Errorf("create plugins dir: %w", err)
-	}
-
-	// Copy the plugin file.
-	pluginSrc := filepath.Join(repoDir, "GentlemanOpenCode", "plugins", "background-agents.ts")
-	pluginDst := filepath.Join(pluginsDir, "background-agents.ts")
-	if err := system.CopyFile(pluginSrc, pluginDst); err != nil {
-		return fmt.Errorf("copy background-agents.ts: %w", err)
-	}
-	SendLog(stepID, "🔌 Copied background-agents plugin")
-
-	// Copy package.json so OpenCode (and bun) know about the dependency.
-	pkgSrc := filepath.Join(repoDir, "GentlemanOpenCode", "package.json")
-	pkgDst := filepath.Join(openCodeDir, "package.json")
-	if err := system.CopyFile(pkgSrc, pkgDst); err != nil {
-		return fmt.Errorf("copy package.json: %w", err)
-	}
-
-	// Check if unique-names-generator is already installed.
-	nmPath := filepath.Join(openCodeDir, "node_modules", "unique-names-generator")
-	if _, err := os.Stat(nmPath); err == nil {
-		SendLog(stepID, "✓ unique-names-generator already installed")
-		return nil
-	}
-
-	// Install unique-names-generator — prefer bun, fall back to npm.
-	depPkg := "unique-names-generator"
-
-	if system.CommandExists("bun") {
-		SendLog(stepID, "Installing "+depPkg+" via bun...")
-		result := system.RunWithLogs(
-			"bun add "+depPkg,
-			&system.ExecOptions{WorkDir: openCodeDir},
-			func(line string) { SendLog(stepID, "  "+line) },
-		)
-		if result.Error != nil {
-			return fmt.Errorf("bun add %s: %w", depPkg, result.Error)
-		}
-	} else if system.CommandExists("npm") {
-		SendLog(stepID, "Installing "+depPkg+" via npm...")
-		result := system.RunWithLogs(
-			"npm install --save "+depPkg,
-			&system.ExecOptions{WorkDir: openCodeDir},
-			func(line string) { SendLog(stepID, "  "+line) },
-		)
-		if result.Error != nil {
-			return fmt.Errorf("npm install %s: %w", depPkg, result.Error)
-		}
-	} else {
-		// No package manager found — soft skip.
-		// OpenCode will run bun install automatically at startup since
-		// package.json is now in place.
-		SendLog(stepID, "⚠️  No bun/npm found — "+depPkg+" will be installed by OpenCode at startup")
-		return nil
-	}
-
-	// Post-install validation.
-	if _, err := os.Stat(nmPath); os.IsNotExist(err) {
-		return fmt.Errorf(
-			"post-install: %q not found in %q after install — "+
-				"run `cd %s && bun add %s` manually",
-			depPkg, nmPath, openCodeDir, depPkg,
-		)
-	}
-
-	SendLog(stepID, "✓ unique-names-generator installed")
 	return nil
 }
 

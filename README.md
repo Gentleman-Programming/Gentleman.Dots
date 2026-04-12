@@ -38,7 +38,7 @@ A complete development environment configuration including:
 - **Shells**: Fish, Zsh, Nushell
 - **Terminal Multiplexers**: Tmux, Zellij
 - **Terminal Emulators**: Alacritty, WezTerm, Kitty, Ghostty
-- **AI Agent Configs**: Source configurations for Claude Code and OpenCode (installed via [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai))
+- **AI CLI Tools**: Claude Code and OpenCode CLI installers (configs managed by [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai))
 
 ## Quick Start
 
@@ -136,7 +136,7 @@ It configures your AI coding agents with everything they need:
 |--|---------------------------|-----------|
 | **Purpose** | Dev environment (editors, shells, terminals) | AI development layer (agents, memory, skills) |
 | **Installs** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configures Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
-| **Source configs** | `GentlemanClaude/`, `GentlemanOpenCode/` | Reads from this repo + its own assets |
+| **AI configs** | CLI tools only (Claude Code, OpenCode) | Full config: persona, skills, themes, MCP |
 
 Install Gentleman.Dots first for your dev environment, then `gentle-ai` for the AI layer on top.
 

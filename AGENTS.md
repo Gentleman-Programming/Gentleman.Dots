@@ -24,32 +24,7 @@ For manual loading, read the SKILL.md file directly.
 | `gentleman-system` | OS detection, command execution, cross-platform support | [SKILL.md](skills/gentleman-system/SKILL.md) |
 | `go-testing` | Go testing patterns, table-driven tests, Bubbletea testing | [SKILL.md](skills/go-testing/SKILL.md) |
 
-### Generic Skills (User Installation → ~/.claude/skills/)
-
-These skills are copied to user's Claude/OpenCode config via the installer.
-
-| Skill | Description | Source |
-|-------|-------------|--------|
-| `react-19` | React 19 patterns, hooks, components | [GentlemanClaude/skills/react-19](GentlemanClaude/skills/react-19/SKILL.md) |
-| `nextjs-15` | Next.js 15, App Router, Server Components | [GentlemanClaude/skills/nextjs-15](GentlemanClaude/skills/nextjs-15/SKILL.md) |
-| `typescript` | TypeScript patterns, types, generics | [GentlemanClaude/skills/typescript](GentlemanClaude/skills/typescript/SKILL.md) |
-| `tailwind-4` | Tailwind CSS v4 patterns | [GentlemanClaude/skills/tailwind-4](GentlemanClaude/skills/tailwind-4/SKILL.md) |
-| `zod-4` | Zod validation schemas | [GentlemanClaude/skills/zod-4](GentlemanClaude/skills/zod-4/SKILL.md) |
-| `zustand-5` | Zustand state management | [GentlemanClaude/skills/zustand-5](GentlemanClaude/skills/zustand-5/SKILL.md) |
-| `ai-sdk-5` | Vercel AI SDK 5 | [GentlemanClaude/skills/ai-sdk-5](GentlemanClaude/skills/ai-sdk-5/SKILL.md) |
-| `django-drf` | Django REST Framework | [GentlemanClaude/skills/django-drf](GentlemanClaude/skills/django-drf/SKILL.md) |
-| `playwright` | Playwright E2E testing | [GentlemanClaude/skills/playwright](GentlemanClaude/skills/playwright/SKILL.md) |
-| `pytest` | Python pytest patterns | [GentlemanClaude/skills/pytest](GentlemanClaude/skills/pytest/SKILL.md) |
-| `skill-creator` | Create new AI agent skills | [GentlemanClaude/skills/skill-creator](GentlemanClaude/skills/skill-creator/SKILL.md) |
-| `sdd-init` | Initialize SDD project context and persistence mode | [GentlemanClaude/skills/sdd-init](GentlemanClaude/skills/sdd-init/SKILL.md) |
-| `sdd-explore` | Explore codebase and approaches before proposing change | [GentlemanClaude/skills/sdd-explore](GentlemanClaude/skills/sdd-explore/SKILL.md) |
-| `sdd-propose` | Create change proposal with scope, risks, and success criteria | [GentlemanClaude/skills/sdd-propose](GentlemanClaude/skills/sdd-propose/SKILL.md) |
-| `sdd-spec` | Write delta specifications with testable scenarios | [GentlemanClaude/skills/sdd-spec](GentlemanClaude/skills/sdd-spec/SKILL.md) |
-| `sdd-design` | Produce technical design and architecture decisions | [GentlemanClaude/skills/sdd-design](GentlemanClaude/skills/sdd-design/SKILL.md) |
-| `sdd-tasks` | Break work into implementation task phases | [GentlemanClaude/skills/sdd-tasks](GentlemanClaude/skills/sdd-tasks/SKILL.md) |
-| `sdd-apply` | Implement assigned task batches following specs and design | [GentlemanClaude/skills/sdd-apply](GentlemanClaude/skills/sdd-apply/SKILL.md) |
-| `sdd-verify` | Verify implementation against specs and tasks | [GentlemanClaude/skills/sdd-verify](GentlemanClaude/skills/sdd-verify/SKILL.md) |
-| `sdd-archive` | Close a change and archive final artifacts | [GentlemanClaude/skills/sdd-archive](GentlemanClaude/skills/sdd-archive/SKILL.md) |
+> **Note:** User-facing AI skills (React 19, TypeScript, SDD workflow, etc.) are now managed by [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai).
 
 ## Auto-invoke Skills
 
@@ -80,12 +55,9 @@ skills/                              # Repository-specific skills
 ├── gentleman-bubbletea/SKILL.md     # TUI patterns
 ├── gentleman-trainer/SKILL.md       # Vim trainer
 └── ...
-
-GentlemanClaude/skills/              # User-installable skills
-├── react-19/SKILL.md                # Copied to ~/.claude/skills/
-├── typescript/SKILL.md
-└── ...
 ```
+
+> User-installable skills (React 19, TypeScript, SDD, etc.) are now managed by [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai).
 
 ## Contributing
 
@@ -95,12 +67,6 @@ GentlemanClaude/skills/              # User-installable skills
 3. Add SKILL.md following the template
 4. Register in this file under "Gentleman.Dots Specific"
 5. Run `./skills/setup.sh --all` to regenerate
-
-### Adding a User Skill (for Claude/OpenCode users)
-1. Create skill directory under `GentlemanClaude/skills/`
-2. Add SKILL.md following the template
-3. Register in this file under "Generic Skills"
-4. The installer will copy it to user's config
 
 ## Project Overview
 
