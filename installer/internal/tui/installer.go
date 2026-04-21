@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -40,6 +41,121 @@ func wrapStepError(stepID, stepName, description string, cause error) error {
 		Description: description,
 		Cause:       cause,
 	}
+}
+
+// preserveFileDuringOperation keeps an existing user-managed file intact while
+// an external installer mutates or recreates the surrounding config directory.
+func preserveFileDuringOperation(path string, operation func() error) error {
+	originalContents, err := os.ReadFile(path)
+	existed := err == nil
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("read preserved file: %w", err)
+	}
+
+	mode := os.FileMode(0o644)
+	if existed {
+		info, statErr := os.Stat(path)
+		if statErr != nil {
+			return fmt.Errorf("stat preserved file: %w", statErr)
+		}
+		mode = info.Mode()
+	}
+
+	operationErr := operation()
+	if !existed {
+		return operationErr
+	}
+
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		if operationErr != nil {
+			return fmt.Errorf("operation failed: %w; additionally failed to recreate preserved file directory: %v", operationErr, err)
+		}
+		return fmt.Errorf("recreate preserved file directory: %w", err)
+	}
+
+	if err := os.WriteFile(path, originalContents, mode); err != nil {
+		if operationErr != nil {
+			return fmt.Errorf("operation failed: %w; additionally failed to restore preserved file: %v", operationErr, err)
+		}
+		return fmt.Errorf("restore preserved file: %w", err)
+	}
+
+	return operationErr
+}
+
+// mergeJSONFileMissingKeys creates a config file from the repo default when it
+// does not exist, or merges only missing keys into an existing JSON object.
+func mergeJSONFileMissingKeys(src, dst string) (string, error) {
+	srcContents, err := os.ReadFile(src)
+	if err != nil {
+		return "", fmt.Errorf("read source json: %w", err)
+	}
+
+	var srcJSON map[string]any
+	if err := json.Unmarshal(srcContents, &srcJSON); err != nil {
+		return "", fmt.Errorf("parse source json: %w", err)
+	}
+
+	dstContents, err := os.ReadFile(dst)
+	if os.IsNotExist(err) {
+		if err := system.CopyFile(src, dst); err != nil {
+			return "", err
+		}
+		return "created", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("read destination json: %w", err)
+	}
+
+	var dstJSON map[string]any
+	if err := json.Unmarshal(dstContents, &dstJSON); err != nil {
+		return "", fmt.Errorf("parse destination json: %w", err)
+	}
+
+	if !mergeMissingJSONKeys(dstJSON, srcJSON) {
+		return "preserved", nil
+	}
+
+	mergedContents, err := json.MarshalIndent(dstJSON, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("marshal merged json: %w", err)
+	}
+	mergedContents = append(mergedContents, '\n')
+
+	info, err := os.Stat(dst)
+	if err != nil {
+		return "", fmt.Errorf("stat destination json: %w", err)
+	}
+	if err := os.WriteFile(dst, mergedContents, info.Mode()); err != nil {
+		return "", fmt.Errorf("write merged json: %w", err)
+	}
+
+	return "merged", nil
+}
+
+// mergeMissingJSONKeys recursively copies only missing object keys from src to
+// dst. Existing values in dst always win.
+func mergeMissingJSONKeys(dst, src map[string]any) bool {
+	changed := false
+
+	for key, srcValue := range src {
+		dstValue, exists := dst[key]
+		if !exists {
+			dst[key] = srcValue
+			changed = true
+			continue
+		}
+
+		srcMap, srcIsMap := srcValue.(map[string]any)
+		dstMap, dstIsMap := dstValue.(map[string]any)
+		if srcIsMap && dstIsMap {
+			if mergeMissingJSONKeys(dstMap, srcMap) {
+				changed = true
+			}
+		}
+	}
+
+	return changed
 }
 
 // executeStep runs the actual installation for a step
@@ -1144,9 +1260,15 @@ func stepInstallNvim(m *Model) error {
 	// Skip on Termux - OpenCode doesn't support Android
 	if !m.SystemInfo.IsTermux {
 		SendLog(stepID, "Installing OpenCode (optional)...")
-		system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
-			SendLog(stepID, line)
-		})
+		opencodeConfigPath := filepath.Join(homeDir, ".config", "opencode", "opencode.json")
+		if err := preserveFileDuringOperation(opencodeConfigPath, func() error {
+			result := system.RunWithLogs(`curl -fsSL https://opencode.ai/install | bash`, nil, func(line string) {
+				SendLog(stepID, line)
+			})
+			return result.Error
+		}); err != nil {
+			SendLog(stepID, "⚠️ Could not preserve existing OpenCode config during install: "+err.Error())
+		}
 	} else {
 		SendLog(stepID, "Skipping OpenCode (not supported on Termux)")
 	}
@@ -1161,7 +1283,21 @@ func stepInstallNvim(m *Model) error {
 		SendLog(stepID, "Warning: could not remove legacy opencode/skill dir: "+err.Error())
 	}
 	system.EnsureDir(filepath.Join(openCodeDir, "skills"))
-	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), filepath.Join(openCodeDir, "opencode.json"))
+	opencodeConfigPath := filepath.Join(openCodeDir, "opencode.json")
+	configAction, err := mergeJSONFileMissingKeys(filepath.Join(repoDir, "GentlemanOpenCode/opencode.json"), opencodeConfigPath)
+	if err != nil {
+		return wrapStepError("nvim", "Install Neovim",
+			"Failed to configure OpenCode config",
+			err)
+	}
+	switch configAction {
+	case "created":
+		SendLog(stepID, "⚙️ Installed default OpenCode config")
+	case "merged":
+		SendLog(stepID, "⚙️ Merged missing keys into existing OpenCode config")
+	default:
+		SendLog(stepID, "⚙️ Preserved existing OpenCode config")
+	}
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/themes/gentleman.json"), filepath.Join(openCodeDir, "themes/gentleman.json"))
 	system.CopyDir(filepath.Join(repoDir, "GentlemanOpenCode", "skills"), filepath.Join(openCodeDir, "skills"))
 	system.CopyFile(filepath.Join(repoDir, "GentlemanOpenCode/AGENTS.md"), filepath.Join(openCodeDir, "AGENTS.md"))

@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
@@ -770,6 +771,214 @@ func TestBackupOptions(t *testing.T) {
 		m, _ = simulateKeyPress(m, "enter")
 		if m.Screen != ScreenMainMenu {
 			t.Errorf("Expected MainMenu after cancel, got %v", m.Screen)
+		}
+	})
+}
+
+func TestPreserveFileDuringOperation(t *testing.T) {
+	t.Run("restores existing file after overwrite", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		path := filepath.Join(tmpDir, "opencode.json")
+		original := `{"plugins":{"existing":true}}`
+
+		if err := os.WriteFile(path, []byte(original), 0644); err != nil {
+			t.Fatalf("write original file: %v", err)
+		}
+
+		err := preserveFileDuringOperation(path, func() error {
+			return os.WriteFile(path, []byte(`{"plugins":{"installer":true}}`), 0644)
+		})
+		if err != nil {
+			t.Fatalf("preserveFileDuringOperation returned error: %v", err)
+		}
+
+		got, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read restored file: %v", err)
+		}
+		if string(got) != original {
+			t.Fatalf("expected original contents %q, got %q", original, string(got))
+		}
+	})
+
+	t.Run("restores existing file after deletion", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		path := filepath.Join(tmpDir, "opencode.json")
+		original := `{"mcps":{"keep":true}}`
+
+		if err := os.WriteFile(path, []byte(original), 0644); err != nil {
+			t.Fatalf("write original file: %v", err)
+		}
+
+		err := preserveFileDuringOperation(path, func() error {
+			return os.Remove(path)
+		})
+		if err != nil {
+			t.Fatalf("preserveFileDuringOperation returned error: %v", err)
+		}
+
+		got, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read restored file: %v", err)
+		}
+		if string(got) != original {
+			t.Fatalf("expected original contents %q, got %q", original, string(got))
+		}
+	})
+
+	t.Run("does not create file when none existed before", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		path := filepath.Join(tmpDir, "opencode.json")
+
+		err := preserveFileDuringOperation(path, func() error {
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("preserveFileDuringOperation returned error: %v", err)
+		}
+
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("expected file to remain absent, stat err = %v", err)
+		}
+	})
+}
+
+func TestMergeJSONFileMissingKeys(t *testing.T) {
+	t.Run("creates destination file when it does not exist", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		src := filepath.Join(tmpDir, "default-opencode.json")
+		dst := filepath.Join(tmpDir, "opencode.json")
+		defaultContents := `{"theme":"gentleman"}`
+
+		if err := os.WriteFile(src, []byte(defaultContents), 0644); err != nil {
+			t.Fatalf("write source file: %v", err)
+		}
+
+		action, err := mergeJSONFileMissingKeys(src, dst)
+		if err != nil {
+			t.Fatalf("mergeJSONFileMissingKeys returned error: %v", err)
+		}
+		if action != "created" {
+			t.Fatalf("expected action created, got %q", action)
+		}
+
+		got, err := os.ReadFile(dst)
+		if err != nil {
+			t.Fatalf("read destination file: %v", err)
+		}
+		if string(got) != defaultContents {
+			t.Fatalf("expected destination contents %q, got %q", defaultContents, string(got))
+		}
+	})
+
+	t.Run("merges only missing keys into existing destination file", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		src := filepath.Join(tmpDir, "default-opencode.json")
+		dst := filepath.Join(tmpDir, "opencode.json")
+		defaultContents := `{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "gentleman": {
+      "mode": "primary",
+      "tools": {
+        "edit": true,
+        "write": true
+      }
+    },
+    "dangerous-gentleman": {
+      "mode": "all"
+    }
+  },
+  "autoupdate": true
+}`
+		existingContents := `{
+  "agent": {
+    "gentleman": {
+      "mode": "custom",
+      "tools": {
+        "edit": false
+      }
+    }
+  }
+}`
+
+		if err := os.WriteFile(src, []byte(defaultContents), 0644); err != nil {
+			t.Fatalf("write source file: %v", err)
+		}
+		if err := os.WriteFile(dst, []byte(existingContents), 0644); err != nil {
+			t.Fatalf("write existing destination file: %v", err)
+		}
+
+		action, err := mergeJSONFileMissingKeys(src, dst)
+		if err != nil {
+			t.Fatalf("mergeJSONFileMissingKeys returned error: %v", err)
+		}
+		if action != "merged" {
+			t.Fatalf("expected action merged, got %q", action)
+		}
+
+		got, err := os.ReadFile(dst)
+		if err != nil {
+			t.Fatalf("read destination file: %v", err)
+		}
+
+		var merged map[string]any
+		if err := json.Unmarshal(got, &merged); err != nil {
+			t.Fatalf("unmarshal merged destination file: %v", err)
+		}
+
+		if merged["$schema"] != "https://opencode.ai/config.json" {
+			t.Fatalf("expected $schema to be added, got %#v", merged["$schema"])
+		}
+		if merged["autoupdate"] != true {
+			t.Fatalf("expected autoupdate to be added, got %#v", merged["autoupdate"])
+		}
+
+		agent := merged["agent"].(map[string]any)
+		gentleman := agent["gentleman"].(map[string]any)
+		if gentleman["mode"] != "custom" {
+			t.Fatalf("expected existing agent.gentleman.mode to be preserved, got %#v", gentleman["mode"])
+		}
+
+		tools := gentleman["tools"].(map[string]any)
+		if tools["edit"] != false {
+			t.Fatalf("expected existing agent.gentleman.tools.edit to be preserved, got %#v", tools["edit"])
+		}
+		if tools["write"] != true {
+			t.Fatalf("expected missing agent.gentleman.tools.write to be added, got %#v", tools["write"])
+		}
+
+		if _, ok := agent["dangerous-gentleman"]; !ok {
+			t.Fatal("expected missing agent.dangerous-gentleman object to be added")
+		}
+	})
+
+	t.Run("returns preserved when no keys are missing", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		src := filepath.Join(tmpDir, "default-opencode.json")
+		dst := filepath.Join(tmpDir, "opencode.json")
+		contents := `{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "gentleman": {
+      "mode": "primary"
+    }
+  }
+}`
+
+		if err := os.WriteFile(src, []byte(contents), 0644); err != nil {
+			t.Fatalf("write source file: %v", err)
+		}
+		if err := os.WriteFile(dst, []byte(contents), 0644); err != nil {
+			t.Fatalf("write destination file: %v", err)
+		}
+
+		action, err := mergeJSONFileMissingKeys(src, dst)
+		if err != nil {
+			t.Fatalf("mergeJSONFileMissingKeys returned error: %v", err)
+		}
+		if action != "preserved" {
+			t.Fatalf("expected action preserved, got %q", action)
 		}
 	})
 }
