@@ -1,9 +1,5 @@
 layout {
-    tab name="nvim" focus=true {
-        pane
-    }
-
-    tab name="shell" {
+    tab name="base" focus=true {
         pane
     }
 
@@ -24,7 +20,7 @@ layout {
                 mode_tmux    "#[bg=#EA83A5] "  
 
                 tab_normal   "#[fg=#C9C7CD] {name} "  
-                tab_active   "#[fg=#92A2D5,bold,italic] {name} "  
+                tab_active   "#[fg=#C65C5B,bold,italic] {name} "  
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                 command_git_branch_format      "#[fg=#85B5BA] {stdout} "  

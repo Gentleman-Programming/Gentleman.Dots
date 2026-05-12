@@ -4,6 +4,7 @@
 
 keybinds clear-defaults=true {
     locked {
+        bind "Ctrl a" { SwitchToMode "tmux"; }
         bind "Ctrl g" { SwitchToMode "normal"; }
     }
     pane {
@@ -132,6 +133,135 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
     }
+    tmux {
+        bind "Ctrl a" { Write 1; SwitchToMode "locked"; }
+
+        // tmux muscle-memory: sessions
+        bind "s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+        bind "w" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+        bind "D" { Detach; }
+        bind "K" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+
+        // tmux muscle-memory: copy/search
+        bind "[" { SwitchToMode "scroll"; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "E" { EditScrollback; SwitchToMode "locked"; }
+
+        // tmux muscle-memory: panes
+        bind "v" { NewPane "right"; SwitchToMode "locked"; }
+        bind "%" { NewPane "right"; SwitchToMode "locked"; }
+        bind "d" { NewPane "down"; SwitchToMode "locked"; }
+        bind "\"" { NewPane "down"; SwitchToMode "locked"; }
+        bind "N" { NewPane; SwitchToMode "locked"; }
+        bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
+        bind "x" { CloseFocus; SwitchToMode "locked"; }
+        bind "o" { FocusNextPane; SwitchToMode "locked"; }
+        bind ";" { FocusPreviousPane; SwitchToMode "locked"; }
+        bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
+        bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
+        bind "h" { MoveFocus "left"; SwitchToMode "locked"; }
+        bind "j" { MoveFocus "down"; SwitchToMode "locked"; }
+        bind "k" { MoveFocus "up"; SwitchToMode "locked"; }
+        bind "l" { MoveFocus "right"; SwitchToMode "locked"; }
+        bind "left" { MoveFocus "left"; SwitchToMode "locked"; }
+        bind "down" { MoveFocus "down"; SwitchToMode "locked"; }
+        bind "up" { MoveFocus "up"; SwitchToMode "locked"; }
+        bind "right" { MoveFocus "right"; SwitchToMode "locked"; }
+
+        // tmux muscle-memory: tabs/windows
+        bind "c" { NewTab; SwitchToMode "locked"; }
+        bind "," { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "&" { CloseTab; SwitchToMode "locked"; }
+        bind "p" { GoToPreviousTab; SwitchToMode "locked"; }
+        bind "n" { GoToNextTab; SwitchToMode "locked"; }
+        bind "0" { GoToTab 1; SwitchToMode "locked"; }
+        bind "1" { GoToTab 1; SwitchToMode "locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "locked"; }
+        bind "i" { MoveTab "left"; SwitchToMode "locked"; }
+        bind "u" { MoveTab "right"; SwitchToMode "locked"; }
+        bind "{" { PreviousSwapLayout; SwitchToMode "locked"; }
+        bind "}" { NextSwapLayout; SwitchToMode "locked"; }
+        bind "space" { NextSwapLayout; SwitchToMode "locked"; }
+
+        // Zellij equivalents for existing custom behavior
+        bind "S" { ToggleActiveSyncTab; SwitchToMode "locked"; }
+        bind "+" { Resize "Increase"; SwitchToMode "locked"; }
+        bind "=" { Resize "Increase"; SwitchToMode "locked"; }
+        bind "-" { Resize "Decrease"; SwitchToMode "locked"; }
+
+        // Ctrl+a access to full Zellij modes without using Ctrl+g or Alt
+        bind "P" { SwitchToMode "pane"; }
+        bind "T" { SwitchToMode "tab"; }
+        bind "R" { SwitchToMode "resize"; }
+        bind "M" { SwitchToMode "move"; }
+        bind "O" { SwitchToMode "session"; }
+        bind "q" { Quit; }
+        bind "?" {
+            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
+            "prefix"                "ctrl + a"
+            "literal ctrl+a"        "ctrl + a + ctrl + a"
+            "sessions"              "ctrl + a + s/w"
+            "detach"                "ctrl + a + D"
+            "new tab/window"        "ctrl + a + c"
+            "rename tab/window"     "ctrl + a + ,"
+            "close tab/window"      "ctrl + a + &"
+            "previous/next tab"     "ctrl + a + p/n"
+            "go to tab"             "ctrl + a + 1..9"
+            "split right"           "ctrl + a + v or %"
+            "split down"            "ctrl + a + d or \""
+            "focus pane"            "ctrl + a + h/j/k/l or arrows"
+            "next/previous pane"    "ctrl + a + o / ;"
+            "close pane"            "ctrl + a + x"
+            "fullscreen"            "ctrl + a + z"
+            "floating/embed"        "ctrl + a + f/e"
+            "scroll/copy"           "ctrl + a + ["
+            "search"                "ctrl + a + /"
+            "sync tab"              "ctrl + a + S"
+            "resize"                "ctrl + a + +/-/= or R then h/j/k/l"
+            "zellij modes"          "ctrl + a + P/T/R/M/O"
+            floating true
+            }
+            SwitchToMode "locked"
+        }
+        bind "y" {
+            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
+            "prefix"                "ctrl + a"
+            "help"                  "ctrl + a + ?"
+            "sessions"              "ctrl + a + s/w"
+            "split right/down"      "ctrl + a + v/d or %/\""
+            "tabs"                  "ctrl + a + c, p, n, 1..9, &, ,"
+            "panes"                 "ctrl + a + h/j/k/l, o, ;, x, z"
+            "zellij modes"          "ctrl + a + P/T/R/M/O"
+            floating true
+            }
+            SwitchToMode "locked"
+        }
+    }
     shared_among "normal" "locked" {
         bind "Alt y" {
             LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
@@ -179,6 +309,10 @@ keybinds clear-defaults=true {
             floating true
             }
         }
+        bind "Ctrl h" { MoveFocusOrTab "left"; }
+        bind "Ctrl j" { MoveFocus "down"; }
+        bind "Ctrl k" { MoveFocus "up"; }
+        bind "Ctrl l" { MoveFocusOrTab "right"; }
         bind "Alt left" { MoveFocusOrTab "left"; }
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }
@@ -198,6 +332,7 @@ keybinds clear-defaults=true {
         bind "Alt o" { MoveTab "right"; }
     }
     shared_except "locked" "renametab" "renamepane" {
+        bind "Ctrl a" { SwitchToMode "tmux"; }
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Ctrl q" { Quit; }
     }
@@ -459,13 +594,6 @@ default_layout "work_kanagawa"
 // the stdin of the program to perform the copy. This can be used with
 // terminal emulators which do not support the OSC 52 ANSI control sequence
 // that will be used by default if this option is not set.
-//
-// NOTE: If copy/paste isn't working, uncomment the line matching your system:
-// - Linux X11: uncomment "xclip" line AND set copy_clipboard "primary"
-// - Linux Wayland: uncomment "wl-copy" line
-// - macOS: uncomment "pbcopy" line
-// See: https://zellij.dev/documentation/faq.html#copy--paste-isnt-working-how-can-i-fix-this
-//
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
@@ -517,20 +645,20 @@ scrollback_editor "nvim"
 //   - true (default)
 //   - false
 // 
-// session_serialization false
+session_serialization true
  
 // Whether pane viewports are serialized along with the session, default is false
 // Options:
 //   - true
 //   - false (default)
 // 
-// serialize_pane_viewport false
+serialize_pane_viewport true
  
 // Scrollback lines to serialize along with the pane viewport when serializing sessions, 0
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
 // also default to the scrollback size. This does nothing if `serialize_pane_viewport` is not true.
 // 
-// scrollback_lines_to_serialize 10000
+scrollback_lines_to_serialize 10000
  
 // Enable or disable the rendering of styled and colored underlines (undercurl).
 // May need to be disabled for certain unsupported terminals
@@ -541,7 +669,7 @@ scrollback_editor "nvim"
  
 // How often in seconds sessions are serialized
 // 
-// serialization_interval 10000
+serialization_interval 10000
  
 // Enable or disable writing of session metadata to disk (if disabled, other sessions might not know
 // metadata info on this session)
