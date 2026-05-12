@@ -715,8 +715,8 @@ layout {
               mode_normal  "#[bg=#286983] "
               mode_tmux    "#[bg=#ea9a97] "
 
-              tab_normal   "#[fg=#6e6a86] {name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {name} "
+              tab_normal   "#[fg=#6e6a86] {index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#3e8fb0] {stdout} "
@@ -762,8 +762,8 @@ layout {
               mode_normal  "#[bg=#d3c6aa] "
               mode_tmux    "#[bg=#f1fa8c] "
 
-              tab_normal   "#[fg=#7a8478] {name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {name} "
+              tab_normal   "#[fg=#7a8478] {index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=green] {stdout} "
@@ -805,8 +805,8 @@ layout {
               mode_normal  "#[bg=#DCD7BA] "
               mode_tmux    "#[bg=#FFA066] "
 
-              tab_normal   "#[fg=#54546D] {name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {name} "
+              tab_normal   "#[fg=#54546D] {index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#76946A] {stdout} "
@@ -848,8 +848,8 @@ layout {
                 mode_normal  "#[bg=#85B5BA] "  
                 mode_tmux    "#[bg=#EA83A5] "  
 
-                tab_normal   "#[fg=#C9C7CD] {name} "  
-                tab_active   "#[fg=#C65C5B,bold,italic] {name} "  
+                tab_normal   "#[fg=#C9C7CD] {index}:{name} "  
+                tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "  
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                 command_git_branch_format      "#[fg=#85B5BA] {stdout} "  
@@ -894,8 +894,8 @@ layout {
               mode_normal  "#[bg=#878fb9] "  // Light blue for normal mode
               mode_tmux    "#[bg=#c58ea7] "  // Intense pink for tmux mode
 
-              tab_normal   "#[fg=#786577] {name} "  // Dark gray for inactive tabs
-              tab_active   "#[fg=#C65C5B,bold,italic] {name} "  // Kanagawa red for active tabs
+              tab_normal   "#[fg=#786577] {index}:{name} "  // Dark gray for inactive tabs
+              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "  // Kanagawa red for active tabs
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#878fb9] {stdout} "  // Light blue for Git branch
