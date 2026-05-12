@@ -396,8 +396,9 @@ func TestSetupInstallStepsFullInstall(t *testing.T) {
 	m.ExistingConfigs = []string{"nvim"}
 	m.SetupInstallSteps()
 
+	// xcode runs before clone so git is available on a fresh macOS install.
 	// setshell step runs interactively to change the default shell with chsh
-	expectedIDs := []string{"backup", "clone", "homebrew", "xcode", "terminal", "font", "shell", "wm", "engram", "nvim", "setshell", "cleanup"}
+	expectedIDs := []string{"backup", "xcode", "clone", "homebrew", "terminal", "font", "shell", "wm", "engram", "nvim", "setshell", "cleanup"}
 	if len(m.Steps) != len(expectedIDs) {
 		t.Errorf("Expected %d steps, got %d", len(expectedIDs), len(m.Steps))
 	}
