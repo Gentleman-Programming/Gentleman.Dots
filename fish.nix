@@ -31,14 +31,21 @@
           echo "   /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
       end
 
+      # pnpm installed via Homebrew, with global executables in PNPM_HOME/bin.
+      set -gx PNPM_HOME $HOME/Library/pnpm
+
       # All PATH entries - matching zsh config
-      # Priority: local bins > nix > cargo > volta > bun > homebrew > system
-      set -gx PATH $HOME/.local/bin $HOME/.opencode/bin $HOME/.local/state/nix/profiles/home-manager/home-path/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $HOME/.cargo/bin $HOME/.volta/bin $HOME/.bun/bin $PATH
+      # Priority: Pi wrapper > pnpm globals > local bins > nix > cargo > volta > bun > homebrew > system
+      set -gx PATH $HOME/.pi/agent/bin $PNPM_HOME/bin $HOME/.local/bin $HOME/.opencode/bin $HOME/.local/state/nix/profiles/home-manager/home-path/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $HOME/.cargo/bin $HOME/.volta/bin $HOME/.bun/bin $PATH
 
       set -gx GPG_TTY (tty)
 
-      if not set -q TMUX; and not set -q ZED_TERMINAL
-          tmux
+      if not set -q TMUX; and not set -q ZELLIJ; and not set -q ZED_TERMINAL
+          if test "$TERM_PROGRAM" = ghostty; and type -q zellij
+              zellij attach -c main
+          else if type -q tmux
+              tmux
+          end
       end
       starship init fish | source
       zoxide init fish | source
