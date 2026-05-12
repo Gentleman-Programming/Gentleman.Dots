@@ -49,7 +49,7 @@ keybinds clear-defaults=true {
         bind "j" { GoToNextTab; }
         bind "k" { GoToPreviousTab; }
         bind "l" { GoToNextTab; }
-        bind "n" { NewTab; SwitchToMode "locked"; }
+        bind "n" { NewTab name="tab"; SwitchToMode "locked"; }
         bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
         bind "s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
         bind "t" { SwitchToMode "normal"; }
@@ -187,7 +187,7 @@ keybinds clear-defaults=true {
         bind "right" { MoveFocus "right"; SwitchToMode "locked"; }
 
         // tmux muscle-memory: tabs/windows
-        bind "c" { NewTab; SwitchToMode "locked"; }
+        bind "c" { NewTab name="tab"; SwitchToMode "locked"; }
         bind "," { SwitchToMode "renametab"; TabNameInput 0; }
         bind "&" { CloseTab; SwitchToMode "locked"; }
         bind "p" { GoToPreviousTab; SwitchToMode "locked"; }

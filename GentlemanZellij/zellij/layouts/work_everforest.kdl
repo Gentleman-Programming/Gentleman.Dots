@@ -6,7 +6,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-              format_left   "{mode} #[fg=#a7c080,bold]{session}{tabs}"
+              format_left   "{mode} #[fg=#a7c080,bold]{tabs}"
+              format_center "#[fg=#a7c080,bold]{session}"
               format_right  "{command_git_branch} {datetime}"
               format_space  ""
 
@@ -20,8 +21,8 @@ layout {
               mode_normal  "#[bg=#d3c6aa] "
               mode_tmux    "#[bg=#f1fa8c] "
 
-              tab_normal   "#[fg=#7a8478] {index}:{name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
+              tab_normal   "#[fg=#7a8478]{index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=green] {stdout} "
