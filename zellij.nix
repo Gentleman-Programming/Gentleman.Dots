@@ -54,7 +54,7 @@ keybinds clear-defaults=true {
         bind "j" { GoToNextTab; }
         bind "k" { GoToPreviousTab; }
         bind "l" { GoToNextTab; }
-        bind "n" { NewTab; SwitchToMode "locked"; }
+        bind "n" { NewTab name="tab"; SwitchToMode "locked"; }
         bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
         bind "s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
         bind "t" { SwitchToMode "normal"; }
@@ -192,7 +192,7 @@ keybinds clear-defaults=true {
         bind "right" { MoveFocus "right"; SwitchToMode "locked"; }
 
         // tmux muscle-memory: tabs/windows
-        bind "c" { NewTab; SwitchToMode "locked"; }
+        bind "c" { NewTab name="tab"; SwitchToMode "locked"; }
         bind "," { SwitchToMode "renametab"; TabNameInput 0; }
         bind "&" { CloseTab; SwitchToMode "locked"; }
         bind "p" { GoToPreviousTab; SwitchToMode "locked"; }
@@ -701,7 +701,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-              format_left   "{mode} #[fg=#e0def4,bold]{session}{tabs}"
+              format_left   "{mode} #[fg=#e0def4,bold]{tabs}"
+              format_center "#[fg=#e0def4,bold]{session}"
               format_right  "{command_git_branch} {datetime}"
               format_space  ""
 
@@ -715,8 +716,8 @@ layout {
               mode_normal  "#[bg=#286983] "
               mode_tmux    "#[bg=#ea9a97] "
 
-              tab_normal   "#[fg=#6e6a86] {index}:{name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
+              tab_normal   "#[fg=#6e6a86]{index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#3e8fb0] {stdout} "
@@ -748,7 +749,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-              format_left   "{mode} #[fg=#a7c080,bold]{session}{tabs}"
+              format_left   "{mode} #[fg=#a7c080,bold]{tabs}"
+              format_center "#[fg=#a7c080,bold]{session}"
               format_right  "{command_git_branch} {datetime}"
               format_space  ""
 
@@ -762,8 +764,8 @@ layout {
               mode_normal  "#[bg=#d3c6aa] "
               mode_tmux    "#[bg=#f1fa8c] "
 
-              tab_normal   "#[fg=#7a8478] {index}:{name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
+              tab_normal   "#[fg=#7a8478]{index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=green] {stdout} "
@@ -791,7 +793,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-              format_left   "{mode} #[fg=#76946A,bold]{session}{tabs}"
+              format_left   "{mode} #[fg=#76946A,bold]{tabs}"
+              format_center "#[fg=#76946A,bold]{session}"
               format_right  "{command_git_branch} {datetime}"
               format_space  ""
 
@@ -805,8 +808,8 @@ layout {
               mode_normal  "#[bg=#DCD7BA] "
               mode_tmux    "#[bg=#FFA066] "
 
-              tab_normal   "#[fg=#54546D] {index}:{name} "
-              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "
+              tab_normal   "#[fg=#54546D]{index}:{name} "
+              tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#76946A] {stdout} "
@@ -835,7 +838,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-                format_left   "{mode} #[fg=#E29ECA,bold]{session}{tabs}"  
+                format_left   "{mode} #[fg=#E29ECA,bold]{tabs}"  
+                format_center "#[fg=#E29ECA,bold]{session}"
                 format_right  "{command_git_branch} {datetime}"
                 format_space  ""
 
@@ -848,8 +852,8 @@ layout {
                 mode_normal  "#[bg=#85B5BA] "  
                 mode_tmux    "#[bg=#EA83A5] "  
 
-                tab_normal   "#[fg=#C9C7CD] {index}:{name} "  
-                tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "  
+                tab_normal   "#[fg=#C9C7CD]{index}:{name} "  
+                tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "  
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                 command_git_branch_format      "#[fg=#85B5BA] {stdout} "  
@@ -880,7 +884,8 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-              format_left   "{mode} #[fg=#c5a3a9,bold]{session}{tabs}"  // Light pink for main text
+              format_left   "{mode} #[fg=#c5a3a9,bold]{tabs}"  // Light pink for main text
+              format_center "#[fg=#c5a3a9,bold]{session}"
               format_right  "{command_git_branch} {datetime}"
               format_space  ""
 
@@ -894,8 +899,8 @@ layout {
               mode_normal  "#[bg=#878fb9] "  // Light blue for normal mode
               mode_tmux    "#[bg=#c58ea7] "  // Intense pink for tmux mode
 
-              tab_normal   "#[fg=#786577] {index}:{name} "  // Dark gray for inactive tabs
-              tab_active   "#[fg=#C65C5B,bold,italic] {index}:{name} "  // Kanagawa red for active tabs
+              tab_normal   "#[fg=#786577]{index}:{name} "  // Dark gray for inactive tabs
+              tab_active   "#[fg=#C65C5B,bold,italic]{index}:{name} "  // Kanagawa red for active tabs
 
               command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
               command_git_branch_format      "#[fg=#878fb9] {stdout} "  // Light blue for Git branch
