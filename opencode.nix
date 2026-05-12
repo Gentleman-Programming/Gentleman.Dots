@@ -166,8 +166,12 @@
       fi
     fi
 
-    # Install GitHub Copilot extension if not present
-    if ! gh extension list | grep -q "github/gh-copilot"; then
+    # GitHub CLI 2.86+ ships Copilot as a built-in command. Older versions used
+    # the github/gh-copilot extension, so only install the extension when neither
+    # the built-in command nor the extension is present.
+    if gh copilot --help >/dev/null 2>&1; then
+      echo "✅ GitHub Copilot command already available"
+    elif ! gh extension list | grep -q "github/gh-copilot"; then
       echo "📦 Installing GitHub Copilot extension..."
       gh extension install github/gh-copilot
       echo "✅ GitHub Copilot extension installed!"
