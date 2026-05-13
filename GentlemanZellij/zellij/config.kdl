@@ -51,7 +51,8 @@ keybinds clear-defaults=true {
         bind "l" { GoToNextTab; }
         bind "n" { NewTab name="tab"; SwitchToMode "locked"; }
         bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
-        bind "s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
+        // Intentionally harder: sync sends all input to every pane.
+        bind "Ctrl s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
         bind "t" { SwitchToMode "normal"; }
         bind "x" { CloseTab; SwitchToMode "locked"; }
         bind "tab" { ToggleTab; }
@@ -209,7 +210,8 @@ keybinds clear-defaults=true {
         bind "space" { NextSwapLayout; SwitchToMode "locked"; }
 
         // Zellij equivalents for existing custom behavior
-        bind "S" { ToggleActiveSyncTab; SwitchToMode "locked"; }
+        // Intentionally harder: sync sends all input to every pane.
+        bind "Ctrl s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
         bind "+" { Resize "Increase"; SwitchToMode "locked"; }
         bind "=" { Resize "Increase"; SwitchToMode "locked"; }
         bind "-" { Resize "Decrease"; SwitchToMode "locked"; }
@@ -241,7 +243,7 @@ keybinds clear-defaults=true {
             "floating/embed"        "ctrl + a + f/e"
             "scroll/copy"           "ctrl + a + ["
             "search"                "ctrl + a + /"
-            "sync tab"              "ctrl + a + S"
+            "sync tab"              "ctrl + a + ctrl+s"
             "resize"                "ctrl + a + +/-/= or R then h/j/k/l"
             "zellij modes"          "ctrl + a + P/T/R/M/O"
             floating true
@@ -255,6 +257,7 @@ keybinds clear-defaults=true {
             "sessions"              "ctrl + a + s/w"
             "split right/down"      "ctrl + a + v/d or %/\""
             "tabs"                  "ctrl + a + c, p, n, 1..9, &, ,"
+            "sync tab"              "ctrl + a + ctrl+s"
             "panes"                 "ctrl + a + h/j/k/l, o, ;, x, z"
             "zellij modes"          "ctrl + a + P/T/R/M/O"
             floating true
@@ -282,7 +285,7 @@ keybinds clear-defaults=true {
             "close tab"             "ctrl + g + t + x"
             "change focus of tab"   "ctrl + g + t + arrow key"
             "rename tab"            "ctrl + g + t + r"
-            "sync tab"              "ctrl + g + t + s"
+            "sync tab"              "ctrl + g + t + ctrl+s"
             "brake pane to new tab" "ctrl + g + t + b"
             "brake pane left"       "ctrl + g + t + ["
             "brake pane right"      "ctrl + g + t + ]"
@@ -562,7 +565,7 @@ default_layout "work_kanagawa"
 //   - true (default, enabled)
 //   - false
 // 
-// pane_frames false
+pane_frames false
  
 // When attaching to an existing session with other users,
 // should the session be mirrored (true)
