@@ -61,10 +61,11 @@ yabai -m rule --add app="^Alfred$" manage=off
 yabai -m rule --add app="^1Password" manage=off
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# SIGNALS - Auto-fix problematic windows
+# SIGNALS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-# Focus next window when one is closed
-yabai -m signal --add event=window_destroyed action="yabai -m window --focus recent || yabai -m window --focus first" label="focus_on_destroy"
+# Intentionally no auto-focus on window_destroyed.
+# The old focus_on_destroy signal could jump to unrelated spaces/windows while working.
+# Use skhd's manual rescue binding (alt + ctrl + space) when macOS leaves no useful focus.
 
 echo "yabai configuration loaded.."

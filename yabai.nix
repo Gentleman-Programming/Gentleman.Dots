@@ -18,7 +18,7 @@
     cp -r ${toString ./yabai}/* "$HOME/.config/yabai/"
     chmod -R u+w "$HOME/.config/yabai"
     chmod +x "$HOME/.config/yabai/yabairc"
-    chmod +x "$HOME/.config/yabai/move-window-to-space.sh"
+    chmod +x "$HOME/.config/yabai"/*.sh
 
     # ─── Yabai sudoers setup for scripting addition ───
     # Required for space switching (yabai --load-sa needs passwordless sudo)
