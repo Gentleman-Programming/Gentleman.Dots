@@ -38,14 +38,14 @@ if test $IS_TERMUX -eq 0; and set -q BREW_BIN; and test -f $BREW_BIN
     eval ($BREW_BIN shellenv)
 end
 
-# Start tmux/zellij
+# Start tmux/zellij (tmux first, zellij as fallback)
 if not set -q TMUX
-    tmux
+    if type -q tmux
+        tmux new-session -A -s main
+    else if type -q zellij
+        zellij attach -c main
+    end
 end
-
-#if not set -q ZELLIJ
-#    zellij
-#end
 
 # Initialize tools
 starship init fish | source

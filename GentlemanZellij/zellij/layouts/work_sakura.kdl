@@ -16,8 +16,6 @@ layout {
               border_format   "#[fg=#3f3b3e]{char}"  // Dark gray for border
               border_position "top"
 
-              hide_frame_for_single_pane "true"
-
               mode_normal  "#[bg=#878fb9] "  // Light blue for normal mode
               mode_tmux    "#[bg=#c58ea7] "  // Intense pink for tmux mode
 

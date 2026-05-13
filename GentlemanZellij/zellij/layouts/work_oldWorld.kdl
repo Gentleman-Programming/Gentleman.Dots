@@ -16,7 +16,6 @@ layout {
                 border_format   "#[fg=#161617]{char}"  
                 border_position "top"
 
-                hide_frame_for_single_pane "true"
                 mode_normal  "#[bg=#85B5BA] "  
                 mode_tmux    "#[bg=#EA83A5] "  
 
