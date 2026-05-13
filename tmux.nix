@@ -34,7 +34,7 @@ bind-key -n M-g if-shell -F '#{==:#{session_name},scratch}' {
   detach-client
 } {
   # open in the same directory of the current pane
-  display-popup -d "#{pane_current_path}" -E "tmux new-session -A -s scratch"
+  display-popup -d "#{pane_current_path}" -E -k "tmux new-session -A -s scratch"
 }
 
 # Tema Kanagawa
@@ -45,15 +45,18 @@ set -g @kanagawa-ignore-window-colors true
 
 # --- terminal & key handling ---
 set -g default-terminal "tmux-256color"
-set -ga terminal-overrides ",*:Tc"
+set -as terminal-features ",*:RGB"
+set -as terminal-features ",*:usstyle"
+set -as terminal-features ",*:hyperlinks"
 
-set -s extended-keys off
+set -s extended-keys on
+set -as terminal-features 'xterm*:extkeys'
+set -sg escape-time 10
 
 # Modo vim
 set -g mode-keys vi
-if-shell 'uname | grep -q Darwin' \
-  'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"' \
-  'bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clip"'
+set -g set-clipboard on
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
 
 # Keymaps
 unbind C-b

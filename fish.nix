@@ -41,10 +41,10 @@
       set -gx GPG_TTY (tty)
 
       if not set -q TMUX; and not set -q ZELLIJ; and not set -q ZED_TERMINAL
-          if test "$TERM_PROGRAM" = ghostty; and type -q zellij
+          if type -q tmux
+              tmux new-session -A -s main
+          else if type -q zellij
               zellij attach -c main
-          else if type -q tmux
-              tmux
           end
       end
       starship init fish | source

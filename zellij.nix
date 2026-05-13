@@ -182,6 +182,7 @@ keybinds clear-defaults=true {
         bind ";" { FocusPreviousPane; SwitchToMode "locked"; }
         bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
+        bind "F" { TogglePanePinned; SwitchToMode "locked"; }
         bind "h" { MoveFocus "left"; SwitchToMode "locked"; }
         bind "j" { MoveFocus "down"; SwitchToMode "locked"; }
         bind "k" { MoveFocus "up"; SwitchToMode "locked"; }
@@ -328,6 +329,7 @@ keybinds clear-defaults=true {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt F" { TogglePanePinned; }
         bind "Alt h" { MoveFocusOrTab "left"; }
         bind "Alt i" { MoveTab "left"; }
         bind "Alt j" { MoveFocus "down"; }
@@ -540,8 +542,12 @@ default_mode "locked"
  
 // The name of the default layout to load on startup
 // Default: "work_oldWorld"
-// 
+//
 default_layout "work_kanagawa"
+
+// show_release_notes false   // default true in 0.43; uncomment to suppress
+// web_server false           // default; local-only workflow
+// web_sharing "off"          // default; never share sessions
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)
