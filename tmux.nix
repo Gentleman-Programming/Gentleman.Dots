@@ -50,6 +50,7 @@ set -as terminal-features ",*:usstyle"
 set -as terminal-features ",*:hyperlinks"
 
 set -s extended-keys on
+set -s extended-keys-format csi-u
 set -as terminal-features 'xterm*:extkeys'
 set -sg escape-time 10
 

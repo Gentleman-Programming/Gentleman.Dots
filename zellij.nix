@@ -176,6 +176,7 @@ keybinds clear-defaults=true {
         bind "d" { NewPane "down"; SwitchToMode "locked"; }
         bind "\"" { NewPane "down"; SwitchToMode "locked"; }
         bind "N" { NewPane; SwitchToMode "locked"; }
+        bind "S" { NewPane "stacked"; SwitchToMode "locked"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
         bind "x" { CloseFocus; SwitchToMode "locked"; }
         bind "o" { FocusNextPane; SwitchToMode "locked"; }
@@ -406,6 +407,7 @@ keybinds clear-defaults=true {
 // Plugin aliases - can be used to change the implementation of Zellij
 // changing these requires a restart to take effect
 plugins {
+    about location="zellij:about"
     compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
     filepicker location="zellij:strider" {
@@ -425,6 +427,7 @@ plugins {
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
+    "zellij:link"
 }
  
 // Use a simplified UI without special fonts (arrow glyphs)
@@ -717,8 +720,6 @@ layout {
               border_format   "#[fg=#6e6a86]{char}"
               border_position "top"
 
-              hide_frame_for_single_pane "true"
-
               mode_normal  "#[bg=#286983] "
               mode_tmux    "#[bg=#ea9a97] "
 
@@ -765,7 +766,6 @@ layout {
               border_format   "#[fg=#9D8F6F]{char}"
               border_position "top"
 
-              hide_frame_for_single_pane "true"
 
               mode_normal  "#[bg=#d3c6aa] "
               mode_tmux    "#[bg=#f1fa8c] "
@@ -809,7 +809,6 @@ layout {
               border_format   "#[fg=#C0A36E]{char}"
               border_position "top"
 
-              hide_frame_for_single_pane "true"
 
               mode_normal  "#[bg=#DCD7BA] "
               mode_tmux    "#[bg=#FFA066] "
@@ -851,11 +850,10 @@ layout {
 
                 border_enabled  "false"
                 border_char     "─"
-                border_format   "#[fg=#161617]{char}"  
+                border_format   "#[fg=#161617]{char}"
                 border_position "top"
 
-                hide_frame_for_single_pane "true"
-                mode_normal  "#[bg=#85B5BA] "  
+                mode_normal  "#[bg=#85B5BA] "
                 mode_tmux    "#[bg=#EA83A5] "  
 
                 tab_normal   "#[fg=#C9C7CD]{index}:{name} "  
@@ -900,7 +898,6 @@ layout {
               border_format   "#[fg=#3f3b3e]{char}"  // Dark gray for border
               border_position "top"
 
-              hide_frame_for_single_pane "true"
 
               mode_normal  "#[bg=#878fb9] "  // Light blue for normal mode
               mode_tmux    "#[bg=#c58ea7] "  // Intense pink for tmux mode
