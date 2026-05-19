@@ -13,6 +13,7 @@ This guide walks you through manually setting up your development environment wi
   - [Install a Terminal Emulator](#5-install-a-terminal-emulator)
   - [Configure Terminal Emulator](#6-configure-terminal-emulator)
   - [Install Chocolatey and win32yank](#7-install-chocolatey-and-win32yank)
+- [Unsupported Native Windows Tooling](#unsupported-native-windows-tooling)
 - [Linux, Arch Linux, macOS, and WSL](#linux-arch-linux-macos-and-wsl)
   - [Install Dependencies](#1-install-dependencies)
   - [Install Iosevka Term Nerd Font](#2-install-iosevka-term-nerd-font)
@@ -149,6 +150,79 @@ iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
 ```powershell
 choco install win32yank
 ```
+
+---
+
+## Unsupported Native Windows Tooling
+
+> **Unsupported path:** Windows-via-WSL is the supported Gentleman.Dots path. The notes below capture a native Windows tooling setup for users who want Windows-side tools, but this path is not covered by the installer, maintained as a supported workflow, or validated by Docker E2E tests.
+
+Use this section as reference material only. If something breaks on native Windows, prefer the supported WSL setup above instead of opening installer bugs for this path.
+
+### Install native tools with Scoop
+
+After installing [Scoop](https://scoop.sh/), install the Windows-side tools:
+
+```powershell
+scoop bucket add extras
+scoop bucket add nerd-fonts
+scoop install git curl wget unzip 7zip
+scoop install neovim ripgrep fd fzf lazygit
+scoop install nodejs-lts python gcc make
+scoop install starship zoxide nu win32yank bat less
+scoop install alacritty wezterm
+```
+
+### Copy configuration files
+
+From the repository root, copy the relevant configs into the Windows user config locations:
+
+```powershell
+New-Item -ItemType Directory "$env:APPDATA\alacritty" -Force
+Copy-Item ".\alacritty.toml" "$env:APPDATA\alacritty\alacritty.toml" -Force
+Copy-Item ".\.wezterm.lua" "$HOME\.wezterm.lua" -Force
+
+New-Item -ItemType Directory "$env:LOCALAPPDATA\nvim" -Force
+Copy-Item ".\GentlemanNvim\nvim\*" "$env:LOCALAPPDATA\nvim" -Recurse -Force
+
+New-Item -ItemType Directory "$env:APPDATA\nushell" -Force
+Copy-Item ".\GentlemanNushell\config.nu" "$env:APPDATA\nushell\config.nu" -Force
+Copy-Item ".\GentlemanNushell\env.nu" "$env:APPDATA\nushell\env.nu" -Force
+Copy-Item ".\GentlemanNushell\.zoxide.nu" "$env:APPDATA\nushell\.zoxide.nu" -Force
+
+New-Item -ItemType Directory "$HOME\.config" -Force
+Copy-Item ".\starship.toml" "$HOME\.config\starship.toml" -Force
+Copy-Item ".\bash-env.nu" "$HOME\.config\bash-env.nu" -Force
+```
+
+| Tool | Native Windows config location |
+|------|--------------------------------|
+| Alacritty | `%APPDATA%\alacritty\alacritty.toml` |
+| WezTerm | `%USERPROFILE%\.wezterm.lua` or `%USERPROFILE%\.config\wezterm\wezterm.lua` |
+| Neovim | `%LOCALAPPDATA%\nvim` |
+| Nushell | `%APPDATA%\nushell\config.nu` and `%APPDATA%\nushell\env.nu` |
+| Starship | `%USERPROFILE%\.config\starship.toml` |
+| Shared Nushell environment | `%USERPROFILE%\.config\bash-env.nu` |
+
+### Known native Windows adjustments
+
+Native Nushell may need local adjustments because the shared config assumes Unix-oriented tools and tmux. If startup fails, comment optional `atuin`/`carapace` source lines and disable `start_multiplexer` in:
+
+```text
+%APPDATA%\nushell\env.nu
+%APPDATA%\nushell\config.nu
+```
+
+### Choose WSL or native Windows per terminal
+
+Alacritty and WezTerm can both launch either WSL or native Windows shells. For native Windows tooling, make sure the terminal is not configured to start directly in WSL.
+
+| Terminal | WSL startup | Native Windows startup |
+|----------|-------------|------------------------|
+| Alacritty | Set `program = "wsl.exe"` in `alacritty.toml` | Remove the WSL shell override or set `program = "nu.exe"` |
+| WezTerm | Set `config.default_domain = 'WSL:Ubuntu'` in `.wezterm.lua` | Leave `default_domain` unset or set `config.default_prog = { "nu.exe" }` |
+
+If a terminal launches from `C:\Windows\System32`, edit its shortcut and set an explicit start directory such as the repository drive root or the current user's home directory.
 
 ---
 
