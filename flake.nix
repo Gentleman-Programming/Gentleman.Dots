@@ -27,6 +27,11 @@
             inherit system;
             config.allowUnfree = true;
           };
+          nodeWithoutNpm = pkgs.runCommand "nodejs-without-npm-${pkgs.nodejs.version}" { } ''
+            mkdir -p "$out/bin"
+            ln -s ${pkgs.nodejs}/bin/node "$out/bin/node"
+            ln -s ${pkgs.nodejs}/bin/corepack "$out/bin/corepack"
+          '';
           
           unstablePkgs = import nixpkgs-unstable {
             inherit system;
@@ -91,7 +96,8 @@
                 bash
                 starship
                 fzf
-                nodejs
+                nodeWithoutNpm
+                pnpm
                 bun
                 cargo
                 go
