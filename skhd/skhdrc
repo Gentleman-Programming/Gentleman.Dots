@@ -46,13 +46,13 @@ alt - 6 : yabai -m space --focus 6
 alt - 7 : yabai -m space --focus 7
 
 # Move window to workspace and follow (alt + shift + number) - native command
-alt + shift - 1 : yabai -m window --space 1 --focus
-alt + shift - 2 : yabai -m window --space 2 --focus
-alt + shift - 3 : yabai -m window --space 3 --focus
-alt + shift - 4 : yabai -m window --space 4 --focus
-alt + shift - 5 : yabai -m window --space 5 --focus
-alt + shift - 6 : yabai -m window --space 6 --focus
-alt + shift - 7 : yabai -m window --space 7 --focus
+alt + shift - 1 : ~/.config/yabai/move-window-to-space.sh 1
+alt + shift - 2 : ~/.config/yabai/move-window-to-space.sh 2
+alt + shift - 3 : ~/.config/yabai/move-window-to-space.sh 3
+alt + shift - 4 : ~/.config/yabai/move-window-to-space.sh 4
+alt + shift - 5 : ~/.config/yabai/move-window-to-space.sh 5
+alt + shift - 6 : ~/.config/yabai/move-window-to-space.sh 6
+alt + shift - 7 : ~/.config/yabai/move-window-to-space.sh 7
 
 # Fullscreen (alt + shift + f)
 alt + shift - f : yabai -m window --toggle zoom-fullscreen
