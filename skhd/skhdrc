@@ -68,8 +68,8 @@ alt - tab : yabai -m space --focus recent
 alt + shift - tab : yabai -m window --display next; yabai -m display --focus next
 
 # Special commands
-# Reload config (alt + shift + r)
-alt + shift - r : yabai --restart-service; skhd --restart-service
+# Reload config (alt + ctrl + shift + r)
+alt + ctrl + shift - r : /bin/launchctl kickstart -k gui/$(/usr/bin/id -u)/com.koekeishiya.yabai; skhd --restart-service
 
 # Balance layout (alt + shift + b)
 alt + shift - b : yabai -m space --balance
