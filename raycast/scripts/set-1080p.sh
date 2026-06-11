@@ -19,6 +19,12 @@ ARZOPA="2CC539C8-E8F3-44C6-925E-AE98DE7F6EFB"
     "id:$ELGATO res:1280x800 hz:60 color_depth:8 enabled:true scaling:on origin:(372,1080) degree:0" \
     "id:$ARZOPA res:1024x600 hz:60 color_depth:4 enabled:true scaling:off origin:(-55,-600) degree:0"
 
+# Force WallpaperAgent to re-render the wallpaper at the new resolution.
+# macOS caches the rasterized wallpaper at the previous backing size and just
+# stretches it on a resolution change, which looks blurry. Killing the agent
+# makes it respawn and regenerate the bitmap at the current resolution.
+killall WallpaperAgent
+
 # Reset Raycast window position (use -g to not focus Raycast)
 sleep 2
 open -g raycast://extensions/raycast/raycast/reset-raycast-window-position
