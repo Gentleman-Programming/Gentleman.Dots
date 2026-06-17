@@ -13,7 +13,7 @@ green = 0.0
 red = 1.0
 
 [focus]
-followsMouse = true
+followsMouse = false
 followsWindowToMonitor = false
 moveMouseToFocusedWindow = true
 
