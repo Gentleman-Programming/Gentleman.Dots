@@ -57,9 +57,9 @@ This repository provides a complete, declarative development environment configu
 
 ### 🪟 Window Management (macOS)
 
-- **Yabai**: Tiling window manager with scripting support
-- **Skhd**: Hotkey daemon for keyboard shortcuts
-- **SketchyBar**: Customizable status bar with plugins
+- **Nehir** (current): Niri-style scrolling-column tiling WM with a built-in workspace bar and hotkeys
+- **Yabai + Skhd** (legacy): BSP tiling WM + hotkey daemon — kept for fallback, not auto-started
+- **SketchyBar** (legacy): Status bar — replaced by Nehir's native workspace bar
 - **Aerospace**: Alternative tiling window manager (optional)
 
 ### 📝 Development Workflow
@@ -97,7 +97,7 @@ The flake automatically handles system-specific configurations, installs all dep
 | **AI Tools**        | Claude Code, OpenCode (12 agents), Engram, Context7, Notion MCP |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
-| **Window Manager**  | Yabai + Skhd, SketchyBar, Aerospace (opt) |
+| **Window Manager**  | Nehir (current); Yabai + Skhd + SketchyBar (legacy) |
 | **Automation**      | Raycast Scripts                           |
 
 ### 📁 Project Structure
@@ -140,11 +140,13 @@ The flake automatically handles system-specific configurations, installs all dep
 ├── gemini.nix             # Gemini CLI configuration (optional)
 │
 ├── # ─── Window Management (macOS) ───
-├── yabai.nix              # Yabai window manager configuration
+├── nehir.nix              # Nehir (Niri-style WM) config — current, config-only
+├── nehir/                 # Nehir hotkeys, settings, workspaces (TOML)
+├── yabai.nix              # Yabai window manager configuration (legacy, not imported)
 ├── yabai/                 # Yabai scripts and config
-├── skhd.nix               # Skhd hotkey daemon configuration
+├── skhd.nix               # Skhd hotkey daemon configuration (legacy, not imported)
 ├── skhd/                  # Skhd keybindings (skhdrc)
-├── sketchybar.nix         # SketchyBar status bar configuration
+├── sketchybar.nix         # SketchyBar status bar configuration (legacy, not imported)
 ├── sketchybar/            # SketchyBar plugins and config
 ├── simple-bar.nix         # simple-bar for Übersicht (disabled)
 ├── simple-bar/            # simple-bar themes (disabled)
@@ -282,7 +284,39 @@ For window management on Linux, consider:
 
 ---
 
+## 🪟 Nehir Window Manager (macOS)
+
+[Nehir](https://github.com/guria/nehir) is the current window manager: a Niri-style
+scrolling-column tiler with a built-in workspace bar. Like Ghostty, the app binary is
+installed outside Nix (Homebrew cask); `nehir.nix` only deploys the config files to
+`~/.config/nehir/` and Nehir live-reloads them.
+
+```bash
+# Install the app (binary not managed by Nix)
+brew tap guria/tap
+brew install --cask nehir
+open -a Nehir
+```
+
+Then grant **System Settings → Privacy & Security → Accessibility → Nehir**.
+
+Config lives in `nehir/` (deployed to `~/.config/nehir/`):
+
+| File | Purpose |
+|------|---------|
+| `hotkeys.toml` | Keybindings (ported from the old skhd layout) |
+| `settings.toml` | Gaps, focus-follows-mouse, native workspace bar, IPC |
+| `workspaces.toml` | Workspace list + monitor assignments (6 → Elgato, 7 → Arzopa) |
+
+The legacy `yabai.nix` / `skhd.nix` / `sketchybar.nix` modules are no longer imported in
+`flake.nix` so they don't auto-start. To roll back, re-enable those imports and
+`launchctl enable` their agents.
+
+---
+
 ## 🖥️ SketchyBar Status Bar
+
+> **Legacy** — replaced by Nehir's native workspace bar. Kept for users still on yabai.
 
 This configuration includes a fully customized SketchyBar setup with:
 
@@ -420,7 +454,10 @@ custom-shader = ~/.config/ghostty/shaders/cursor_smear_gentleman.glsl
 
 ### 5. Window Management Options
 
-#### Option A: Yabai + Skhd (Recommended)
+> **Current default: Nehir.** See [Nehir Window Manager](#-nehir-window-manager-macos) above.
+> The Yabai/Skhd options below are legacy and no longer imported by `flake.nix`.
+
+#### Option A: Yabai + Skhd (legacy)
 
 Yabai and Skhd are automatically configured via the flake. They provide:
 

@@ -1,0 +1,65 @@
+# Nehir hotkeys — ported from the skhd (yabai/BSP) keymaps.
+#
+# Scheme preserved from skhd:
+#   Control+Option  -> focus           (was alt+ctrl)
+#   Option+Shift    -> move window     (was alt+shift)
+#   Option+{N}      -> workspaces      (was alt+N)
+#
+# Nehir MERGES this file onto its built-in defaults: any action not listed
+# here keeps Nehir's native Option+Command binding. Where a Nehir default
+# collides with a chord we want, the default is explicitly "Unassigned".
+
+[focus]
+# Focus windows (was alt+ctrl+hjkl). In Niri: h/l move between columns,
+# j/k move between windows stacked inside the focused column.
+left  = "Control+Option+H"
+down  = "Control+Option+J"
+up    = "Control+Option+K"
+right = "Control+Option+L"
+# Focus the next monitor (was alt+shift+tab). NOTE: this only moves focus —
+# unlike yabai it does not carry the window to the other display.
+monitorNext = "Option+Shift+Tab"
+
+[move]
+# Vertical: move the window within its stacked column (was alt+shift+j/k).
+down = "Option+Shift+J"
+up   = "Option+Shift+K"
+# Horizontal: move the whole COLUMN left/right (was alt+shift+h/l).
+# Uses moveColumn (not move-window) so the column strip re-packs cleanly with
+# no leftover gap on the left — move-window left/right leaves the viewport
+# unsnapped until you manually refocus the neighbour.
+columnLeft  = "Option+Shift+H"
+columnRight = "Option+Shift+L"
+
+[workspace]
+# Switch to / move window to workspace 1-9 (was alt+N / alt+shift+N).
+switch = "Option+{N}"
+moveTo = "Option+Shift+{N}"
+# Most-recent workspace (was alt+tab).
+backAndForth = "Option+Tab"
+
+[layout]
+# Fullscreen the focused window (was alt+shift+f).
+toggleFullscreen = "Option+Shift+F"
+# Free the default chord (toggleColumnFullWidth) that also wanted Option+Shift+F.
+toggleColumnFullWidth = "Unassigned"
+# Balance column/window sizes (was alt+shift+b).
+balanceSizes = "Option+Shift+B"
+# Toggle floating for the focused window (was alt+ctrl+f).
+toggleFocusedFloating = "Control+Option+F"
+# Free the default chord (expandColumnToAvailableWidth) that also wanted Control+Option+F.
+expandColumnToAvailable = "Unassigned"
+# Resize column width (was alt + -/=).
+decreaseColumnWidth = "Option+Minus"
+increaseColumnWidth = "Option+Equal"
+# Resize window height (was alt + up/down arrows).
+decreaseWindowHeight = "Option+Down Arrow"
+increaseWindowHeight = "Option+Up Arrow"
+# Focus rescue for off-screen windows (closest to skhd's alt+ctrl+space rescue).
+rescueOffscreen = "Control+Option+Space"
+# Toggle column stacked/tabbed — Niri replacement for the BSP "toggle split" (was alt+e).
+toggleColumnTabbed = "Option+E"
+
+# Dropped — no equivalent in the Niri column model:
+#   rotate (alt+r), mirror x/y (alt+x / alt+y), bsp/stack toggle (alt+/ , alt+,).
+#   reload config (alt+ctrl+shift+r) — Nehir live-reloads this file automatically.

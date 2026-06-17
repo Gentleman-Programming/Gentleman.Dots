@@ -1,0 +1,31 @@
+# Nehir core settings. Any key omitted here falls back to Nehir's built-in
+# default, so this file only pins the handful of things worth being explicit about.
+
+[general]
+hotkeysEnabled = true
+# Enables the `nehirctl` IPC socket (used to query/drive Nehir from scripts).
+ipcEnabled = true
+
+[focus]
+# Focus follows the mouse pointer (hover a window to focus it).
+followsMouse = true
+# Warp the cursor to the focused window on keyboard-driven focus/move.
+# Required alongside followsMouse: without it, a keyboard move leaves the cursor
+# behind and focus-follows-mouse immediately steals focus back to whatever window
+# is now under the stationary cursor.
+moveMouseToFocusedWindow = true
+
+[gaps]
+# Inner gap between columns/windows (yabai used a 6px window_gap).
+size = 8.0
+
+[niri]
+# How many columns fit at the "balanced" width.
+balancedColumnCount = 2
+
+[workspaceBar]
+# Native workspace bar. Use this for now instead of wiring sketchybar — the
+# sketchybar path (driven by nehirctl) is a deliberate second-pass decision.
+enabled = true
+position = "overlappingMenuBar"
+showLabels = true

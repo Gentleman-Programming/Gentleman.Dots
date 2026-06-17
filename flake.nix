@@ -62,10 +62,14 @@
             ./opencode.nix  # OpenCode AI assistant configuration
             ./claude.nix  # Claude Code CLI configuration
             ./engram.nix  # Engram memory layer for AI agents
-            ./yabai.nix  # Yabai window manager configuration
-            ./skhd.nix  # Skhd hotkey daemon configuration
+            # Migrated to Nehir (Niri-style WM). yabai/skhd/sketchybar are no longer
+            # activated so they don't auto-start. Files/packages kept for fallback;
+            # re-enable these imports to go back. LaunchAgents are also `launchctl disable`d.
+            # ./yabai.nix  # Yabai window manager configuration
+            # ./skhd.nix  # Skhd hotkey daemon configuration
+            ./nehir.nix  # Nehir (Niri-style WM) configuration
             # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
-            ./sketchybar.nix  # SketchyBar status bar
+            # ./sketchybar.nix  # SketchyBar status bar
             ./raycast.nix  # Raycast scripts
             {
               # Personal data

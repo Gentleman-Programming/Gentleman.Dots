@@ -1,0 +1,37 @@
+# Workspace list with monitor assignments (ported from yabai space labels).
+#
+# Workspaces 1-5 live on the main display (LG TV). 6 and 7 are pinned to the
+# specific external monitors they belong to, matching the old yabai layout:
+#   space 6 -> Elgato Teleprompter
+#   space 7 -> Arzopa portable monitor
+#
+# `monitor = "specific"` pins by displayId + name. displayId is the number in
+# Nehir's "display:N" id (verify with: nehirctl query displays). If a monitor's
+# displayId changes after a reconnect, Nehir re-resolves by monitorName.
+
+[1]
+monitor = "main"
+
+[2]
+monitor = "main"
+
+[3]
+monitor = "main"
+
+[4]
+monitor = "main"
+
+[5]
+monitor = "main"
+
+[6]
+displayName = "❤️"
+monitor = "specific"
+monitorName = "Elgato Prom."
+monitorDisplayId = 6
+
+[7]
+displayName = "🚀"
+monitor = "specific"
+monitorName = "ARZOPA"
+monitorDisplayId = 5
