@@ -1,0 +1,12 @@
+# Inactive sample. Rename to `.toml` and edit values to enable.
+# Float dialogs while sending their parent app to a named workspace.
+[match]
+bundleId = "com.example.productivity-app"
+axRole = "AXDialog"
+axSubrole = "AXStandardWindow"
+
+[effect]
+layout = "float"
+assignToWorkspace = "3"
+minWidth = 480
+minHeight = 320

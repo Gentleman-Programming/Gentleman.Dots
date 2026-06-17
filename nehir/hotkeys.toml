@@ -1,65 +1,141 @@
-# Nehir hotkeys — ported from the skhd (yabai/BSP) keymaps.
-#
-# Scheme preserved from skhd:
-#   Control+Option  -> focus           (was alt+ctrl)
-#   Option+Shift    -> move window     (was alt+shift)
-#   Option+{N}      -> workspaces      (was alt+N)
-#
-# Nehir MERGES this file onto its built-in defaults: any action not listed
-# here keeps Nehir's native Option+Command binding. Where a Nehir default
-# collides with a chord we want, the default is explicitly "Unassigned".
-
-[focus]
-# Focus windows (was alt+ctrl+hjkl). In Niri: h/l move between columns,
-# j/k move between windows stacked inside the focused column.
-left  = "Control+Option+H"
-down  = "Control+Option+J"
-up    = "Control+Option+K"
-right = "Control+Option+L"
-# Focus the next monitor (was alt+shift+tab). NOTE: this only moves focus —
-# unlike yabai it does not carry the window to the other display.
-monitorNext = "Option+Shift+Tab"
-
-[move]
-# Vertical: move the window within its stacked column (was alt+shift+j/k).
-down = "Option+Shift+J"
-up   = "Option+Shift+K"
-# Horizontal: move the whole COLUMN left/right (was alt+shift+h/l).
-# Uses moveColumn (not move-window) so the column strip re-packs cleanly with
-# no leftover gap on the left — move-window left/right leaves the viewport
-# unsnapped until you manually refocus the neighbour.
-columnLeft  = "Option+Shift+H"
-columnRight = "Option+Shift+L"
 
 [workspace]
-# Switch to / move window to workspace 1-9 (was alt+N / alt+shift+N).
 switch = "Option+{N}"
 moveTo = "Option+Shift+{N}"
-# Most-recent workspace (was alt+tab).
+moveColumnTo = "Unassigned"
+focusAnywhere = "Unassigned"
 backAndForth = "Option+Tab"
+next = "Control+Option+Command+Right Arrow"
+previous = "Control+Option+Command+Left Arrow"
+swapWithMonitorLeft = "Unassigned"
+swapWithMonitorRight = "Unassigned"
+swapWithMonitorUp = "Unassigned"
+swapWithMonitorDown = "Unassigned"
+
+[focus]
+column = "Control+Option+Command+{N}"
+windowInColumn = "Unassigned"
+left = "Control+Option+H"
+down = "Control+Option+J"
+up = "Control+Option+K"
+right = "Control+Option+L"
+previous = "Option+Command+Tab"
+downOrLeft = "Unassigned"
+upOrRight = "Unassigned"
+windowTop = "Unassigned"
+windowBottom = "Unassigned"
+windowDownOrTop = "Unassigned"
+windowUpOrBottom = "Unassigned"
+windowOrWorkspaceDown = "Unassigned"
+windowOrWorkspaceUp = "Unassigned"
+columnFirst = "Option+Command+Home"
+columnLast = "Option+Command+End"
+monitorNext = "Option+Shift+Tab"
+monitorPrevious = "Unassigned"
+monitorLast = "Control+Command+Grave"
+
+[move]
+columnToIndex = "Unassigned"
+left = "Option+Shift+Command+Left Arrow"
+down = "Option+Shift+J"
+up = "Option+Shift+K"
+right = "Option+Shift+Command+Right Arrow"
+windowDown = "Unassigned"
+windowUp = "Unassigned"
+windowDownOrToWorkspaceDown = "Unassigned"
+windowUpOrToWorkspaceUp = "Unassigned"
+windowToWorkspaceUp = "Hyper+Up Arrow"
+windowToWorkspaceDown = "Hyper+Down Arrow"
+columnToWorkspaceUp = "Unassigned"
+columnToWorkspaceDown = "Unassigned"
+columnLeft = "Option+Shift+H"
+columnRight = "Option+Shift+L"
+columnToFirst = "Control+Option+Command+Home"
+columnToLast = "Control+Option+Command+End"
+consumeOrExpelLeft = "Unassigned"
+consumeOrExpelRight = "Unassigned"
+consumeIntoColumn = "Unassigned"
+expelFromColumn = "Unassigned"
+"windowToWorkspaceOnMonitor.1.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.1.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.1.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.1.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.2.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.2.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.2.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.2.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.3.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.3.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.3.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.3.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.4.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.4.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.4.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.4.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.5.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.5.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.5.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.5.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.6.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.6.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.6.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.6.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.7.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.7.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.7.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.7.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.8.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.8.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.8.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.8.up" = "Unassigned"
+"windowToWorkspaceOnMonitor.9.down" = "Unassigned"
+"windowToWorkspaceOnMonitor.9.left" = "Unassigned"
+"windowToWorkspaceOnMonitor.9.right" = "Unassigned"
+"windowToWorkspaceOnMonitor.9.up" = "Unassigned"
 
 [layout]
-# Fullscreen the focused window (was alt+shift+f).
 toggleFullscreen = "Option+Shift+F"
-# Free the default chord (toggleColumnFullWidth) that also wanted Option+Shift+F.
+toggleNativeFullscreen = "Option+Shift+Command+Return"
+toggleColumnTabbed = "Option+E"
 toggleColumnFullWidth = "Unassigned"
-# Balance column/window sizes (was alt+shift+b).
-balanceSizes = "Option+Shift+B"
-# Toggle floating for the focused window (was alt+ctrl+f).
-toggleFocusedFloating = "Control+Option+F"
-# Free the default chord (expandColumnToAvailableWidth) that also wanted Control+Option+F.
 expandColumnToAvailable = "Unassigned"
-# Resize column width (was alt + -/=).
+cycleColumnWidthForward = "Option+Command+Period"
+cycleColumnWidthBackward = "Option+Command+Comma"
+cycleWindowWidthForward = "Unassigned"
+cycleWindowWidthBackward = "Unassigned"
+cycleWindowHeightForward = "Unassigned"
+cycleWindowHeightBackward = "Unassigned"
 decreaseColumnWidth = "Option+Minus"
 increaseColumnWidth = "Option+Equal"
-# Resize window height (was alt + up/down arrows).
+decreaseWindowWidth = "Unassigned"
+increaseWindowWidth = "Unassigned"
 decreaseWindowHeight = "Option+Down Arrow"
 increaseWindowHeight = "Option+Up Arrow"
-# Focus rescue for off-screen windows (closest to skhd's alt+ctrl+space rescue).
+resetWindowHeight = "Control+Option+Command+R"
+balanceSizes = "Option+Shift+B"
+scrollViewportLeft = "Option+Command+Left Bracket"
+scrollViewportRight = "Option+Command+Right Bracket"
+toggleFocusedFloating = "Control+Option+F"
+assignScratchpad = "Unassigned"
+toggleScratchpad = "Unassigned"
+raiseAllFloating = "Option+Shift+Command+R"
 rescueOffscreen = "Control+Option+Space"
-# Toggle column stacked/tabbed — Niri replacement for the BSP "toggle split" (was alt+e).
-toggleColumnTabbed = "Option+E"
 
-# Dropped — no equivalent in the Niri column model:
-#   rotate (alt+r), mirror x/y (alt+x / alt+y), bsp/stack toggle (alt+/ , alt+,).
-#   reload config (alt+ctrl+shift+r) — Nehir live-reloads this file automatically.
+[ui]
+commandPalette = "Option+Command+Space"
+menuAnywhere = "Option+Command+M"
+settings = "Unassigned"
+toggleOverview = "Option+Command+O"
+toggleWorkspaceBar = "Unassigned"
+toggleFocusFollowsMouse = "Unassigned"
+toggleFocusFollowsWindowToMonitor = "Unassigned"
+toggleMoveMouseToFocused = "Unassigned"
+toggleBordersEnabled = "Unassigned"
+togglePreventSleepEnabled = "Unassigned"
+toggleIPCEnabled = "Unassigned"
+
+[debugging]
+dumpRuntimeState = "Unassigned"
+resetRuntimeState = "Unassigned"
+restartClearingRuntimeState = "Unassigned"
+toggleTraceCapture = "Control+Option+Command+T"

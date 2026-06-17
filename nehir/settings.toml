@@ -1,31 +1,74 @@
-# Nehir core settings. Any key omitted here falls back to Nehir's built-in
-# default, so this file only pins the handful of things worth being explicit about.
 
-[general]
-hotkeysEnabled = true
-# Enables the `nehirctl` IPC socket (used to query/drive Nehir from scripts).
-ipcEnabled = true
+[appearance]
+mode = "dark"
+
+[borders]
+enabled = true
+width = 1.0
+
+[borders.color]
+alpha = 1.0
+blue = 0.5260301973608223
+green = 0.0
+red = 1.0
 
 [focus]
-# Focus follows the mouse pointer (hover a window to focus it).
 followsMouse = true
-# Warp the cursor to the focused window on keyboard-driven focus/move.
-# Required alongside followsMouse: without it, a keyboard move leaves the cursor
-# behind and focus-follows-mouse immediately steals focus back to whatever window
-# is now under the stationary cursor.
+followsWindowToMonitor = false
 moveMouseToFocusedWindow = true
 
 [gaps]
-# Inner gap between columns/windows (yabai used a 6px window_gap).
 size = 8.0
 
+[gaps.outer]
+bottom = 0.0
+left = 0.0
+right = 0.0
+top = 0.0
+
+[general]
+developerModeEnabled = false
+hotkeysEnabled = true
+ipcEnabled = true
+preventSleepEnabled = false
+
+[gestures]
+fingerCount = 3
+invertDirection = true
+mouseResizeModifierKey = "option"
+scrollEnabled = true
+scrollModifierKey = "optionShift"
+scrollSensitivity = 5.0
+
+[mouseWarp]
+axis = "horizontal"
+margin = 1
+monitorOrder = []
+
 [niri]
-# How many columns fit at the "balanced" width.
 balancedColumnCount = 2
+columnWidthPresets = [0.35, 0.5, 0.65, 0.95]
+infiniteLoop = false
+revealPartial = "default"
+
+[statusBar]
+showAppNames = false
+showWorkspaceName = false
+useWorkspaceId = false
 
 [workspaceBar]
-# Native workspace bar. Use this for now instead of wiring sketchybar — the
-# sketchybar path (driven by nehirctl) is a deliberate second-pass decision.
+backgroundOpacity = 0.0
+deduplicateAppIcons = true
 enabled = true
-position = "overlappingMenuBar"
+height = 24.0
+hideEmptyWorkspaces = false
+labelFontSize = 12.0
+notchAware = true
+position = "belowMenuBar"
+reserveLayoutSpace = true
+showFloatingWindows = true
 showLabels = true
+showTraceButton = false
+windowLevel = "popup"
+xOffset = 0.0
+yOffset = 0.0

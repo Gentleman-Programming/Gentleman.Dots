@@ -1,0 +1,10 @@
+# Inactive sample. Rename to `.toml` and edit values to enable.
+# Float browser Picture-in-Picture windows.
+[match]
+bundleId = "com.apple.Safari"
+titleSubstring = "Picture in Picture"
+
+[effect]
+layout = "float"
+minWidth = 320
+minHeight = 180

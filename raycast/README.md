@@ -16,6 +16,7 @@ Custom Raycast scripts for macOS automation.
 | `set-1080p.sh` | Set LG TV to 1080p resolution with multi-monitor arrangement |
 | `reset-display-placement.sh` | Auto-detect current resolution and reset display arrangement |
 | `restart-sketchybar.sh` | Kill and restart sketchybar |
+| `restart-nehir.sh` | Quit and relaunch Nehir to re-tile a stuck layout |
 
 ## Requirements
 
