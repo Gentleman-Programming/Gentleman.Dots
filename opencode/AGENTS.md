@@ -136,3 +136,19 @@ If you see a compaction message or "FIRST ACTION REQUIRED":
 
 Do not skip step 1. Without it, everything done before compaction is lost from memory.
 <!-- /gentle-ai:engram-protocol -->
+
+<!-- gentle-ai:opencode-model-assignments -->
+## OpenCode Model Assignments
+
+OpenCode uses `agent.<name>.model` plus `agent.<name>.variant` in `opencode.json`.
+These assignments mirror the Codex model and reasoning profile configuration:
+
+| Codex profile | OpenCode model | OpenCode `variant` | OpenCode agents / SDD phases |
+|---------------|----------------|--------------------|-------------------------------|
+| default | `openai/gpt-5.5` | `medium` | `gentle-orchestrator`, `sdd-orchestrator`, `gentleman` |
+| `sdd-strong` | `openai/gpt-5.5` | `high` | `sdd-propose`, `sdd-design`, `sdd-verify`, `jd-judge-a`, `jd-judge-b` |
+| `sdd-mid` | `openai/gpt-5.5` | `medium` | `sdd-apply`, `jd-fix-agent` |
+| `sdd-cheap` | `openai/gpt-5.4-mini` | `low` | `sdd-explore`, `sdd-spec`, `sdd-tasks`, `sdd-archive`, `sdd-onboard`, `sdd-init` |
+
+Treat the explicit agent entries in `opencode.json` as authoritative. If an agent is missing an explicit model or variant, use the OpenCode runtime default for that agent.
+<!-- /gentle-ai:opencode-model-assignments -->
