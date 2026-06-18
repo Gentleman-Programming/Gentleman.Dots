@@ -94,7 +94,7 @@ The flake automatically handles system-specific configurations, installs all dep
 | **Terminals**       | Ghostty, WezTerm, Tmux, Zellij (optional) |
 | **Editor**          | Neovim (LazyVim) + Zed                    |
 | **Languages**       | Node.js, Rust, Go, with Volta management  |
-| **AI Tools**        | Claude Code, OpenCode (12 agents), Engram, Context7, Notion MCP |
+| **AI Tools**        | Claude Code, OpenCode (12 agents), Engram, Herdr, Context7, Notion MCP |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
 | **Window Manager**  | Nehir (current); Yabai + Skhd + SketchyBar (legacy) |
@@ -137,6 +137,7 @@ The flake automatically handles system-specific configurations, installs all dep
 ├── opencode.nix           # OpenCode AI configuration
 ├── opencode/              # OpenCode config, AGENTS.md, 35 skills, themes
 ├── engram.nix             # Engram persistent memory configuration
+├── herdr.nix              # Herdr agent multiplexer configuration
 ├── gemini.nix             # Gemini CLI configuration (optional)
 │
 ├── # ─── Window Management (macOS) ───
