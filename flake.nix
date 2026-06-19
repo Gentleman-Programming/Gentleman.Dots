@@ -54,6 +54,7 @@
             ./wezterm.nix  # WezTerm configuration
             ./zellij.nix  # Zellij configuration
             ./tmux.nix  # Tmux configuration
+            ./tmux-agents.nix  # Tmux agent-state notifier (working/blocked/idle)
             ./fish.nix  # Fish shell configuration
             ./starship.nix  # Starship prompt configuration
             ./nvim.nix  # Neovim configuration

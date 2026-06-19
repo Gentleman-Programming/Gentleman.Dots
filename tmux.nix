@@ -84,6 +84,10 @@ setw -g pane-base-index 1
 
 # TPM init
 run '~/.tmux/plugins/tpm/tpm'
+
+# Agent-state display layer — sourced AFTER TPM so it can extend the kanagawa
+# theme's window-status-format (file installed by tmux-agents.nix).
+if-shell '[ -f ~/.config/tmux/agents.conf ]' 'source-file ~/.config/tmux/agents.conf'
       '';
     };
   };
