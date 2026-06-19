@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# agent-status — status-right renderer + self-heal heartbeat (runs every status-interval).
+# agent-status — self-heal heartbeat (runs every status-interval, prints NOTHING).
 #
-# 1) Self-heal: clears "blocked" on any pane the user is CURRENTLY VIEWING.
-#    No hook fires when an agent's question/permission is cancelled, so the blocked
-#    state would otherwise stick forever. The red is an alert for windows you're NOT
-#    watching — once a blocked pane is on-screen, the alert is delivered, so clear it.
-# 2) Render: the workspaces+agents informativo from the window-level rollup.
+# It lives in status-right only so tmux re-runs it on each refresh; the agent
+# informativo is shown by the per-tab dots (window-status-format), so this script
+# stays visually silent and the theme keeps the status-right (RAM/CPU/git).
+#
+# Self-heal: clears "blocked" on any pane the user is CURRENTLY VIEWING. No hook
+# fires when an agent's question/permission is cancelled, so the blocked state would
+# otherwise stick forever — once a blocked pane is on-screen, the alert is delivered.
 set -uo pipefail
 command -v tmux >/dev/null 2>&1 || exit 0
 
@@ -20,7 +22,7 @@ recompute_rollup() {
   tmux set -w -t "$win" @win_agent_state "$worst" 2>/dev/null
 }
 
-# --- 1) self-heal: clear blocked on the pane(s) on screen right now ---
+# --- self-heal: clear blocked on the pane(s) on screen right now ---
 while IFS=$'\t' read -r pid st vis wid; do
   if [ "$st" = "blocked" ] && [ "$vis" = "1" ]; then
     tmux set -p -t "$pid" @agent_state idle 2>/dev/null
@@ -30,15 +32,5 @@ while IFS=$'\t' read -r pid st vis wid; do
 # (tmux IFS tab-splitting merges consecutive tabs).
 done < <(tmux list-panes -a -F '#{pane_id}'$'\t''#{?#{@agent_state},#{@agent_state},-}'$'\t''#{&&:#{pane_active},#{&&:#{window_active},#{session_attached}}}'$'\t''#{window_id}' 2>/dev/null)
 
-# --- 2) render the informativo ---
-out=""
-while IFS=$'\t' read -r name rollup; do
-  [ -n "$name" ] || continue
-  case "$rollup" in
-    blocked) out+=" #[fg=red,bold]●#[default]${name}" ;;
-    working) out+=" #[fg=yellow]●#[default]${name}" ;;
-  esac
-done < <(tmux list-windows -a -F '#{window_name}'$'\t''#{?#{@win_agent_state},#{@win_agent_state},-}' 2>/dev/null)
-
-[ -n "$out" ] || out=" #[fg=green]●#[default] idle"
-printf '%s' "$out"
+# No output: the per-tab dots are the informativo; the theme keeps the status-right.
+exit 0
