@@ -73,9 +73,12 @@ export const TmuxAgentStatePlugin = async () => {
           break;
         case "permission.asked":
         case "question.asked":
-        case "session.error":
           await report("blocked");
           break;
+        // session.error fires for recoverable errors too (e.g. editing a file
+        // before reading it) that the agent retries and works through. It is NOT
+        // "waiting on the user", so we ignore it — real lifecycle events
+        // (session.idle / permission.asked) drive the state instead.
         case "session.idle":
           await report("idle");
           break;

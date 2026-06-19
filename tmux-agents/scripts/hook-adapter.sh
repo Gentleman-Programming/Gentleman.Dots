@@ -24,10 +24,16 @@ is_blocking_tool() {
 }
 
 tool=""
+msg=""
 case "$event" in
   PreToolUse|PostToolUse)
     tool="$(printf '%s' "$input" | python3 -c 'import sys,json
 try: print(json.load(sys.stdin).get("tool_name","") or json.load(sys.stdin).get("toolName",""))
+except Exception: print("")' 2>/dev/null)"
+    ;;
+  Notification)
+    msg="$(printf '%s' "$input" | python3 -c 'import sys,json
+try: print(json.load(sys.stdin).get("message","") or "")
 except Exception: print("")' 2>/dev/null)"
     ;;
 esac
@@ -40,10 +46,16 @@ case "$event" in
   UserPromptSubmit|PreCompact)
     state=working ;;
   Notification)
-    state=blocked ;;
+    # Claude fires Notification for two unrelated cases. Only the permission case
+    # is a real "needs you"; the idle "waiting for your input" one is NOT blocked
+    # (it fires ~60s after Stop and would otherwise re-stick the pane to blocked).
+    case "$msg" in
+      *permission*|*"needs your"*|*approve*) state=blocked ;;
+      *) state=idle; msg="" ;;
+    esac ;;
   Stop|SessionStart|SessionEnd|TurnComplete)
     state=idle ;;
   *) exit 0 ;;   # SubagentStop and unknown events: ignore
 esac
 
-exec bash "$HOME/.config/tmux/scripts/agent-report.sh" "$pane" "$state"
+exec bash "$HOME/.config/tmux/scripts/agent-report.sh" "$pane" "$state" "$msg"
