@@ -71,6 +71,16 @@
     chmod +x "$HOME/.config/yabai"/*.sh 2>/dev/null || true
     echo "⚙️ Copied yabai config to $HOME/.config/yabai"
 
+    # ─── Remove stale nix-era binary ───
+    # Older nix generations installed yabai into ~/.local/bin, which takes PATH
+    # priority over Homebrew. nix no longer manages it, so it lingers as an
+    # orphan that both shadows the brew binary at runtime and makes the
+    # `command -v yabai` check below skip the brew install. Drop it first.
+    if [ -e "$HOME/.local/bin/yabai" ]; then
+      rm -f "$HOME/.local/bin/yabai"
+      echo "🧹 Removed stale ~/.local/bin/yabai (now provided by Homebrew)"
+    fi
+
     # ─── Locate Homebrew ───
     # brew is not guaranteed to be on PATH during home-manager activation;
     # probe the standard locations (Apple Silicon first, Intel fallback).
