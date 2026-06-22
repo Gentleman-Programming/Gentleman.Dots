@@ -88,8 +88,7 @@
                 nushell
 
                 # ─── Window management (macOS) ───
-                yabai
-                skhd
+                # yabai and skhd are installed via Homebrew (see yabai.nix / skhd.nix)
                 unstablePkgs.sketchybar  # Use unstable for latest version
 
                 # ─── Development tools ───

@@ -1,84 +1,101 @@
-{ lib, pkgs, ... }:
+{ pkgs, lib, ... }:
+
 {
-  home.activation.copySkhd = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  # Manual reinstall script for skhd (Homebrew-based)
+  home.file."bin/install-skhd" = {
+    text = ''
+      #!/usr/bin/env bash
+      set -e
+
+      # ─── Locate Homebrew ───
+      # brew is not guaranteed to be on PATH; probe the standard locations.
+      BREW=""
+      if [ -x /opt/homebrew/bin/brew ]; then
+        BREW="/opt/homebrew/bin/brew"
+      elif [ -x /usr/local/bin/brew ]; then
+        BREW="/usr/local/bin/brew"
+      fi
+
+      if [ -z "$BREW" ]; then
+        echo "⚠️  Homebrew no encontrado, instalá skhd manualmente con: brew install koekeishiya/formulae/skhd"
+        exit 1
+      fi
+
+      echo "🚀 Installing skhd via Homebrew..."
+
+      # Ensure the tap is present (idempotent)
+      "$BREW" tap koekeishiya/formulae >/dev/null 2>&1 || true
+
+      if "$BREW" list skhd >/dev/null 2>&1 || command -v skhd >/dev/null 2>&1; then
+        echo "✅ skhd already installed"
+      else
+        "$BREW" install koekeishiya/formulae/skhd
+        echo "✅ skhd installed"
+      fi
+
+      echo "🔧 Starting skhd service..."
+      # brew services is unsupported by this formula (no #service); use the
+      # binary's native service manager. Restart if running, else start.
+      if pgrep -x skhd >/dev/null 2>&1; then
+        skhd --restart-service || true
+      else
+        skhd --start-service || true
+      fi
+
+      echo ""
+      echo "🎉 skhd setup complete!"
+      echo "⚠️  Remember to grant Accessibility permission to skhd in System Settings."
+    '';
+    executable = true;
+  };
+
+  # Auto-install skhd on home-manager activation (Homebrew-based)
+  home.activation.copySkhd = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    echo "🔧 Setting up skhd..."
+
+    # ─── Copy declarative configuration ───
     echo "Copying Skhd configuration..."
     rm -rf "$HOME/.config/skhd"
+    mkdir -p "$HOME/.config/skhd"
 
-    if [ ! -d "$HOME/.config/skhd" ]; then
-      mkdir -p "$HOME/.config/skhd"
-    fi
-
-    cp -r ${toString ./skhd}/* "$HOME/.config/skhd/"
+    cp -rf ${toString ./skhd}/* "$HOME/.config/skhd/" 2>/dev/null || true
     chmod -R u+w "$HOME/.config/skhd"
+    echo "⚙️ Copied skhd config to $HOME/.config/skhd"
 
-    # ─── Stable-path binary install (macOS Accessibility persistence) ───
-    # Nix store paths include a hash that changes on every package update,
-    # which invalidates macOS Accessibility permission. Copy the binary to
-    # a stable user-owned path and point the LaunchAgent there so the
-    # permission survives home-manager bumps.
-    SKHD_SRC="${lib.getExe pkgs.skhd}"
-    SKHD_DST="$HOME/.local/bin/skhd"
-    PLIST="$HOME/Library/LaunchAgents/com.koekeishiya.skhd.plist"
-    UID_VAL=$(/usr/bin/id -u)
-
-    mkdir -p "$HOME/.local/bin"
-    mkdir -p "$HOME/Library/LaunchAgents"
-
-    NEW_HASH=$(/usr/bin/shasum -a 256 "$SKHD_SRC" | /usr/bin/awk '{print $1}')
-    OLD_HASH=""
-    if [ -f "$SKHD_DST" ]; then
-      OLD_HASH=$(/usr/bin/shasum -a 256 "$SKHD_DST" | /usr/bin/awk '{print $1}')
+    # ─── Locate Homebrew ───
+    # brew is not guaranteed to be on PATH during home-manager activation;
+    # probe the standard locations (Apple Silicon first, Intel fallback).
+    BREW=""
+    if [ -x /opt/homebrew/bin/brew ]; then
+      BREW="/opt/homebrew/bin/brew"
+    elif [ -x /usr/local/bin/brew ]; then
+      BREW="/usr/local/bin/brew"
     fi
 
-    if [ "$NEW_HASH" != "$OLD_HASH" ] || [ ! -f "$PLIST" ]; then
-      echo "Installing skhd to $SKHD_DST"
-      /bin/launchctl bootout gui/$UID_VAL/com.koekeishiya.skhd 2>/dev/null || true
-      /bin/rm -f "$SKHD_DST"
-      /bin/cp "$SKHD_SRC" "$SKHD_DST"
-      /bin/chmod +x "$SKHD_DST"
-
-      /bin/cat > "$PLIST" <<PLISTEOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.koekeishiya.skhd</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>$SKHD_DST</string>
-    </array>
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>PATH</key>
-        <string>$HOME/.local/bin:$HOME/.local/state/nix/profiles/home-manager/home-path/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-    </dict>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <dict>
-        <key>SuccessfulExit</key>
-        <false/>
-        <key>Crashed</key>
-        <true/>
-    </dict>
-    <key>StandardOutPath</key>
-    <string>/tmp/skhd_$USER.out.log</string>
-    <key>StandardErrorPath</key>
-    <string>/tmp/skhd_$USER.err.log</string>
-    <key>ProcessType</key>
-    <string>Interactive</string>
-    <key>Nice</key>
-    <integer>-20</integer>
-</dict>
-</plist>
-PLISTEOF
-
-      /bin/launchctl bootstrap gui/$UID_VAL "$PLIST" 2>/dev/null || true
-      echo "skhd LaunchAgent reloaded at $SKHD_DST"
-      echo "⚠️  If skhd fails to start: grant Accessibility to $SKHD_DST in System Settings"
+    if [ -z "$BREW" ]; then
+      echo "⚠️  Homebrew no encontrado, instalá skhd manualmente con: brew install koekeishiya/formulae/skhd"
     else
-      echo "skhd binary already up to date at $SKHD_DST"
+      # ─── Idempotent install ───
+      "$BREW" tap koekeishiya/formulae >/dev/null 2>&1 || true
+
+      if "$BREW" list skhd >/dev/null 2>&1 || command -v skhd >/dev/null 2>&1; then
+        echo "✅ skhd already installed"
+      else
+        echo "🚀 Installing skhd via Homebrew..."
+        "$BREW" install koekeishiya/formulae/skhd || echo "⚠️  skhd install failed, run: brew install koekeishiya/formulae/skhd"
+      fi
+
+      # ─── Start/refresh the daemon via the binary's native service manager ───
+      # brew services is unsupported by this formula (no #service); use
+      # skhd --start-service / --restart-service for idempotency.
+      echo "🔧 Starting skhd service..."
+      if pgrep -x skhd >/dev/null 2>&1; then
+        skhd --restart-service >/dev/null 2>&1 || true
+      else
+        skhd --start-service >/dev/null 2>&1 || true
+      fi
     fi
+
+    echo "🎉 skhd setup complete!"
   '';
 }
