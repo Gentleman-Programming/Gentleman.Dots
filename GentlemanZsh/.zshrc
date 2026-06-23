@@ -84,7 +84,10 @@ WM_CMD="tmux"
 # change with zellij
 
 function start_if_needed() {
-    if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]]; then
+    # Skip auto-launch inside herdr panes (HERDR_ENV is set) to avoid nested
+    # multiplexers. See https://github.com/ogulcancelik/herdr
+    if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]] \
+      && [[ -z "$HERDR_ENV" ]]; then
         exec $WM_CMD
     fi
 }
