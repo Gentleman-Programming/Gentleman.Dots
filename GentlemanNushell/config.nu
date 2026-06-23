@@ -925,8 +925,10 @@ def fzfnvim [] {
 let MULTIPLEXER = "tmux" 
 let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
+# Skip auto-launch inside herdr panes (HERDR_ENV is set) to avoid nested
+# multiplexers. See https://github.com/ogulcancelik/herdr
 def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+  if ($MULTIPLEXER_ENV_PREFIX not-in ($env | columns)) and ("HERDR_ENV" not-in ($env | columns)) {
     run-external $MULTIPLEXER
   }
 }
