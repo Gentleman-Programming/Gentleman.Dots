@@ -425,6 +425,23 @@ else
 end
 ```
 
+### Nested Multiplexer Inside herdr
+
+[herdr](https://github.com/ogulcancelik/herdr) is an agent multiplexer that runs
+each pane as a real shell on top of your terminal. Since the Gentleman shell
+configs auto-launch tmux/zellij on interactive startup, an unguarded config would
+spawn a multiplexer *inside* every herdr pane, nesting one multiplexer in another.
+
+**Status**: ✅ Handled automatically. herdr exports `HERDR_ENV` in its panes, and
+the auto-launch logic skips when that variable is set:
+
+- **Zsh** (`.zshrc`) — `start_if_needed` adds `[[ -z "$HERDR_ENV" ]]`
+- **Fish** (`config.fish`) — the launch block is wrapped in `if not set -q HERDR_ENV`
+- **Nushell** (`config.nu`) — `start_multiplexer` adds `"HERDR_ENV" not-in ($env | columns)`
+
+The guard is multiplexer-agnostic, so it applies whether you chose tmux or zellij.
+If you launch your shell outside herdr, the multiplexer starts as usual.
+
 ### Other Issues
 
 If you encounter other problems:
