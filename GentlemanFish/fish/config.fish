@@ -39,11 +39,15 @@ if test $IS_TERMUX -eq 0; and set -q BREW_BIN; and test -f $BREW_BIN
 end
 
 # Start tmux/zellij (tmux first, zellij as fallback)
+# Skip auto-launch inside herdr panes (HERDR_ENV is set) to avoid nested
+# multiplexers. See https://github.com/ogulcancelik/herdr
 if not set -q TMUX
-    if type -q tmux
-        tmux new-session -A -s main
-    else if type -q zellij
-        zellij attach -c main
+    if not set -q HERDR_ENV
+        if type -q tmux
+            tmux new-session -A -s main
+        else if type -q zellij
+            zellij attach -c main
+        end
     end
 end
 
