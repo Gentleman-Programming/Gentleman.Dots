@@ -22,7 +22,10 @@ WM_CMD="tmux"
 # change with zellij
 
 function start_if_needed() {
-    if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]]; then
+    # Skip auto-launch inside herdr panes (HERDR_ENV is set) to avoid nested
+    # multiplexers. See https://github.com/ogulcancelik/herdr
+    if [[ $- == *i* ]] && [[ -z "${WM_VAR#/}" ]] && [[ -t 1 ]] \
+      && [[ -z "$HERDR_ENV" ]]; then
         exec $WM_CMD
     fi
 }
@@ -56,6 +59,7 @@ start_if_needed
 				"start_if_needed",
 				"function start_if_needed",
 				"exec $WM_CMD",
+				"HERDR_ENV",
 			},
 		},
 		{
@@ -80,6 +84,7 @@ start_if_needed
 				"WM_VAR=\"$ZELLIJ\"",
 				"WM_CMD=\"zellij\"",
 				"start_if_needed",
+				"HERDR_ENV",
 			},
 			wantNotContain: []string{
 				"WM_VAR=\"/$TMUX\"",
@@ -95,6 +100,7 @@ start_if_needed
 				"WM_VAR=\"/$TMUX\"",
 				"WM_CMD=\"tmux\"",
 				"start_if_needed",
+				"HERDR_ENV",
 			},
 			wantNotContain: []string{},
 		},
@@ -274,7 +280,7 @@ let MULTIPLEXER = "tmux"
 let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
 def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+  if ($MULTIPLEXER_ENV_PREFIX not-in ($env | columns)) and ("HERDR_ENV" not-in ($env | columns)) {
     run-external $MULTIPLEXER
   }
 }
@@ -301,6 +307,7 @@ start_multiplexer
 				"def start_multiplexer",
 				"start_multiplexer",
 				"run-external",
+				"HERDR_ENV",
 			},
 		},
 		{
@@ -310,6 +317,7 @@ start_multiplexer
 				"let MULTIPLEXER = \"zellij\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\"",
 				"start_multiplexer",
+				"HERDR_ENV",
 			},
 			wantNotContain: []string{
 				"let MULTIPLEXER = \"tmux\"",
@@ -323,6 +331,7 @@ start_multiplexer
 				"let MULTIPLEXER = \"tmux\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"TMUX\"",
 				"start_multiplexer",
+				"HERDR_ENV",
 			},
 			wantNotContain: []string{},
 		},
