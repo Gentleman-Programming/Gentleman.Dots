@@ -1,0 +1,88 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                        GENTLEMAN DOTS - ALACRITTY                             ║
+# ║                Parity port from Ghostty (splits handled by tmux)             ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                                   FONT                                        │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+[font]
+size = 14
+
+[font.normal]
+family = "IosevkaTerm Nerd Font"
+style = "Regular"
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                                  WINDOW                                       │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+[window]
+opacity = 0.95
+blur = true
+decorations = "full"
+dynamic_padding = true
+option_as_alt = "OnlyLeft"
+
+[window.padding]
+x = 0
+y = 0
+
+[window.dimensions]
+columns = 100
+lines = 100
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                           GENTLEMAN THEME                                     │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+[colors.primary]
+background = "#06080f"
+foreground = "#f3f6f9"
+
+[colors.cursor]
+cursor = "#e0c15a"
+text = "#06080f"
+
+[colors.selection]
+background = "#263356"
+text = "#f3f6f9"
+
+[colors.normal]
+black = "#06080f"
+red = "#cb7c94"
+green = "#b7cc85"
+yellow = "#ffe066"
+blue = "#7fb4ca"
+magenta = "#ff8dd7"
+cyan = "#7aa89f"
+white = "#f3f6f9"
+
+[colors.bright]
+black = "#8a8fa3"
+red = "#de8fa8"
+green = "#d1e8a9"
+yellow = "#fff7b1"
+blue = "#a3d4d5"
+magenta = "#ffaeea"
+cyan = "#7fb4ca"
+white = "#f3f6f9"
+
+# ┌──────────────────────────────────────────────────────────────────────────────┐
+# │                            INPUT / KEYBINDINGS                                │
+# │   Splits/navigation/resize are handled by tmux (auto-started by fish).        │
+# │   Only Ghostty's non-split binds are ported here.                             │
+# └──────────────────────────────────────────────────────────────────────────────┘
+
+# cmd+k -> clear screen (Ghostty: clear_screen). Form feed clears the view.
+[[keyboard.bindings]]
+key = "K"
+mods = "Command"
+chars = "\u000C"
+
+# shift+enter -> send ESC + CR (Ghostty: text:\x1b\r)
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\u000D"

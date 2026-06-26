@@ -49,6 +49,7 @@
           modules = [
             ./nushell.nix  # Nushell configuration
             ./ghostty.nix  # Ghostty configuration
+            ./alacritty.nix  # Alacritty configuration
             ./zed.nix  # Zed configuration
             ./television.nix  # Television configuration
             ./wezterm.nix  # WezTerm configuration
