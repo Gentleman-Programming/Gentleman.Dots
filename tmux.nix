@@ -48,6 +48,9 @@ set -g default-terminal "tmux-256color"
 set -as terminal-features ",*:RGB"
 set -as terminal-features ",*:usstyle"
 set -as terminal-features ",*:hyperlinks"
+# Synchronized output (DECSET 2026) passthrough — fixes TUI flicker/redraw
+# duplication for high-frequency apps (pi, claude-code) running inside tmux.
+set -as terminal-features ",*:sync"
 
 set -s extended-keys on
 set -s extended-keys-format csi-u
