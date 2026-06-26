@@ -703,10 +703,6 @@ serialization_interval 10000
     ".config/zellij/layouts/work.kdl" = {
       text = ''
 layout {
-    tab name="base" focus=true {
-        pane
-    }
-
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
@@ -741,6 +737,10 @@ layout {
           plugin location="zellij:status-bar"
         }
     }
+
+    tab name="base" focus=true {
+        pane
+    }
 }
 
 
@@ -749,10 +749,6 @@ layout {
     ".config/zellij/layouts/work_everforest.kdl" = {
       text = ''
 layout {
-    tab name="base" focus=true {
-        pane
-    }
-
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
@@ -785,6 +781,10 @@ layout {
         }
         children
     }
+
+    tab name="base" focus=true {
+        pane
+    }
 }
 
       '';
@@ -792,10 +792,6 @@ layout {
     ".config/zellij/layouts/work_kanagawa.kdl" = {
       text = ''
 layout {
-    tab name="base" focus=true {
-        pane
-    }
-
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
@@ -829,6 +825,9 @@ layout {
         children
     }
 
+    tab name="base" focus=true {
+        pane
+    }
 }
 
       '';
@@ -836,10 +835,6 @@ layout {
     ".config/zellij/layouts/work_oldWorld.kdl" = {
       text = ''
 layout {
-    tab name="base" focus=true {
-        pane
-    }
-
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
@@ -874,6 +869,10 @@ layout {
             plugin location="zellij:status-bar"
         }
     }
+
+    tab name="base" focus=true {
+        pane
+    }
 }
 
       '';
@@ -881,10 +880,6 @@ layout {
     ".config/zellij/layouts/work_sakura.kdl" = {
       text = ''
 layout {
-    tab name="base" focus=true {
-        pane
-    }
-
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
@@ -919,6 +914,10 @@ layout {
         pane size=1 borderless=true  {
           plugin location="zellij:status-bar"
         }
+    }
+
+    tab name="base" focus=true {
+        pane
     }
 }
 
