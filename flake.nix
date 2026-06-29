@@ -101,7 +101,7 @@
                 starship
                 fzf
                 nodeWithoutNpm
-                pnpm
+                unstablePkgs.pnpm
                 bun
                 cargo
                 go
