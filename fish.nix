@@ -31,8 +31,8 @@
           echo "   /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
       end
 
-      # pnpm global executables live directly in PNPM_HOME. Do not use
-      # PNPM_HOME/bin: pnpm validates that PNPM_HOME itself is on PATH.
+      # pnpm 11 links global executables into PNPM_HOME/bin and validates that
+      # directory is on PATH (pnpm 10 used PNPM_HOME directly).
       set -gx PNPM_HOME $HOME/Library/pnpm
 
       # CodeGraph bundles a Node runtime that may try to read macOS' legacy
@@ -43,17 +43,10 @@
 
       # All PATH entries - matching zsh config
       # Priority: Pi wrapper > pnpm globals > local bins > nix > cargo > volta > bun > homebrew > system
-      set -gx PATH $HOME/.pi/agent/bin $PNPM_HOME $HOME/.local/bin $HOME/.opencode/bin $HOME/.local/state/nix/profiles/home-manager/home-path/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $HOME/.cargo/bin $HOME/.volta/bin $HOME/.bun/bin $PATH
+      set -gx PATH $HOME/.pi/agent/bin $PNPM_HOME/bin $HOME/.local/bin $HOME/.opencode/bin $HOME/.local/state/nix/profiles/home-manager/home-path/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin $HOME/.cargo/bin $HOME/.volta/bin $HOME/.bun/bin $PATH
 
       set -gx GPG_TTY (tty)
 
-      if not set -q TMUX; and not set -q ZELLIJ; and not set -q ZED_TERMINAL
-          if type -q zellij
-              zellij attach -c main
-          else if type -q tmux
-              tmux new-session -A -s main
-          end
-      end
       starship init fish | source
       zoxide init fish | source
       atuin init fish | source
