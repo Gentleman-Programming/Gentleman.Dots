@@ -6,9 +6,10 @@
 prefix = "ctrl+a"
 
 # Move between agents in the sidebar.
-previous_agent = "prefix+shift+k"
-next_agent = "prefix+shift+j"
+# Avoid Herdr's built-in prefix+shift+j/k pane-swap bindings.
+previous_agent = "prefix+alt+k"
+next_agent = "prefix+alt+j"
 
 # Jump straight to agent N (1..9) as listed in the sidebar.
 # Independent from prefix+1..9 (tabs) and prefix+w (workspaces).
-focus_agent = "prefix+shift+1..9"
+focus_agent = "prefix+alt+1..9"
