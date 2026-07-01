@@ -1,6 +1,21 @@
 # herdr configuration managed by Gentleman.Dots.
 # This file is copied into ~/.config/herdr/config.toml during Home Manager activation.
 
+[theme]
+# Follow the terminal palette, then override Herdr UI tokens with the OpenCode Gentleman theme.
+name = "terminal"
+
+[theme.custom]
+panel_bg = "#06080f"
+accent = "#E0C15A"
+green = "#B7CC85"
+blue = "#7FB4CA"
+red = "#CB7C94"
+yellow = "#DEBA87"
+
+[ui]
+accent = "#E0C15A"
+
 [keys]
 # Match tmux/Zellij-style prefix muscle memory.
 prefix = "ctrl+a"
@@ -11,5 +26,6 @@ previous_agent = "prefix+alt+k"
 next_agent = "prefix+alt+j"
 
 # Jump straight to agent N (1..9) as listed in the sidebar.
-# Independent from prefix+1..9 (tabs) and prefix+w (workspaces).
-focus_agent = "prefix+alt+1..9"
+# Use Ctrl after the prefix: Alt+number is owned by skhd/yabai spaces,
+# and Shift+number did not reach Herdr reliably in the current terminal setup.
+focus_agent = "prefix+ctrl+1..9"
