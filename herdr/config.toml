@@ -2,19 +2,21 @@
 # This file is copied into ~/.config/herdr/config.toml during Home Manager activation.
 
 [theme]
-# Follow the terminal palette, then override Herdr UI tokens with the OpenCode Gentleman theme.
-name = "terminal"
+# Use a built-in dark theme with neutral foregrounds so Herdr does not inherit
+# Ghostty bright-black selected rows or Kanagawa's warm/yellow label text.
+name = "one-dark"
 
 [theme.custom]
 panel_bg = "#06080f"
-accent = "#E0C15A"
+# Match Pi's Gentle theme, with a muted cyan for Herdr chrome.
+accent = "#6FA0AF"
 green = "#B7CC85"
-blue = "#7FB4CA"
+blue = "#6FA0AF"
 red = "#CB7C94"
 yellow = "#DEBA87"
 
 [ui]
-accent = "#E0C15A"
+accent = "#6FA0AF"
 
 [keys]
 # Match tmux/Zellij-style prefix muscle memory.
