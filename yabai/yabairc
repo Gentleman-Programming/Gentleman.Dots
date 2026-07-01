@@ -68,4 +68,10 @@ yabai -m rule --add app="^1Password" manage=off
 # The old focus_on_destroy signal could jump to unrelated spaces/windows while working.
 # Use skhd's manual rescue binding (alt + ctrl + space) when macOS leaves no useful focus.
 
+# Ghostty native tabs surface as separate windows through macOS' Accessibility API,
+# so yabai tiles each new tab and breaks the layout. Re-apply the bsp layout whenever
+# a Ghostty window appears or disappears to re-normalise the space (official workaround).
+yabai -m signal --add app='^Ghostty$' event=window_created action='yabai -m space --layout bsp'
+yabai -m signal --add app='^Ghostty$' event=window_destroyed action='yabai -m space --layout bsp'
+
 echo "yabai configuration loaded.."
