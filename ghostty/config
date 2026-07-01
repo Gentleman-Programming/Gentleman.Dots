@@ -70,29 +70,39 @@ keybind = ctrl+a>z=toggle_split_zoom
 keybind = ctrl+a>x=close_surface
 keybind = ctrl+a>o=goto_split:next
 keybind = ctrl+a>;=goto_split:previous
-keybind = ctrl+a>h=goto_split:left
-keybind = ctrl+a>j=goto_split:down
-keybind = ctrl+a>k=goto_split:up
-keybind = ctrl+a>l=goto_split:right
-keybind = ctrl+a>left=goto_split:left
-keybind = ctrl+a>down=goto_split:down
-keybind = ctrl+a>up=goto_split:up
-keybind = ctrl+a>right=goto_split:right
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:down
+keybind = ctrl+k=goto_split:up
+keybind = ctrl+l=goto_split:right
 keybind = ctrl+a>space=equalize_splits
 
 # Copy/search/scrollback equivalents
-keybind = ctrl+a>[=scroll_page_up
+# Ghostty does not have full tmux copy-mode/visual-selection parity yet.
 keybind = ctrl+a>/=start_search
-keybind = ctrl+a>E=write_scrollback_file:open
+# Open scrollback with nvim: write 'nvim ' first, then press Ctrl+a e.
+keybind = ctrl+a>e=write_scrollback_file:paste
+keybind = ctrl+a>E=write_scrollback_file:paste
+
+# Scrollback mode table; press Ctrl+a [, then navigate. Press q or Escape to exit.
+keybind = ctrl+a>[=activate_key_table:scrollback
+keybind = scrollback/j=scroll_page_lines:1
+keybind = scrollback/k=scroll_page_lines:-1
+keybind = scrollback/d=scroll_page_fractional:0.5
+keybind = scrollback/u=scroll_page_fractional:-0.5
+keybind = scrollback/g=scroll_to_top
+keybind = scrollback/shift+g=scroll_to_bottom
+keybind = scrollback/y=copy_to_clipboard
+keybind = scrollback/e=deactivate_key_table
+keybind = scrollback/E=write_scrollback_file:paste
+keybind = scrollback//=start_search
+keybind = scrollback/q=deactivate_key_table
+keybind = scrollback/escape=deactivate_key_table
+keybind = scrollback/catch_all=ignore
 
 # Direct resize approximations for Zellij resize mode
 keybind = ctrl+a>+=resize_split:right,10
 keybind = ctrl+a>==resize_split:right,10
 keybind = ctrl+a>-=resize_split:left,10
-keybind = ctrl+a>H=resize_split:left,10
-keybind = ctrl+a>J=resize_split:down,10
-keybind = ctrl+a>K=resize_split:up,10
-keybind = ctrl+a>L=resize_split:right,10
 keybind = ctrl+a>R=activate_key_table:resize
 
 # Resize mode table; press Ctrl+a R, then resize keys. Press r or Escape to exit.
@@ -104,10 +114,6 @@ keybind = resize/arrow_left=resize_split:left,10
 keybind = resize/arrow_down=resize_split:down,10
 keybind = resize/arrow_up=resize_split:up,10
 keybind = resize/arrow_right=resize_split:right,10
-keybind = resize/H=resize_split:right,10
-keybind = resize/J=resize_split:up,10
-keybind = resize/K=resize_split:down,10
-keybind = resize/L=resize_split:left,10
 keybind = resize/+=resize_split:right,10
 keybind = resize/==resize_split:right,10
 keybind = resize/-=resize_split:left,10
@@ -121,6 +127,8 @@ keybind = shift+enter=text:\x1b\r
 
 # Open file with nvim (write 'nvim' first, then use this keybinding)
 keybind = alt+s=write_screen_file:paste
+# Open full scrollback with nvim: write 'nvim ' first, then press Ctrl+Shift+s.
+keybind = ctrl+shift+s=write_scrollback_file:paste
 
 
 # ┌──────────────────────────────────────────────────────────────────────────────┐
