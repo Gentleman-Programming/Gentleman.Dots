@@ -45,81 +45,8 @@ macos-option-as-alt = left
 keybind = alt+left=unbind
 keybind = alt+right=unbind
 
-# Prefix mirrors the user's Zellij/tmux mode: Ctrl+a.
-keybind = ctrl+a>ctrl+a=text:\x01
-
-# Native Ghostty tab/window equivalents
-keybind = ctrl+a>c=new_tab
-keybind = ctrl+a>,=prompt_tab_title
-keybind = ctrl+a>&=close_tab
-keybind = ctrl+a>n=next_tab
-keybind = ctrl+a>p=previous_tab
-keybind = ctrl+a>0=goto_tab:1
-keybind = ctrl+a>1=goto_tab:1
-keybind = ctrl+a>2=goto_tab:2
-keybind = ctrl+a>9=goto_tab:9
-keybind = ctrl+a>i=move_tab:-1
-keybind = ctrl+a>u=move_tab:1
-
-# Native Ghostty split/pane equivalents
-keybind = ctrl+a>v=new_split:right
-keybind = ctrl+a>%=new_split:right
-keybind = ctrl+a>d=new_split:down
-keybind = ctrl+a>"=new_split:down
-keybind = ctrl+a>z=toggle_split_zoom
-keybind = ctrl+a>x=close_surface
-keybind = ctrl+a>o=goto_split:next
-keybind = ctrl+a>;=goto_split:previous
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+j=goto_split:down
-keybind = ctrl+k=goto_split:up
-keybind = ctrl+l=goto_split:right
-keybind = ctrl+a>space=equalize_splits
-
-# Copy/search/scrollback equivalents
-# Ghostty does not have full tmux copy-mode/visual-selection parity yet.
-keybind = ctrl+a>/=start_search
-# Open scrollback with nvim: write 'nvim ' first, then press Ctrl+a e.
-keybind = ctrl+a>e=write_scrollback_file:paste
-keybind = ctrl+a>E=write_scrollback_file:paste
-
-# Scrollback mode table; press Ctrl+a [, then navigate. Press q or Escape to exit.
-keybind = ctrl+a>[=activate_key_table:scrollback
-keybind = scrollback/j=scroll_page_lines:1
-keybind = scrollback/k=scroll_page_lines:-1
-keybind = scrollback/d=scroll_page_fractional:0.5
-keybind = scrollback/u=scroll_page_fractional:-0.5
-keybind = scrollback/g=scroll_to_top
-keybind = scrollback/shift+g=scroll_to_bottom
-keybind = scrollback/y=copy_to_clipboard
-keybind = scrollback/e=deactivate_key_table
-keybind = scrollback/E=write_scrollback_file:paste
-keybind = scrollback//=start_search
-keybind = scrollback/q=deactivate_key_table
-keybind = scrollback/escape=deactivate_key_table
-keybind = scrollback/catch_all=ignore
-
-# Direct resize approximations for Zellij resize mode
-keybind = ctrl+a>+=resize_split:right,10
-keybind = ctrl+a>==resize_split:right,10
-keybind = ctrl+a>-=resize_split:left,10
-keybind = ctrl+a>R=activate_key_table:resize
-
-# Resize mode table; press Ctrl+a R, then resize keys. Press r or Escape to exit.
-keybind = resize/h=resize_split:left,10
-keybind = resize/j=resize_split:down,10
-keybind = resize/k=resize_split:up,10
-keybind = resize/l=resize_split:right,10
-keybind = resize/arrow_left=resize_split:left,10
-keybind = resize/arrow_down=resize_split:down,10
-keybind = resize/arrow_up=resize_split:up,10
-keybind = resize/arrow_right=resize_split:right,10
-keybind = resize/+=resize_split:right,10
-keybind = resize/==resize_split:right,10
-keybind = resize/-=resize_split:left,10
-keybind = resize/r=deactivate_key_table
-keybind = resize/escape=deactivate_key_table
-keybind = resize/catch_all=ignore
+# Multiplexer-style shortcuts are intentionally not bound in Ghostty.
+# Herdr owns Ctrl+a and pane/tab/workspace navigation inside the terminal.
 
 # Miscellaneous
 keybind = cmd+k=clear_screen

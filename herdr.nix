@@ -1,8 +1,9 @@
-{ pkgs, lib, ... }:
+{ lib, ... }:
 
 {
   # Herdr — agent multiplexer that lives in your terminal (https://herdr.dev)
-  # Binary installed via Homebrew (homebrew-core). Config is managed declaratively below.
+  # Binary installed via Homebrew (homebrew-core). Runtime config is copied as a
+  # regular writable file instead of being linked into the Nix store.
 
   # Auto-install herdr on home-manager activation if it is missing.
   # Guarded so a missing/failed brew never breaks the activation (same approach as engram.nix).
@@ -17,19 +18,12 @@
     else
       echo "⚠️  Homebrew not found — install Herdr manually: brew install herdr"
     fi
-  '';
 
-  home.file = {
-    # Custom keybindings are MERGED on top of herdr's built-in v2 defaults.
-    # A partial config only overrides what it declares; `herdr config reset-keys`
-    # backs this up and restores defaults. Apply changes live with `herdr server reload-config`.
-    ".config/herdr/config.toml" = {
-      text = ''
-[keys]
-# Jump straight to agent N (1..9) as listed in the sidebar.
-# Independent from prefix+1..9 (tabs) and prefix+w (workspaces).
-focus_agent = "prefix+shift+1..9"
-      '';
-    };
-  };
+    echo "📝 Copying Herdr config..."
+    mkdir -p "$HOME/.config/herdr"
+    # Keep the repo file as the source of truth, but install it as a regular
+    # writable file so Herdr does not read through a Nix store symlink.
+    cp "${./herdr/config.toml}" "$HOME/.config/herdr/config.toml"
+    chmod u+w "$HOME/.config/herdr/config.toml"
+  '';
 }

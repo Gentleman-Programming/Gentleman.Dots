@@ -1,0 +1,14 @@
+# herdr configuration managed by Gentleman.Dots.
+# This file is copied into ~/.config/herdr/config.toml during Home Manager activation.
+
+[keys]
+# Match tmux/Zellij-style prefix muscle memory.
+prefix = "ctrl+a"
+
+# Move between agents in the sidebar.
+previous_agent = "prefix+shift+k"
+next_agent = "prefix+shift+j"
+
+# Jump straight to agent N (1..9) as listed in the sidebar.
+# Independent from prefix+1..9 (tabs) and prefix+w (workspaces).
+focus_agent = "prefix+shift+1..9"
