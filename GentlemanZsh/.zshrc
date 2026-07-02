@@ -67,10 +67,26 @@ if [[ $IS_TERMUX -eq 1 ]]; then
     # Powerlevel10k on Termux - may need manual install
     [[ -f "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && source "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 else
-    source $(dirname $BREW_BIN)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-    source $(dirname $BREW_BIN)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-    source $(dirname $BREW_BIN)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source $(dirname $BREW_BIN)/share/powerlevel10k/powerlevel10k.zsh-theme
+    source_if_exists() {
+        [[ -f "$1" ]] && source "$1"
+    }
+
+    if [[ -n "$BREW_BIN" && -d "$(dirname $BREW_BIN)/share" ]]; then
+        BREW_SHARE="$(dirname $BREW_BIN)/share"
+        source_if_exists "$BREW_SHARE/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+        source_if_exists "$BREW_SHARE/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        source_if_exists "$BREW_SHARE/zsh-autosuggestions/zsh-autosuggestions.zsh"
+        source_if_exists "$BREW_SHARE/powerlevel10k/powerlevel10k.zsh-theme"
+    fi
+
+    # Native Linux package layouts (Arch/Fedora/Debian vary by package).
+    source_if_exists "/usr/share/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+    source_if_exists "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    source_if_exists "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    source_if_exists "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    source_if_exists "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    source_if_exists "/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme"
+    source_if_exists "/usr/share/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
 export PROJECT_PATHS="/home/alanbuscaglia/work"

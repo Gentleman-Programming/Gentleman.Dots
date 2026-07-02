@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -596,6 +598,86 @@ func stepInstallFont(m *Model) error {
 	return nil
 }
 
+type platformPackages struct {
+	Termux string
+	Brew   string
+	Arch   string
+	Fedora string
+	Debian string
+}
+
+func installPlatformPackages(m *Model, stepID string, packages platformPackages, onLog func(string)) *system.ExecResult {
+	switch {
+	case m.SystemInfo.IsTermux:
+		return system.RunPkgInstall(packages.Termux, nil, onLog)
+	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
+		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
+	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
+		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
+	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
+		return system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
+	default:
+		return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+	}
+}
+
+func installHerdrBinary(m *Model, stepID string) error {
+	if system.CommandExists("herdr") {
+		SendLog(stepID, "Herdr already installed")
+		return nil
+	}
+	if m.SystemInfo.IsTermux {
+		return fmt.Errorf("herdr is not available through the Termux package installer")
+	}
+	if m.SystemInfo.OS == system.OSMac || m.SystemInfo.HasBrew {
+		result := system.RunBrewWithLogs("install herdr", nil, func(line string) {
+			SendLog(stepID, line)
+		})
+		return result.Error
+	}
+
+	assetArch := ""
+	expectedSHA256 := ""
+	switch runtime.GOARCH {
+	case "amd64":
+		assetArch = "x86_64"
+		expectedSHA256 = "b965acaffc2c22f54b6e6c64af7cf8e98a3f4ac2622630a0599c67a4b9d8a654"
+	case "arm64":
+		assetArch = "aarch64"
+		expectedSHA256 = "3d757ac30c631e79dc45038c3ecc6423fe13a89f9cffa0f415aedd2c27f1576c"
+	default:
+		return fmt.Errorf("unsupported Herdr architecture: %s", runtime.GOARCH)
+	}
+
+	homeDir := os.Getenv("HOME")
+	binDir := filepath.Join(homeDir, ".local", "bin")
+	if err := system.EnsureDir(binDir); err != nil {
+		return err
+	}
+
+	url := fmt.Sprintf("https://github.com/ogulcancelik/herdr/releases/download/v0.7.1/herdr-linux-%s", assetArch)
+	dest := filepath.Join(binDir, "herdr")
+	SendLog(stepID, "Downloading Herdr release binary...")
+	result := system.RunWithLogs(fmt.Sprintf("curl -fsSL %q -o %q", url, dest), nil, func(line string) {
+		SendLog(stepID, line)
+	})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	data, err := os.ReadFile(dest)
+	if err != nil {
+		return err
+	}
+	actualSHA256 := sha256.Sum256(data)
+	if hex.EncodeToString(actualSHA256[:]) != expectedSHA256 {
+		os.Remove(dest)
+		return fmt.Errorf("Herdr checksum mismatch for %s", url)
+	}
+
+	return os.Chmod(dest, 0755)
+}
+
 func stepInstallShell(m *Model) error {
 	homeDir := os.Getenv("HOME")
 	repoDir := "Gentleman.Dots"
@@ -612,16 +694,15 @@ func stepInstallShell(m *Model) error {
 	switch shell {
 	case "fish":
 		SendLog(stepID, "Installing Fish shell and plugins...")
-		var result *system.ExecResult
-		if m.SystemInfo.IsTermux {
-			result = system.RunPkgInstall("fish starship zoxide", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		} else {
-			result = system.RunBrewWithLogs("install fish carapace zoxide atuin starship", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		}
+		result := installPlatformPackages(m, stepID, platformPackages{
+			Termux: "fish starship zoxide",
+			Brew:   "fish carapace zoxide atuin starship",
+			Arch:   "fish carapace zoxide atuin starship",
+			Fedora: "fish carapace zoxide atuin starship",
+			Debian: "fish zoxide starship",
+		}, func(line string) {
+			SendLog(stepID, line)
+		})
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to install Fish shell and dependencies",
@@ -668,17 +749,15 @@ func stepInstallShell(m *Model) error {
 
 	case "zsh":
 		SendLog(stepID, "Installing Zsh and plugins...")
-		var result *system.ExecResult
-		if m.SystemInfo.IsTermux {
-			// Termux has zsh in pkg, but plugins need to be installed differently
-			result = system.RunPkgInstall("zsh starship zoxide", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		} else {
-			result = system.RunBrewWithLogs("install zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		}
+		result := installPlatformPackages(m, stepID, platformPackages{
+			Termux: "zsh starship zoxide",
+			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
+			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
+			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
+			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
+		}, func(line string) {
+			SendLog(stepID, line)
+		})
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to install Zsh and plugins",
@@ -726,16 +805,15 @@ func stepInstallShell(m *Model) error {
 
 	case "nushell":
 		SendLog(stepID, "Installing Nushell and dependencies...")
-		var result *system.ExecResult
-		if m.SystemInfo.IsTermux {
-			result = system.RunPkgInstall("nushell starship zoxide jq", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		} else {
-			result = system.RunBrewWithLogs("install nushell carapace zoxide atuin jq bash starship", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		}
+		result := installPlatformPackages(m, stepID, platformPackages{
+			Termux: "nushell starship zoxide jq",
+			Brew:   "nushell carapace zoxide atuin jq bash starship",
+			Arch:   "nushell carapace zoxide atuin jq bash starship",
+			Fedora: "nushell carapace zoxide atuin jq bash starship",
+			Debian: "nushell zoxide jq bash starship",
+		}, func(line string) {
+			SendLog(stepID, line)
+		})
 		if result.Error != nil {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to install Nushell and dependencies",
@@ -812,16 +890,15 @@ func stepInstallWM(m *Model) error {
 	case "tmux":
 		if !system.CommandExists("tmux") {
 			SendLog(stepID, "Installing Tmux...")
-			var result *system.ExecResult
-			if m.SystemInfo.IsTermux {
-				result = system.RunPkgInstall("tmux", nil, func(line string) {
-					SendLog(stepID, line)
-				})
-			} else {
-				result = system.RunBrewWithLogs("install tmux", nil, func(line string) {
-					SendLog(stepID, line)
-				})
-			}
+			result := installPlatformPackages(m, stepID, platformPackages{
+				Termux: "tmux",
+				Brew:   "tmux",
+				Arch:   "tmux",
+				Fedora: "tmux",
+				Debian: "tmux",
+			}, func(line string) {
+				SendLog(stepID, line)
+			})
 			if result.Error != nil {
 				return wrapStepError("wm", "Install Tmux",
 					"Failed to install Tmux",
@@ -913,16 +990,15 @@ func stepInstallWM(m *Model) error {
 	case "zellij":
 		if !system.CommandExists("zellij") {
 			SendLog(stepID, "Installing Zellij...")
-			var result *system.ExecResult
-			if m.SystemInfo.IsTermux {
-				result = system.RunPkgInstall("zellij", nil, func(line string) {
-					SendLog(stepID, line)
-				})
-			} else {
-				result = system.RunBrewWithLogs("install zellij", nil, func(line string) {
-					SendLog(stepID, line)
-				})
-			}
+			result := installPlatformPackages(m, stepID, platformPackages{
+				Termux: "zellij",
+				Brew:   "zellij",
+				Arch:   "zellij",
+				Fedora: "zellij",
+				Debian: "zellij",
+			}, func(line string) {
+				SendLog(stepID, line)
+			})
 			if result.Error != nil {
 				return wrapStepError("wm", "Install Zellij",
 					"Failed to install Zellij",
@@ -969,20 +1045,11 @@ func stepInstallWM(m *Model) error {
 
 	case "herdr":
 		if !system.CommandExists("herdr") {
-			if m.SystemInfo.IsTermux {
-				return wrapStepError("wm", "Install Herdr",
-					"Herdr is not available through the Termux package installer. Install Herdr manually and rerun this step.",
-					fmt.Errorf("herdr command not found"))
-			}
-
 			SendLog(stepID, "Installing Herdr...")
-			result := system.RunBrewWithLogs("install herdr", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-			if result.Error != nil {
+			if err := installHerdrBinary(m, stepID); err != nil {
 				return wrapStepError("wm", "Install Herdr",
 					"Failed to install Herdr",
-					result.Error)
+					err)
 			}
 		} else {
 			SendLog(stepID, "Herdr already installed")
@@ -1025,16 +1092,15 @@ func stepInstallNvim(m *Model) error {
 	// Check Node.js
 	if !system.CommandExists("node") {
 		SendLog(stepID, "Installing Node.js...")
-		var result *system.ExecResult
-		if m.SystemInfo.IsTermux {
-			result = system.RunPkgInstall("nodejs", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		} else {
-			result = system.RunBrewWithLogs("install node", nil, func(line string) {
-				SendLog(stepID, line)
-			})
-		}
+		result := installPlatformPackages(m, stepID, platformPackages{
+			Termux: "nodejs",
+			Brew:   "node",
+			Arch:   "nodejs npm",
+			Fedora: "nodejs npm",
+			Debian: "nodejs npm",
+		}, func(line string) {
+			SendLog(stepID, line)
+		})
 		if result.Error != nil {
 			return wrapStepError("nvim", "Install Neovim",
 				"Failed to install Node.js (required for LSP servers)",
@@ -1046,17 +1112,16 @@ func stepInstallNvim(m *Model) error {
 
 	// Install dependencies
 	SendLog(stepID, "Installing Neovim and dependencies...")
-	var result *system.ExecResult
-	if m.SystemInfo.IsTermux {
-		// Termux package names (neovim instead of nvim, clang instead of gcc)
-		result = system.RunPkgInstall("neovim git clang fzf fd ripgrep bat curl lazygit", nil, func(line string) {
-			SendLog(stepID, line)
-		})
-	} else {
-		result = system.RunBrewWithLogs("install nvim git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter", nil, func(line string) {
-			SendLog(stepID, line)
-		})
-	}
+	// Termux package names differ from desktop Linux package managers.
+	result := installPlatformPackages(m, stepID, platformPackages{
+		Termux: "neovim git clang fzf fd ripgrep bat curl lazygit",
+		Brew:   "nvim git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter",
+		Arch:   "neovim git gcc fzf fd ripgrep coreutils bat curl lazygit tree-sitter",
+		Fedora: "neovim git gcc fzf fd-find ripgrep coreutils bat curl lazygit tree-sitter-cli",
+		Debian: "neovim git gcc fzf fd-find ripgrep coreutils bat curl lazygit tree-sitter-cli",
+	}, func(line string) {
+		SendLog(stepID, line)
+	})
 	if result.Error != nil {
 		return wrapStepError("nvim", "Install Neovim",
 			"Failed to install Neovim and dependencies",

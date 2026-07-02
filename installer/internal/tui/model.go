@@ -544,8 +544,8 @@ func (m *Model) SetupInstallSteps() {
 	})
 
 	// Homebrew (interactive - first install needs password)
-	// Skip for Termux - it uses pkg instead
-	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux {
+	// Skip Termux and native package manager Linux distributions.
+	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux && m.SystemInfo.OS != system.OSArch && m.SystemInfo.OS != system.OSFedora {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "homebrew",
 			Name:        "Install Homebrew",
@@ -576,7 +576,7 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Shell (not interactive - brew doesn't need password)
+	// Shell installation runs through executeStep. Native Linux package managers use sudo there.
 	m.Steps = append(m.Steps, InstallStep{
 		ID:          "shell",
 		Name:        "Install " + m.Choices.Shell,
@@ -584,7 +584,7 @@ func (m *Model) SetupInstallSteps() {
 		Status:      StatusPending,
 	})
 
-	// Window manager (not interactive - brew doesn't need password)
+	// Window manager installation runs through executeStep. Herdr downloads to ~/.local/bin on non-Homebrew Linux.
 	if m.Choices.WindowMgr != "none" && m.Choices.WindowMgr != "" {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "wm",
@@ -594,7 +594,7 @@ func (m *Model) SetupInstallSteps() {
 		})
 	}
 
-	// Neovim (not interactive - brew doesn't need password)
+	// Neovim installation runs through executeStep. Native Linux package managers use sudo there.
 	if m.Choices.InstallNvim {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "nvim",
