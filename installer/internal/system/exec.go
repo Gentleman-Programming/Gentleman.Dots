@@ -375,6 +375,7 @@ func ConfigPaths() map[string]string {
 		"nushell":   home + "/.config/nushell",
 		"tmux":      home + "/.tmux.conf",
 		"zellij":    home + "/.config/zellij",
+		"herdr":     home + "/.config/herdr",
 		"alacritty": home + "/.config/alacritty",
 		"wezterm":   home + "/.wezterm.lua",
 		"kitty":     home + "/.config/kitty",
@@ -659,10 +660,7 @@ func RunSudoWithLogs(command string, opts *ExecOptions, onLog LogCallback) *Exec
 	return RunWithLogs("sudo "+command, opts, onLog)
 }
 
-// PatchZshForWM modifies .zshrc based on window manager choice
-// If wm is "none", removes WM-related lines
-// If wm is "zellij", changes tmux references to zellij
-// If wm is "tmux", leaves as-is (default)
+// PatchZshForWM modifies .zshrc based on window manager choice.
 func PatchZshForWM(zshrcPath string, wm string, installNvim bool) error {
 	content, err := os.ReadFile(zshrcPath)
 	if err != nil {
@@ -671,24 +669,11 @@ func PatchZshForWM(zshrcPath string, wm string, installNvim bool) error {
 
 	lines := strings.Split(string(content), "\n")
 	var newLines []string
-
-	// Lines to remove if WM is "none"
-	wmLinesToRemove := map[string]bool{
-		`WM_VAR="/$TMUX"`:      true,
-		`WM_VAR="$ZELLIJ"`:     true,
-		`WM_CMD="tmux"`:        true,
-		`WM_CMD="zellij"`:      true,
-		`# change with ZELLIJ`: true,
-		`# change with zellij`: true,
-		`start_if_needed`:      true,
-	}
-
 	inStartIfNeeded := false
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
 
-		// Handle fzf line - wrap with command check if nvim not installed
 		if strings.Contains(line, `eval "$(fzf --zsh)"`) {
 			if !installNvim {
 				newLines = append(newLines, `if command -v fzf &> /dev/null; then`)
@@ -700,51 +685,62 @@ func PatchZshForWM(zshrcPath string, wm string, installNvim bool) error {
 			continue
 		}
 
-		// Handle WM based on choice
-		if wm == "none" {
-			// Skip WM-related lines entirely
-			if wmLinesToRemove[trimmed] {
-				continue
+		if strings.HasPrefix(trimmed, "function start_if_needed") {
+			inStartIfNeeded = !strings.Contains(trimmed, "}")
+			if wm != "none" {
+				newLines = append(newLines, line)
 			}
-			// Skip function start_if_needed block
-			if strings.HasPrefix(trimmed, "function start_if_needed") {
-				inStartIfNeeded = true
-				continue
-			}
-			if inStartIfNeeded {
-				if trimmed == "}" {
-					inStartIfNeeded = false
-				}
-				continue
-			}
-			// Skip the call to start_if_needed
-			if trimmed == "start_if_needed" {
-				continue
-			}
-			newLines = append(newLines, line)
-		} else if wm == "zellij" {
-			// Replace tmux with zellij
-			modified := line
-			if strings.Contains(line, `WM_VAR="/$TMUX"`) {
-				modified = `WM_VAR="$ZELLIJ"`
-			} else if strings.Contains(line, `WM_CMD="tmux"`) {
-				modified = `WM_CMD="zellij"`
-			} else if strings.Contains(line, "# change with ZELLIJ") {
-				continue // Remove this comment
-			} else if strings.Contains(line, "# change with zellij") {
-				continue // Remove this comment
-			}
-			newLines = append(newLines, modified)
-		} else {
-			// tmux is default, keep as-is
-			newLines = append(newLines, line)
+			continue
 		}
+		if inStartIfNeeded {
+			if wm != "none" {
+				if strings.Contains(trimmed, "[[ $- == *i* ]]") && strings.Contains(trimmed, "WM_VAR") {
+					newLines = append(newLines, `    if [[ $- == *i* ]] && command -v "$WM_CMD" >/dev/null 2>&1 && [[ -z "${WM_VAR#/}" ]] && [[ -z "$TMUX" ]] && [[ -z "$ZELLIJ" ]] && [[ -z "$HERDR_ENV" ]] && [[ -t 1 ]]; then`)
+				} else {
+					newLines = append(newLines, line)
+				}
+			}
+			if trimmed == "}" {
+				inStartIfNeeded = false
+			}
+			continue
+		}
+		if trimmed == `WM_VAR="/$TMUX"` || trimmed == `WM_VAR="$ZELLIJ"` || trimmed == `WM_VAR="$HERDR_ENV"` {
+			switch wm {
+			case "tmux":
+				newLines = append(newLines, `WM_VAR="/$TMUX"`)
+			case "zellij":
+				newLines = append(newLines, `WM_VAR="$ZELLIJ"`)
+			case "herdr":
+				newLines = append(newLines, `WM_VAR="$HERDR_ENV"`)
+			}
+			continue
+		}
+		if trimmed == `WM_CMD="tmux"` || trimmed == `WM_CMD="zellij"` || trimmed == `WM_CMD="herdr"` {
+			switch wm {
+			case "tmux":
+				newLines = append(newLines, `WM_CMD="tmux"`)
+			case "zellij":
+				newLines = append(newLines, `WM_CMD="zellij"`)
+			case "herdr":
+				newLines = append(newLines, `WM_CMD="herdr"`)
+			}
+			continue
+		}
+		if trimmed == "# change with ZELLIJ" || trimmed == "# change with zellij" || trimmed == "# change with HERDR" || trimmed == "# change with herdr" {
+			continue
+		}
+		if trimmed == "start_if_needed" && wm == "none" {
+			continue
+		}
+
+		newLines = append(newLines, line)
 	}
 
 	return os.WriteFile(zshrcPath, []byte(strings.Join(newLines, "\n")), 0644)
 }
 
-// PatchFishForWM modifies config.fish based on window manager choice
+// PatchFishForWM modifies config.fish based on window manager choice.
 func PatchFishForWM(configPath string, wm string, installNvim bool) error {
 	content, err := os.ReadFile(configPath)
 	if err != nil {
@@ -753,14 +749,14 @@ func PatchFishForWM(configPath string, wm string, installNvim bool) error {
 
 	lines := strings.Split(string(content), "\n")
 	var newLines []string
-
-	inTmuxBlock := false
-	inZellijBlock := false
+	insertedMultiplexerBlock := false
+	inMultiplexerBlock := false
+	multiplexerBlockDepth := 0
+	inCommentedMultiplexerBlock := false
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
 
-		// Handle fzf line
 		if strings.Contains(line, "fzf --fish | source") {
 			if !installNvim {
 				newLines = append(newLines, `if command -v fzf &> /dev/null`)
@@ -772,62 +768,85 @@ func PatchFishForWM(configPath string, wm string, installNvim bool) error {
 			continue
 		}
 
-		if wm == "none" {
-			// Skip tmux block
-			if trimmed == "if not set -q TMUX" {
-				inTmuxBlock = true
-				continue
+		if inMultiplexerBlock {
+			if strings.HasPrefix(trimmed, "if ") {
+				multiplexerBlockDepth++
 			}
-			if inTmuxBlock {
-				if trimmed == "end" {
-					inTmuxBlock = false
+			if trimmed == "end" {
+				multiplexerBlockDepth--
+				if multiplexerBlockDepth <= 0 {
+					inMultiplexerBlock = false
 				}
-				continue
 			}
-			// Skip zellij commented block
-			if strings.HasPrefix(trimmed, "#if not set -q ZELLIJ") || strings.HasPrefix(trimmed, "#  zellij") || strings.HasPrefix(trimmed, "#end") {
-				continue
-			}
-			newLines = append(newLines, line)
-		} else if wm == "zellij" {
-			// Comment out tmux, uncomment zellij
-			if trimmed == "if not set -q TMUX" {
-				inTmuxBlock = true
-				continue
-			}
-			if inTmuxBlock {
-				if trimmed == "end" {
-					inTmuxBlock = false
-				}
-				continue
-			}
-			// Uncomment zellij block
-			if trimmed == "#if not set -q ZELLIJ" {
-				newLines = append(newLines, "if not set -q ZELLIJ")
-				inZellijBlock = true
-				continue
-			}
-			if inZellijBlock && strings.HasPrefix(trimmed, "#") {
-				if trimmed == "#end" {
-					newLines = append(newLines, "end")
-					inZellijBlock = false
-				} else {
-					// Remove leading # and space
-					newLines = append(newLines, strings.TrimPrefix(trimmed, "#"))
-				}
-				continue
-			}
-			newLines = append(newLines, line)
-		} else {
-			// tmux - keep as is
-			newLines = append(newLines, line)
+			continue
 		}
+
+		if inCommentedMultiplexerBlock {
+			if trimmed == "#end" {
+				inCommentedMultiplexerBlock = false
+			}
+			continue
+		}
+
+		startsMultiplexerBlock := trimmed == "# Start tmux/zellij (tmux first, zellij as fallback)" ||
+			trimmed == "# Start selected terminal multiplexer" ||
+			trimmed == "if not set -q TMUX" ||
+			strings.HasPrefix(trimmed, "if status is-interactive; and") && (strings.Contains(trimmed, "TMUX") || strings.Contains(trimmed, "ZELLIJ") || strings.Contains(trimmed, "HERDR_ENV"))
+
+		if startsMultiplexerBlock {
+			if !insertedMultiplexerBlock && wm != "none" {
+				newLines = append(newLines, fishMultiplexerBlock(wm)...)
+				insertedMultiplexerBlock = true
+			}
+			if strings.HasPrefix(trimmed, "if ") {
+				inMultiplexerBlock = true
+				multiplexerBlockDepth = 1
+			}
+			continue
+		}
+
+		if strings.HasPrefix(trimmed, "#if not set -q ZELLIJ") || strings.HasPrefix(trimmed, "#if not set -q HERDR_ENV") {
+			inCommentedMultiplexerBlock = true
+			continue
+		}
+
+		newLines = append(newLines, line)
+	}
+
+	if !insertedMultiplexerBlock && wm != "none" {
+		newLines = append(newLines, fishMultiplexerBlock(wm)...)
 	}
 
 	return os.WriteFile(configPath, []byte(strings.Join(newLines, "\n")), 0644)
 }
 
-// PatchNushellForWM modifies config.nu based on window manager choice
+func fishMultiplexerBlock(wm string) []string {
+	switch wm {
+	case "zellij":
+		return []string{
+			"# Start selected terminal multiplexer",
+			"if status is-interactive; and command -q zellij; and not set -q TMUX; and not set -q ZELLIJ; and not set -q HERDR_ENV",
+			"    zellij attach -c main",
+			"end",
+		}
+	case "herdr":
+		return []string{
+			"# Start selected terminal multiplexer",
+			"if status is-interactive; and command -q herdr; and not set -q HERDR_ENV; and not set -q TMUX; and not set -q ZELLIJ",
+			"    herdr; or echo \"⚠️  Herdr failed to start; continuing in Fish.\"",
+			"end",
+		}
+	default:
+		return []string{
+			"# Start selected terminal multiplexer",
+			"if status is-interactive; and command -q tmux; and not set -q TMUX; and not set -q ZELLIJ; and not set -q HERDR_ENV",
+			"    tmux new-session -A -s main",
+			"end",
+		}
+	}
+}
+
+// PatchNushellForWM modifies config.nu based on window manager choice.
 func PatchNushellForWM(configPath string, wm string) error {
 	content, err := os.ReadFile(configPath)
 	if err != nil {
@@ -836,45 +855,55 @@ func PatchNushellForWM(configPath string, wm string) error {
 
 	lines := strings.Split(string(content), "\n")
 	var newLines []string
-
 	inMultiplexerBlock := false
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
 
-		if wm == "none" {
-			// Skip multiplexer-related lines
-			if strings.HasPrefix(trimmed, "let MULTIPLEXER =") ||
-				strings.HasPrefix(trimmed, "let MULTIPLEXER_ENV_PREFIX =") {
-				continue
+		if strings.HasPrefix(trimmed, "let MULTIPLEXER =") {
+			switch wm {
+			case "tmux", "zellij", "herdr":
+				newLines = append(newLines, fmt.Sprintf(`let MULTIPLEXER = "%s"`, wm))
 			}
-			if strings.HasPrefix(trimmed, "def start_multiplexer") {
-				inMultiplexerBlock = true
-				continue
-			}
-			if inMultiplexerBlock {
-				if trimmed == "}" {
-					inMultiplexerBlock = false
-				}
-				continue
-			}
-			if trimmed == "start_multiplexer" {
-				continue
-			}
-			newLines = append(newLines, line)
-		} else if wm == "zellij" {
-			// Replace tmux with zellij
-			if strings.Contains(line, `let MULTIPLEXER = "tmux"`) {
-				newLines = append(newLines, `let MULTIPLEXER = "zellij"`)
-			} else if strings.Contains(line, `let MULTIPLEXER_ENV_PREFIX = "TMUX"`) {
+			continue
+		}
+		if strings.HasPrefix(trimmed, "let MULTIPLEXER_ENV_PREFIX =") {
+			switch wm {
+			case "tmux":
+				newLines = append(newLines, `let MULTIPLEXER_ENV_PREFIX = "TMUX"`)
+			case "zellij":
 				newLines = append(newLines, `let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"`)
-			} else {
+			case "herdr":
+				newLines = append(newLines, `let MULTIPLEXER_ENV_PREFIX = "HERDR_ENV"`)
+			}
+			continue
+		}
+		if strings.HasPrefix(trimmed, "def start_multiplexer") {
+			inMultiplexerBlock = !strings.Contains(trimmed, "}")
+			if wm != "none" {
 				newLines = append(newLines, line)
 			}
-		} else {
-			// tmux - keep as is
-			newLines = append(newLines, line)
+			continue
 		}
+		if inMultiplexerBlock {
+			if wm != "none" {
+				if strings.HasPrefix(trimmed, "if $MULTIPLEXER_ENV_PREFIX not-in") {
+					newLines = append(newLines, `  let active_env = ($env | columns)`)
+					newLines = append(newLines, `  if (which $MULTIPLEXER | is-not-empty) and $MULTIPLEXER_ENV_PREFIX not-in $active_env and "TMUX" not-in $active_env and "ZELLIJ" not-in $active_env and "HERDR_ENV" not-in $active_env {`)
+				} else {
+					newLines = append(newLines, line)
+				}
+			}
+			if trimmed == "}" {
+				inMultiplexerBlock = false
+			}
+			continue
+		}
+		if trimmed == "start_multiplexer" && wm == "none" {
+			continue
+		}
+
+		newLines = append(newLines, line)
 	}
 
 	return os.WriteFile(configPath, []byte(strings.Join(newLines, "\n")), 0644)

@@ -119,9 +119,9 @@ func TestGetCurrentOptions(t *testing.T) {
 		m.Screen = ScreenWMSelect
 		opts := m.GetCurrentOptions()
 
-		// Should have: Tmux, Zellij, None, separator, Learn
-		if len(opts) != 5 {
-			t.Errorf("Expected 5 WM options (including separator and learn), got %d", len(opts))
+		// Should have: Tmux, Zellij, Herdr, None, separator, Learn
+		if len(opts) != 6 {
+			t.Errorf("Expected 6 WM options (including separator and learn), got %d", len(opts))
 		}
 	})
 

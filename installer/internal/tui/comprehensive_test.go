@@ -899,7 +899,7 @@ func TestShellSelect(t *testing.T) {
 }
 
 func TestWMSelect(t *testing.T) {
-	wms := []string{"tmux", "zellij", "none"}
+	wms := []string{"tmux", "zellij", "herdr", "none"}
 
 	for i, wm := range wms {
 		t.Run(wm, func(t *testing.T) {

@@ -36,7 +36,7 @@ A complete development environment configuration including:
 
 - **Neovim** with LSP, autocompletion, and AI integration
 - **Shells**: Fish, Zsh, Nushell
-- **Terminal Multiplexers**: Tmux, Zellij
+- **Terminal Multiplexers**: Tmux, Zellij, Herdr
 - **Terminal Emulators**: Alacritty, WezTerm, Kitty, Ghostty
 - **AI CLI Tools**: Claude Code and OpenCode CLI installers (configs managed by [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai))
 
@@ -74,6 +74,8 @@ chmod +x gentleman.dots
 Termux requires building locally. See the [Termux Installation Guide](docs/manual-installation.md#termux) for full instructions.
 
 The TUI guides you through selecting your preferred tools and handles all the configuration automatically.
+
+During multiplexer selection, choose **Tmux**, **Zellij**, **Herdr**, or **None**. Fish, Zsh, and Nushell are patched to auto-start the selected multiplexer on fresh interactive shells while avoiding nested sessions.
 
 > **Tmux users:** After installation, open tmux and press `prefix + I` (capital I) to install plugins via TPM. This ensures the theme and all plugins load correctly.
 
@@ -135,7 +137,7 @@ It configures your AI coding agents with everything they need:
 | | This repo (Gentleman.Dots) | gentle-ai |
 |--|---------------------------|-----------|
 | **Purpose** | Dev environment (editors, shells, terminals) | AI development layer (agents, memory, skills) |
-| **Installs** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configures Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
+| **Installs** | Neovim, Fish/Zsh/Nushell, Tmux/Zellij/Herdr, Ghostty | Configures Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
 | **AI configs** | CLI tools only (Claude Code, OpenCode) | Full config: persona, skills, themes, MCP |
 
 Install Gentleman.Dots first for your dev environment, then `gentle-ai` for the AI layer on top.
@@ -181,7 +183,7 @@ Launch it from the main menu: **Vim Mastery Trainer**
 
 - **Terminal Emulators**: Ghostty, Kitty, WezTerm, Alacritty
 - **Shells**: Nushell, Fish, Zsh (+ Powerlevel10k)
-- **Multiplexers**: Tmux, Zellij
+- **Multiplexers**: Tmux, Zellij, Herdr
 - **Editor**: Neovim (LazyVim with LSP, completions, AI)
 - **Prompt**: Starship
 

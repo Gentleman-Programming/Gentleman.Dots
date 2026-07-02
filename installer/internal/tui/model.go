@@ -85,7 +85,7 @@ type UserChoices struct {
 	Terminal     string // "alacritty", "wezterm", "kitty", "ghostty", "none"
 	InstallFont  bool
 	Shell        string // "fish", "zsh", "nushell"
-	WindowMgr    string // "tmux", "zellij", "none"
+	WindowMgr    string // "tmux", "zellij", "herdr", "none"
 	InstallNvim  bool
 	CreateBackup bool // Whether to backup existing configs
 }
@@ -283,7 +283,10 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenShellSelect:
 		return []string{"Fish", "Zsh", "Nushell", "─────────────", "ℹ️  Learn about shells"}
 	case ScreenWMSelect:
-		return []string{"Tmux", "Zellij", "None", "─────────────", "ℹ️  Learn about multiplexers"}
+		if m.SystemInfo != nil && m.SystemInfo.IsTermux {
+			return []string{"Tmux", "Zellij", "None", "─────────────", "ℹ️  Learn about multiplexers"}
+		}
+		return []string{"Tmux", "Zellij", "Herdr", "None", "─────────────", "ℹ️  Learn about multiplexers"}
 	case ScreenNvimSelect:
 		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
 	case ScreenBackupConfirm:
@@ -318,7 +321,7 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenLearnShells:
 		return []string{"Fish", "Zsh", "Nushell", "─────────────", "← Back"}
 	case ScreenLearnWM:
-		return []string{"Tmux", "Zellij", "─────────────", "← Back"}
+		return []string{"Tmux", "Zellij", "Herdr", "─────────────", "← Back"}
 	case ScreenLearnNvim:
 		return []string{"View Features", "View Keymaps", "📖 LazyVim Guide", "─────────────", "← Back"}
 	case ScreenKeymaps:

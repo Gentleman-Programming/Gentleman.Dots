@@ -22,7 +22,7 @@ func TestAllUserSelectionPaths(t *testing.T) {
 	shellChoices := []string{"fish", "zsh", "nushell"}
 
 	// All possible WM choices
-	wmChoices := []string{"tmux", "zellij", "none"}
+	wmChoices := []string{"tmux", "zellij", "herdr", "none"}
 
 	// All possible nvim choices
 	nvimChoices := []bool{true, false}
@@ -322,8 +322,8 @@ end
 		if contains(contentStr, "if not set -q TMUX") {
 			t.Error("TMUX block should be removed")
 		}
-		if !contains(contentStr, "if not set -q ZELLIJ") {
-			t.Error("ZELLIJ block should be uncommented")
+		if !contains(contentStr, "command -q zellij") || !contains(contentStr, "zellij attach -c main") {
+			t.Error("Zellij startup block should be configured")
 		}
 	})
 }
@@ -393,7 +393,7 @@ start_multiplexer`
 // TestAllShellAndWMCombinations tests all shell+WM combinations
 func TestAllShellAndWMCombinations(t *testing.T) {
 	shells := []string{"zsh", "fish", "nushell"}
-	wms := []string{"tmux", "zellij", "none"}
+	wms := []string{"tmux", "zellij", "herdr", "none"}
 	nvimOptions := []bool{true, false}
 
 	for _, shell := range shells {
@@ -660,7 +660,8 @@ func TestEachWMSelection(t *testing.T) {
 	}{
 		{"tmux", 0, "tmux"},
 		{"zellij", 1, "zellij"},
-		{"none", 2, "none"},
+		{"herdr", 2, "herdr"},
+		{"none", 3, "none"},
 	}
 
 	for _, tc := range wms {

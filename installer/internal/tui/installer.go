@@ -966,6 +966,46 @@ func stepInstallWM(m *Model) error {
 			}
 		}
 		SendLog(stepID, "✓ Zellij configured")
+
+	case "herdr":
+		if !system.CommandExists("herdr") {
+			if m.SystemInfo.IsTermux {
+				return wrapStepError("wm", "Install Herdr",
+					"Herdr is not available through the Termux package installer. Install Herdr manually and rerun this step.",
+					fmt.Errorf("herdr command not found"))
+			}
+
+			SendLog(stepID, "Installing Herdr...")
+			result := system.RunBrewWithLogs("install herdr", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+			if result.Error != nil {
+				return wrapStepError("wm", "Install Herdr",
+					"Failed to install Herdr",
+					result.Error)
+			}
+		} else {
+			SendLog(stepID, "Herdr already installed")
+		}
+
+		SendLog(stepID, "Copying Herdr configuration...")
+		herdrDir := filepath.Join(homeDir, ".config", "herdr")
+		if err := system.EnsureDir(herdrDir); err != nil {
+			return wrapStepError("wm", "Install Herdr",
+				"Failed to create Herdr config directory",
+				err)
+		}
+		if err := system.CopyFile(filepath.Join(repoDir, "herdr", "config.toml"), filepath.Join(herdrDir, "config.toml")); err != nil {
+			return wrapStepError("wm", "Install Herdr",
+				"Failed to copy Herdr configuration",
+				err)
+		}
+		if err := os.Chmod(filepath.Join(herdrDir, "config.toml"), 0644); err != nil {
+			return wrapStepError("wm", "Install Herdr",
+				"Failed to make Herdr configuration writable",
+				err)
+		}
+		SendLog(stepID, "✓ Herdr configured")
 	}
 
 	return nil

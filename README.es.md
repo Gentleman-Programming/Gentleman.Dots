@@ -36,7 +36,7 @@ Una configuración completa de entorno de desarrollo que incluye:
 
 - **Neovim** con LSP, autocompletado e integración con IA
 - **Shells**: Fish, Zsh, Nushell
-- **Multiplexores de terminal**: Tmux, Zellij
+- **Multiplexores de terminal**: Tmux, Zellij, Herdr
 - **Emuladores de terminal**: Alacritty, WezTerm, Kitty, Ghostty
 - **Herramientas CLI de IA**: Instaladores de Claude Code y OpenCode CLI (configs gestionadas por [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai))
 
@@ -76,6 +76,8 @@ chmod +x gentleman.dots
 Termux requiere compilar localmente. Consultá la [Guía de instalación en Termux](docs/manual-installation.md#termux) para las instrucciones completas.
 
 ---
+
+El TUI te deja elegir **Tmux**, **Zellij**, **Herdr** o **None** como multiplexor. Fish, Zsh y Nushell quedan configurados para iniciar el multiplexor elegido en shells interactivos nuevos, evitando sesiones anidadas.
 
 > **Usuarios de Tmux:** Después de la instalación, abrí tmux y presioná `prefix + I` (I mayúscula) para instalar los plugins con TPM. Esto asegura que el tema y los plugins carguen correctamente.
 
@@ -137,7 +139,7 @@ Configura tus agentes de IA con todo lo que necesitan:
 | | Este repo (Gentleman.Dots) | gentle-ai |
 |--|---------------------------|-----------|
 | **Propósito** | Entorno de desarrollo (editores, shells, terminales) | Capa de desarrollo con IA (agentes, memoria, skills) |
-| **Instala** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configura Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
+| **Instala** | Neovim, Fish/Zsh/Nushell, Tmux/Zellij/Herdr, Ghostty | Configura Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
 | **Configs IA** | Solo CLI tools (Claude Code, OpenCode) | Config completa: persona, skills, temas, MCP |
 
 Instalá Gentleman.Dots primero para tu entorno de desarrollo, después `gentle-ai` para la capa de IA.
@@ -183,7 +185,7 @@ Podés iniciarlo desde el menú principal: **Vim Mastery Trainer**
 
 - **Emuladores de terminal**: Ghostty, Kitty, WezTerm, Alacritty
 - **Shells**: Nushell, Fish, Zsh (+ Powerlevel10k)
-- **Multiplexores**: Tmux, Zellij
+- **Multiplexores**: Tmux, Zellij, Herdr
 - **Editor**: Neovim (LazyVim con LSP, completado e IA)
 - **Prompt**: Starship
 

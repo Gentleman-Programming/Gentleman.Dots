@@ -203,6 +203,22 @@ func GetWMInfo() map[string]ToolInfo {
 			},
 			Website: "https://zellij.dev",
 		},
+		"herdr": {
+			Name:        "Herdr",
+			Description: "Agent-focused terminal multiplexer for AI coding workflows",
+			Pros: []string{
+				"Designed for agent sessions",
+				"Simple terminal-native workflow",
+				"Writable user config",
+				"Works as an alternative to tmux/zellij for local AI work",
+			},
+			Cons: []string{
+				"Newer and less ubiquitous than tmux",
+				"Requires Herdr to be available through Homebrew or manual install",
+				"Not installed through Termux packages by this installer",
+			},
+			Website: "https://herdr.dev",
+		},
 	}
 }
 

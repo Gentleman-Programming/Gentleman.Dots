@@ -88,6 +88,22 @@ start_if_needed
 			},
 		},
 		{
+			name:        "WM herdr should replace tmux with herdr",
+			wm:          "herdr",
+			installNvim: true,
+			wantContain: []string{
+				"WM_VAR=\"$HERDR_ENV\"",
+				"WM_CMD=\"herdr\"",
+				"command -v \"$WM_CMD\"",
+				"start_if_needed",
+			},
+			wantNotContain: []string{
+				"WM_VAR=\"/$TMUX\"",
+				"WM_CMD=\"tmux\"",
+				"# change with ZELLIJ",
+			},
+		},
+		{
 			name:        "WM tmux should keep original content",
 			wm:          "tmux",
 			installNvim: true,
@@ -200,12 +216,27 @@ alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 			},
 		},
 		{
-			name:        "WM zellij should uncomment zellij and remove tmux",
+			name:        "WM zellij should configure zellij and remove tmux",
 			wm:          "zellij",
 			installNvim: true,
 			wantContain: []string{
-				"if not set -q ZELLIJ",
-				"zellij",
+				"command -q zellij",
+				"not set -q ZELLIJ",
+				"zellij attach -c main",
+			},
+			wantNotContain: []string{
+				"if not set -q TMUX",
+				"#if not set -q ZELLIJ",
+			},
+		},
+		{
+			name:        "WM herdr should use herdr guard",
+			wm:          "herdr",
+			installNvim: true,
+			wantContain: []string{
+				"command -q herdr",
+				"not set -q HERDR_ENV",
+				"herdr; or echo",
 			},
 			wantNotContain: []string{
 				"if not set -q TMUX",
@@ -217,8 +248,8 @@ alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 			wm:          "tmux",
 			installNvim: true,
 			wantContain: []string{
-				"if not set -q TMUX",
-				"tmux",
+				"command -q tmux",
+				"tmux new-session -A -s main",
 			},
 			wantNotContain: []string{},
 		},
@@ -309,6 +340,20 @@ start_multiplexer
 			wantContain: []string{
 				"let MULTIPLEXER = \"zellij\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\"",
+				"start_multiplexer",
+			},
+			wantNotContain: []string{
+				"let MULTIPLEXER = \"tmux\"",
+				"let MULTIPLEXER_ENV_PREFIX = \"TMUX\"",
+			},
+		},
+		{
+			name: "WM herdr should replace tmux with herdr",
+			wm:   "herdr",
+			wantContain: []string{
+				"let MULTIPLEXER = \"herdr\"",
+				"let MULTIPLEXER_ENV_PREFIX = \"HERDR_ENV\"",
+				"which $MULTIPLEXER",
 				"start_multiplexer",
 			},
 			wantNotContain: []string{

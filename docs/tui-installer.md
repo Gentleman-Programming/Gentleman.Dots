@@ -39,10 +39,10 @@ gentleman-dots
 
 | Platform | Command |
 |----------|---------|
-| macOS Apple Silicon | `curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-darwin-arm64.tar.gz \| tar xz && ./gentleman-dots` |
-| macOS Intel | `curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-darwin-amd64.tar.gz \| tar xz && ./gentleman-dots` |
-| Linux x86_64 | `curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-linux-amd64.tar.gz \| tar xz && ./gentleman-dots` |
-| Linux ARM64 | `curl -sL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-dots-linux-arm64.tar.gz \| tar xz && ./gentleman-dots` |
+| macOS Apple Silicon | `curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-darwin-arm64 -o gentleman-dots && chmod +x gentleman-dots && ./gentleman-dots` |
+| macOS Intel | `curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-darwin-amd64 -o gentleman-dots && chmod +x gentleman-dots && ./gentleman-dots` |
+| Linux x86_64 | `curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-linux-amd64 -o gentleman-dots && chmod +x gentleman-dots && ./gentleman-dots` |
+| Linux ARM64 | `curl -fsSL https://github.com/Gentleman-Programming/Gentleman.Dots/releases/latest/download/gentleman-installer-linux-arm64 -o gentleman-dots && chmod +x gentleman-dots && ./gentleman-dots` |
 
 ### Option 3: Build from Source
 
@@ -73,7 +73,7 @@ From the main menu you can access:
 2. **Terminal Emulator**: Select Ghostty, Kitty, WezTerm, Alacritty, or None
 3. **Font Installation**: Iosevka Term Nerd Font (required for icons)
 4. **Shell**: Choose Nushell, Fish, Zsh, or None
-5. **Window Manager**: Select Tmux, Zellij, or None
+5. **Window Manager**: Select Tmux, Zellij, Herdr, or None
 6. **Neovim**: Configure LazyVim with LSP and AI assistants
 7. **Backup Confirmation**: Option to backup existing configs before overwriting
 8. **Installation**: Watch real-time progress
@@ -118,7 +118,7 @@ gentleman.dots --non-interactive --shell=<shell> [options]
 |------|--------|-------------|
 | `--shell` | `fish`, `zsh`, `nushell` | Shell to install (required) |
 | `--terminal` | `alacritty`, `wezterm`, `kitty`, `ghostty`, `none` | Terminal emulator |
-| `--wm` | `tmux`, `zellij`, `none` | Window manager |
+| `--wm` | `tmux`, `zellij`, `herdr`, `none` | Window manager |
 | `--nvim` | | Install Neovim configuration |
 | `--font` | | Install Nerd Font |
 | `--backup` | `true`/`false` | Backup existing configs (default: true) |
@@ -129,8 +129,8 @@ gentleman.dots --non-interactive --shell=<shell> [options]
 # Interactive TUI (default)
 gentleman.dots
 
-# Non-interactive with Fish + Zellij + Neovim
-gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
+# Non-interactive with Fish + Herdr + Neovim
+gentleman.dots --non-interactive --shell=fish --wm=herdr --nvim
 
 # Test mode with Zsh + Tmux (no terminal, no nvim)
 gentleman.dots --test --non-interactive --shell=zsh --wm=tmux
@@ -156,6 +156,7 @@ The installer automatically detects existing configurations for:
 | Nushell | `~/.config/nushell`, `~/Library/Application Support/nushell` |
 | Tmux | `~/.tmux.conf`, `~/.tmux` |
 | Zellij | `~/.config/zellij` |
+| Herdr | `~/.config/herdr` |
 | Alacritty | `~/.config/alacritty` |
 | WezTerm | `~/.config/wezterm`, `~/.wezterm.lua` |
 | Kitty | `~/.config/kitty` |
@@ -206,6 +207,7 @@ The installer includes educational content to help you understand each tool:
 |-------------|-------------|
 | Tmux | Battle-tested, widely used |
 | Zellij | Modern, WebAssembly plugins |
+| Herdr | Agent-focused multiplexer for AI coding sessions |
 
 ### Neovim
 

@@ -343,15 +343,24 @@ mkdir -p ~/.config/zellij
 cp -r GentlemanZellij/zellij/* ~/.config/zellij/
 ```
 
-**Update shell config for Zellij:**
+#### Herdr
 
-If you chose Zellij instead of Tmux, update your shell configuration:
+```bash
+brew install herdr
+mkdir -p ~/.config/herdr
+cp herdr/config.toml ~/.config/herdr/config.toml
+chmod u+w ~/.config/herdr/config.toml
+```
+
+**Update shell config for Zellij or Herdr:**
+
+If you chose Zellij or Herdr instead of Tmux, update your shell configuration:
 
 | Shell | Config File | Change |
 |-------|-------------|--------|
-| Zsh | `~/.zshrc` | Replace `TMUX` → `ZELLIJ` and `tmux` → `zellij` |
-| Fish | `~/.config/fish/config.fish` | Replace `TMUX` → `ZELLIJ` and `tmux` → `zellij` |
-| Nushell (Linux) | `~/.config/nushell/config.nu` | Replace `"tmux"` → `"zellij"` and `"TMUX"` → `"ZELLIJ"` |
+| Zsh | `~/.zshrc` | Set `WM_VAR`/`WM_CMD` for `zellij` or `herdr` |
+| Fish | `~/.config/fish/config.fish` | Start the selected multiplexer with `TMUX`/`ZELLIJ`/`HERDR_ENV` guards |
+| Nushell (Linux) | `~/.config/nushell/config.nu` | Set `MULTIPLEXER` and `MULTIPLEXER_ENV_PREFIX` for the selected tool |
 | Nushell (macOS) | `~/Library/Application Support/nushell/config.nu` | Same as above |
 
 ### 6. Install Neovim

@@ -25,6 +25,7 @@ Detailed overview of all tools configured by Gentleman.Dots.
 |------|-------------|
 | **Tmux** | Battle-tested, widely used, lots of plugins |
 | **Zellij** | Modern, WebAssembly plugins, floating panes |
+| **Herdr** | Agent-focused terminal multiplexer for AI coding workflows |
 
 ## Editor
 

@@ -242,7 +242,7 @@ func TestConfigPaths(t *testing.T) {
 		}
 
 		// Check for expected keys
-		expectedKeys := []string{"nvim", "fish", "zsh", "tmux", "zellij", "alacritty", "ghostty"}
+		expectedKeys := []string{"nvim", "fish", "zsh", "tmux", "zellij", "herdr", "alacritty", "ghostty"}
 		for _, key := range expectedKeys {
 			if _, exists := paths[key]; !exists {
 				t.Errorf("Expected key '%s' in ConfigPaths", key)

@@ -41,7 +41,7 @@ func parseFlags() *cliFlags {
 	flag.BoolVar(&flags.nonInteractive, "non-interactive", false, "Run without TUI, use CLI flags")
 	flag.StringVar(&flags.terminal, "terminal", "", "Terminal: alacritty, wezterm, kitty, ghostty, none")
 	flag.StringVar(&flags.shell, "shell", "", "Shell: fish, zsh, nushell")
-	flag.StringVar(&flags.windowMgr, "wm", "", "Window manager: tmux, zellij, none")
+	flag.StringVar(&flags.windowMgr, "wm", "", "Window manager: tmux, zellij, herdr, none")
 	flag.BoolVar(&flags.nvim, "nvim", false, "Install Neovim configuration")
 	flag.BoolVar(&flags.font, "font", false, "Install Nerd Font")
 	flag.BoolVar(&flags.backup, "backup", true, "Backup existing configs (default: true)")
@@ -110,7 +110,7 @@ func runNonInteractive(flags *cliFlags) error {
 	// Validate values
 	validTerminals := map[string]bool{"alacritty": true, "wezterm": true, "kitty": true, "ghostty": true, "none": true, "": true}
 	validShells := map[string]bool{"fish": true, "zsh": true, "nushell": true}
-	validWMs := map[string]bool{"tmux": true, "zellij": true, "none": true, "": true}
+	validWMs := map[string]bool{"tmux": true, "zellij": true, "herdr": true, "none": true, "": true}
 
 	if !validTerminals[terminal] {
 		return fmt.Errorf("invalid terminal: %s (valid: alacritty, wezterm, kitty, ghostty, none)", terminal)
@@ -119,7 +119,7 @@ func runNonInteractive(flags *cliFlags) error {
 		return fmt.Errorf("invalid shell: %s (valid: fish, zsh, nushell)", shell)
 	}
 	if !validWMs[wm] {
-		return fmt.Errorf("invalid window manager: %s (valid: tmux, zellij, none)", wm)
+		return fmt.Errorf("invalid window manager: %s (valid: tmux, zellij, herdr, none)", wm)
 	}
 
 	// Default empty values to "none"
@@ -199,7 +199,7 @@ Flags:
 Non-Interactive Options:
   --shell=<shell>      Shell to install (required): fish, zsh, nushell
   --terminal=<term>    Terminal: alacritty, wezterm, kitty, ghostty, none
-  --wm=<wm>            Window manager: tmux, zellij, none
+  --wm=<wm>            Window manager: tmux, zellij, herdr, none
   --nvim               Install Neovim configuration
   --font               Install Nerd Font
   --backup=false       Disable config backup (default: true)
@@ -208,8 +208,8 @@ Examples:
   # Interactive TUI
   gentleman.dots
 
-  # Non-interactive with Fish + Zellij + Neovim
-  gentleman.dots --non-interactive --shell=fish --wm=zellij --nvim
+  # Non-interactive with Fish + Herdr + Neovim
+  gentleman.dots --non-interactive --shell=fish --wm=herdr --nvim
 
   # Test mode with Zsh + Tmux (no terminal, no nvim)
   gentleman.dots --test --non-interactive --shell=zsh --wm=tmux

@@ -55,6 +55,7 @@ Gentleman.Dots/
 ├── GentlemanNushell/             # Nushell config
 ├── GentlemanTmux/                # Tmux config
 ├── GentlemanZellij/              # Zellij config
+├── herdr/                        # Herdr config
 ├── docs/                         # Documentation
 └── AGENTS.md                     # Single source of truth for AI skills
 ```
