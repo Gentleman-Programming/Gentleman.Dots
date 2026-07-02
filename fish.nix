@@ -228,6 +228,12 @@
           zellij action rename-tab "$base" >/dev/null 2>&1
       end
 
+      # Start Herdr automatically for fresh interactive Fish sessions.
+      # Guard against nesting when Fish is already running inside Herdr, tmux, or Zellij.
+      if status is-interactive; and command -q herdr; and not set -q HERDR_ENV; and not set -q TMUX; and not set -q ZELLIJ
+          herdr; or echo "⚠️  Herdr failed to start; continuing in Fish."
+      end
+
       clear
     '';
 
