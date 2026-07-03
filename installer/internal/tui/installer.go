@@ -612,7 +612,7 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 		return system.RunPkgInstall(packages.Termux, nil, onLog)
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
 		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
-	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
+	case m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew && packages.Fedora != "":
 		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
 		return system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
@@ -691,6 +691,13 @@ func stepInstallShell(m *Model) error {
 	system.EnsureDir(filepath.Join(homeDir, ".cache/carapace"))
 	system.EnsureDir(filepath.Join(homeDir, ".local/share/atuin"))
 
+	// Fedora-specific: Enable COPR repositories if we don't have Homebrew
+	if m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew {
+		SendLog(stepID, "Fedora: Enabling COPR repositories for starship and carapace...")
+		system.RunSudo("dnf copr enable -y atim/starship", nil)
+		system.RunSudo("dnf copr enable -y virulent/carapace-bin", nil)
+	}
+
 	switch shell {
 	case "fish":
 		SendLog(stepID, "Installing Fish shell and plugins...")
@@ -698,7 +705,7 @@ func stepInstallShell(m *Model) error {
 			Termux: "fish starship zoxide",
 			Brew:   "fish carapace zoxide atuin starship",
 			Arch:   "fish carapace zoxide atuin starship",
-			Fedora: "fish carapace zoxide atuin starship",
+			Fedora: "fish carapace-bin zoxide atuin starship",
 			Debian: "fish zoxide starship",
 		}, func(line string) {
 			SendLog(stepID, line)
@@ -753,7 +760,7 @@ func stepInstallShell(m *Model) error {
 			Termux: "zsh starship zoxide",
 			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
 			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
-			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
+			Fedora: "zsh carapace-bin zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
 			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
 		}, func(line string) {
 			SendLog(stepID, line)
@@ -809,7 +816,7 @@ func stepInstallShell(m *Model) error {
 			Termux: "nushell starship zoxide jq",
 			Brew:   "nushell carapace zoxide atuin jq bash starship",
 			Arch:   "nushell carapace zoxide atuin jq bash starship",
-			Fedora: "nushell carapace zoxide atuin jq bash starship",
+			Fedora: "nushell carapace-bin zoxide atuin jq bash starship",
 			Debian: "nushell zoxide jq bash starship",
 		}, func(line string) {
 			SendLog(stepID, line)
@@ -990,6 +997,10 @@ func stepInstallWM(m *Model) error {
 	case "zellij":
 		if !system.CommandExists("zellij") {
 			SendLog(stepID, "Installing Zellij...")
+			if m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew {
+				SendLog(stepID, "Fedora: Enabling COPR repository for zellij...")
+				system.RunSudo("dnf copr enable -y varlad/zellij", nil)
+			}
 			result := installPlatformPackages(m, stepID, platformPackages{
 				Termux: "zellij",
 				Brew:   "zellij",
@@ -1088,6 +1099,12 @@ func stepInstallNvim(m *Model) error {
 	obsidianDir := filepath.Join(homeDir, ".config/obsidian")
 	system.EnsureDir(obsidianDir)
 	system.EnsureDir(filepath.Join(obsidianDir, "templates"))
+
+	// Fedora-specific: Enable COPR repository for lazygit if we don't have Homebrew
+	if m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew {
+		SendLog(stepID, "Fedora: Enabling COPR repository for lazygit...")
+		system.RunSudo("dnf copr enable -y dejan/lazygit", nil)
+	}
 
 	// Check Node.js
 	if !system.CommandExists("node") {

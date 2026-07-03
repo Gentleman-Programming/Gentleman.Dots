@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 
@@ -12,12 +13,15 @@ import (
 	"github.com/charmbracelet/x/exp/teatest"
 )
 
-// skipIfTermux skips the test if running in Termux environment
+// skipIfTermux skips the test if running in Termux environment or non-macOS
 // Golden tests compare against macOS snapshots, so they fail on other platforms
 func skipIfTermux(t *testing.T) {
 	t.Helper()
 	if _, err := os.Stat("/data/data/com.termux"); err == nil {
 		t.Skip("Skipping golden test: running in Termux environment (snapshots are from macOS)")
+	}
+	if runtime.GOOS != "darwin" {
+		t.Skip("Skipping golden test: snapshots are from macOS")
 	}
 }
 

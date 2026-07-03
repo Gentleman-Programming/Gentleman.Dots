@@ -671,7 +671,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		m.Cursor = 0
 
 	case ScreenShellSelect:
-		m.Choices.Shell = strings.ToLower(options[m.Cursor])
+		m.Choices.Shell = strings.ToLower(strings.Split(options[m.Cursor], " ")[0])
 		m.Screen = ScreenWMSelect
 		m.Cursor = 0
 
@@ -689,7 +689,7 @@ func (m Model) handleSelection() (tea.Model, tea.Cmd) {
 		}
 
 	case ScreenWMSelect:
-		m.Choices.WindowMgr = strings.ToLower(options[m.Cursor])
+		m.Choices.WindowMgr = strings.ToLower(strings.Split(options[m.Cursor], " ")[0])
 		m.Screen = ScreenNvimSelect
 		m.Cursor = 0
 

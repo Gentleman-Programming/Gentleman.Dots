@@ -109,8 +109,8 @@ func TestGetCurrentOptions(t *testing.T) {
 		}
 		expected := []string{"Fish", "Zsh", "Nushell"}
 		for i, exp := range expected {
-			if opts[i] != exp {
-				t.Errorf("Expected %s at position %d, got %s", exp, i, opts[i])
+			if !strings.HasPrefix(opts[i], exp) {
+				t.Errorf("Expected prefix %s at position %d, got %s", exp, i, opts[i])
 			}
 		}
 	})

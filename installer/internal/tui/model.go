@@ -281,12 +281,36 @@ func (m Model) GetCurrentOptions() []string {
 	case ScreenFontSelect:
 		return []string{"Yes, install Iosevka Term Nerd Font", "No, I already have it"}
 	case ScreenShellSelect:
-		return []string{"Fish", "Zsh", "Nushell", "─────────────", "ℹ️  Learn about shells"}
-	case ScreenWMSelect:
-		if m.SystemInfo != nil && m.SystemInfo.IsTermux {
-			return []string{"Tmux", "Zellij", "None", "─────────────", "ℹ️  Learn about multiplexers"}
+		fishLabel := "Fish"
+		if system.CommandExists("fish") {
+			fishLabel = "Fish (detected)"
 		}
-		return []string{"Tmux", "Zellij", "Herdr", "None", "─────────────", "ℹ️  Learn about multiplexers"}
+		zshLabel := "Zsh"
+		if system.CommandExists("zsh") {
+			zshLabel = "Zsh (detected)"
+		}
+		nuLabel := "Nushell"
+		if system.CommandExists("nu") {
+			nuLabel = "Nushell (detected)"
+		}
+		return []string{fishLabel, zshLabel, nuLabel, "─────────────", "ℹ️  Learn about shells"}
+	case ScreenWMSelect:
+		tmuxLabel := "Tmux"
+		if system.CommandExists("tmux") {
+			tmuxLabel = "Tmux (detected)"
+		}
+		zellijLabel := "Zellij"
+		if system.CommandExists("zellij") {
+			zellijLabel = "Zellij (detected)"
+		}
+		herdrLabel := "Herdr"
+		if system.CommandExists("herdr") {
+			herdrLabel = "Herdr (detected)"
+		}
+		if m.SystemInfo != nil && m.SystemInfo.IsTermux {
+			return []string{tmuxLabel, zellijLabel, "None", "─────────────", "ℹ️  Learn about multiplexers"}
+		}
+		return []string{tmuxLabel, zellijLabel, herdrLabel, "None", "─────────────", "ℹ️  Learn about multiplexers"}
 	case ScreenNvimSelect:
 		return []string{"Yes, install Neovim with config", "No, skip Neovim", "─────────────", "ℹ️  Learn about Neovim", "⌨️  View Keymaps", "📖 LazyVim Guide"}
 	case ScreenBackupConfirm:
