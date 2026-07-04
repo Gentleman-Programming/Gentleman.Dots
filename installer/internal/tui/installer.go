@@ -610,10 +610,10 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	switch {
 	case m.SystemInfo.IsTermux:
 		return system.RunPkgInstall(packages.Termux, nil, onLog)
-	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
-		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
-	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
-		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
+	case m.SystemInfo.OS == system.OSArch && !m.SystemInfo.HasBrew && packages.Arch != "":
+    		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
+	case m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew && packages.Fedora != "":
+    		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
 		return system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
 	default:
