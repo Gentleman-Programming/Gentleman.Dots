@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: installer/go.sum
 
       - name: Run Go tests
-        run: go test ./...
+        run: go test ./... -skip Golden
 
   linux-e2e:
     name: Linux E2E (${{ matrix.image }})
@@ -88,6 +88,9 @@ jobs:
         with:
           go-version-file: installer/go.mod
           cache-dependency-path: installer/go.sum
+
+      - name: Run Go tests including golden snapshots
+        run: go test ./...
 
       - name: Build installer
         run: go build ./cmd/gentleman-installer
