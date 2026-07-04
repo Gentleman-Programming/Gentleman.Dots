@@ -445,6 +445,13 @@ func CreateBackup(configs []string) (string, error) {
 		return "", fmt.Errorf("failed to create backup directory: %w", err)
 	}
 
+	cleanupOnFailure := true
+	defer func() {
+		if cleanupOnFailure {
+			_ = os.RemoveAll(backupDir)
+		}
+	}()
+
 	configPaths := ConfigPaths()
 
 	for _, configKey := range configs {
@@ -481,6 +488,7 @@ func CreateBackup(configs []string) (string, error) {
 		}
 	}
 
+	cleanupOnFailure = false
 	return backupDir, nil
 }
 
