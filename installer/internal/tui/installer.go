@@ -221,6 +221,25 @@ func stepInstallDeps(m *Model) error {
 		return nil
 	}
 
+	// Atomic/immutable distro: try brew for deps, skip system packages
+	if m.SystemInfo.IsAtomic {
+		SendLog(stepID, "Atomic distro detected — using Homebrew instead of system packages")
+		if m.SystemInfo.HasBrew {
+			SendLog(stepID, "Installing base dependencies via Homebrew...")
+			result := system.RunBrewWithLogs("install git curl wget unzip", nil, func(line string) {
+				SendLog(stepID, line)
+			})
+			if result.Error != nil {
+				// Non-critical - these may already be available
+				SendLog(stepID, "Warning: some brew packages failed (may already be installed)")
+			}
+		} else {
+			SendLog(stepID, "Homebrew not available — skipping system package installation")
+			SendLog(stepID, "ℹ Ensure git and curl are available before proceeding")
+		}
+		return nil
+	}
+
 	// Arch Linux
 	if m.SystemInfo.OS == system.OSArch {
 		result := system.RunSudo("pacman -Syu --noconfirm", nil)
@@ -280,11 +299,141 @@ func stepInstallXcode(m *Model) error {
 	return nil
 }
 
+// copyTerminalConfig copies terminal configuration files to the user's home directory.
+// Used by both atomic and non-atomic install paths.
+func copyTerminalConfig(terminal, homeDir, repoDir, stepID string) {
+	switch terminal {
+	case "alacritty":
+		if err := system.EnsureDir(filepath.Join(homeDir, ".config/alacritty")); err == nil {
+			system.CopyFile(filepath.Join(repoDir, "alacritty.toml"), filepath.Join(homeDir, ".config/alacritty/alacritty.toml"))
+			SendLog(stepID, "✓ Alacritty configured")
+		}
+	case "wezterm":
+		if err := system.EnsureDir(filepath.Join(homeDir, ".config/wezterm")); err == nil {
+			system.CopyFile(filepath.Join(repoDir, ".wezterm.lua"), filepath.Join(homeDir, ".config/wezterm/wezterm.lua"))
+			SendLog(stepID, "✓ WezTerm configured")
+		}
+	case "kitty":
+		if err := system.EnsureDir(filepath.Join(homeDir, ".config/kitty")); err == nil {
+			system.CopyDir(filepath.Join(repoDir, "GentlemanKitty"), filepath.Join(homeDir, ".config", "kitty"))
+			SendLog(stepID, "✓ Kitty configured")
+		}
+	case "ghostty":
+		if err := system.EnsureDir(filepath.Join(homeDir, ".config/ghostty")); err == nil {
+			system.CopyDir(filepath.Join(repoDir, "GentlemanGhostty"), filepath.Join(homeDir, ".config", "ghostty"))
+			SendLog(stepID, "✓ Ghostty configured")
+		}
+	}
+}
+
 func stepInstallTerminal(m *Model) error {
 	terminal := m.Choices.Terminal
 	homeDir := os.Getenv("HOME")
 	repoDir := "Gentleman.Dots"
 	stepID := "terminal"
+
+	// Atomic/immutable distro: if already installed, just copy config
+	if m.SystemInfo.IsAtomic && system.CommandExists(terminal) {
+		SendLog(stepID, fmt.Sprintf("%s already installed, copying configuration...", terminal))
+		copyTerminalConfig(terminal, homeDir, repoDir, stepID)
+		return nil
+	}
+
+	// Atomic/immutable distro: brew first, flatpak second, suggest rpm-ostree as last resort
+	if m.SystemInfo.IsAtomic && !system.CommandExists(terminal) {
+		SendLog(stepID, "Atomic distro detected — trying Homebrew first")
+		if m.SystemInfo.HasBrew {
+			var brewResult *system.ExecResult
+			switch terminal {
+			case "wezterm":
+				system.Run("brew tap wez/wezterm-linuxbrew", nil)
+				brewResult = system.RunBrewWithLogs("install wezterm", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			case "ghostty":
+				// Ghostty may be available via brew on Linux in the future
+				brewResult = system.RunBrewWithLogs("install ghostty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			case "kitty":
+				brewResult = system.RunBrewWithLogs("install kitty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			case "alacritty":
+				brewResult = system.RunBrewWithLogs("install alacritty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			}
+			if brewResult != nil && brewResult.Error == nil {
+				SendLog(stepID, "✓ Installed via Homebrew")
+			} else {
+				// Brew failed, try flatpak for supported terminals
+				SendLog(stepID, "Homebrew not available for this terminal")
+				switch terminal {
+				case "wezterm":
+					if m.SystemInfo.HasFlatpak {
+						SendLog(stepID, "Installing via Flatpak...")
+						if result := system.RunFlatpakWithLogs("install -y flathub org.wezfurlong.wezterm", nil, func(line string) {
+							SendLog(stepID, line)
+						}); result.Error != nil {
+							SendLog(stepID, "Flatpak install failed — you may need to run: flatpak install flathub org.wezfurlong.wezterm")
+						} else {
+							SendLog(stepID, "✓ Installed via Flatpak")
+						}
+					} else {
+						SendLog(stepID, "ℹ Install Flatpak first, then: flatpak install flathub org.wezfurlong.wezterm")
+					}
+				case "ghostty":
+					SendLog(stepID, "ℹ Install Ghostty manually: rpm-ostree install ghostty")
+				case "kitty":
+					SendLog(stepID, "ℹ Install Kitty manually: curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh")
+				case "alacritty":
+					SendLog(stepID, "ℹ Install Alacritty manually: rpm-ostree install alacritty")
+				}
+			}
+		} else {
+			SendLog(stepID, "Homebrew not installed — showing manual install options")
+			switch terminal {
+			case "wezterm":
+				if m.SystemInfo.HasFlatpak {
+					SendLog(stepID, "ℹ Install via Flatpak: flatpak install flathub org.wezfurlong.wezterm")
+				} else {
+					SendLog(stepID, "ℹ Install WezTerm via: rpm-ostree install wezterm  OR  flatpak install flathub org.wezfurlong.wezterm")
+				}
+			case "ghostty":
+				SendLog(stepID, "ℹ Install Ghostty via: rpm-ostree install ghostty")
+			case "kitty":
+				SendLog(stepID, "ℹ Install Kitty via: curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh")
+			case "alacritty":
+				SendLog(stepID, "ℹ Install Alacritty via: rpm-ostree install alacritty")
+			}
+		}
+		// Always copy config files regardless of package installation
+		SendLog(stepID, "Copying terminal configuration...")
+		switch terminal {
+		case "alacritty":
+			if err := system.EnsureDir(filepath.Join(homeDir, ".config/alacritty")); err == nil {
+				system.CopyFile(filepath.Join(repoDir, "alacritty.toml"), filepath.Join(homeDir, ".config/alacritty/alacritty.toml"))
+				SendLog(stepID, "✓ Alacritty configured")
+			}
+		case "wezterm":
+			if err := system.EnsureDir(filepath.Join(homeDir, ".config/wezterm")); err == nil {
+				system.CopyFile(filepath.Join(repoDir, ".wezterm.lua"), filepath.Join(homeDir, ".config/wezterm/wezterm.lua"))
+				SendLog(stepID, "✓ WezTerm configured")
+			}
+		case "kitty":
+			if err := system.EnsureDir(filepath.Join(homeDir, ".config/kitty")); err == nil {
+				system.CopyDir(filepath.Join(repoDir, "GentlemanKitty"), filepath.Join(homeDir, ".config", "kitty"))
+				SendLog(stepID, "✓ Kitty configured")
+			}
+		case "ghostty":
+			if err := system.EnsureDir(filepath.Join(homeDir, ".config/ghostty")); err == nil {
+				system.CopyDir(filepath.Join(repoDir, "GentlemanGhostty"), filepath.Join(homeDir, ".config", "ghostty"))
+				SendLog(stepID, "✓ Ghostty configured")
+			}
+		}
+		return nil
+	}
 
 	switch terminal {
 	case "alacritty":
@@ -610,6 +759,21 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	switch {
 	case m.SystemInfo.IsTermux:
 		return system.RunPkgInstall(packages.Termux, nil, onLog)
+	case m.SystemInfo.IsAtomic:
+		// On atomic distros, always prefer Homebrew (userspace, no sudo needed)
+		if m.SystemInfo.HasBrew && packages.Brew != "" {
+			onLog("Atomic distro: installing via Homebrew")
+			return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+		}
+		// No brew available or no brew packages defined, show manual instructions
+		suggested := packages.Fedora
+		if suggested == "" {
+			suggested = packages.Brew
+		}
+		onLog("Atomic distro: skipping system package installation")
+		onLog("ℹ Install manually via: rpm-ostree install " + suggested)
+		onLog("   Or use: brew install " + packages.Brew)
+		return &system.ExecResult{ExitCode: 0}
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
 		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
@@ -1257,6 +1421,16 @@ fi
 
 		SendLog(stepID, fmt.Sprintf("✓ Configured %s to auto-start in ~/.bashrc", shell))
 		SendLog(stepID, "Close and reopen Termux for changes to take effect")
+		return nil
+	}
+
+	// Atomic distros: /etc/shells is read-only, skip sudo usermod/chsh
+	if m.SystemInfo.IsAtomic {
+		SendLog(stepID, "Atomic distro detected — skipping shell change via /etc/shells")
+		SendLog(stepID, "ℹ Set your default shell manually: chsh -s $(which "+shellCmd+")")
+		if m.Choices.Shell == "fish" || m.Choices.Shell == "nushell" {
+			SendLog(stepID, "   Or add 'exec "+shellCmd+"' to your .bashrc")
+		}
 		return nil
 	}
 
