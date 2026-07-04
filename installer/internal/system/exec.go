@@ -267,6 +267,16 @@ func RunBrew(args string, opts *ExecOptions) *ExecResult {
 	return Run(brewPath+" "+args, opts)
 }
 
+// RunRpmOstree runs an rpm-ostree command (for atomic distros)
+func RunRpmOstree(args string, opts *ExecOptions) *ExecResult {
+	return Run("rpm-ostree "+args, opts)
+}
+
+// RunFlatpak runs a flatpak command
+func RunFlatpak(args string, opts *ExecOptions) *ExecResult {
+	return Run("flatpak "+args, opts)
+}
+
 // RunPkg runs a Termux pkg command (install packages)
 func RunPkg(args string, opts *ExecOptions) *ExecResult {
 	return Run("pkg "+args, opts)
@@ -658,6 +668,18 @@ func RunBrewWithLogs(args string, opts *ExecOptions, onLog LogCallback) *ExecRes
 // RunSudoWithLogs runs a sudo command with log streaming
 func RunSudoWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResult {
 	return RunWithLogs("sudo "+command, opts, onLog)
+}
+
+// RunBrewWithLogs runs a brew command with log streaming (already defined above, keeping the first one)
+
+// RunRpmOstreeWithLogs runs an rpm-ostree command with log streaming
+func RunRpmOstreeWithLogs(args string, opts *ExecOptions, onLog LogCallback) *ExecResult {
+	return RunWithLogs("rpm-ostree "+args, opts, onLog)
+}
+
+// RunFlatpakWithLogs runs a flatpak command with log streaming
+func RunFlatpakWithLogs(args string, opts *ExecOptions, onLog LogCallback) *ExecResult {
+	return RunWithLogs("flatpak "+args, opts, onLog)
 }
 
 // PatchZshForWM modifies .zshrc based on window manager choice.

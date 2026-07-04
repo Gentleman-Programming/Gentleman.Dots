@@ -7,6 +7,21 @@ import (
 	"strings"
 )
 
+// atomicDistros contains os-release ID values that are known atomic/immutable.
+// This is the authoritative source for detection.
+var atomicDistroIDs = map[string]bool{
+	"silverblue":      true,
+	"fedora-silverblue": true,
+	"kinoite":         true,
+	"fedora-kinoite":  true,
+	"bazzite":         true,
+	"bluefin":         true,
+	"aurora":          true,
+	"sericea":         true,
+	"wayblue":         true,
+	"fedora-iot":      true,
+}
+
 type OSType int
 
 const (
@@ -20,17 +35,19 @@ const (
 )
 
 type SystemInfo struct {
-	OS        OSType
-	OSName    string
-	IsWSL     bool
-	IsARM     bool
-	IsTermux  bool
-	HomeDir   string
-	HasBrew   bool
-	HasPkg    bool // Termux package manager
-	HasXcode  bool
-	UserShell string
-	Prefix    string // Termux $PREFIX or empty for other systems
+	OS         OSType
+	OSName     string
+	IsWSL      bool
+	IsARM      bool
+	IsTermux   bool
+	IsAtomic   bool   // Atomic/immutable distro (Silverblue, Bazzite, etc.)
+	HomeDir    string
+	HasBrew    bool
+	HasPkg     bool // Termux package manager
+	HasXcode   bool
+	HasFlatpak bool
+	UserShell  string
+	Prefix     string // Termux $PREFIX or empty for other systems
 }
 
 func Detect() *SystemInfo {
@@ -75,7 +92,12 @@ func Detect() *SystemInfo {
 		}
 	}
 
+	info.IsAtomic = checkAtomic()
+	if info.IsAtomic {
+		info.OSName += " (Atomic)"
+	}
 	info.HasBrew = checkBrew()
+	info.HasFlatpak = checkFlatpak()
 	info.UserShell = detectCurrentShell()
 
 	return info
@@ -144,6 +166,45 @@ func checkBrew() bool {
 func checkXcode() bool {
 	cmd := exec.Command("xcode-select", "-p")
 	return cmd.Run() == nil
+}
+
+// checkAtomic detects if we're running on an atomic/immutable Linux distro.
+// Priority: /run/ostree-booted (most reliable), rpm-ostree binary, os-release ID.
+func checkAtomic() bool {
+	if runtime.GOOS != "linux" {
+		return false
+	}
+
+	// Most reliable indicator: /run/ostree-booted exists on ostree-based systems
+	if _, err := os.Stat("/run/ostree-booted"); err == nil {
+		return true
+	}
+
+	// Check for rpm-ostree binary (present on Fedora Atomic derivatives)
+	if _, err := exec.LookPath("rpm-ostree"); err == nil {
+		return true
+	}
+
+	// Check os-release for known atomic distro IDs
+	data, err := os.ReadFile("/etc/os-release")
+	if err != nil {
+		return false
+	}
+
+	content := strings.ToLower(string(data))
+	for id := range atomicDistroIDs {
+		if strings.Contains(content, "id="+id) || strings.Contains(content, "id=\""+id+"\"") || strings.Contains(content, "variant_id="+id) || strings.Contains(content, "variant_id=\""+id+"\"") {
+			return true
+		}
+	}
+
+	return false
+}
+
+// checkFlatpak detects if the flatpak command is available
+func checkFlatpak() bool {
+	_, err := exec.LookPath("flatpak")
+	return err == nil
 }
 
 func detectCurrentShell() string {
