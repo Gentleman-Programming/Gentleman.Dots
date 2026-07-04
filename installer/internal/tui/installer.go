@@ -755,10 +755,16 @@ type platformPackages struct {
 	Debian string
 }
 
+var (
+	runPkgInstallWithLogs = system.RunPkgInstall
+	runSudoWithLogs       = system.RunSudoWithLogs
+	runBrewWithLogs       = system.RunBrewWithLogs
+)
+
 func installPlatformPackages(m *Model, stepID string, packages platformPackages, onLog func(string)) *system.ExecResult {
 	switch {
 	case m.SystemInfo.IsTermux:
-		return system.RunPkgInstall(packages.Termux, nil, onLog)
+		return runPkgInstallWithLogs(packages.Termux, nil, onLog)
 	case m.SystemInfo.IsAtomic:
 		// On atomic distros, always prefer Homebrew (userspace, no sudo needed)
 		if m.SystemInfo.HasBrew && packages.Brew != "" {
@@ -775,14 +781,28 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 		onLog("   Or use: brew install " + packages.Brew)
 		return &system.ExecResult{ExitCode: 0}
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
-		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
+		return runNativeWithBrewFallback("pacman -S --needed --noconfirm "+packages.Arch, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
-		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
+		return runNativeWithBrewFallback("dnf install -y "+packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
-		return system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
+		return runSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
 	default:
-		return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+		if m.SystemInfo.HasBrew && packages.Brew != "" {
+			return runBrewWithLogs("install "+packages.Brew, nil, onLog)
+		}
+		return &system.ExecResult{
+			Error: fmt.Errorf("no package manager available for this platform"),
+		}
 	}
+}
+
+func runNativeWithBrewFallback(nativeCommand string, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	result := runSudoWithLogs(nativeCommand, nil, onLog)
+	if result.Error == nil || !hasBrew || brewPackages == "" {
+		return result
+	}
+
+	return runBrewWithLogs("install "+brewPackages, nil, onLog)
 }
 
 func installHerdrBinary(m *Model, stepID string) error {
