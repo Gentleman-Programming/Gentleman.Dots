@@ -607,17 +607,38 @@ type platformPackages struct {
 }
 
 func installPlatformPackages(m *Model, stepID string, packages platformPackages, onLog func(string)) *system.ExecResult {
+	// Prefer native package manager on Linux, fall back to Homebrew if available
 	switch {
 	case m.SystemInfo.IsTermux:
 		return system.RunPkgInstall(packages.Termux, nil, onLog)
-	case m.SystemInfo.OS == system.OSArch && !m.SystemInfo.HasBrew && packages.Arch != "":
-    		return system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
-	case m.SystemInfo.OS == system.OSFedora && !m.SystemInfo.HasBrew && packages.Fedora != "":
-    		return system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
-	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
-		return system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
-	default:
+	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
+		result := system.RunSudoWithLogs("pacman -S --needed --noconfirm "+packages.Arch, nil, onLog)
+		if result.Error == nil || !m.SystemInfo.HasBrew || packages.Brew == "" {
+			return result
+		}
+		// Native failed, fall back to Homebrew
 		return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
+		result := system.RunSudoWithLogs("dnf install -y "+packages.Fedora, nil, onLog)
+		if result.Error == nil || !m.SystemInfo.HasBrew || packages.Brew == "" {
+			return result
+		}
+		// Native failed, fall back to Homebrew
+		return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && packages.Debian != "":
+		result := system.RunSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
+		if result.Error == nil || !m.SystemInfo.HasBrew || packages.Brew == "" {
+			return result
+		}
+		// Native failed, fall back to Homebrew
+		return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+	default:
+		if m.SystemInfo.HasBrew && packages.Brew != "" {
+			return system.RunBrewWithLogs("install "+packages.Brew, nil, onLog)
+		}
+		return &system.ExecResult{
+			Error: fmt.Errorf("no package manager available for this platform"),
+		}
 	}
 }
 
