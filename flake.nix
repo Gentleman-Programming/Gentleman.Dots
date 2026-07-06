@@ -53,6 +53,7 @@
             ./zed.nix  # Zed configuration
             ./television.nix  # Television configuration
             ./wezterm.nix  # WezTerm configuration
+            ./kitty.nix  # Kitty configuration
             ./zellij.nix  # Zellij configuration
             ./tmux.nix  # Tmux configuration
             ./tmux-agents.nix  # Tmux agent-state notifier (working/blocked/idle)
