@@ -20,17 +20,19 @@ const (
 )
 
 type SystemInfo struct {
-	OS        OSType
-	OSName    string
-	IsWSL     bool
-	IsARM     bool
-	IsTermux  bool
-	HomeDir   string
-	HasBrew   bool
-	HasPkg    bool // Termux package manager
-	HasXcode  bool
-	UserShell string
-	Prefix    string // Termux $PREFIX or empty for other systems
+	OS            OSType
+	OSName        string
+	IsWSL         bool
+	IsARM         bool
+	IsTermux      bool
+	HomeDir       string
+	HasBrew       bool
+	HasPkg        bool // Termux package manager
+	HasXcode      bool
+	HasAURHelper  bool   // true if yay or paru is installed
+	AURHelper     string // "yay" or "paru" (empty if none)
+	UserShell     string
+	Prefix        string // Termux $PREFIX or empty for other systems
 }
 
 func Detect() *SystemInfo {
@@ -66,6 +68,7 @@ func Detect() *SystemInfo {
 		if isArchLinux() {
 			info.OS = OSArch
 			info.OSName = "Arch Linux"
+			info.HasAURHelper, info.AURHelper = detectAURHelper()
 		} else if isFedora() {
 			info.OS = OSFedora
 			info.OSName = "Fedora/RHEL"
@@ -139,6 +142,17 @@ func checkPkg() bool {
 func checkBrew() bool {
 	_, err := exec.LookPath("brew")
 	return err == nil
+}
+
+// detectAURHelper checks for yay or paru (Arch User Repository helpers)
+func detectAURHelper() (bool, string) {
+	if _, err := exec.LookPath("yay"); err == nil {
+		return true, "yay"
+	}
+	if _, err := exec.LookPath("paru"); err == nil {
+		return true, "paru"
+	}
+	return false, ""
 }
 
 func checkXcode() bool {
