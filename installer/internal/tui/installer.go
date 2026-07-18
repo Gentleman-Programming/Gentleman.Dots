@@ -716,8 +716,8 @@ func stepInstallShell(m *Model) error {
 		SendLog(stepID, "Installing Fish shell and plugins...")
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "fish starship zoxide",
-			Brew:   "fish carapace zoxide atuin starship",
-			Arch:   "fish carapace zoxide atuin starship",
+			Brew:   "fish fisher starship zoxide atuin fzf carapace nvm rustup-init coreutils",
+			Arch:   "",
 			Fedora: "fish carapace zoxide atuin starship",
 			Debian: "fish zoxide starship",
 		}, func(line string) {
@@ -772,7 +772,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "zsh starship zoxide",
 			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
-			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
+			Arch:   "zsh zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
 			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
 			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
 		}, func(line string) {
@@ -828,7 +828,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "nushell starship zoxide jq",
 			Brew:   "nushell carapace zoxide atuin jq bash starship",
-			Arch:   "nushell carapace zoxide atuin jq bash starship",
+			Arch:   "nushell zoxide atuin jq bash starship",
 			Fedora: "nushell carapace zoxide atuin jq bash starship",
 			Debian: "nushell zoxide jq bash starship",
 		}, func(line string) {
