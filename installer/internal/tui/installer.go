@@ -716,8 +716,8 @@ func stepInstallShell(m *Model) error {
 		SendLog(stepID, "Installing Fish shell and plugins...")
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "fish starship zoxide",
-			Brew:   "fish carapace zoxide atuin starship",
-			Arch:   "fish zoxide atuin starship",
+			Brew:   "fish fisher starship zoxide atuin fzf carapace nvm rustup-init coreutils",
+			Arch:   "",
 			Fedora: "fish carapace zoxide atuin starship",
 			Debian: "fish zoxide starship",
 		}, func(line string) {
