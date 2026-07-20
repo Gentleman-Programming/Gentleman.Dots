@@ -43,4 +43,12 @@ return {
     "coder/claudecode.nvim",
     enabled = true,
   },
+  {
+    -- Plugin: antigravity-cli.nvim
+    -- URL: https://github.com/McEazy2700/antigravity-cli.nvim
+    -- Description: Google Antigravity CLI integration (successor to Gemini CLI)
+    -- To switch: set claudecode.nvim enabled = false and this one enabled = true.
+    "mceazy2700/antigravity-cli.nvim",
+    enabled = false,
+  },
 }
