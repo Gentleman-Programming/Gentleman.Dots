@@ -240,6 +240,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
+> **Note:** `carapace` is **not** in the Arch/CachyOS official repositories (AUR-only). If you use the TUI installer it downloads the static release binary to `~/.local/bin/carapace` automatically. For manual installs, either add an AUR helper (`paru -S carapace-bin`) or fetch the binary from <https://github.com/carapace-sh/carapace-bin/releases>.
+
 #### Linux (Debian/Ubuntu)
 
 ```bash
