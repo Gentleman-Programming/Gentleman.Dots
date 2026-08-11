@@ -1,9 +1,13 @@
 package tui
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -604,12 +608,14 @@ type platformPackages struct {
 	Arch   string
 	Fedora string
 	Debian string
+	GitHub string
 }
 
 var (
 	runPkgInstallWithLogs = system.RunPkgInstall
 	runSudoWithLogs       = system.RunSudoWithLogs
 	runBrewWithLogs       = system.RunBrewWithLogs
+	runCheckCommand       = system.Run
 )
 
 func installPlatformPackages(m *Model, stepID string, packages platformPackages, onLog func(string)) *system.ExecResult {
@@ -617,11 +623,11 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	case m.SystemInfo.IsTermux:
 		return runPkgInstallWithLogs(packages.Termux, nil, onLog)
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
-		return runNativeWithBrewFallback("pacman -S --needed --noconfirm "+packages.Arch, packages.Brew, m.SystemInfo.HasBrew, onLog)
+		return installNativeWithGitHubFallback(m, stepID, packages.Arch, packages.Brew, packages.GitHub, "pacman", m.SystemInfo.HasBrew, onLog)
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
-		return runNativeWithBrewFallback("dnf install -y "+packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
+		return installNativeWithGitHubFallback(m, stepID, packages.Fedora, packages.Brew, packages.GitHub, "dnf", m.SystemInfo.HasBrew, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
-		return runSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
+		return installNativeWithGitHubFallback(m, stepID, packages.Debian, packages.Brew, packages.GitHub, "apt", false, onLog)
 	default:
 		if m.SystemInfo.HasBrew && packages.Brew != "" {
 			return runBrewWithLogs("install "+packages.Brew, nil, onLog)
@@ -632,6 +638,132 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	}
 }
 
+// installNativeWithGitHubFallback installs packages through the native package
+// manager, checking availability per package first. Native managers abort the
+// whole transaction when one package is unknown (pacman fails entirely), so
+// packages the manager does not provide are installed from GitHub instead when
+// a fallback installer exists. Availability is checked for the combined list of
+// native and GitHub packages, so a package that only ships a GitHub installer
+// (e.g. carapace) is still probed and routed to its fallback when the native
+// manager does not have it. If the availability query itself fails (e.g.
+// package manager or its database is unavailable), degrade to the previous
+// behavior: hand the full package list to the native manager.
+func installNativeWithGitHubFallback(m *Model, stepID, nativePkgs, brewPkgs, githubPkgs, pkgMgr string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	existing, missing, checked := filterNativePackages(strings.TrimSpace(nativePkgs+" "+githubPkgs), pkgMgr)
+	if !checked {
+		SendLog(stepID, fmt.Sprintf("Could not verify package availability, installing all packages via %s", pkgMgr))
+		return runNativeWithBrewFallback(nativeInstallCommand(pkgMgr, strings.Fields(nativePkgs)...), brewPkgs, hasBrew, onLog)
+	}
+
+	githubSet := make(map[string]bool)
+	for _, pkg := range strings.Fields(githubPkgs) {
+		githubSet[pkg] = true
+	}
+
+	for _, pkg := range missing {
+		if !githubSet[pkg] {
+			return &system.ExecResult{Error: fmt.Errorf("package %q is not available in the system repositories and has no GitHub fallback installer", pkg)}
+		}
+	}
+
+	var nativeResult *system.ExecResult
+	if len(existing) > 0 {
+		nativeResult = runNativeWithBrewFallback(nativeInstallCommand(pkgMgr, existing...), brewPkgs, hasBrew, onLog)
+	}
+
+	for _, pkg := range missing {
+		if err := installGitHubPackageFn(m, stepID, pkg, onLog); err != nil {
+			return &system.ExecResult{Error: err}
+		}
+	}
+
+	if nativeResult != nil {
+		return nativeResult
+	}
+	return &system.ExecResult{}
+}
+
+// filterNativePackages splits pkgs into those the native package manager
+// provides and those it does not. checked is false when availability could not
+// be determined for any package (infrastructure failure, not a missing
+// package).
+func filterNativePackages(pkgs, pkgMgr string) (existing, missing []string, checked bool) {
+	for _, pkg := range strings.Fields(pkgs) {
+		exists, ok := packageAvailableInRepo(pkg, pkgMgr)
+		if !ok {
+			return nil, nil, false
+		}
+		if exists {
+			existing = append(existing, pkg)
+		} else {
+			missing = append(missing, pkg)
+		}
+	}
+	return existing, missing, true
+}
+
+// packageAvailableInRepo reports whether pkg exists in the native package
+// manager's repositories and whether the query itself succeeded. A failed
+// query (ok=false) means availability could not be determined, NOT that the
+// package is missing. LC_ALL=C forces English output so the "not found" marker
+// is locale-independent.
+func packageAvailableInRepo(pkg, pkgMgr string) (exists, ok bool) {
+	query := ""
+	notFoundPattern := ""
+	switch pkgMgr {
+	case "pacman":
+		query = "LC_ALL=C pacman -Si " + pkg
+		notFoundPattern = "target not found"
+	case "dnf":
+		query = "LC_ALL=C dnf info " + pkg
+		notFoundPattern = "No match for argument"
+	case "apt":
+		query = "apt-cache show " + pkg
+	default:
+		return false, false
+	}
+
+	result := runCheckCommand(query, nil)
+	if result.Error != nil && result.ExitCode == 0 {
+		// The process never started (e.g. the package manager binary is
+		// missing): availability cannot be determined.
+		return false, false
+	}
+	if result.ExitCode == 0 {
+		// Some apt versions exit 0 with empty output for unknown packages.
+		if pkgMgr == "apt" && strings.TrimSpace(result.Output) == "" {
+			return false, true
+		}
+		return true, true
+	}
+	// Non-zero exit is the manager's normal "package unknown" report, so it
+	// is NOT an infrastructure failure by itself. For pacman/dnf, only treat
+	// it as missing when the manager explicitly prints its "not found"
+	// marker; any other non-zero exit (locked database, missing metadata, no
+	// network) means availability could not be determined.
+	if notFoundPattern != "" {
+		if strings.Contains(result.Output+"\n"+result.Stderr, notFoundPattern) {
+			return false, true
+		}
+		return false, false
+	}
+	// apt-cache show: non-zero exit means the package is unknown to the cache.
+	return false, true
+}
+
+func nativeInstallCommand(pkgMgr string, pkgs ...string) string {
+	list := strings.Join(pkgs, " ")
+	switch pkgMgr {
+	case "pacman":
+		return "pacman -S --needed --noconfirm " + list
+	case "dnf":
+		return "dnf install -y " + list
+	case "apt":
+		return "apt-get install -y " + list
+	}
+	return list
+}
+
 func runNativeWithBrewFallback(nativeCommand string, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
 	result := runSudoWithLogs(nativeCommand, nil, onLog)
 	if result.Error == nil || !hasBrew || brewPackages == "" {
@@ -639,6 +771,165 @@ func runNativeWithBrewFallback(nativeCommand string, brewPackages string, hasBre
 	}
 
 	return runBrewWithLogs("install "+brewPackages, nil, onLog)
+}
+
+// installGitHubPackageFn is the dispatch seam for GitHub fallback installers.
+var installGitHubPackageFn = installGitHubPackage
+
+func installGitHubPackage(m *Model, stepID, pkg string, onLog func(string)) error {
+	switch pkg {
+	case "carapace":
+		return installCarapaceBinary(m, stepID, onLog)
+	case "zsh-theme-powerlevel10k":
+		return installPowerlevel10k(m, stepID, onLog)
+	default:
+		return fmt.Errorf("no GitHub fallback installer for package %q", pkg)
+	}
+}
+
+func installCarapaceBinary(m *Model, stepID string, onLog func(string)) error {
+	if system.CommandExists("carapace") {
+		SendLog(stepID, "Carapace already installed")
+		return nil
+	}
+
+	assetArch := ""
+	switch runtime.GOARCH {
+	case "amd64":
+		assetArch = "amd64"
+	case "arm64":
+		assetArch = "arm64"
+	default:
+		return fmt.Errorf("unsupported Carapace architecture: %s", runtime.GOARCH)
+	}
+
+	homeDir := os.Getenv("HOME")
+	binDir := filepath.Join(homeDir, ".local", "bin")
+	if err := system.EnsureDir(binDir); err != nil {
+		return err
+	}
+
+	// Download to a temporary directory and clean it up afterwards.
+	tmpDir, err := os.MkdirTemp("", "carapace")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Resolve the latest release asset and its official digest from the
+	// GitHub API. The digest is the same SHA256 the project publishes in its
+	// checksums.txt file next to the installers, so no version or checksum is
+	// hardcoded here: the verification always matches the current release.
+	metaPath := filepath.Join(tmpDir, "release.json")
+	SendLog(stepID, "Resolving latest Carapace release...")
+	result := system.RunWithLogs("curl -fsSL https://api.github.com/repos/carapace-sh/carapace-bin/releases/latest -o "+metaPath, nil, onLog)
+	if result.Error != nil {
+		return result.Error
+	}
+	meta, err := os.ReadFile(metaPath)
+	if err != nil {
+		return err
+	}
+
+	var release struct {
+		TagName string `json:"tag_name"`
+		Assets  []struct {
+			Name   string `json:"name"`
+			URL    string `json:"browser_download_url"`
+			Digest string `json:"digest"`
+		} `json:"assets"`
+	}
+	if err := json.Unmarshal(meta, &release); err != nil {
+		return fmt.Errorf("parsing Carapace release metadata: %w", err)
+	}
+
+	assetName := fmt.Sprintf("carapace-bin_%s_linux_%s.tar.gz", strings.TrimPrefix(release.TagName, "v"), assetArch)
+	var assetURL, expectedSHA256 string
+	for _, a := range release.Assets {
+		if a.Name == assetName {
+			assetURL = a.URL
+			expectedSHA256 = strings.TrimPrefix(a.Digest, "sha256:")
+			break
+		}
+	}
+	if assetURL == "" || expectedSHA256 == "" {
+		return fmt.Errorf("no digest available for Carapace release asset %q", assetName)
+	}
+
+	tarPath := filepath.Join(tmpDir, "carapace.tar.gz")
+	SendLog(stepID, "Downloading Carapace release binary...")
+	result = system.RunWithLogs(fmt.Sprintf("curl -fsSL %q -o %q", assetURL, tarPath), nil, onLog)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	data, err := os.ReadFile(tarPath)
+	if err != nil {
+		return err
+	}
+	actualSHA256 := sha256.Sum256(data)
+	if hex.EncodeToString(actualSHA256[:]) != expectedSHA256 {
+		return fmt.Errorf("Carapace checksum mismatch for %s", assetURL)
+	}
+
+	SendLog(stepID, "Extracting Carapace binary...")
+	dest := filepath.Join(binDir, "carapace")
+	if err := extractTarGzBinary(tarPath, "carapace", dest); err != nil {
+		return err
+	}
+
+	return os.Chmod(dest, 0755)
+}
+
+// extractTarGzBinary extracts the first regular file entry whose base name
+// matches entryName from a .tar.gz archive and writes it to dest.
+func extractTarGzBinary(tarGzPath, entryName, dest string) error {
+	f, err := os.Open(tarGzPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	gz, err := gzip.NewReader(f)
+	if err != nil {
+		return err
+	}
+	defer gz.Close()
+
+	tr := tar.NewReader(gz)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		if hdr.Typeflag != tar.TypeReg || filepath.Base(hdr.Name) != entryName {
+			continue
+		}
+		out, err := os.Create(dest)
+		if err != nil {
+			return err
+		}
+		if _, err := io.Copy(out, tr); err != nil {
+			out.Close()
+			return err
+		}
+		return out.Close()
+	}
+	return fmt.Errorf("entry %q not found in %s", entryName, tarGzPath)
+}
+
+func installPowerlevel10k(m *Model, stepID string, onLog func(string)) error {
+	if _, err := os.Stat("/usr/share/powerlevel10k/powerlevel10k.zsh-theme"); err == nil {
+		SendLog(stepID, "Powerlevel10k already installed")
+		return nil
+	}
+
+	SendLog(stepID, "Cloning Powerlevel10k from GitHub...")
+	result := runSudoWithLogs("git clone --depth 1 https://github.com/romkatv/powerlevel10k /usr/share/powerlevel10k", nil, onLog)
+	return result.Error
 }
 
 func installHerdrBinary(m *Model, stepID string) error {
@@ -717,9 +1008,10 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "fish starship zoxide",
 			Brew:   "fish carapace zoxide atuin starship",
-			Arch:   "fish carapace zoxide atuin starship",
-			Fedora: "fish carapace zoxide atuin starship",
+			Arch:   "fish zoxide atuin starship",
+			Fedora: "fish zoxide atuin starship",
 			Debian: "fish zoxide starship",
+			GitHub: "carapace",
 		}, func(line string) {
 			SendLog(stepID, line)
 		})
@@ -772,9 +1064,10 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "zsh starship zoxide",
 			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
-			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
-			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
+			Arch:   "zsh zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete",
+			Fedora: "zsh zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
 			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
+			GitHub: "carapace zsh-theme-powerlevel10k",
 		}, func(line string) {
 			SendLog(stepID, line)
 		})
@@ -828,9 +1121,10 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "nushell starship zoxide jq",
 			Brew:   "nushell carapace zoxide atuin jq bash starship",
-			Arch:   "nushell carapace zoxide atuin jq bash starship",
-			Fedora: "nushell carapace zoxide atuin jq bash starship",
+			Arch:   "nushell zoxide atuin jq bash starship",
+			Fedora: "nushell zoxide atuin jq bash starship",
 			Debian: "nushell zoxide jq bash starship",
+			GitHub: "carapace",
 		}, func(line string) {
 			SendLog(stepID, line)
 		})
