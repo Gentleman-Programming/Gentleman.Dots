@@ -356,6 +356,13 @@ func EnsureDir(path string) error {
 	return os.MkdirAll(path, 0755)
 }
 
+// PathExists reports whether path exists. Symlinks are resolved, so a symlink
+// pointing at an existing directory counts as existing.
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
 // BackupInfo contains information about a backup
 type BackupInfo struct {
 	Path      string
