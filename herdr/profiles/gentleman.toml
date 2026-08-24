@@ -1,0 +1,16 @@
+# Neutral/cyan Gentleman profile.
+
+[theme]
+# One Dark supplies stable token defaults for values Herdr does not customize.
+name = "one-dark"
+
+[theme.custom]
+panel_bg = "#06080f"
+accent = "#6FA0AF"
+green = "#B7CC85"
+blue = "#6FA0AF"
+red = "#CB7C94"
+yellow = "#DEBA87"
+
+[ui]
+accent = "#6FA0AF"
