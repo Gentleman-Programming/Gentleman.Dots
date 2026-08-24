@@ -1,4 +1,4 @@
-function fish-theme --description "Select the Gentleman Fish and Starship theme"
+function fish-theme --description "Select the Gentleman Fish, Starship, and Atuin theme"
     if test (count $argv) -ne 1
         echo "Usage: fish-theme <gentleman|gentleman-cute>" >&2
         return 2
@@ -20,6 +20,7 @@ function fish-theme --description "Select the Gentleman Fish and Starship theme"
     set -l marker_dir "$config_home/fish"
     set -l marker "$marker_dir/gentleman-theme"
     set -l starship_profile "$config_home/starship/$theme.toml"
+    set -l atuin_profile "$config_home/atuin/themes/$theme.toml"
 
     if not test -r "$profile"
         echo "Fish profile is unavailable: $profile" >&2
@@ -28,6 +29,11 @@ function fish-theme --description "Select the Gentleman Fish and Starship theme"
 
     if not test -r "$starship_profile"
         echo "Starship profile is unavailable: $starship_profile" >&2
+        return 1
+    end
+
+    if not test -r "$atuin_profile"
+        echo "Atuin profile is unavailable: $atuin_profile" >&2
         return 1
     end
 
@@ -69,6 +75,7 @@ function fish-theme --description "Select the Gentleman Fish and Starship theme"
     source "$profile"
     or return 1
     set -gx STARSHIP_CONFIG "$starship_profile"
+    set -gx ATUIN_THEME__NAME "$theme"
 
     if status is-interactive
         commandline -f repaint

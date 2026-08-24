@@ -1,0 +1,13 @@
+[theme]
+name = "gentleman"
+
+[colors]
+AlertInfo = "#A3B5D6"
+AlertWarn = "#DEBA87"
+AlertError = "#CB7C94"
+Annotation = "#8A8FA3"
+Base = "#F3F6F9"
+Guidance = "#5C6170"
+Important = "#FF8DD7"
+Title = "#7AA89F"
+Muted = "#5C6170"

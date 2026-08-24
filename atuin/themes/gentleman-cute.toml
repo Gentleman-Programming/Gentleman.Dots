@@ -1,0 +1,13 @@
+[theme]
+name = "gentleman-cute"
+
+[colors]
+AlertInfo = "#C49BFF"
+AlertWarn = "#F2B86D"
+AlertError = "#FF718F"
+Annotation = "#A78E9B"
+Base = "#F6EFF3"
+Guidance = "#76616B"
+Important = "#FF81CC"
+Title = "#E35FA6"
+Muted = "#76616B"

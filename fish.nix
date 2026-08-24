@@ -76,6 +76,7 @@
           end
 
           set -gx STARSHIP_CONFIG "$gentleman_config_home/starship/$gentleman_active_theme.toml"
+          set -gx ATUIN_THEME__NAME "$gentleman_active_theme"
           starship init fish | source
           zoxide init fish | source
       atuin init fish | source
