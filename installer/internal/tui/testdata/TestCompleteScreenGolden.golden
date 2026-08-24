@@ -1,0 +1,19 @@
+[?25l[?2004h]2;Gentleman.Dots Installer                                            [K
+  ✨ Installation Complete! ✨              [K
+                                            [K
+  Summary                                   [K
+                                            [K
+    • OS: mac                               [K
+    • Terminal: ghostty                     [K
+    • Shell: fish                           [K
+    • Window Manager: tmux                  [K
+    • Editor: Neovim with Gentleman config  [K
+                                            [K
+  Next Step                                 [K
+                                            [K
+                                            [K
+  To use your new shell now, run:           [K
+     exec fish                              [K
+                                            [K
+                                            [K
+  Press [Enter] or [q] to exit              [K[18A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

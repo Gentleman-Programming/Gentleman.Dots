@@ -1016,7 +1016,8 @@ let MULTIPLEXER = "tmux"
 let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
 def start_multiplexer [] {
-  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) and "ZED_TERMINAL" not-in ($env | columns) {
+  let active_env = ($env | columns)
+  if (which $MULTIPLEXER | is-not-empty) and $MULTIPLEXER_ENV_PREFIX not-in $active_env and "TMUX" not-in $active_env and "ZELLIJ" not-in $active_env and "HERDR_ENV" not-in $active_env and "ZED_TERMINAL" not-in $active_env {
     run-external $MULTIPLEXER
   }
 }

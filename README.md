@@ -1021,6 +1021,14 @@ For questions or issues, open a GitHub issue.
 
 ---
 
+## Contributors
+
+Thanks to everyone who has contributed to Gentleman.Dots!
+
+[![Contributors](https://contrib.rocks/image?repo=Gentleman-Programming/Gentleman.Dots)](https://github.com/Gentleman-Programming/Gentleman.Dots/graphs/contributors)
+
+---
+
 **Happy coding!** 🚀
 
 — Gentleman Programming

@@ -1,0 +1,99 @@
+name: E2E Installer Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go-tests:
+    name: Go tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: installer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: installer/go.mod
+          cache-dependency-path: installer/go.sum
+
+      - name: Run Go tests
+        run: go test ./... -skip Golden
+
+  linux-e2e:
+    name: Linux E2E (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    needs: go-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ubuntu, debian, fedora, alpine]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: installer/go.mod
+          cache-dependency-path: installer/go.sum
+
+      - name: Run Docker E2E
+        run: ./installer/e2e/docker-test.sh e2e ${{ matrix.image }}
+
+  termux-e2e:
+    name: Termux E2E (non-blocking)
+    runs-on: ubuntu-latest
+    needs: go-tests
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: installer/go.mod
+          cache-dependency-path: installer/go.sum
+
+      - name: Run Termux Docker E2E
+        run: ./installer/e2e/docker-test.sh e2e termux
+
+  macos-smoke:
+    name: macOS smoke test
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: installer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: installer/go.mod
+          cache-dependency-path: installer/go.sum
+
+      - name: Run Go tests including golden snapshots
+        run: go test ./...
+
+      - name: Build installer
+        run: go build ./cmd/gentleman-installer
+
+      - name: Run non-interactive help smoke test
+        run: ./gentleman-installer --help

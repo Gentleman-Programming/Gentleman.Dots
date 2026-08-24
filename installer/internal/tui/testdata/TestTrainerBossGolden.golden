@@ -1,0 +1,21 @@
+[?25l[?2004h]2;Gentleman.Dots Installer                                                                                
+  ⚔️  BOSS FIGHT: The Line Walker                                               
+  Lives: ❤️ ❤️ ❤️   |  Step: 1/5                                                
+                                                                                
+  📋 Challenge:                                                                 
+     Move to the 'e' in 'getUser'                                               
+                                                                                
+  📝 Code:                                                                      
+  ────────────────────────────────────────────────────────────                  
+   1 │ const getUserProfile = (userId) => fetchUserData(userId).then(processProf
+  ────────────────────────────────────────────────────────────                  
+                                                                                
+  ⌨️  Your answer:                                                              
+  ╭───────╮                                                                     
+  │       │                                                                     
+  │  ...  │                                                                     
+  │       │                                                                     
+  ╰───────╯                                                                     
+                                                                                
+                                                                                
+  Type command • [Enter] submit • [Esc] forfeit                                 [20A [K[J[2K[?2004l[?25h[?1002l[?1003l[?1006l

@@ -99,11 +99,38 @@ $env.NU_PLUGIN_DIRS = [
 $env.EDITOR = "nvim"
 $env.VISUAL = "nvim"
 
+# Detect Termux
+let is_termux = (("/data/data/com.termux" | path exists) or ($env.TERMUX_VERSION? != null))
+
+# Detect Homebrew path based on architecture (skip for Termux)
+# Apple Silicon: /opt/homebrew/bin
+# Intel Mac: /usr/local/bin
+# Linux: /home/linuxbrew/.linuxbrew/bin
+let brew_path = if $is_termux {
+    ""
+} else if (sys host | get name) == "Darwin" {
+    if ("/opt/homebrew/bin/brew" | path exists) {
+        "/opt/homebrew/bin"
+    } else if ("/usr/local/bin/brew" | path exists) {
+        "/usr/local/bin"
+    } else {
+        ""
+    }
+} else {
+    if ("/home/linuxbrew/.linuxbrew/bin/brew" | path exists) {
+        "/home/linuxbrew/.linuxbrew/bin"
+    } else {
+        ""
+    }
+}
+
+# Build PATH - Termux uses $PREFIX/bin
 $env.PATH = (
     $env.PATH
     | split row (char esep)
+    | prepend (if $is_termux { ($env.PREFIX | path join "bin") } else { [] })
     | prepend ($env.HOME | path join ".local/bin")
-    | prepend '/opt/homebrew/bin'
+    | prepend (if $brew_path != "" { $brew_path } else { [] })
     | prepend ($env.HOME | path join ".local/state/nix/profiles/home-manager/home-path/bin")
     | prepend ($env.HOME | path join ".opencode/bin")
     | prepend ($env.HOME | path join ".volta/bin")
