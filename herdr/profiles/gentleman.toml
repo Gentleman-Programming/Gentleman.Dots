@@ -14,3 +14,7 @@ yellow = "#DEBA87"
 
 [ui]
 accent = "#6FA0AF"
+show_agent_labels_on_pane_borders = true
+
+[ui.toast]
+delivery = "herdr"
