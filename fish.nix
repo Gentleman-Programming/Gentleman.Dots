@@ -55,7 +55,7 @@
 
           # Apply the persisted Fish profile before Starship creates its prompt.
           set -l gentleman_config_home "$HOME/.config"
-          set -l gentleman_active_theme gentleman
+          set -l gentleman_active_theme gentleman-cute
           set -l gentleman_theme_marker "$gentleman_config_home/fish/gentleman-theme"
 
           if test -r "$gentleman_theme_marker"
