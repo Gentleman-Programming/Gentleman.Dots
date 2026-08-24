@@ -110,8 +110,8 @@
 
       ## alias
 
-      alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
-      alias fzfnvim='nvim (fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+      alias fzfbat='fzf --preview="bat --theme=ansi --color=always {}"'
+      alias fzfnvim='nvim (fzf --preview="bat --theme=ansi --color=always {}")'
       alias opencode-config='nvim ~/.opencode.json'
 
       ##  yazi

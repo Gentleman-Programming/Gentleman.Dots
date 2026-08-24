@@ -32,3 +32,6 @@ set -g fish_pager_color_progress $comment
 set -g fish_pager_color_prefix $cyan
 set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
+
+# fzf colors.
+set -gx FZF_DEFAULT_OPTS "--color=fg:#F3F6F9,bg:-1,gutter:-1,hl:#7AA89F,fg+:#F3F6F9,bg+:#263356,hl+:#7AA89F,info:#8394A3,prompt:#7AA89F,pointer:#FF8DD7,marker:#FFE066,spinner:#A3B5D6,header:#8394A3,border:#263356,separator:#263356,label:#8394A3"

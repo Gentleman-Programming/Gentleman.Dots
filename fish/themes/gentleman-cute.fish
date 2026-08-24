@@ -39,3 +39,6 @@ set -g fish_pager_color_completion $text
 set -g fish_pager_color_description --dim $muted
 set -g fish_pager_color_selected_background --background=$selection
 set -g fish_pager_color_secondary_background --background=$surface
+
+# fzf colors.
+set -gx FZF_DEFAULT_OPTS "--color=fg:$text,bg:-1,gutter:-1,hl:$accent,fg+:$text,bg+:$selection,hl+:$active_rose,info:$muted,prompt:$accent,pointer:$active_rose,marker:$champagne,spinner:$deep_rose,header:$soft_rose,border:$selection,separator:$selection,label:$muted"
