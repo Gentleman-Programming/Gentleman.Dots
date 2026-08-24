@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  home.file = {
+    ".config/fish/themes/gentleman.fish".source = ./fish/themes/gentleman.fish;
+    ".config/fish/themes/gentleman-cute.fish".source = ./fish/themes/gentleman-cute.fish;
+    ".config/fish/functions/fish-theme.fish".source = ./fish/functions/fish-theme.fish;
+  };
+
   programs.fish = {
     interactiveShellInit = ''
       if status is-interactive
@@ -47,8 +53,31 @@
 
       set -gx GPG_TTY (tty)
 
-      starship init fish | source
-      zoxide init fish | source
+          # Apply the persisted Fish profile before Starship creates its prompt.
+          set -l gentleman_config_home "$HOME/.config"
+          set -l gentleman_active_theme gentleman
+          set -l gentleman_theme_marker "$gentleman_config_home/fish/gentleman-theme"
+
+          if test -r "$gentleman_theme_marker"
+              set -l gentleman_marker_theme (string trim -- (cat "$gentleman_theme_marker"))
+              if test -n "$gentleman_marker_theme"
+                  switch $gentleman_marker_theme
+                      case gentleman gentleman-cute
+                          set gentleman_active_theme $gentleman_marker_theme
+                  end
+              end
+          end
+
+          set -l gentleman_fish_profile "$gentleman_config_home/fish/themes/$gentleman_active_theme.fish"
+          if test -r "$gentleman_fish_profile"
+              source "$gentleman_fish_profile"
+          else
+              echo "⚠️  Fish theme profile is unavailable: $gentleman_fish_profile"
+          end
+
+          set -gx STARSHIP_CONFIG "$gentleman_config_home/starship/$gentleman_active_theme.toml"
+          starship init fish | source
+          zoxide init fish | source
       atuin init fish | source
       fzf --fish | source
 
@@ -177,38 +206,7 @@
       #set -g fish_pager_color_completion $foreground
       #set -g fish_pager_color_description $comment
       #
-      set -l foreground F3F6F9 normal
-      set -l selection 263356 normal
-      set -l comment 8394A3 brblack
-      set -l red CB7C94 red
-      set -l orange DEBA87 orange
-      set -l yellow FFE066 yellow
-      set -l green B7CC85 green
-      set -l purple A3B5D6 purple
-      set -l cyan 7AA89F cyan
-      set -l pink FF8DD7 magenta
 
-      # Syntax Highlighting Colors
-      set -g fish_color_normal $foreground
-      set -g fish_color_command $cyan
-      set -g fish_color_keyword $pink
-      set -g fish_color_quote $yellow
-      set -g fish_color_redirection $foreground
-      set -g fish_color_end $orange
-      set -g fish_color_error $red
-      set -g fish_color_param $purple
-      set -g fish_color_comment $comment
-      set -g fish_color_selection --background=$selection
-      set -g fish_color_search_match --background=$selection
-      set -g fish_color_operator $green
-      set -g fish_color_escape $pink
-      set -g fish_color_autosuggestion $comment
-
-      # Completion Pager Colors
-      set -g fish_pager_color_progress $comment
-      set -g fish_pager_color_prefix $cyan
-      set -g fish_pager_color_completion $foreground
-      set -g fish_pager_color_description $comment
 
       # tmux-style tab naming for Zellij: name a tab after its directory.
       # Only fires while the tab still has Zellij's default "Tab #N" name, so it
