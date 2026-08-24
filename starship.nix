@@ -65,7 +65,7 @@ let
     green = "#D2CBD0";
     yellow = "#E0C27A";
     blue = "#F095C8";
-    mauve = "#C49BFF";
+    mauve = "#D7A0B8";
     pink = "#FFB1DD";
     teal = "#D7A0B8";
     peach = "#F2B86D";
@@ -74,7 +74,7 @@ let
     rosewater = "#E0C27A";
     flamingo = "#FFB1DD";
     maroon = "#C96AA2";
-    lavender = "#C49BFF";
+    lavender = "#D7A0B8";
     subtext1 = "#A78E9B";
     overlay2 = "#D7A0B8";
     overlay1 = "#B99AA9";

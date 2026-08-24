@@ -99,36 +99,42 @@ run_selector() {
   HOME="$HOME_DIR" PATH="$BIN_DIR:/usr/bin:/bin" ATUIN_LOG="$ATUIN_LOG" ATUIN_STUB_EXIT="${ATUIN_STUB_EXIT:-0}" "$FISH_BIN" -c 'source "$argv[1]"; fish-theme "$argv[2]"' "$FUNCTION" "$1"
 }
 
-# Managed assets use Atuin's complete 18.15.2 theme schema and approved palettes.
-assert_file_contains "$REPO/atuin/themes/gentleman.toml" '[theme]' 'Gentleman declares the Atuin theme table'
-assert_file_contains "$REPO/atuin/themes/gentleman.toml" '[colors]' 'Gentleman declares the Atuin colors table'
-for color in \
-  'AlertInfo = "#7FB4CA"' \
-  'AlertWarn = "#FFE066"' \
-  'AlertError = "#CB7C94"' \
-  'Annotation = "#DEBA87"' \
-  'Base = "#06080F"' \
-  'Guidance = "#7AA89F"' \
-  'Important = "#FF8DD7"' \
-  'Title = "#F3F6F9"' \
-  'Muted = "#8394A3"'; do
-  assert_file_contains "$REPO/atuin/themes/gentleman.toml" "$color" 'Gentleman retains its established palette'
-done
+# Managed assets use Atuin's complete 18.15.2 foreground-only theme schema and approved palettes.
+assert_eq "$(cat <<'THEME'
+[theme]
+name = "gentleman"
+parent = "default"
 
-assert_file_contains "$REPO/atuin/themes/gentleman-cute.toml" '[theme]' 'Cute declares the Atuin theme table'
-assert_file_contains "$REPO/atuin/themes/gentleman-cute.toml" '[colors]' 'Cute declares the Atuin colors table'
-for color in \
-  'AlertInfo = "#A9C7EE"' \
-  'AlertWarn = "#E0C27A"' \
-  'AlertError = "#FF718F"' \
-  'Annotation = "#C96AA2"' \
-  'Base = "#1A1218"' \
-  'Guidance = "#F095C8"' \
-  'Important = "#FFB1DD"' \
-  'Title = "#D2CBD0"' \
-  'Muted = "#A78E9B"'; do
-  assert_file_contains "$REPO/atuin/themes/gentleman-cute.toml" "$color" 'Cute retains its approved palette'
-done
+[colors]
+AlertInfo = "#7FB4CA"
+AlertWarn = "#FFE066"
+AlertError = "#CB7C94"
+Annotation = "#DEBA87"
+Base = "#F3F6F9"
+Guidance = "#7AA89F"
+Important = "#FF8DD7"
+Title = "#FF8DD7"
+Muted = "#8394A3"
+THEME
+)" "$(cat "$REPO/atuin/themes/gentleman.toml")" 'Gentleman declares exact Atuin metadata and foreground semantic palette'
+
+assert_eq "$(cat <<'THEME'
+[theme]
+name = "gentleman-cute"
+parent = "default"
+
+[colors]
+AlertInfo = "#D2CBD0"
+AlertWarn = "#E0C27A"
+AlertError = "#FF718F"
+Annotation = "#A78E9B"
+Base = "#F6EFF3"
+Guidance = "#D2CBD0"
+Important = "#F095C8"
+Title = "#FFB1DD"
+Muted = "#76616B"
+THEME
+)" "$(cat "$REPO/atuin/themes/gentleman-cute.toml")" 'Cute declares exact Atuin metadata and foreground semantic palette'
 
 assert_file_contains "$REPO/fish.nix" '".config/atuin/themes/gentleman.toml".source = ./atuin/themes/gentleman.toml;' 'Home Manager installs the Gentleman Atuin asset'
 assert_file_contains "$REPO/fish.nix" '".config/atuin/themes/gentleman-cute.toml".source = ./atuin/themes/gentleman-cute.toml;' 'Home Manager installs the Cute Atuin asset'
