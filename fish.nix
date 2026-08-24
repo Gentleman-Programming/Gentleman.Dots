@@ -4,6 +4,8 @@
     ".config/fish/themes/gentleman.fish".source = ./fish/themes/gentleman.fish;
     ".config/fish/themes/gentleman-cute.fish".source = ./fish/themes/gentleman-cute.fish;
     ".config/fish/functions/fish-theme.fish".source = ./fish/functions/fish-theme.fish;
+    ".config/atuin/themes/gentleman.toml".source = ./atuin/themes/gentleman.toml;
+    ".config/atuin/themes/gentleman-cute.toml".source = ./atuin/themes/gentleman-cute.toml;
   };
 
   programs.fish = {
@@ -76,7 +78,6 @@
           end
 
           set -gx STARSHIP_CONFIG "$gentleman_config_home/starship/$gentleman_active_theme.toml"
-          set -gx ATUIN_THEME__NAME "$gentleman_active_theme"
           starship init fish | source
           zoxide init fish | source
       atuin init fish | source

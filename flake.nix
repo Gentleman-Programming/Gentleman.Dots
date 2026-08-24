@@ -59,7 +59,6 @@
             ./tmux-agents.nix  # Tmux agent-state notifier (working/blocked/idle)
             ./fish.nix  # Fish shell configuration
             ./starship.nix  # Starship prompt configuration
-            ./atuin.nix  # Atuin theme profiles
             ./nvim.nix  # Neovim configuration
             ./zsh.nix  # Zsh configuration
             ./oil-scripts.nix  # Oil.nvim scripts configuration
