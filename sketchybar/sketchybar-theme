@@ -1,0 +1,75 @@
+#!/bin/bash
+
+usage() {
+  printf 'Usage: sketchybar-theme gentleman|gentleman-cute\n' >&2
+}
+
+if [ "$#" -ne 1 ]; then
+  usage
+  exit 2
+fi
+
+case "$1" in
+  gentleman|gentleman-cute)
+    THEME_NAME=$1
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac
+
+CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
+MARKER_DIR="$HOME/.config/gentleman"
+MARKER_FILE="$MARKER_DIR/sketchybar-theme"
+CANDIDATE_FILE=""
+
+cleanup_candidate() {
+  if [ -n "$CANDIDATE_FILE" ]; then
+    rm -f -- "$CANDIDATE_FILE"
+  fi
+}
+
+for required_file in \
+  "$CONFIG_DIR/theme.sh" \
+  "$CONFIG_DIR/themes/gentleman.sh" \
+  "$CONFIG_DIR/themes/gentleman-cute.sh"; do
+  if [ ! -f "$required_file" ] || [ ! -r "$required_file" ]; then
+    printf 'Cannot select a SketchyBar theme: required file is missing or unreadable: %s\n' "$required_file" >&2
+    exit 1
+  fi
+
+  if ! /bin/bash -n "$required_file"; then
+    printf 'Cannot select a SketchyBar theme: required file has invalid Bash syntax: %s\n' "$required_file" >&2
+    exit 1
+  fi
+done
+
+if ! mkdir -p "$MARKER_DIR"; then
+  printf 'Cannot select a SketchyBar theme: could not create marker directory: %s\n' "$MARKER_DIR" >&2
+  exit 1
+fi
+
+if ! CANDIDATE_FILE=$(mktemp "$MARKER_DIR/.sketchybar-theme.XXXXXX"); then
+  printf 'Cannot select a SketchyBar theme: could not create marker candidate\n' >&2
+  exit 1
+fi
+trap cleanup_candidate EXIT
+
+if ! printf '%s\n' "$THEME_NAME" > "$CANDIDATE_FILE"; then
+  printf 'Cannot select a SketchyBar theme: could not write marker candidate\n' >&2
+  exit 1
+fi
+
+if ! mv -f "$CANDIDATE_FILE" "$MARKER_FILE"; then
+  printf 'Cannot select a SketchyBar theme: could not publish marker\n' >&2
+  exit 1
+fi
+CANDIDATE_FILE=""
+
+if ! sketchybar --reload; then
+  printf 'SketchyBar theme marker was published as %s, but reload failed. The theme will apply on the next launch; run sketchybar-theme gentleman to roll back.\n' "$THEME_NAME" >&2
+  exit 1
+fi
+
+printf 'SketchyBar theme selected: %s\n' "$THEME_NAME"

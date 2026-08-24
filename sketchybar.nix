@@ -1,6 +1,11 @@
 { pkgs, lib, ... }:
 
 {
+  home.file.".local/bin/sketchybar-theme" = {
+    source = ./sketchybar/sketchybar-theme;
+    executable = true;
+  };
+
   # Manual reinstall script for SketchyBar (Homebrew-based)
   home.file."bin/install-sketchybar" = {
     text = ''

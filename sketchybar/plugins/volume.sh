@@ -2,6 +2,10 @@
 
 # Volume - displays current volume level
 
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
+
 RAW_VOLUME=$(osascript -e "output volume of (get volume settings)" 2>/dev/null)
 MUTED=$(osascript -e "output muted of (get volume settings)" 2>/dev/null)
 
@@ -14,9 +18,9 @@ else
 fi
 
 if [ "$MUTED" = "true" ] || [ "$VOLUME" -eq 0 ]; then
-  COLOR=0xffcb7c94
+  COLOR=$ERROR
 else
-  COLOR=0xff7fb4ca
+  COLOR=$VOLUME_NORMAL
 fi
 
-sketchybar --set $NAME icon.color="$COLOR" label="$LABEL"
+sketchybar --set "$NAME" icon.color="$COLOR" label="$LABEL"

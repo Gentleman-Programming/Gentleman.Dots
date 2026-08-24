@@ -6,26 +6,9 @@
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# GENTLEMAN COLOR PALETTE (matching Ghostty/Neovim theme)
-# ─────────────────────────────────────────────────────────────────────────────────
-export BLACK=0xff06080f
-export WHITE=0xfff3f6f9
-export RED=0xffcb7c94
-export GREEN=0xffb7cc85
-export YELLOW=0xffffe066
-export ORANGE=0xfffff7b1
-export BLUE=0xff7fb4ca
-export MAGENTA=0xffff8dd7
-export CYAN=0xff7aa89f
-export TRANSPARENT=0x00000000
-
-# Island colors
-export ISLAND_BG=0xff121620
-export ISLAND_BORDER=0xff263356
-export ACCENT_COLOR=0xffe0c15a
-export DIM=0xff565f89
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # BAR APPEARANCE (transparent base for floating islands)
@@ -37,7 +20,7 @@ sketchybar --bar \
   sticky=on \
   padding_left=8 \
   padding_right=8 \
-  color=$TRANSPARENT \
+  color="$PANEL_BG" \
   corner_radius=0 \
   y_offset=-50 \
   margin=0 \
@@ -52,11 +35,11 @@ sketchybar --animate sin 12 --bar y_offset=-50 y_offset=2
 # ─────────────────────────────────────────────────────────────────────────────────
 sketchybar --default \
   icon.font="IosevkaTerm NFM:Bold:14.0" \
-  icon.color=$WHITE \
+  icon.color="$TEXT" \
   label.font="IosevkaTerm NFM:Medium:13.0" \
-  label.color=$WHITE \
-  background.color=$ISLAND_BG \
-  background.border_color=$ISLAND_BORDER \
+  label.color="$TEXT" \
+  background.color="$ISLAND_BG" \
+  background.border_color="$ISLAND_BORDER" \
   background.border_width=1 \
   background.corner_radius=12 \
   background.height=32 \
@@ -75,26 +58,26 @@ sketchybar --default \
 # SPACES (YABAI WORKSPACES)
 # ─────────────────────────────────────────────────────────────────────────────────
 for sid in $(seq 1 10); do
-  sketchybar --add space space.$sid left \
-    --set space.$sid \
-      space=$sid \
+  sketchybar --add space "space.$sid" left \
+    --set "space.$sid" \
+      space="$sid" \
       icon.drawing=off \
       label="$sid" \
       label.padding_left=8 \
       label.padding_right=8 \
-      label.color=$DIM \
+      label.color="$DIM" \
       label.font="IosevkaTerm NF:Regular:12.0" \
       padding_left=2 \
       padding_right=2 \
-      background.color=$ISLAND_BG \
-      background.border_color=$ISLAND_BORDER \
+      background.color="$ISLAND_BG" \
+      background.border_color="$ISLAND_BORDER" \
       background.border_width=1 \
       background.corner_radius=4 \
       background.height=24 \
       background.drawing=on \
       script="$PLUGIN_DIR/space.sh" \
       click_script="yabai -m space --focus $sid" \
-    --subscribe space.$sid space_change
+    --subscribe "space.$sid" space_change
 done
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -103,7 +86,7 @@ done
 sketchybar --add item separator_left left \
   --set separator_left \
     icon=">" \
-    icon.color=$ACCENT_COLOR \
+    icon.color="$ACCENT" \
     icon.font="IosevkaTerm NF:Bold:16.0" \
     icon.padding_left=8 \
     icon.padding_right=8 \
@@ -117,13 +100,13 @@ sketchybar --add item front_app left \
   --set front_app \
     icon.drawing=off \
     label.font="IosevkaTerm NF:Bold:12.0" \
-    label.color=$BLACK \
+    label.color="$FOCUSED_TEXT" \
     label.padding_left=10 \
     label.padding_right=10 \
     label.max_chars=16 \
     scroll_texts=on \
-    background.color=$GREEN \
-    background.border_color=$GREEN \
+    background.color="$FOCUSED_BG" \
+    background.border_color="$FOCUSED_BG" \
     background.border_width=0 \
     background.corner_radius=4 \
     background.height=24 \
@@ -141,14 +124,14 @@ sketchybar --add item front_app left \
 sketchybar --add item battery right \
   --set battery \
     icon.font="IosevkaTerm NF:Bold:14.0" \
-    icon.color=$GREEN \
+    icon.color="$BATTERY_HEALTHY" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.width=40 \
     label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -164,12 +147,12 @@ sketchybar --add item datetime right \
   --set datetime \
     icon="CAL" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$YELLOW \
+    icon.color="$CHAMPAGNE" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -184,14 +167,14 @@ sketchybar --add item meeting right \
   --set meeting \
     icon="MTG" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$YELLOW \
+    icon.color="$CHAMPAGNE" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.max_chars=12 \
     scroll_texts=on \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -206,14 +189,14 @@ sketchybar --add item volume right \
   --set volume \
     icon="VOL" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$BLUE \
+    icon.color="$VOLUME_NORMAL" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.width=40 \
     label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -228,14 +211,14 @@ sketchybar --add item cpu right \
   --set cpu \
     icon="CPU" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$RED \
+    icon.color="$CPU_INITIAL" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.width=40 \
     label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -250,14 +233,14 @@ sketchybar --add item gpu right \
   --set gpu \
     icon="GPU" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$ORANGE \
+    icon.color="$GPU_NORMAL" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.width=40 \
     label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \
@@ -272,14 +255,14 @@ sketchybar --add item ram right \
   --set ram \
     icon="RAM" \
     icon.font="IosevkaTerm NF:Bold:10.0" \
-    icon.color=$MAGENTA \
+    icon.color="$RAM_NORMAL" \
     icon.padding_left=10 \
     icon.padding_right=4 \
     label.padding_right=10 \
     label.width=40 \
     label.align=right \
-    background.color=$ISLAND_BG \
-    background.border_color=$ISLAND_BORDER \
+    background.color="$ISLAND_BG" \
+    background.border_color="$ISLAND_BORDER" \
     background.border_width=1 \
     background.corner_radius=4 \
     background.height=24 \

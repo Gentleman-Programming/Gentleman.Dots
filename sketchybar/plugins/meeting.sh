@@ -3,12 +3,13 @@
 # Meeting - shows next calendar event (next 24 hours)
 # IMPORTANT: Uses pgrep to check if Calendar is running (osascript can launch apps)
 
-YELLOW=0xffffe066
-DIM=0xff565f89
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
 
 # Check if Calendar is running using pgrep (safe, won't launch the app)
 if ! pgrep -x "Calendar" > /dev/null 2>&1; then
-  sketchybar --set $NAME icon.color=$DIM label="--"
+  sketchybar --set "$NAME" icon.color="$MUTED" label="--"
   exit 0
 fi
 
@@ -51,7 +52,7 @@ FILTERED=$(echo "$NEXT_EVENT" | while IFS='|' read -r time_num display; do
 done | sort -n | head -1 | cut -d'|' -f2)
 
 if [ -z "$FILTERED" ]; then
-  sketchybar --set $NAME icon.color=$DIM label="--"
+  sketchybar --set "$NAME" icon.color="$MUTED" label="--"
 else
-  sketchybar --set $NAME icon.color=$YELLOW label="$FILTERED"
+  sketchybar --set "$NAME" icon.color="$CHAMPAGNE" label="$FILTERED"
 fi

@@ -2,6 +2,10 @@
 
 # Network - displays connection status
 
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
+
 # Try to get WiFi SSID
 WIFI=$(/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -I 2>/dev/null | awk -F': ' '/^ *SSID/{print $2}')
 
@@ -14,13 +18,13 @@ if [ -z "$WIFI" ]; then
 fi
 
 if [ -z "$WIFI" ]; then
-  sketchybar --set $NAME \
+  sketchybar --set "$NAME" \
     icon="NET" \
-    icon.color=0xffcb7c94 \
+    icon.color="$ERROR" \
     label="Off"
 else
-  sketchybar --set $NAME \
+  sketchybar --set "$NAME" \
     icon="NET" \
-    icon.color=0xff7aa89f \
+    icon.color="$NETWORK_NORMAL" \
     label="$WIFI"
 fi

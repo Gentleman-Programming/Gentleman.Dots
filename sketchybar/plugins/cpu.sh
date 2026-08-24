@@ -2,19 +2,19 @@
 
 # CPU - ps-based (19ms) instead of top (500ms)
 
-RED=0xffcb7c94
-YELLOW=0xffffe066
-CYAN=0xff7aa89f
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
 
 NCPU=$(sysctl -n hw.ncpu)
 CPU=$(ps -A -o %cpu | awk -v n="$NCPU" '{s+=$1} END {v=s/n; if(v>100)v=100; printf "%d",v}')
 
 if [ "$CPU" -ge 80 ]; then
-  COLOR=$RED
+  COLOR=$ERROR
 elif [ "$CPU" -ge 50 ]; then
-  COLOR=$YELLOW
+  COLOR=$WARNING
 else
-  COLOR=$CYAN
+  COLOR=$CPU_NORMAL
 fi
 
-sketchybar --set $NAME icon.color="$COLOR" label="${CPU}%"
+sketchybar --set "$NAME" icon.color="$COLOR" label="${CPU}%"

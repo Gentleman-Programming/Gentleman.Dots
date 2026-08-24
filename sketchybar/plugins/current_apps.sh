@@ -3,8 +3,9 @@
 # Current Apps - shows all apps in the current workspace
 # The focused app is highlighted with brackets [App]
 
-ACCENT=0xffe0c15a
-WHITE=0xfff3f6f9
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
 
 # Get current space
 CURRENT_SPACE=$(yabai -m query --spaces --space 2>/dev/null | jq -r '.index')
@@ -13,10 +14,10 @@ CURRENT_SPACE=$(yabai -m query --spaces --space 2>/dev/null | jq -r '.index')
 FOCUSED_APP=$(yabai -m query --windows --window 2>/dev/null | jq -r '.app' 2>/dev/null)
 
 # Get all apps in current space
-APPS=$(yabai -m query --windows --space $CURRENT_SPACE 2>/dev/null | jq -r '.[].app' 2>/dev/null | sort -u)
+APPS=$(yabai -m query --windows --space "$CURRENT_SPACE" 2>/dev/null | jq -r '.[].app' 2>/dev/null | sort -u)
 
 if [ -z "$APPS" ]; then
-  sketchybar --set $NAME label="--"
+  sketchybar --set "$NAME" label="--"
   exit 0
 fi
 
@@ -41,4 +42,4 @@ while IFS= read -r app; do
   fi
 done <<< "$APPS"
 
-sketchybar --set $NAME label="$LABEL"
+sketchybar --set "$NAME" label="$LABEL"

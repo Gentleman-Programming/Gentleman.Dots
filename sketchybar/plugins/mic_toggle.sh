@@ -2,11 +2,9 @@
 
 # Toggle microphone mute/unmute with pulse animation
 
-# Colors
-RED=0xffcb7c94
-GREEN=0xffb7cc85
-DIM=0xff565f89
-YELLOW=0xffffe066
+# CONFIG_DIR is supplied by SketchyBar at runtime.
+# shellcheck disable=SC1091
+source "$CONFIG_DIR/theme.sh"
 
 # Animation settings
 ANIM_DURATION=5
@@ -15,7 +13,7 @@ ANIM_CURVE="sin"
 # Show loading with scale pulse
 sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
   icon="..." \
-  icon.color=$YELLOW \
+  icon.color="$WARNING" \
   background.y_offset=2 background.y_offset=0
 
 # Get current state
@@ -38,11 +36,11 @@ MIC_VOLUME=$(osascript -e "input volume of (get volume settings)")
 if [ "$MIC_VOLUME" -eq 0 ]; then
   sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
     icon="MIC" \
-    icon.color=$DIM \
+    icon.color="$MUTED" \
     label="OFF"
 else
   sketchybar --animate $ANIM_CURVE $ANIM_DURATION --set mic \
     icon="MIC" \
-    icon.color=$RED \
+    icon.color="$SOFT_ROSE" \
     label="ON"
 fi
