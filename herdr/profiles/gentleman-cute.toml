@@ -5,7 +5,7 @@
 name = "one-dark"
 
 [theme.custom]
-panel_bg = "#1A1218"
+panel_bg = "#000000"
 surface0 = "#241822"
 surface1 = "#342230"
 surface_dim = "#20161E"
@@ -13,8 +13,8 @@ overlay0 = "#B99AA9"
 overlay1 = "#D7A0B8"
 text = "#F6EFF3"
 subtext0 = "#A78E9B"
-accent = "#E35FA6"
-mauve = "#FF81CC"
+accent = "#F095C8"
+mauve = "#FFB1DD"
 green = "#D2CBD0"
 yellow = "#E0C27A"
 red = "#FF718F"
@@ -23,7 +23,7 @@ teal = "#D7A0B8"
 peach = "#F2B86D"
 
 [ui]
-accent = "#E35FA6"
+accent = "#F095C8"
 show_agent_labels_on_pane_borders = true
 
 [ui.toast]
