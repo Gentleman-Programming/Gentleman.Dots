@@ -134,13 +134,13 @@ assert_eq '0xffd7a0b8' "$(resolve_value SOFT_ROSE)" "Cute soft rose"
 assert_eq '0xffa9c7ee' "$(resolve_value POWDER_BLUE)" "Cute powder blue"
 assert_eq '0xfff2b86d' "$(resolve_value WARNING)" "Cute warning"
 assert_eq '0xffff718f' "$(resolve_value ERROR)" "Cute error"
-assert_eq '0xffffb1dd' "$(resolve_value WORKSPACE_ACTIVE)" "Cute selected workspace uses active rose"
-assert_eq '0xffd7a0b8' "$(resolve_value CPU_NORMAL)" "Cute normal CPU uses soft rose"
-assert_eq '0xffd7a0b8' "$(resolve_value CPU_INITIAL)" "Cute initial CPU uses soft rose"
+assert_eq '0xffb4e7c7' "$(resolve_value WORKSPACE_ACTIVE)" "Cute selected workspace uses mint"
+assert_eq '0xffc4daf6' "$(resolve_value CPU_NORMAL)" "Cute normal CPU uses sky"
+assert_eq '0xffc4daf6' "$(resolve_value CPU_INITIAL)" "Cute initial CPU uses sky"
 assert_eq "$(resolve_value CPU_NORMAL)" "$(resolve_value CPU_INITIAL)" "Cute initial CPU aliases normal CPU"
-assert_eq '0xffd7a0b8' "$(resolve_value NETWORK_NORMAL)" "Cute network uses soft rose"
+assert_eq '0xffc4daf6' "$(resolve_value NETWORK_NORMAL)" "Cute network uses sky"
 assert_eq '0xfff095c8' "$(resolve_value VOLUME_NORMAL)" "Cute normal volume uses primary rose"
-assert_eq '0xffc96aa2' "$(resolve_value RAM_NORMAL)" "Cute RAM uses deep rose"
+assert_eq '0xffb4e7c7' "$(resolve_value RAM_NORMAL)" "Cute RAM uses mint"
 
 # The selector accepts only the two profile names and publishes the marker before reload.
 printf 'gentleman\n' > "$MARKER_DIR/sketchybar-theme"
@@ -271,11 +271,11 @@ assert_contains 'background.border_color=0xffe0c15a' "$space_selected" "selected
 printf 'gentleman-cute\n' > "$MARKER_DIR/sketchybar-theme"
 cute_main_output=$(run_config)
 assert_eq "$(resolve_value CPU_INITIAL)" "$(icon_color_for_item cpu "$cute_main_output")" "Cute initial CPU renders its profile token"
-assert_eq '0xffd7a0b8' "$(icon_color_for_item cpu "$cute_main_output")" "Cute initial CPU renders soft rose"
+assert_eq '0xffc4daf6' "$(icon_color_for_item cpu "$cute_main_output")" "Cute initial CPU renders sky"
 cute_space_selected=$(run_plugin space.sh env SELECTED=true)
-assert_contains 'label.color=0xffffb1dd' "$cute_space_selected" "Cute selected workspace uses active rose"
+assert_contains 'label.color=0xffb4e7c7' "$cute_space_selected" "Cute selected workspace uses mint"
 assert_contains 'background.color=0xff342230' "$cute_space_selected" "Cute selected workspace uses selected background"
-assert_contains 'background.border_color=0xffffb1dd' "$cute_space_selected" "Cute selected workspace uses active rose border"
+assert_contains 'background.border_color=0xffb4e7c7' "$cute_space_selected" "Cute selected workspace uses mint border"
 
 printf 'gentleman\n' > "$MARKER_DIR/sketchybar-theme"
 cat > "$BIN_DIR/osascript" <<'STUB'
