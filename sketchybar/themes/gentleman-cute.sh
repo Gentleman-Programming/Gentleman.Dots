@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Approved Gentleman-Cute palette, exposed through semantic tokens.
-export PANEL_BG=0xff1a1218
+export PANEL_BG=0x00000000
 export ISLAND_BG=0xff241822
 export SELECTED_BG=0xff342230
 
@@ -21,7 +21,7 @@ export WARNING=0xfff2b86d
 export ERROR=0xffff718f
 
 export ISLAND_BORDER="$DEEP_ROSE"
-export FOCUSED_TEXT="$PANEL_BG"
+export FOCUSED_TEXT=0xff1a1218
 export FOCUSED_BG="$ACTIVE_ROSE"
 export WORKSPACE_ACTIVE="$MINT"
 export BATTERY_HEALTHY="$MINT"

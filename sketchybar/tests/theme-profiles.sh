@@ -118,7 +118,8 @@ assert_eq '0xffcb7c94' "$(resolve_value ERROR)" "Gentleman error preserves the c
 assert_eq '0xffffe066' "$(resolve_value WARNING)" "Gentleman warning preserves the current yellow"
 
 printf 'gentleman-cute\n' > "$MARKER_DIR/sketchybar-theme"
-assert_eq '0xff1a1218' "$(resolve_value PANEL_BG)" "Cute panel background"
+assert_eq '0x00000000' "$(resolve_value PANEL_BG)" "Cute panel is transparent so islands float"
+assert_eq '0xff1a1218' "$(resolve_value FOCUSED_TEXT)" "Cute focused text stays dark independently of the panel"
 assert_eq '0xff241822' "$(resolve_value ISLAND_BG)" "Cute island background"
 assert_eq '0xff342230' "$(resolve_value SELECTED_BG)" "Cute selected workspace background"
 assert_eq '0xfff6eff3' "$(resolve_value TEXT)" "Cute text"
