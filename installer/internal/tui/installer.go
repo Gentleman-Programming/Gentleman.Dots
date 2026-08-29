@@ -34,6 +34,51 @@ func (e *StepError) Unwrap() error {
 	return e.Cause
 }
 
+// removeRepoDirIfSafe inspects path's git status via system.InspectRepoDir
+// and only deletes it when that is unambiguously safe (absent or a clean
+// git checkout). It fails closed on a dirty checkout, a non-git directory,
+// or an undeterminable git status, returning an actionable error naming the
+// absolute path instead of running an unconditional rm -rf.
+//
+// It never prompts for confirmation: docs/tui-installer.md documents
+// --non-interactive as CI/CD friendly, so refusal must be a deterministic
+// abort rather than blocking on user input. Callers decide how to treat a
+// refusal - stepCloneRepo treats it as fatal, stepCleanup treats it as
+// non-critical.
+func removeRepoDirIfSafe(stepID, path string) error {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		absPath = path
+	}
+
+	switch system.InspectRepoDir(path) {
+	case system.RepoAbsent:
+		return nil
+	case system.RepoCleanCheckout:
+		// Dry run (upstream #190): the actual deletion here is
+		// os.RemoveAll, which the Run/RunWithLogs gate does NOT cover,
+		// so it needs its own branch. Print the planned removal and
+		// return without deleting anything.
+		if system.IsDryRun() {
+			system.Notify(fmt.Sprintf("[dry-run] would remove: %s (clean git checkout)", absPath))
+			return nil
+		}
+		SendLog(stepID, fmt.Sprintf("Removing existing %s (clean git checkout)...", absPath))
+		// os.RemoveAll takes the absolute path as a discrete argument -
+		// never interpolated into a shell command string.
+		if err := os.RemoveAll(absPath); err != nil {
+			return fmt.Errorf("failed to remove %s: %w", absPath, err)
+		}
+		return nil
+	default:
+		return fmt.Errorf(
+			"refusing to remove %s: it has uncommitted changes, untracked files, is not a git repository, or its git status could not be determined. "+
+				"Move or rename the directory, or run the installer from a different working directory, then retry",
+			absPath,
+		)
+	}
+}
+
 // wrapStepError creates a detailed error for a step failure
 func wrapStepError(stepID, stepName, description string, cause error) error {
 	return &StepError{
@@ -105,17 +150,13 @@ func stepBackupConfigs(m *Model) error {
 func stepCloneRepo(m *Model) error {
 	stepID := "clone"
 
-	// Check if already exists
-	if _, err := os.Stat("Gentleman.Dots"); err == nil {
-		SendLog(stepID, "Removing existing Gentleman.Dots directory...")
-		result := system.RunWithLogs("rm -rf Gentleman.Dots", nil, func(line string) {
-			SendLog(stepID, line)
-		})
-		if result.Error != nil {
-			return wrapStepError("clone", "Clone Repository",
-				"Failed to remove existing Gentleman.Dots directory",
-				result.Error)
-		}
+	// Check if already exists. Deletion is fail-closed: a dirty checkout,
+	// a non-git directory, or an undeterminable git status refuses removal
+	// instead of running an unconditional rm -rf (see repo-clone-safety spec).
+	if err := removeRepoDirIfSafe(stepID, "Gentleman.Dots"); err != nil {
+		return wrapStepError("clone", "Clone Repository",
+			"Refusing to remove the existing Gentleman.Dots directory",
+			err)
 	}
 
 	SendLog(stepID, "Cloning repository from GitHub...")
@@ -128,11 +169,16 @@ func stepCloneRepo(m *Model) error {
 			result.Error)
 	}
 
-	// Verify clone was successful
-	if _, err := os.Stat("Gentleman.Dots"); os.IsNotExist(err) {
-		return wrapStepError("clone", "Clone Repository",
-			"Repository was cloned but directory not found",
-			fmt.Errorf("Gentleman.Dots directory does not exist after clone"))
+	// Verify clone was successful. Under a dry run the clone was
+	// suppressed, so the directory legitimately does not exist: this
+	// existence check must be gated, otherwise a dry run reports a
+	// false failure (suppress effects, never derivations).
+	if !system.IsDryRun() {
+		if _, err := os.Stat("Gentleman.Dots"); os.IsNotExist(err) {
+			return wrapStepError("clone", "Clone Repository",
+				"Repository was cloned but directory not found",
+				fmt.Errorf("Gentleman.Dots directory does not exist after clone"))
+		}
 	}
 
 	SendLog(stepID, "✓ Repository cloned successfully")
@@ -717,7 +763,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "fish starship zoxide",
 			Brew:   "fish carapace zoxide atuin starship",
-			Arch:   "fish carapace zoxide atuin starship",
+			Arch:   "fish zoxide atuin starship",
 			Fedora: "fish carapace zoxide atuin starship",
 			Debian: "fish zoxide starship",
 		}, func(line string) {
@@ -772,7 +818,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "zsh starship zoxide",
 			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
-			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
+			Arch:   "zsh zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete",
 			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
 			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
 		}, func(line string) {
@@ -828,7 +874,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "nushell starship zoxide jq",
 			Brew:   "nushell carapace zoxide atuin jq bash starship",
-			Arch:   "nushell carapace zoxide atuin jq bash starship",
+			Arch:   "nushell zoxide atuin jq bash starship",
 			Fedora: "nushell carapace zoxide atuin jq bash starship",
 			Debian: "nushell zoxide jq bash starship",
 		}, func(line string) {
@@ -1195,11 +1241,12 @@ func stepInstallNvim(m *Model) error {
 func stepCleanup(m *Model) error {
 	stepID := "cleanup"
 	SendLog(stepID, "Removing temporary files...")
-	// Only remove the cloned repo - no sudo needed
-	result := system.Run("rm -rf Gentleman.Dots", nil)
-	if result.Error != nil {
-		// Non-critical error, just log it
-		SendLog(stepID, "Warning: Could not remove temporary directory")
+	// Only remove the cloned repo - no sudo needed. Deletion is fail-closed
+	// (see removeRepoDirIfSafe); cleanup keeps its existing non-critical
+	// semantics: a refusal warns and leaves the directory in place, it
+	// never fails the install.
+	if err := removeRepoDirIfSafe(stepID, "Gentleman.Dots"); err != nil {
+		SendLog(stepID, fmt.Sprintf("Warning: Could not remove temporary directory: %v", err))
 		return nil
 	}
 	SendLog(stepID, "✓ Cleanup complete")
