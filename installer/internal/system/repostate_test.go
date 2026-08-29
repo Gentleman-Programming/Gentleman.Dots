@@ -36,7 +36,7 @@ func TestInspectRepoDir_Absent(t *testing.T) {
 	}
 }
 
-func TestInspectRepoDir_CleanCheckout(t *testing.T) {
+func TestInspectRepoDir_LocalOnlyRepoIsNotDeletable(t *testing.T) {
 	dir := t.TempDir()
 	initGitRepo(t, dir)
 
@@ -47,10 +47,13 @@ func TestInspectRepoDir_CleanCheckout(t *testing.T) {
 	runGit(t, dir, "add", "file.txt")
 	runGit(t, dir, "commit", "-m", "initial commit")
 
+	// This repository has no remote, so its commit exists nowhere else.
+	// A clean working tree is not proof that deleting it loses nothing:
+	// treating this as deletable is the defect that destroyed real work.
 	got := InspectRepoDir(dir)
 
-	if got != RepoCleanCheckout {
-		t.Fatalf("InspectRepoDir(%q) = %v, want RepoCleanCheckout", dir, got)
+	if got != RepoUnpublishedWork {
+		t.Fatalf("InspectRepoDir(%q) = %v, want RepoUnpublishedWork", dir, got)
 	}
 }
 

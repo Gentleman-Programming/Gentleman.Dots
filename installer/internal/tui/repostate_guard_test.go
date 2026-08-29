@@ -30,8 +30,15 @@ func runGitCmd(t *testing.T, dir string, args ...string) {
 	}
 }
 
+// cleanGitFixture builds a checkout that is genuinely safe to delete: the
+// working tree is clean AND every commit is published to a remote. A clean
+// working tree alone is not enough - a repository with no remote holds
+// commits that exist nowhere else, which the guard must refuse to remove.
 func cleanGitFixture(t *testing.T, dir string) {
 	t.Helper()
+	origin := dir + ".origin.git"
+	runGitCmd(t, filepath.Dir(dir), "init", "--bare", "-b", "main", origin)
+
 	initGitFixture(t, dir)
 	filePath := filepath.Join(dir, "file.txt")
 	if err := os.WriteFile(filePath, []byte("hello"), 0o644); err != nil {
@@ -39,6 +46,8 @@ func cleanGitFixture(t *testing.T, dir string) {
 	}
 	runGitCmd(t, dir, "add", "file.txt")
 	runGitCmd(t, dir, "commit", "-m", "initial commit")
+	runGitCmd(t, dir, "remote", "add", "origin", origin)
+	runGitCmd(t, dir, "push", "-u", "origin", "HEAD:main")
 }
 
 func dirtyGitFixture(t *testing.T, dir string) {

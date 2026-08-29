@@ -72,8 +72,9 @@ func removeRepoDirIfSafe(stepID, path string) error {
 		return nil
 	default:
 		return fmt.Errorf(
-			"refusing to remove %s: it has uncommitted changes, untracked files, is not a git repository, or its git status could not be determined. "+
-				"Move or rename the directory, or run the installer from a different working directory, then retry",
+			"refusing to remove %s: it holds work that would be lost - uncommitted changes, untracked files, commits or stashes that are on no remote - "+
+				"or it is not a git repository, or its git status could not be determined. "+
+				"Push or move the work, rename the directory, or run the installer from a different working directory, then retry",
 			absPath,
 		)
 	}

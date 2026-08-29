@@ -24,10 +24,47 @@ Before removing an existing `Gentleman.Dots` directory at either `stepCloneRepo`
 - THEN the installer MUST refuse to delete it
 - AND MUST abort the step with a message instructing the user to move, rename, or commit the directory
 
+### Requirement: A clean working tree MUST NOT by itself authorise deletion
+
+`git status --porcelain` being empty proves only that nothing is uncommitted. It does not prove that nothing would be lost. A checkout may hold commits that exist on no remote, or stashes, both of which survive a clean status and are destroyed by removal. The installer MUST additionally establish that the repository's work is published before deleting it, and MUST fail closed when publication cannot be established.
+
+Deletion is permitted only when ALL of the following hold: the working tree is clean, there are no untracked files, there are no stash entries, and `HEAD` is contained by at least one remote-tracking branch. A repository with no remotes, or a branch whose publication cannot be determined, MUST be refused.
+
+#### Scenario: Clean checkout holding an unpushed commit
+
+- GIVEN a `Gentleman.Dots` directory whose working tree is clean
+- AND it holds at least one commit that is on no remote-tracking branch
+- WHEN the step attempts removal
+- THEN the installer MUST refuse to delete it
+- AND the message MUST name unpushed commits as work that would be lost
+
+#### Scenario: Clean checkout with no remote configured
+
+- GIVEN a `Gentleman.Dots` directory whose working tree is clean
+- AND the repository has no remotes
+- WHEN the step attempts removal
+- THEN the installer MUST refuse to delete it, because nothing in it can be shown to exist elsewhere
+
+#### Scenario: Clean checkout holding a stash
+
+- GIVEN a `Gentleman.Dots` directory whose working tree is clean
+- AND `git stash list` is non-empty
+- WHEN the step attempts removal
+- THEN the installer MUST refuse to delete it
+
+#### Scenario: Branch with no upstream whose HEAD is already published
+
+- GIVEN a `Gentleman.Dots` directory whose working tree is clean
+- AND the current branch has no upstream
+- AND `HEAD` is contained by a remote-tracking branch
+- WHEN the step attempts removal
+- THEN the installer MAY delete it, because no commit would be lost; the guard MUST NOT over-block this case
+
 #### Scenario: Directory exists and is a clean git repository
 
 - GIVEN a `Gentleman.Dots` directory exists at the relevant path
 - AND `git status --porcelain` reports no uncommitted changes and no untracked files
+- AND its work is published: no stash entries and `HEAD` contained by a remote-tracking branch
 - WHEN the step attempts removal
 - THEN the installer MUST proceed to delete the directory without prompting
 

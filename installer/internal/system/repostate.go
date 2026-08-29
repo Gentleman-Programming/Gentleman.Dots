@@ -27,6 +27,11 @@ const (
 	// RepoUnknown means the git status could not be determined for any
 	// reason (git binary missing, command error, unparseable output).
 	RepoUnknown
+	// RepoUnpublishedWork means the working tree is clean but the
+	// repository still holds work that exists nowhere else: commits that
+	// are on no remote, a branch whose publication cannot be proven, or a
+	// stash. A clean working tree is not proof that nothing would be lost.
+	RepoUnpublishedWork
 )
 
 // runGitStatus runs `git -C <dir> status --porcelain` and returns its raw
@@ -43,6 +48,43 @@ var runGitStatus = func(dir string) (stdout string, err error) {
 		return "", err
 	}
 	return string(out), nil
+}
+
+// runGitLines runs an arbitrary read-only git command in dir and returns its
+// raw stdout. Like runGitStatus it is a var-function seam for tests, and the
+// directory is passed as a discrete argument, never interpolated into a
+// shell string.
+var runGitLines = func(dir string, args ...string) (stdout string, err error) {
+	cmd := exec.Command("git", append([]string{"-C", dir}, args...)...)
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+}
+
+// hasUnpublishedWork reports whether a clean checkout still holds work that
+// deleting it would destroy. It fails closed: anything it cannot prove
+// published counts as unpublished.
+func hasUnpublishedWork(absPath string) (bool, error) {
+	// A stash is invisible to `git status --porcelain`.
+	stashes, err := runGitLines(absPath, "stash", "list")
+	if err != nil {
+		return true, err
+	}
+	if strings.TrimSpace(stashes) != "" {
+		return true, nil
+	}
+
+	// HEAD must be contained by at least one remote-tracking branch. This
+	// also covers a branch with no upstream and a repository with no
+	// remotes at all: both yield no containing remote branch, so both are
+	// treated as unpublished.
+	remotes, err := runGitLines(absPath, "branch", "--remotes", "--contains", "HEAD")
+	if err != nil {
+		return true, err
+	}
+	return strings.TrimSpace(remotes) == "", nil
 }
 
 // InspectRepoDir classifies the git status of path, resolving it to an
@@ -79,8 +121,18 @@ func InspectRepoDir(path string) RepoState {
 		return RepoUnknown
 	}
 
-	if strings.TrimSpace(stdout) == "" {
-		return RepoCleanCheckout
+	if strings.TrimSpace(stdout) != "" {
+		return RepoDirtyCheckout
 	}
-	return RepoDirtyCheckout
+
+	// The working tree is clean, which is NOT the same as "nothing would be
+	// lost": committed-but-unpushed work and stashes survive a clean status.
+	unpublished, err := hasUnpublishedWork(absPath)
+	if err != nil {
+		return RepoUnknown
+	}
+	if unpublished {
+		return RepoUnpublishedWork
+	}
+	return RepoCleanCheckout
 }
