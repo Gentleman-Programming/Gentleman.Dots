@@ -18,6 +18,19 @@ yellow = "#DEBA87"
 [ui]
 accent = "#6FA0AF"
 
+[ui.sound]
+# Play a short mp3 alert when an agent finishes or needs input in a background
+# workspace. Herdr ships no audio decoder: it shells out to an external mp3
+# player, trying `paplay`, `pw-play`, `ffplay`, `mpg123` and `mpv` in that order,
+# and fails silently when none of them is installed. Install one of them, for
+# example `pulseaudio-utils` (paplay) or `mpg123` on Debian/Ubuntu.
+enabled = true
+
+# Sound fires only for agents in a BACKGROUND workspace: an agent in the focused
+# workspace never alerts, by design. To test playback manually, run
+# `herdr notification show "test" --sound done`; if it stays silent, look for
+# `WARN herdr::sound` in ~/.config/herdr/herdr-client.log.
+
 [keys]
 # Match tmux/Zellij-style prefix muscle memory.
 prefix = "ctrl+a"
