@@ -698,6 +698,69 @@ func installHerdrBinary(m *Model, stepID string) error {
 	return os.Chmod(dest, 0755)
 }
 
+// installCarapaceBinary installs the carapace completion engine as a static
+// release binary. Carapace is not available in the Arch/CachyOS official
+// repositories (AUR-only), so it is downloaded directly from GitHub releases.
+func installCarapaceBinary(stepID string) error {
+	const version = "v1.7.3"
+
+	assetArch := ""
+	expectedSHA256 := ""
+	switch runtime.GOARCH {
+	case "amd64":
+		assetArch = "amd64"
+		expectedSHA256 = "35ab52bfe7bdd8296d90c3687660bde80497599badde840ab615d2f421f5f053"
+	case "arm64":
+		assetArch = "arm64"
+		expectedSHA256 = "b2456cb09d77004db87de2567d6d7588a61ceb4724522c463e2b1c1f87b4d4b9"
+	default:
+		return fmt.Errorf("unsupported carapace architecture: %s (use the AUR package on 32-bit systems)", runtime.GOARCH)
+	}
+
+	homeDir := os.Getenv("HOME")
+	binDir := filepath.Join(homeDir, ".local", "bin")
+	if err := system.EnsureDir(binDir); err != nil {
+		return err
+	}
+
+	tarball := fmt.Sprintf("carapace-bin_%s_linux_%s.tar.gz", strings.TrimPrefix(version, "v"), assetArch)
+	url := fmt.Sprintf("https://github.com/carapace-sh/carapace-bin/releases/download/%s/%s", version, tarball)
+	tmp, err := os.CreateTemp("", "carapace-*.tar.gz")
+	if err != nil {
+		return err
+	}
+	tmpPath := tmp.Name()
+	tmp.Close()
+	defer os.Remove(tmpPath)
+
+	SendLog(stepID, "Downloading carapace release binary...")
+	result := system.RunWithLogs(fmt.Sprintf("curl -fsSL %q -o %q", url, tmpPath), nil, func(line string) {
+		SendLog(stepID, line)
+	})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	data, err := os.ReadFile(tmpPath)
+	if err != nil {
+		return err
+	}
+	actualSHA256 := sha256.Sum256(data)
+	if hex.EncodeToString(actualSHA256[:]) != expectedSHA256 {
+		return fmt.Errorf("carapace checksum mismatch for %s", url)
+	}
+
+	dest := filepath.Join(binDir, "carapace")
+	result = system.RunWithLogs(fmt.Sprintf("tar -xzf %q -C %q carapace", tmpPath, binDir), nil, func(line string) {
+		SendLog(stepID, line)
+	})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return os.Chmod(dest, 0755)
+}
+
 func stepInstallShell(m *Model) error {
 	homeDir := os.Getenv("HOME")
 	repoDir := "Gentleman.Dots"
@@ -711,13 +774,23 @@ func stepInstallShell(m *Model) error {
 	system.EnsureDir(filepath.Join(homeDir, ".cache/carapace"))
 	system.EnsureDir(filepath.Join(homeDir, ".local/share/atuin"))
 
+	// Carapace is not available in the Arch/CachyOS official repositories,
+	// so install the static release binary instead of relying on pacman.
+	if m.SystemInfo.OS == system.OSArch && !system.CommandExists("carapace") {
+		SendLog(stepID, "Installing carapace (static release binary)...")
+		if err := installCarapaceBinary(stepID); err != nil {
+			return wrapStepError("shell", "Install shell dependencies",
+				"Failed to install carapace", err)
+		}
+	}
+
 	switch shell {
 	case "fish":
 		SendLog(stepID, "Installing Fish shell and plugins...")
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "fish starship zoxide",
 			Brew:   "fish carapace zoxide atuin starship",
-			Arch:   "fish carapace zoxide atuin starship",
+			Arch:   "fish zoxide atuin starship",
 			Fedora: "fish carapace zoxide atuin starship",
 			Debian: "fish zoxide starship",
 		}, func(line string) {
@@ -772,7 +845,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "zsh starship zoxide",
 			Brew:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete powerlevel10k",
-			Arch:   "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
+			Arch:   "zsh zoxide atuin zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete zsh-theme-powerlevel10k",
 			Fedora: "zsh carapace zoxide atuin zsh-autosuggestions zsh-syntax-highlighting starship",
 			Debian: "zsh zoxide starship zsh-autosuggestions zsh-syntax-highlighting",
 		}, func(line string) {
@@ -828,7 +901,7 @@ func stepInstallShell(m *Model) error {
 		result := installPlatformPackages(m, stepID, platformPackages{
 			Termux: "nushell starship zoxide jq",
 			Brew:   "nushell carapace zoxide atuin jq bash starship",
-			Arch:   "nushell carapace zoxide atuin jq bash starship",
+			Arch:   "nushell zoxide atuin jq bash starship",
 			Fedora: "nushell carapace zoxide atuin jq bash starship",
 			Debian: "nushell zoxide jq bash starship",
 		}, func(line string) {
