@@ -848,7 +848,8 @@ func fishMultiplexerBlock(wm string) []string {
 		return []string{
 			"# Start selected terminal multiplexer",
 			"if status is-interactive; and command -q tmux; and not set -q TMUX; and not set -q ZELLIJ; and not set -q HERDR_ENV",
-			"    tmux new-session -A -s main",
+			"    # Create a unique session per terminal window (-A would attach to an existing session instead, mirroring it across terminals)",
+			"    tmux new-session -s \"term-$(date +%s)-$(random)\"",
 			"end",
 		}
 	}
