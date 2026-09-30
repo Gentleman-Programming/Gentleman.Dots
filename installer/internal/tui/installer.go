@@ -698,6 +698,12 @@ func installHerdrBinary(m *Model, stepID string) error {
 	return os.Chmod(dest, 0755)
 }
 
+// shouldInstallOhMyZsh reports whether Oh My Zsh still needs to be installed
+// under homeDir. An existing installation is left to its own update cycle.
+func shouldInstallOhMyZsh(homeDir string) bool {
+	return !system.PathExists(filepath.Join(homeDir, ".oh-my-zsh"))
+}
+
 func stepInstallShell(m *Model) error {
 	homeDir := os.Getenv("HOME")
 	repoDir := "Gentleman.Dots"
@@ -801,10 +807,25 @@ func stepInstallShell(m *Model) error {
 				"Failed to copy Powerlevel10k configuration",
 				err)
 		}
-		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZsh", ".oh-my-zsh"), filepath.Join(homeDir, ".oh-my-zsh")); err != nil {
-			return wrapStepError("shell", "Install Zsh",
-				"Failed to copy Oh-My-Zsh directory",
-				err)
+		// Oh My Zsh owns its own Git checkout and updates itself. Writing into an
+		// existing installation dirties its tracked files and makes `omz update`
+		// fail with rebase conflicts, so only install it when it is missing.
+		if shouldInstallOhMyZsh(homeDir) {
+			SendLog(stepID, "Installing Oh My Zsh...")
+			// KEEP_ZSHRC keeps the .zshrc copied above; RUNZSH/CHSH keep the
+			// installer non-interactive. See ohmyzsh tools/install.sh.
+			result := system.RunWithLogs(fmt.Sprintf(
+				`ZSH=%q RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`,
+				filepath.Join(homeDir, ".oh-my-zsh")), nil, func(line string) {
+				SendLog(stepID, line)
+			})
+			if result.Error != nil {
+				return wrapStepError("shell", "Install Zsh",
+					"Failed to install Oh My Zsh",
+					result.Error)
+			}
+		} else {
+			SendLog(stepID, "✓ Oh My Zsh already installed, leaving it untouched")
 		}
 		// Termux: Add zsh to $PREFIX/etc/shells so tmux doesn't complain
 		if m.SystemInfo.IsTermux {

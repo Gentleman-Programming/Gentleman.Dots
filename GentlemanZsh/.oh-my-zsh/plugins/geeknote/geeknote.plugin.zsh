@@ -1,2 +1,0 @@
-#Alias
-alias gn='geeknote'
