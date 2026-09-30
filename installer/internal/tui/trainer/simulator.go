@@ -3,6 +3,7 @@ package trainer
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // SimulatedPosition represents the cursor position after simulating vim motions
@@ -449,12 +450,26 @@ func moveWordForward(pos SimulatedPosition, code []string, bigWord bool) Simulat
 	if bigWord {
 		// For WORD motion: only spaces separate WORDs
 		// Skip current WORD (non-space chars)
-		for col < len(line) && line[col] != ' ' && line[col] != '\t' {
-			col++
+		for col < len(line) {
+			r, size, ok := runeAtBytePos(line, col)
+			if !ok {
+				break
+			}
+			if r == ' ' || r == '\t' {
+				break
+			}
+			col += size
 		}
 		// Skip whitespace
-		for col < len(line) && (line[col] == ' ' || line[col] == '\t') {
-			col++
+		for col < len(line) {
+			r, size, ok := runeAtBytePos(line, col)
+			if !ok {
+				break
+			}
+			if r != ' ' && r != '\t' {
+				break
+			}
+			col += size
 		}
 	} else {
 		// For word motion: words are alphanumeric OR punctuation sequences
@@ -463,23 +478,47 @@ func moveWordForward(pos SimulatedPosition, code []string, bigWord bool) Simulat
 		// - A sequence of non-word, non-space characters (punctuation)
 
 		if col < len(line) {
-			currentChar := line[col]
+			r, _, ok := runeAtBytePos(line, col)
+			if ok {
+				isWord := isWordChar(r, false)
 
-			if isWordChar(currentChar, false) {
-				// On a word char - skip the rest of this word
-				for col < len(line) && isWordChar(line[col], false) {
-					col++
+				if isWord {
+					// On a word char - skip the rest of this word
+					for col < len(line) {
+						rr, sz, ok := runeAtBytePos(line, col)
+						if !ok {
+							break
+						}
+						if !isWordChar(rr, false) {
+							break
+						}
+						col += sz
+					}
+				} else if r != ' ' && r != '\t' {
+					// On punctuation - skip the rest of this punctuation sequence
+					for col < len(line) {
+						rr, sz, ok := runeAtBytePos(line, col)
+						if !ok {
+							break
+						}
+						if isWordChar(rr, false) || rr == ' ' || rr == '\t' {
+							break
+						}
+						col += sz
+					}
 				}
-			} else if currentChar != ' ' && currentChar != '\t' {
-				// On punctuation - skip the rest of this punctuation sequence
-				for col < len(line) && !isWordChar(line[col], false) && line[col] != ' ' && line[col] != '\t' {
-					col++
-				}
-			}
 
-			// Now skip whitespace to get to the next word/punctuation
-			for col < len(line) && (line[col] == ' ' || line[col] == '\t') {
-				col++
+				// Now skip whitespace to get to the next word/punctuation
+				for col < len(line) {
+					rr, sz, ok := runeAtBytePos(line, col)
+					if !ok {
+						break
+					}
+					if rr != ' ' && rr != '\t' {
+						break
+					}
+					col += sz
+				}
 			}
 		}
 	}
@@ -490,8 +529,15 @@ func moveWordForward(pos SimulatedPosition, code []string, bigWord bool) Simulat
 		pos.Col = 0
 		// Skip leading spaces on new line
 		line = code[pos.Line]
-		for pos.Col < len(line) && line[pos.Col] == ' ' {
-			pos.Col++
+		for pos.Col < len(line) {
+			r, size, ok := runeAtBytePos(line, pos.Col)
+			if !ok {
+				break
+			}
+			if r != ' ' && r != '\t' {
+				break
+			}
+			pos.Col += size
 		}
 		return pos
 	}
@@ -507,19 +553,49 @@ func moveEndOfWord(pos SimulatedPosition, code []string, bigWord bool) Simulated
 	line := code[pos.Line]
 	col := pos.Col
 
-	// Move at least one character
-	if col < len(line)-1 {
-		col++
+	// Move at least one rune forward
+	if col < len(line) {
+		_, sz, ok := runeAtBytePos(line, col)
+		if ok && sz > 0 {
+			col += sz
+		} else {
+			col++
+		}
 	}
 
-	// Skip spaces
-	for col < len(line) && line[col] == ' ' {
-		col++
+	// Skip whitespace
+	for col < len(line) {
+		r, sz, ok := runeAtBytePos(line, col)
+		if !ok || (r != ' ' && r != '\t') {
+			break
+		}
+		col += sz
 	}
 
 	// Skip to end of word
-	for col < len(line)-1 && isWordChar(line[col+1], bigWord) {
-		col++
+	for col < len(line) {
+		r, sz, ok := runeAtBytePos(line, col)
+		if !ok {
+			break
+		}
+		if !isWordChar(r, bigWord) {
+			break
+		}
+		col += sz
+	}
+
+	// Position at the last rune of word (one back from end boundary)
+	if col > 0 {
+		prevR, prevSz, ok := runeAtBytePos(line, col-1)
+		if ok && isWordChar(prevR, bigWord) {
+			// Leave col at last word rune
+		} else {
+			// Move back to previous word char if at boundary
+			col -= prevSz
+			if col < 0 {
+				col = 0
+			}
+		}
 	}
 
 	pos.Col = col
@@ -550,15 +626,24 @@ func moveWordBackward(pos SimulatedPosition, code []string, bigWord bool) Simula
 	}
 
 	// Determine what type of character we're on
-	if isWordChar(line[col], bigWord) {
+	r, _, ok := runeAtBytePos(line, col)
+	if ok && isWordChar(r, bigWord) {
 		// On a word char - skip word chars backwards to find start of word
-		for col > 0 && isWordChar(line[col-1], bigWord) {
-			col--
+		for col > 0 {
+			rr, sz, ok2 := runeAtBytePos(line, col-1)
+			if !ok2 || !isWordChar(rr, bigWord) {
+				break
+			}
+			col -= sz
 		}
-	} else if line[col] != ' ' {
+	} else if r != ' ' && r != '\t' {
 		// On punctuation - skip punctuation backwards
-		for col > 0 && !isWordChar(line[col-1], bigWord) && line[col-1] != ' ' {
-			col--
+		for col > 0 {
+			rr, sz, ok2 := runeAtBytePos(line, col-1)
+			if !ok2 || isWordChar(rr, bigWord) || rr == ' ' || rr == '\t' {
+				break
+			}
+			col -= sz
 		}
 	}
 
@@ -681,14 +766,52 @@ func findChar(pos SimulatedPosition, code []string, char byte, forward bool, inc
 	return pos
 }
 
-func isWordChar(ch byte, bigWord bool) bool {
+func isWordChar(r rune, bigWord bool) bool {
 	if bigWord {
-		// WORD: only spaces separate words
-		return ch != ' ' && ch != '\t'
+		// WORD: only spaces separate words (also consider control characters)
+		return r != ' ' && r != '\t' && !unicode.IsControl(r)
 	}
-	// word: letters, digits, underscore
-	r := rune(ch)
-	return unicode.IsLetter(r) || unicode.IsDigit(r) || ch == '_'
+	// word: letters, digits, underscore, and emoji/symbols (Unicode)
+	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || unicode.Is(unicode.So, r) || isEmojiRune(r)
+}
+
+// runeAtBytePos decodes the rune at the given byte position in line.
+// Returns (rune, byteSize, ok). If bytePos is out of range, returns (0, 0, false).
+func runeAtBytePos(line string, bytePos int) (rune, int, bool) {
+	if bytePos < 0 || bytePos >= len(line) {
+		return 0, 0, false
+	}
+	r, size := utf8.DecodeRuneInString(line[bytePos:])
+	if r == utf8.RuneError && size == 1 {
+		// Invalid UTF-8 sequence: skip one byte to avoid infinite loop
+		return r, 1, true
+	}
+	return r, size, true
+}
+
+// isEmojiRune returns true if r is a Unicode emoji symbol.
+// Uses Unicode emoji code point ranges and the Symbol/Other (So) general category.
+func isEmojiRune(r rune) bool {
+	if unicode.Is(unicode.So, r) {
+		return true
+	}
+	switch {
+	case r >= 0x1F300 && r <= 0x1F5FF: // Miscellaneous Symbols and Pictographs
+		return true
+	case r >= 0x1F600 && r <= 0x1F64F: // Emoticons
+		return true
+	case r >= 0x1F680 && r <= 0x1F6FF: // Transport and Map Symbols
+		return true
+	case r >= 0x1F900 && r <= 0x1F9FF: // Supplemental Symbols and Pictographs
+		return true
+	case r >= 0x1FA70 && r <= 0x1FAFF: // Symbols and Pictographs Extended-A
+		return true
+	case r >= 0x2600 && r <= 0x26FF: // Miscellaneous Symbols
+		return true
+	case r >= 0x2700 && r <= 0x27BF: // Dingbats
+		return true
+	}
+	return false
 }
 
 // IsValidInput checks if the input so far could be a valid vim motion
@@ -1081,7 +1204,11 @@ func isWordCharForTextObj(ch byte, bigWord bool) bool {
 	if bigWord {
 		return ch != ' ' && ch != '\t'
 	}
-	r := rune(ch)
+	// Decode byte to full rune for multi-byte UTF-8 chars
+	r, _, ok := runeAtBytePos(string(ch)+"\x00", 0)
+	if !ok {
+		r = rune(ch)
+	}
 	return unicode.IsLetter(r) || unicode.IsDigit(r) || ch == '_'
 }
 
