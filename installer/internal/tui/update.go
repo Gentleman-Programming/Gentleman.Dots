@@ -91,7 +91,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tickCmd()
 
 	case installStartMsg:
-		// Start the installation process
+		// Start the installation process. Wire system.Notify so that
+		// skip warnings (e.g. non-regular files skipped by CopyDir)
+		// are logged live and aggregated for the completion summary.
+		resetSkippedPaths()
+		system.Notify = InstallNotify
 		return m, m.runNextStep()
 
 	case stepProgressMsg:
@@ -133,6 +137,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case installCompleteMsg:
 		m.TotalTime = msg.totalTime
+		m.SkippedPaths = collectSkippedPaths()
 		m.Screen = ScreenComplete
 		return m, nil
 

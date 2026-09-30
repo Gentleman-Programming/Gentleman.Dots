@@ -1093,6 +1093,17 @@ func (m Model) renderComplete() string {
 		s.WriteString("\n")
 	}
 
+	// Skipped non-regular files (sockets, FIFOs, devices) encountered during backup
+	if len(m.SkippedPaths) > 0 {
+		s.WriteString("\n")
+		s.WriteString(TitleStyle.Render("Skipped Files"))
+		s.WriteString("\n")
+		for _, skipped := range m.SkippedPaths {
+			s.WriteString(WarningStyle.Render("  " + skipped))
+			s.WriteString("\n")
+		}
+	}
+
 	// Shell change instructions
 	shell := m.Choices.Shell
 	shellCmd := shell
