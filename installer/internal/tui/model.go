@@ -135,6 +135,8 @@ type Model struct {
 	AvailableBackups []system.BackupInfo // Available backups for restore
 	SelectedBackup   int                 // Selected backup index
 	BackupDir        string              // Last backup directory created
+	// Atomic/immutable distro: packages the user should install manually
+	ManualPackages []string
 	// Vim Trainer mode
 	TrainerStats       *trainer.UserStats   // User's training stats
 	TrainerGameState   *trainer.GameState   // Current game session state
@@ -510,7 +512,8 @@ func (m *Model) SetupInstallSteps() {
 	// Check both Choices.OS and SystemInfo for Termux detection (redundancy)
 	// Must run BEFORE clone and homebrew on Linux so git is available for clone
 	isTermux := m.Choices.OS == "termux" || m.SystemInfo.IsTermux
-	if m.Choices.OS == "linux" && !isTermux {
+	isAtomic := m.SystemInfo.IsAtomic
+	if m.Choices.OS == "linux" && !isTermux && !isAtomic {
 		m.Steps = append(m.Steps, InstallStep{
 			ID:          "deps",
 			Name:        "Install Dependencies",
@@ -525,6 +528,14 @@ func (m *Model) SetupInstallSteps() {
 			Description: "Base packages (pkg)",
 			Status:      StatusPending,
 			Interactive: false, // Termux doesn't need sudo
+		})
+	} else if isAtomic {
+		m.Steps = append(m.Steps, InstallStep{
+			ID:          "deps",
+			Name:        "Install Dependencies",
+			Description: "Base packages (brew) on atomic distro",
+			Status:      StatusPending,
+			Interactive: false, // Brew doesn't need sudo
 		})
 	} else if m.Choices.OS == "mac" && !m.SystemInfo.HasXcode {
 		m.Steps = append(m.Steps, InstallStep{
@@ -544,15 +555,18 @@ func (m *Model) SetupInstallSteps() {
 	})
 
 	// Homebrew (interactive - first install needs password)
-	// Skip Termux and native package manager Linux distributions.
-	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux && m.SystemInfo.OS != system.OSArch && m.SystemInfo.OS != system.OSFedora {
-		m.Steps = append(m.Steps, InstallStep{
-			ID:          "homebrew",
-			Name:        "Install Homebrew",
-			Description: "Package manager",
-			Status:      StatusPending,
-			Interactive: true,
-		})
+	// Skip Termux. On atomic distros, always try brew (it works in userspace).
+	// On traditional Fedora/Arch, brew is optional and not the main path.
+	if !m.SystemInfo.HasBrew && !m.SystemInfo.IsTermux {
+		if m.SystemInfo.IsAtomic || (m.SystemInfo.OS != system.OSArch && m.SystemInfo.OS != system.OSFedora) {
+			m.Steps = append(m.Steps, InstallStep{
+				ID:          "homebrew",
+				Name:        "Install Homebrew",
+				Description: "Package manager",
+				Status:      StatusPending,
+				Interactive: true,
+			})
+		}
 	}
 
 	// Terminal
