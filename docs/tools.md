@@ -19,6 +19,15 @@ Detailed overview of all tools configured by Gentleman.Dots.
 | **Fish** | User-friendly, great defaults, no config needed |
 | **Zsh** | Highly customizable, POSIX-compatible, Powerlevel10k |
 
+Fish's managed `gentleman` and `gentleman-cute` profiles also export listing
+colors when loaded at startup or through `fish-theme gentleman` /
+`fish-theme gentleman-cute`. GNU `ls` uses `LS_COLORS` with the profile's RGB
+palette; BSD/macOS `ls` uses `LSCOLORS` with ANSI approximations from the terminal
+palette. Cute directories use rose; Gentleman directories use cyan. This does
+not replace `ls`, change its options, or force colors when disabled. Apply the
+Home Manager configuration before reloading the installed profile; repository
+edits alone do not update an existing shell.
+
 ## Multiplexers
 
 | Tool | Description |

@@ -42,5 +42,9 @@ set -g fish_pager_color_description --dim $muted
 set -g fish_pager_color_selected_background --background=$selection
 set -g fish_pager_color_secondary_background --background=$surface
 
+# File listing colors: GNU ls uses RGB; BSD/macOS ls uses ANSI approximations.
+set -gx LS_COLORS 'di=38;2;240;149;200:ln=38;2;169;199;238:ex=38;2;180;231;199:pi=38;2;224;194;122:so=38;2;201;106;162:bd=38;2;242;184;109:cd=38;2;242;184;109:or=38;2;255;113;143:mi=38;2;255;113;143'
+set -gx LSCOLORS 'FxExfxdxcxdxdxabagacfc'
+
 # fzf colors.
 set -gx FZF_DEFAULT_OPTS "--color=fg:$text,bg:-1,gutter:-1,hl:$accent,fg+:$text,bg+:$selection,hl+:$active_rose,info:$muted,prompt:$accent,pointer:$active_rose,marker:$mint,spinner:$deep_rose,header:$soft_rose,border:$selection,separator:$selection,label:$muted"
