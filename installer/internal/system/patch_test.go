@@ -249,9 +249,11 @@ alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 			installNvim: true,
 			wantContain: []string{
 				"command -q tmux",
+				"tmux new-session -s \"term-$(date +%s)-$(random)\"",
+			},
+			wantNotContain: []string{
 				"tmux new-session -A -s main",
 			},
-			wantNotContain: []string{},
 		},
 	}
 
