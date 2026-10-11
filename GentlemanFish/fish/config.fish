@@ -79,9 +79,9 @@ set -gx VISUAL nvim
 
 ## alias
 if test (uname) = Darwin
-    alias ls='ls --color=auto'
+    alias ls='ls -G'
 else
-    alias ls='gls --color=auto'
+    alias ls='ls --color=auto'
 end
 
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
@@ -113,6 +113,10 @@ set -g fish_color_search_match --background=$selection
 set -g fish_color_operator $green
 set -g fish_color_escape $pink
 set -g fish_color_autosuggestion $comment
+
+# File listing colors: GNU ls uses RGB; BSD/macOS ls uses ANSI approximations.
+set -gx LS_COLORS 'di=38;2;122;168;159:ln=38;2;255;141;215:ex=38;2;183;204;133:pi=38;2;255;224;102:so=38;2;163;181;214:bd=38;2;222;186;135:cd=38;2;222;186;135:or=38;2;203;124;148:mi=38;2;203;124;148'
+set -gx LSCOLORS 'gxfxexdxcxdxdxabagacgc'
 
 # Completion Pager Colors
 set -g fish_pager_color_progress $comment
