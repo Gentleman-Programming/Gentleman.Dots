@@ -107,6 +107,27 @@ eval "$(%s/bin/brew shellenv)"
 
 // getDepsScript returns script to install dependencies on Linux (needs sudo)
 func getDepsScript(m *Model) (string, error) {
+	// Atomic distro: skip system deps, use brew if available
+	if m.SystemInfo.IsAtomic {
+		if m.SystemInfo.HasBrew {
+			script := `#!/bin/sh
+set -e
+echo ""
+echo "🌀 Atomic distro detected — installing deps via Homebrew..."
+echo ""
+brew install git curl wget unzip 2>/dev/null || echo "Some packages may already be installed"
+echo ""
+echo "✅ Dependencies ready!"
+echo ""
+echo "Press Enter to continue..."
+read dummy
+`
+			return script, nil
+		}
+		// No brew, just skip
+		return "", nil
+	}
+
 	var script string
 
 	if m.SystemInfo.OS == system.OSArch {
@@ -172,6 +193,57 @@ func getTerminalScript(m *Model) (string, error) {
 	terminal := m.Choices.Terminal
 	homeDir := os.Getenv("HOME")
 
+	// Atomic distro: skip sudo, show manual instructions, copy config
+	if m.SystemInfo.IsAtomic {
+		if system.CommandExists(terminal) {
+			return "", nil // Already installed, just copy config below
+		}
+
+		var manualCmd string
+		switch terminal {
+		case "wezterm":
+			if m.SystemInfo.HasFlatpak {
+				manualCmd = `echo "📦 Installing WezTerm via Flatpak..."
+flatpak install -y flathub org.wezfurlong.wezterm 2>/dev/null || echo "ℹ  Run manually: flatpak install flathub org.wezfurlong.wezterm"`
+			} else {
+				manualCmd = `echo "ℹ  Install WezTerm via: flatpak install flathub org.wezfurlong.wezterm"`
+			}
+		case "ghostty":
+			manualCmd = `echo "📦 Installing Ghostty via rpm-ostree..."
+if command -v rpm-ostree &> /dev/null; then
+    rpm-ostree install ghostty 2>/dev/null && echo "✓ Ghostty installed (reboot required)" || echo "ℹ  Run manually: rpm-ostree install ghostty"
+else
+    echo "ℹ  Install Ghostty via: brew install ghostty  OR  rpm-ostree install ghostty"
+fi`
+		case "kitty":
+			manualCmd = `echo "📦 Installing Kitty via official installer..."
+curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh
+echo "✓ Kitty installed to ~/.local/kitty.app/"`
+		case "alacritty":
+			manualCmd = `echo "ℹ  Install Alacritty via: brew install alacritty  OR  rpm-ostree install alacritty"`
+		}
+
+		configCmd := getTerminalConfigCmd(terminal, homeDir)
+
+		script := fmt.Sprintf(`#!/bin/sh
+set -e
+echo ""
+echo "🖥️  Installing %s on atomic distro..."
+echo ""
+%s
+echo ""
+echo "📝 Copying %s configuration..."
+%s
+echo ""
+echo "✅ %s configured!"
+echo ""
+echo "Press Enter to continue..."
+read dummy
+`, terminal, manualCmd, terminal, configCmd, terminal)
+
+		return script, nil
+	}
+
 	var installCmd string
 	var configCmd string
 
@@ -216,8 +288,7 @@ cd -
 
 echo "✓ Alacritty built and installed from source"`
 		}
-		configCmd = fmt.Sprintf(`mkdir -p "%s/.config/alacritty"
-cp "Gentleman.Dots/alacritty.toml" "%s/.config/alacritty/alacritty.toml"`, homeDir, homeDir)
+		configCmd = getTerminalConfigCmd(terminal, homeDir)
 
 	case "wezterm":
 		if system.CommandExists("wezterm") {
@@ -231,8 +302,7 @@ sudo dnf install -y wezterm`
 			// Debian uses brew, not interactive
 			return "", nil
 		}
-		configCmd = fmt.Sprintf(`mkdir -p "%s/.config/wezterm"
-cp "Gentleman.Dots/.wezterm.lua" "%s/.config/wezterm/wezterm.lua"`, homeDir, homeDir)
+		configCmd = getTerminalConfigCmd(terminal, homeDir)
 
 	case "ghostty":
 		if system.CommandExists("ghostty") {
@@ -246,8 +316,7 @@ sudo dnf install -y ghostty`
 			// Debian uses install script
 			installCmd = `curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh | bash`
 		}
-		configCmd = fmt.Sprintf(`mkdir -p "%s/.config/ghostty"
-cp -r Gentleman.Dots/GentlemanGhostty/* "%s/.config/ghostty/"`, homeDir, homeDir)
+		configCmd = getTerminalConfigCmd(terminal, homeDir)
 
 	default:
 		return "", nil
@@ -273,6 +342,26 @@ read dummy
 	return script, nil
 }
 
+// getTerminalConfigCmd returns the shell commands to copy terminal config files
+func getTerminalConfigCmd(terminal, homeDir string) string {
+	switch terminal {
+	case "alacritty":
+		return fmt.Sprintf(`mkdir -p "%s/.config/alacritty"
+cp "Gentleman.Dots/alacritty.toml" "%s/.config/alacritty/alacritty.toml"`, homeDir, homeDir)
+	case "wezterm":
+		return fmt.Sprintf(`mkdir -p "%s/.config/wezterm"
+cp "Gentleman.Dots/.wezterm.lua" "%s/.config/wezterm/wezterm.lua"`, homeDir, homeDir)
+	case "kitty":
+		return fmt.Sprintf(`mkdir -p "%s/.config/kitty"
+cp -r Gentleman.Dots/GentlemanKitty/* "%s/.config/kitty/"`, homeDir, homeDir)
+	case "ghostty":
+		return fmt.Sprintf(`mkdir -p "%s/.config/ghostty"
+cp -r Gentleman.Dots/GentlemanGhostty/* "%s/.config/ghostty/"`, homeDir, homeDir)
+	default:
+		return ""
+	}
+}
+
 // getSetShellScript returns script to set the default shell (needs chsh password)
 func getSetShellScript(m *Model) (string, error) {
 	shell := m.Choices.Shell
@@ -292,6 +381,24 @@ func getSetShellScript(m *Model) (string, error) {
 	// Termux: no chsh, we modify ~/.bashrc to start the shell
 	if m.SystemInfo.IsTermux {
 		return getSetShellScriptTermux(shellCmd)
+	}
+
+	// Atomic distro: /etc/shells is read-only, skip sudo
+	if m.SystemInfo.IsAtomic {
+		script := fmt.Sprintf(`#!/bin/sh
+set -e
+echo ""
+echo "🌀 Atomic distro detected — skipping shell change via /etc/shells"
+echo ""
+echo "ℹ  Set your default shell manually:"
+echo "   chsh -s $(which %s)"
+echo ""
+echo "   Or add 'exec %s' to your ~/.bashrc"
+echo ""
+echo "Press Enter to continue..."
+read dummy
+`, shellCmd, shellCmd)
+		return script, nil
 	}
 
 	brewPrefix := system.GetBrewPrefix()

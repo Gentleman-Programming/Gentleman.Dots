@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -140,8 +141,14 @@ func runNonInteractive(flags *cliFlags) error {
 		CreateBackup: flags.backup,
 	}
 
+	sysInfo := system.Detect()
+
 	fmt.Println("🚀 Gentleman.Dots Non-Interactive Installer")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Printf("  System:      %s\n", sysInfo.OSName)
+	if sysInfo.IsAtomic {
+		fmt.Printf("  Mode:        🌀 Atomic distro — using Homebrew, no sudo\n")
+	}
 	fmt.Printf("  Terminal:    %s\n", choices.Terminal)
 	fmt.Printf("  Shell:       %s\n", choices.Shell)
 	fmt.Printf("  Window Mgr:  %s\n", choices.WindowMgr)

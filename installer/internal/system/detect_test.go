@@ -2,6 +2,7 @@ package system
 
 import (
 	"os"
+	"os/exec"
 	"runtime"
 	"testing"
 )
@@ -56,7 +57,8 @@ func TestDetect(t *testing.T) {
 				t.Errorf("Expected OSName to be 'macOS', got '%s'", info.OSName)
 			}
 		case "linux":
-			validNames := []string{"Linux", "Arch Linux", "Debian/Ubuntu", "Fedora/RHEL", "Termux"}
+			validNames := []string{"Linux", "Arch Linux", "Debian/Ubuntu", "Fedora/RHEL", "Termux",
+				"Linux (Atomic)", "Arch Linux (Atomic)", "Debian/Ubuntu (Atomic)", "Fedora/RHEL (Atomic)"}
 			found := false
 			for _, name := range validNames {
 				if info.OSName == name {
@@ -260,6 +262,64 @@ func TestDetectTermuxFields(t *testing.T) {
 		if info.IsTermux {
 			t.Error("IsTermux should be false on non-Termux systems")
 		}
+	})
+}
+
+func TestCheckAtomic(t *testing.T) {
+	t.Run("should not panic", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("checkAtomic panicked: %v", r)
+			}
+		}()
+		_ = checkAtomic()
+	})
+
+	t.Run("detects atomic via ostree-booted", func(t *testing.T) {
+		if _, err := os.Stat("/run/ostree-booted"); err == nil {
+			if !checkAtomic() {
+				t.Error("checkAtomic should return true when /run/ostree-booted exists")
+			}
+		}
+	})
+
+	t.Run("detects atomic via rpm-ostree", func(t *testing.T) {
+		if _, err := exec.LookPath("rpm-ostree"); err == nil {
+			// Should already be detected, but check consistency
+			if !checkAtomic() {
+				t.Error("checkAtomic should return true when rpm-ostree is in PATH")
+			}
+		}
+	})
+}
+
+func TestCheckFlatpak(t *testing.T) {
+	t.Run("should not panic", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("checkFlatpak panicked: %v", r)
+			}
+		}()
+		_ = checkFlatpak()
+	})
+
+	t.Run("should detect flatpak if available", func(t *testing.T) {
+		result := checkFlatpak()
+		// Just verify it returns a boolean without panicking
+		if result {
+			t.Log("Flatpak is available on this system")
+		} else {
+			t.Log("Flatpak is not available on this system")
+		}
+	})
+}
+
+func TestSystemInfoAtomicFields(t *testing.T) {
+	t.Run("SystemInfo should have atomic fields", func(t *testing.T) {
+		info := Detect()
+		// Just verify the field exists and is initialized
+		_ = info.IsAtomic
+		_ = info.HasFlatpak
 	})
 }
 
