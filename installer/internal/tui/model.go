@@ -3,6 +3,8 @@ package tui
 import (
 	"fmt"
 	"os"
+	"strings"
+	"sync"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/tui/trainer"
@@ -135,6 +137,7 @@ type Model struct {
 	AvailableBackups []system.BackupInfo // Available backups for restore
 	SelectedBackup   int                 // Selected backup index
 	BackupDir        string              // Last backup directory created
+	SkippedPaths     []string            // Non-regular files skipped during this run (aggregated for the summary)
 	// Vim Trainer mode
 	TrainerStats       *trainer.UserStats   // User's training stats
 	TrainerGameState   *trainer.GameState   // Current game session state
@@ -181,6 +184,7 @@ func NewModel() Model {
 		AvailableBackups:        []system.BackupInfo{},
 		SelectedBackup:          0,
 		BackupDir:               "",
+		SkippedPaths:            []string{},
 		Program:                 nil, // Will be set after tea.Program is created
 		// Trainer initialization
 		TrainerStats:       nil, // Will be loaded when entering trainer
@@ -234,6 +238,50 @@ func SendLog(stepID string, log string) {
 // SendLogLine is an alias for SendLog for compatibility
 func (m *Model) SendLog(stepID string, log string) {
 	SendLog(stepID, log)
+}
+
+// skippedPaths accumulates non-regular-file skip warnings for the duration of
+// an install run so they can be aggregated into the final ScreenComplete
+// summary. It is guarded by skippedPathsMu because system.Notify may be
+// invoked from a step running on a background goroutine.
+var (
+	skippedPaths   []string
+	skippedPathsMu sync.Mutex
+)
+
+// installSkipPrefix identifies skip warnings emitted by system.report (see
+// internal/system/exec.go CopyDir) among ordinary Notify messages.
+const installSkipPrefix = "⚠ skipped non-regular file:"
+
+// InstallNotify is wired as system.Notify for the duration of an interactive
+// install. It forwards every message to the step log (so it's visible live)
+// and additionally aggregates skip warnings so the ScreenComplete summary
+// can list every skipped path from the run.
+func InstallNotify(msg string) {
+	if strings.HasPrefix(msg, installSkipPrefix) {
+		skippedPathsMu.Lock()
+		skippedPaths = append(skippedPaths, msg)
+		skippedPathsMu.Unlock()
+	}
+	SendLog("backup", msg)
+}
+
+// resetSkippedPaths clears accumulated skip warnings. Call once at the start
+// of an install run so a previous run's warnings never leak into a new one.
+func resetSkippedPaths() {
+	skippedPathsMu.Lock()
+	skippedPaths = nil
+	skippedPathsMu.Unlock()
+}
+
+// collectSkippedPaths returns a copy of the skip warnings accumulated during
+// the current/last install run.
+func collectSkippedPaths() []string {
+	skippedPathsMu.Lock()
+	defer skippedPathsMu.Unlock()
+	out := make([]string, len(skippedPaths))
+	copy(out, skippedPaths)
+	return out
 }
 
 // GetCurrentOptions returns the options for the current screen
