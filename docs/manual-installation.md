@@ -391,8 +391,13 @@ mkdir -p ~/.cache/carapace
 mkdir -p ~/.local/share/atuin
 cp -rf GentlemanZsh/.zshrc ~/
 cp -rf GentlemanZsh/.p10k.zsh ~/
-cp -rf GentlemanZsh/.oh-my-zsh ~/
 brew install powerlevel10k
+
+# Install Oh My Zsh only if you don't have it yet. Skip this if ~/.oh-my-zsh
+# already exists: it is a self-updating Git checkout and overwriting it breaks
+# `omz update`.
+[ -d ~/.oh-my-zsh ] || RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
 ### 5. Install Window Manager

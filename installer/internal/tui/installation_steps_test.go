@@ -268,6 +268,51 @@ start_if_needed`
 	})
 }
 
+// TestShouldInstallOhMyZsh tests that an existing Oh My Zsh installation is
+// never overwritten, since it manages its own Git checkout and updates.
+func TestShouldInstallOhMyZsh(t *testing.T) {
+	t.Run("installs when Oh My Zsh is missing", func(t *testing.T) {
+		tmpDir := t.TempDir()
+
+		if !shouldInstallOhMyZsh(tmpDir) {
+			t.Error("Should install Oh My Zsh when ~/.oh-my-zsh does not exist")
+		}
+	})
+
+	t.Run("skips when Oh My Zsh is a real directory", func(t *testing.T) {
+		tmpDir := t.TempDir()
+
+		if err := os.MkdirAll(filepath.Join(tmpDir, ".oh-my-zsh"), 0o755); err != nil {
+			t.Fatalf("Failed to create oh-my-zsh directory: %v", err)
+		}
+
+		if shouldInstallOhMyZsh(tmpDir) {
+			t.Error("Should leave an existing Oh My Zsh installation untouched")
+		}
+	})
+
+	t.Run("skips when Oh My Zsh is a symlinked directory", func(t *testing.T) {
+		tmpDir := t.TempDir()
+
+		realOhMyZsh := filepath.Join(tmpDir, "real-oh-my-zsh")
+		if err := os.MkdirAll(realOhMyZsh, 0o755); err != nil {
+			t.Fatalf("Failed to create real oh-my-zsh directory: %v", err)
+		}
+
+		home := filepath.Join(tmpDir, "home")
+		if err := os.MkdirAll(home, 0o755); err != nil {
+			t.Fatalf("Failed to create home directory: %v", err)
+		}
+		if err := os.Symlink(realOhMyZsh, filepath.Join(home, ".oh-my-zsh")); err != nil {
+			t.Fatalf("Failed to symlink oh-my-zsh: %v", err)
+		}
+
+		if shouldInstallOhMyZsh(home) {
+			t.Error("Should treat a symlinked Oh My Zsh as already installed")
+		}
+	})
+}
+
 // TestStepInstallShellFish tests fish installation step
 func TestStepInstallShellFish(t *testing.T) {
 	t.Run("fish step patches config based on WM choice - none", func(t *testing.T) {
