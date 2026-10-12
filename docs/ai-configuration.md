@@ -22,7 +22,7 @@ This configuration includes several AI assistants integrated with Neovim. By def
 | **Avante.nvim** | AI-powered coding assistant | Disabled |
 | **CopilotChat.nvim** | GitHub Copilot chat interface | Disabled |
 | **CodeCompanion.nvim** | Multi-AI provider support | Disabled |
-| **Gemini.nvim** | Google Gemini integration | Disabled |
+| **Antigravity.nvim** | Google Antigravity integration | Disabled |
 
 ## Switching AI Plugins
 
@@ -61,7 +61,7 @@ These CLI tools are automatically installed by the Gentleman.Dots installer:
 |------|---------------------|
 | Claude Code CLI | `curl -fsSL https://claude.ai/install.sh \| bash` |
 | OpenCode CLI | `curl -fsSL https://opencode.ai/install \| bash` |
-| Gemini CLI | `brew install gemini-cli` |
+| Antigravity CLI | `curl -fsSL https://antigravity.google/cli/install.sh \| bash` |
 
 > Some services require API keys. Check each plugin's documentation for details.
 
@@ -80,4 +80,4 @@ gentle-ai
 | OpenCode CLI in terminal | **OpenCode.nvim** |
 | GitHub Copilot users | **CopilotChat.nvim** |
 | Multi-provider flexibility | **CodeCompanion.nvim** |
-| Google Gemini users | **Gemini.nvim** |
+| Google Antigravity users | **Antigravity.nvim** |
