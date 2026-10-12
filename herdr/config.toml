@@ -17,6 +17,12 @@ yellow = "#DEBA87"
 
 [ui]
 accent = "#6FA0AF"
+# Herdr asks for a tab name on every new tab by default. Without that prompt a
+# tab keeps its automatic label — the directory it was created in, or a number
+# when that name is taken — so opening several tabs does not mean dismissing a
+# dialog each time. Naming a tab stays available through `prefix+shift+t`
+# (`keys.rename_tab`) or `herdr tab rename`.
+prompt_new_tab_name = false
 
 [keys]
 # Match tmux/Zellij-style prefix muscle memory.
