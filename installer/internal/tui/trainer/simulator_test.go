@@ -1934,3 +1934,30 @@ func TestSimulateMotions_ScrollCombination(t *testing.T) {
 		t.Errorf("Ctrl+u Ctrl+d should return to ~line 10, got %d", result.Line)
 	}
 }
+
+func TestSimulateMotions_EndOfWordStopsOnLastRune(t *testing.T) {
+	cases := []struct {
+		name string
+		code []string
+		keys string
+		from Position
+		want int
+	}{
+		// Review case: `hello world` from col 0 must land on the 'o' (col 4), not the space (col 5)
+		{"review case", []string{"hello world"}, "e", Position{Line: 0, Col: 0}, 4},
+		// Second `e` from the 'o' lands on the 'd' of "world" (col 10)
+		{"second word", []string{"hello world"}, "ee", Position{Line: 0, Col: 0}, 10},
+		// Word at end of line: no boundary rune to overshoot onto
+		{"end of line", []string{"hello"}, "e", Position{Line: 0, Col: 0}, 4},
+		// Emoji is a word char: `e` lands on the emoji rune start (col 3)
+		{"emoji word", []string{"hi 🌍 bye"}, "e", Position{Line: 0, Col: 1}, 3},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := SimulateMotions(tc.from, tc.code, tc.keys)
+			if result.Col != tc.want {
+				t.Errorf("%q from col %d: want col %d, got %d", tc.keys, tc.from.Col, tc.want, result.Col)
+			}
+		})
+	}
+}

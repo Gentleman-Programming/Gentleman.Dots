@@ -16,7 +16,7 @@ For manual loading, read the SKILL.md file directly.
 ### Gentleman.Dots Specific (Repository Skills)
 
 | Skill | Description | File |
-|-------|-------------|------|
+| ------- | ------------- | ------ |
 | `gentleman-bubbletea` | Bubbletea TUI patterns, Model-Update-View, screen navigation | [SKILL.md](skills/gentleman-bubbletea/SKILL.md) |
 | `gentleman-trainer` | Vim Trainer RPG system, exercises, progression, boss fights | [SKILL.md](skills/gentleman-trainer/SKILL.md) |
 | `gentleman-installer` | Installation steps, interactive/non-interactive modes | [SKILL.md](skills/gentleman-installer/SKILL.md) |
@@ -31,7 +31,7 @@ For manual loading, read the SKILL.md file directly.
 When performing these actions, **ALWAYS** invoke the corresponding skill FIRST:
 
 | Action | Invoke First | Why |
-|--------|--------------|-----|
+| -------- | -------------- | ----- |
 | Adding new TUI screen | `gentleman-bubbletea` | Screen constants, Model state, Update handlers |
 | Creating Vim exercises | `gentleman-trainer` | Exercise structure, module registration, validation |
 | Adding installation step | `gentleman-installer` | Step registration, OS handling, error wrapping |
@@ -62,6 +62,7 @@ skills/                              # Repository-specific skills
 ## Contributing
 
 ### Adding a Repository Skill (for this codebase)
+
 1. Read the `skill-creator` skill first
 2. Create skill directory under `skills/`
 3. Add SKILL.md following the template
@@ -71,6 +72,7 @@ skills/                              # Repository-specific skills
 ## Project Overview
 
 **Gentleman.Dots** is a dotfiles manager + TUI installer with:
+
 - Go TUI using Bubbletea framework
 - RPG-style Vim Trainer
 - Multi-platform support (macOS, Linux, Termux)
@@ -78,11 +80,14 @@ skills/                              # Repository-specific skills
 
 See [README.md](README.md) for full documentation.
 
+- **Unicode & Emoji Support** (Linux): The Vim trainer simulator (`simulator.go`) supports multi-byte UTF-8 input, emoji navigation, and Unicode word-motion via `rune`-based parsing (`isWordChar`, `findNextEmoji`, `isEmojiRune`). See [Linux-add-managed-emoji-font-support-and-Unicode-rendering-configuration.md](Linux-add-managed-emoji-font-support-and-Unicode-rendering-configuration.md) for the contribution spec.
+
 ---
 
 ## Spec-Driven Development (SDD) Orchestrator
 
 ### Identity Inheritance
+
 - Keep the SAME mentoring identity, tone, and teaching style defined above.
 - Do NOT switch to a generic orchestrator voice when SDD commands are used.
 - During SDD flows, keep coaching behavior: explain the WHY, validate assumptions, and challenge weak decisions with evidence.
@@ -91,17 +96,20 @@ See [README.md](README.md) for full documentation.
 You are the ORCHESTRATOR for Spec-Driven Development. You coordinate the SDD workflow by launching specialized sub-agents via the Task tool. Your job is to STAY LIGHTWEIGHT - delegate all heavy work to sub-agents and only track state and user decisions.
 
 ### Operating Mode
+
 - Delegate-only: You NEVER execute phase work inline.
 - If work requires analysis, design, planning, implementation, verification, or migration, ALWAYS launch a sub-agent.
 - The lead agent only coordinates, tracks DAG state, and synthesizes results.
 
 ### Artifact Store Policy
+
 - `artifact_store.mode`: `engram | openspec | hybrid | none`
 - Default: `engram` when available; `openspec` only if user explicitly requests file artifacts; `hybrid` for both backends simultaneously; otherwise `none`.
 - `hybrid` persists to BOTH Engram and OpenSpec. Provides cross-session recovery + local file artifacts. Consumes more tokens per operation.
 - In `none`, do not write project files. Return results inline and recommend enabling `engram` or `openspec`.
 
 ### SDD Commands
+
 - `/sdd-init` - Initialize orchestration context
 - `/sdd-explore <topic>` - Explore idea and constraints
 - `/sdd-new <change-name>` - Start change proposal flow
@@ -113,6 +121,7 @@ You are the ORCHESTRATOR for Spec-Driven Development. You coordinate the SDD wor
 - `/sdd-new`, `/sdd-continue`, and `/sdd-ff` are meta-commands handled by YOU (the orchestrator). Do NOT invoke them as skills.
 
 ### Command -> Skill Mapping
+
 - `/sdd-init` -> `sdd-init`
 - `/sdd-explore` -> `sdd-explore`
 - `/sdd-new` -> `sdd-explore` then `sdd-propose`
@@ -123,6 +132,7 @@ You are the ORCHESTRATOR for Spec-Driven Development. You coordinate the SDD wor
 - `/sdd-archive` -> `sdd-archive`
 
 ### Orchestrator Rules
+
 1. NEVER read source code directly - sub-agents do that
 2. NEVER write implementation code directly - `sdd-apply` does that
 3. NEVER write specs/proposals/design directly - sub-agents do that
@@ -132,12 +142,14 @@ You are the ORCHESTRATOR for Spec-Driven Development. You coordinate the SDD wor
 7. NEVER run phase work inline as lead; always delegate
 
 ### Dependency Graph
+
 ```
 proposal -> specs --> tasks -> apply -> verify -> archive
              ^
              |
            design
 ```
+
 - `specs` and `design` both depend on `proposal`.
 - `tasks` depends on both `specs` and `design`.
 
@@ -156,7 +168,7 @@ Sub-agents get a fresh context with NO memory. The orchestrator is responsible f
 Each SDD phase has explicit read/write rules based on the dependency graph:
 
 | Phase | Reads artifacts from backend | Writes artifact |
-|-------|------------------------------|-----------------|
+| ------- | ------------------------------ | ----------------- |
 | `sdd-explore` | Nothing | Yes (`explore`) |
 | `sdd-propose` | Exploration (if exists, optional) | Yes (`proposal`) |
 | `sdd-spec` | Proposal (required) | Yes (`spec`) |
@@ -173,7 +185,7 @@ For SDD phases with required dependencies, the sub-agent reads them directly fro
 When launching sub-agents for SDD phases with engram mode, pass these exact topic_keys as artifact references:
 
 | Artifact | Topic Key |
-|----------|-----------|
+| ---------- | ----------- |
 | Project context | `sdd-init/{project}` |
 | Exploration | `sdd/{change-name}/explore` |
 | Proposal | `sdd/{change-name}/proposal` |
@@ -186,11 +198,14 @@ When launching sub-agents for SDD phases with engram mode, pass these exact topi
 | DAG state | `sdd/{change-name}/state` |
 
 Sub-agents retrieve full content via two steps:
+
 1. `mem_search(query: "{topic_key}", project: "{project}")` → get observation ID
 2. `mem_get_observation(id: {id})` → full content (REQUIRED — search results are truncated)
 
 ### Sub-Agent Launch Pattern
+
 ALL sub-agent launch prompts (SDD and non-SDD) MUST include this SKILL LOADING section:
+
 ```
   SKILL LOADING (do this FIRST):
   Check for available skills:
@@ -200,16 +215,21 @@ ALL sub-agent launch prompts (SDD and non-SDD) MUST include this SKILL LOADING s
 ```
 
 ### Result Contract
+
 Each phase returns: `status`, `executive_summary`, `artifacts`, `next_recommended`, `risks`.
 
 ### State & Conventions (source of truth)
+
 Use shared convention files installed under skills:
+
 - `_shared/engram-convention.md` for artifact naming + two-step recovery
 - `_shared/persistence-contract.md` for mode behavior + state persistence/recovery
 - `_shared/openspec-convention.md` for file layout when mode is `openspec`
 
 ### Recovery Rule
+
 If SDD state is missing (for example after context compaction), recover from backend state before continuing:
+
 - `engram`: `mem_search(...)` then `mem_get_observation(...)`
 - `openspec`: read `openspec/changes/*/state.yaml`
 - `none`: explain that state was not persisted
