@@ -1,19 +1,28 @@
 #!/bin/bash
-# Emoji navigation E2E test for Linux
+# Emoji navigation E2E smoke test for Linux
 # Part of contribution: Linux: add managed emoji font support and Unicode rendering configuration
+set -u
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SIMULATOR="$SCRIPT_DIR/../internal/tui/trainer/simulator.go"
 
 echo "Starting emoji navigation test..."
-TEST_FILE="/tmp/test_emoji_nav.txt"
 
-# Create a test file with mixed content including emoji
-cat > "$TEST_FILE" << 'CONTENT'
-Hello 🌍 world 🌈 emoji test ✨
-Code with symbols: ⚡️ 🚀 🔥
-CONTENT
+if [ ! -f "$SIMULATOR" ]; then
+    echo "FAIL: simulator not found at $SIMULATOR" >&2
+    exit 1
+fi
 
-# Check that the simulator handles emoji lines (simulated motion over emoji)
-# Since isWordChar now treats emoji as word chars, word motions should work
-echo "✓ Emoji content created at $TEST_FILE"
-echo "✓ isEmojiRune available: $(grep -c 'func isEmojiRune' /media/bladimir/Datos2/Datos/proyectos/work/Gentleman.Dots/installer/internal/tui/trainer/simulator.go)"
-echo "✓ findNextEmoji available: $(grep -c 'func findNextEmoji' /media/bladimir/Datos2/Datos/proyectos/work/Gentleman.Dots/installer/internal/tui/trainer/simulator.go)"
+# The simulator must expose the emoji-aware helpers this feature adds:
+# rune decoding and emoji classification drive the word motions.
+for fn in runeAtBytePos isEmojiRune; do
+    if ! grep -q "func $fn" "$SIMULATOR"; then
+        echo "FAIL: $fn not found in $SIMULATOR" >&2
+        exit 1
+    fi
+    echo "OK: $fn available in simulator"
+done
+
+# The Go test suite is the behavioral authority for rune motions and emoji
+# word classification; this script only smoke-checks that the helpers exist.
 echo "PASS: Emoji navigation test (E2E)"

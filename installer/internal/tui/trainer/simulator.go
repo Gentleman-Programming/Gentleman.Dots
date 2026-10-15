@@ -572,30 +572,24 @@ func moveEndOfWord(pos SimulatedPosition, code []string, bigWord bool) Simulated
 		col += sz
 	}
 
-	// Skip to end of word
+	// Skip to end of word: stop on the last word rune, not one past it.
+	// Advance while the NEXT rune is still a word char, so the loop leaves
+	// the cursor on the final word rune (matching `e`) instead of on the
+	// boundary rune after it.
 	for col < len(line) {
 		r, sz, ok := runeAtBytePos(line, col)
-		if !ok {
+		if !ok || !isWordChar(r, bigWord) {
 			break
 		}
-		if !isWordChar(r, bigWord) {
+		next := col + sz
+		if next >= len(line) {
 			break
 		}
-		col += sz
-	}
-
-	// Position at the last rune of word (one back from end boundary)
-	if col > 0 {
-		prevR, prevSz, ok := runeAtBytePos(line, col-1)
-		if ok && isWordChar(prevR, bigWord) {
-			// Leave col at last word rune
-		} else {
-			// Move back to previous word char if at boundary
-			col -= prevSz
-			if col < 0 {
-				col = 0
-			}
+		nr, _, nok := runeAtBytePos(line, next)
+		if !nok || !isWordChar(nr, bigWord) {
+			break
 		}
+		col = next
 	}
 
 	pos.Col = col
@@ -1179,13 +1173,13 @@ func findWordBounds(line string, col int, bigWord bool, around bool) (int, int) 
 
 	// Find start of word
 	start := col
-	for start > 0 && isWordCharForTextObj(line[start-1], bigWord) {
+	for start > 0 && isWordCharForTextObj(line, start-1, bigWord) {
 		start--
 	}
 
 	// Find end of word
 	end := col
-	for end < len(line)-1 && isWordCharForTextObj(line[end+1], bigWord) {
+	for end < len(line)-1 && isWordCharForTextObj(line, end+1, bigWord) {
 		end++
 	}
 
@@ -1199,17 +1193,19 @@ func findWordBounds(line string, col int, bigWord bool, around bool) (int, int) 
 	return start, end
 }
 
-// isWordCharForTextObj checks if a character is part of a word for text object purposes
-func isWordCharForTextObj(ch byte, bigWord bool) bool {
-	if bigWord {
-		return ch != ' ' && ch != '\t'
-	}
-	// Decode byte to full rune for multi-byte UTF-8 chars
-	r, _, ok := runeAtBytePos(string(ch)+"\x00", 0)
+// isWordCharForTextObj checks if the character at the given byte offset is
+// part of a word for text object purposes. Decodes the actual rune from the
+// source line so multi-byte characters (non-ASCII letters, emoji) classify
+// by their real code point instead of by a single byte value.
+func isWordCharForTextObj(line string, idx int, bigWord bool) bool {
+	r, _, ok := runeAtBytePos(line, idx)
 	if !ok {
-		r = rune(ch)
+		return false
 	}
-	return unicode.IsLetter(r) || unicode.IsDigit(r) || ch == '_'
+	if bigWord {
+		return r != ' ' && r != '\t'
+	}
+	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_'
 }
 
 // findQuoteBounds finds the bounds of quoted text
