@@ -66,13 +66,7 @@
             ./claude.nix  # Claude Code CLI configuration
             ./engram.nix  # Engram memory layer for AI agents
             ./herdr.nix  # Herdr agent multiplexer configuration
-            ./yabai.nix  # Yabai window manager configuration
-            ./skhd.nix  # Skhd hotkey daemon configuration
-            # Nehir (Niri-style WM) trial reverted — back to yabai/skhd/sketchybar.
-            # nehir.nix and nehir/ config are kept in the repo for a future retry.
-            # ./nehir.nix  # Nehir (Niri-style WM) configuration
-            # ./simple-bar.nix  # simple-bar for Übersicht (disabled - using sketchybar)
-            ./sketchybar.nix  # SketchyBar status bar
+            ./omniwm.nix  # OmniWM window manager; legacy modules remain available for recovery
             ./raycast.nix  # Raycast scripts
             {
               # Personal data
@@ -90,7 +84,7 @@
                 nushell
 
                 # ─── Window management (macOS) ───
-                # yabai, skhd, and sketchybar are installed via Homebrew modules.
+                # OmniWM is installed via its Homebrew cask only when missing.
 
                 # ─── Development tools ───
                 volta

@@ -87,6 +87,8 @@ El TUI te deja elegir **Tmux**, **Zellij**, **Herdr** o **None** como multiplexo
 
 ## Plataformas soportadas
 
+> **Home Manager en macOS:** el flake usa OmniWM en Apple Silicon con macOS 26 o posterior. La app y su configuración existente se preservan; activá **Start at Login** manualmente en OmniWM. Los módulos de yabai, skhd y SketchyBar quedan inactivos. Consultá la [guía de migración](docs/omniwm-migration.md). Esta restricción es del flake con OmniWM, no del instalador TUI.
+
 | Plataforma            | Arquitectura          | Método de instalación       | Gestor de paquetes |
 | --------------------- | --------------------- | --------------------------- | ------------------ |
 | macOS                 | Apple Silicon (ARM64) | Homebrew, descarga directa  | Homebrew           |

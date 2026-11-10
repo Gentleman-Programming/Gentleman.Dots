@@ -57,10 +57,9 @@ This repository provides a complete, declarative development environment configu
 
 ### 🪟 Window Management (macOS)
 
-- **Nehir** (current): Niri-style scrolling-column tiling WM with a built-in workspace bar and hotkeys
-- **Yabai + Skhd** (legacy): BSP tiling WM + hotkey daemon — kept for fallback, not auto-started
-- **SketchyBar** (legacy): Status bar — replaced by Nehir's native workspace bar
-- **Aerospace**: Alternative tiling window manager (optional)
+- **OmniWM** (current Home Manager default): Apple Silicon, macOS 26+; [migration and login setup](docs/omniwm-migration.md)
+- **Yabai + Skhd + SketchyBar** (legacy): kept for recovery, not imported or started by the default flake
+- **Nehir / Aerospace**: Alternative window managers (optional)
 
 ### 📝 Development Workflow
 
@@ -97,7 +96,7 @@ The flake automatically handles system-specific configurations, installs all dep
 | **AI Tools**        | Claude Code, OpenCode (12 agents), Engram, Herdr, Context7, Notion MCP |
 | **Navigation**      | Television, Yazi, Oil.nvim, Zoxide        |
 | **Development**     | Git, GitHub CLI, Lazy Git                 |
-| **Window Manager**  | Nehir (current); Yabai + Skhd + SketchyBar (legacy) |
+| **Window Manager**  | OmniWM (current); Yabai + Skhd + SketchyBar (legacy) |
 | **Automation**      | Raycast Scripts                           |
 
 ### 📁 Project Structure
@@ -141,7 +140,8 @@ The flake automatically handles system-specific configurations, installs all dep
 ├── gemini.nix             # Gemini CLI configuration (optional)
 │
 ├── # ─── Window Management (macOS) ───
-├── nehir.nix              # Nehir (Niri-style WM) config — current, config-only
+├── omniwm.nix             # OmniWM install check and legacy startup migration
+├── nehir.nix              # Nehir config (optional, not imported)
 ├── nehir/                 # Nehir hotkeys, settings, workspaces (TOML)
 ├── yabai.nix              # Yabai window manager configuration (legacy, not imported)
 ├── yabai/                 # Yabai scripts and config
@@ -172,9 +172,8 @@ The following modules are **macOS-only** and will fail on Linux:
 
 | Module | Description | Why macOS-only |
 |--------|-------------|----------------|
-| `yabai.nix` | Tiling window manager | Uses macOS Accessibility API |
-| `skhd.nix` | Hotkey daemon | Depends on macOS input system |
-| `sketchybar.nix` | Status bar | macOS menu bar integration |
+| `omniwm.nix` | OmniWM and legacy startup migration | Requires Apple Silicon and macOS 26+ |
+| `yabai.nix`, `skhd.nix`, `sketchybar.nix` | Legacy window-management modules (not imported) | macOS-only |
 | `simple-bar.nix` | Status bar widget | Requires Übersicht (macOS app) |
 | `raycast.nix` | Automation scripts | Raycast is macOS-only |
 
@@ -199,26 +198,13 @@ modules = [
   ./opencode.nix
   ./claude.nix
   # ─── macOS ONLY - Comment these on Linux ───
-  # ./yabai.nix        # ← Comment this line
-  # ./skhd.nix         # ← Comment this line
-  # ./simple-bar.nix   # ← Comment this line
+  # ./omniwm.nix       # ← Comment this line
+  # ./raycast.nix      # ← Comment this line
   {
     # ... rest of config
 ```
 
-Also remove the macOS window manager packages from `home.packages` (around line 73-75):
-
-```nix
-home.packages = with pkgs; [
-  # ...
-  
-  # ─── Window management (macOS) ───
-  # yabai   # ← Comment this line
-  # skhd    # ← Comment this line
-  
-  # ...
-];
-```
+The default flake does not add the legacy window-manager packages to `home.packages`.
 
 ### Additional Linux Changes
 
@@ -285,39 +271,17 @@ For window management on Linux, consider:
 
 ---
 
-## 🪟 Nehir Window Manager (macOS)
+## 🪟 OmniWM Window Manager (macOS)
 
-[Nehir](https://github.com/guria/nehir) is the current window manager: a Niri-style
-scrolling-column tiler with a built-in workspace bar. Like Ghostty, the app binary is
-installed outside Nix (Homebrew cask); `nehir.nix` only deploys the config files to
-`~/.config/nehir/` and Nehir live-reloads them.
+The default Home Manager flake uses OmniWM on Apple Silicon with macOS 26 or later. It preserves an existing app and GUI-managed settings; otherwise activation installs the Homebrew cask. Enable **Start at Login** yourself in OmniWM, then verify it in macOS Login Items. No additional launch agent is created.
 
-```bash
-# Install the app (binary not managed by Nix)
-brew tap guria/tap
-brew install --cask nehir
-open -a Nehir
-```
-
-Then grant **System Settings → Privacy & Security → Accessibility → Nehir**.
-
-Config lives in `nehir/` (deployed to `~/.config/nehir/`):
-
-| File | Purpose |
-|------|---------|
-| `hotkeys.toml` | Keybindings (ported from the old skhd layout) |
-| `settings.toml` | Gaps, focus-follows-mouse, native workspace bar, IPC |
-| `workspaces.toml` | Workspace list + monitor assignments (6 → Elgato, 7 → Arzopa) |
-
-The legacy `yabai.nix` / `skhd.nix` / `sketchybar.nix` modules are no longer imported in
-`flake.nix` so they don't auto-start. To roll back, re-enable those imports and
-`launchctl enable` their agents.
+See the [migration guide](docs/omniwm-migration.md) for the legacy service cleanup, failure behavior, and tests. Nehir and the old yabai/skhd/SketchyBar modules remain in the repository but are not imported.
 
 ---
 
 ## 🖥️ SketchyBar Status Bar
 
-> **Legacy** — replaced by Nehir's native workspace bar. Kept for users still on yabai.
+> **Legacy** — not imported or started by the default flake. Kept for users who explicitly return to yabai.
 
 This configuration includes a fully customized SketchyBar setup with:
 
@@ -339,7 +303,7 @@ This configuration includes a fully customized SketchyBar setup with:
 
 ### Starting SketchyBar
 
-SketchyBar starts automatically via Nix. To manually control:
+The default flake does not start SketchyBar. If you deliberately opt back into the legacy setup, these commands control it:
 
 ```bash
 # Start
@@ -410,7 +374,7 @@ _(This is necessary because support for flakes and the new Nix command is still 
 
 ### 3. Configure Your Username
 
-**No need to edit `flake.nix` for system configuration!** The flake supports both Intel and Apple Silicon Macs.
+The flake has Intel and Apple Silicon targets, but the default OmniWM module requires Apple Silicon and macOS 26+. Disable or replace that module before activating an Intel configuration.
 
 You only need to update the `username` variable at the top of `flake.nix` (around line 20):
 
@@ -455,12 +419,12 @@ custom-shader = ~/.config/ghostty/shaders/cursor_smear_gentleman.glsl
 
 ### 5. Window Management Options
 
-> **Current default: Nehir.** See [Nehir Window Manager](#-nehir-window-manager-macos) above.
+> **Current default: OmniWM.** See [OmniWM Window Manager](#-omniwm-window-manager-macos) above.
 > The Yabai/Skhd options below are legacy and no longer imported by `flake.nix`.
 
 #### Option A: Yabai + Skhd (legacy)
 
-Yabai and Skhd are automatically configured via the flake. They provide:
+The retained legacy modules can be re-imported explicitly, which also restores their startup hooks. They provide:
 
 - **Yabai**: Tiling window manager with BSP layout
 - **Skhd**: Hotkey daemon for keyboard shortcuts
@@ -515,7 +479,7 @@ Once you have cloned the repository and are **inside its directory**, run the co
 
 **⚠️ Important:** You must be in the root of this project directory for the command to work, as it uses `.` to find the `flake.nix` file.
 
-**For any Mac (the flake auto-detects your system):**
+**For Apple Silicon with macOS 26 or later:**
 
 ```bash
 home-manager switch --flake .#gentleman
@@ -528,10 +492,7 @@ home-manager switch --flake .#gentleman
   home-manager switch --flake .#gentleman-macos-arm
   ```
 
-- **Intel Macs**:
-  ```bash
-  home-manager switch --flake .#gentleman-macos-intel
-  ```
+- **Intel Macs**: the `gentleman-macos-intel` target requires disabling or replacing `omniwm.nix` before activation; OmniWM rejects Intel before the Home Manager write boundary.
 
 _(These commands apply the configuration defined in the flake, installing all dependencies and applying the necessary settings.)_
 
@@ -592,9 +553,10 @@ Configurations are automatically deployed to:
 | **Claude Code**   | `~/.claude/`                             |
 | **OpenCode**      | `~/.config/opencode/`                    |
 | **Engram**        | `~/go/bin/engram` (managed by `engram.nix`) |
-| **Yabai**         | `~/.config/yabai/`                       |
-| **Skhd**          | `~/.config/skhd/`                        |
-| **SketchyBar**    | `~/.config/sketchybar/`                  |
+| **OmniWM**        | `~/.config/omniwm/` (managed by the app) |
+| **Yabai**         | `~/.config/yabai/` (legacy)              |
+| **Skhd**          | `~/.config/skhd/` (legacy)               |
+| **SketchyBar**    | `~/.config/sketchybar/` (legacy)         |
 | **Raycast**       | `~/Raycast Scripts/`                     |
 
 ### 🚀 Performance Features
