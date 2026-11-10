@@ -14,7 +14,7 @@ Branch: `feat/omniwm-replacement` · Runner: mocked shell tests and offline Nix 
 ## Tasks
 
 - [x] **T1** — Replace the imports, implement the guarded integration, document user-managed startup and migration, and add focused mocked tests. The unit exceeds the approximately 400-line forecast; tests and documentation remain with the behavior.
-- [ ] **T2** — Independent verification passed for S1–S5; parent-owned review disposition and work-unit commit remain pending.
+- [x] **T2** — Independent verification passed for S1–S5; parent committed T1/T2 behavior and proof in `3cb3025`. This documentation-only follow-up awaits a separate parent-owned commit.
 
 ## Log
 
@@ -27,3 +27,4 @@ Branch: `feat/omniwm-replacement` · Runner: mocked shell tests and offline Nix 
 - **L7:** Parent reports an earlier verifier attempt was denied before any runtime probes. A separately authorized bounded verifier then passed S1–S5 with no product blocker: both Nix parses and the cached DAG order passed, and read-only `launchctl` inspection returned 113 for all five legacy labels. This new evidence supersedes L6's launchctl uncertainty. Full flake evaluation was skipped because the verifier was permitted only four files; no Home Manager switch occurred.
 - **L8:** The independently tested regression file was copied byte-for-byte. `python3 -B scripts/omniwm/test_verifier_regressions.py` passed 2 tests and `python3 -B scripts/omniwm/test_omniwm.py` passed 13 tests. Parent also reports its 13-test rerun and `git diff --check` passed. Native OmniWM Start at Login remains a manual action and is not enabled by this module.
 - **L9:** The verifier reported a transient untracked `.claude` path of unknown origin; the parent reports its subsequent status did not show it. It was not inspected or deleted and is excluded from staging. Existing dirty `fish.nix` and `kitty.nix` remain untouched.
+- **L10:** Parent committed T1/T2 behavior and proof as `3cb3025` (`feat(macos): replace legacy window managers with OmniWM`; 9 files, 584 additions, 71 deletions) and reports 13 original tests, 2 independent tests, and diff check passed. No push occurred. This documentation-only checkpoint is pending a separate parent commit. Full flake evaluation remains skipped; no Home Manager switch occurred, and native Start at Login remains manual. Unrelated `fish.nix` and `kitty.nix` remain untouched.
