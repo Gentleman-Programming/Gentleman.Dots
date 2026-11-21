@@ -136,3 +136,10 @@ eval "$(atuin init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Load user-maintained Zsh extensions in lexical order (#206).
+for config_file in "$HOME"/.zshrc.d/*.zsh(N); do
+  [[ -r "$config_file" ]] && source "$config_file"
+done
+unset config_file
+

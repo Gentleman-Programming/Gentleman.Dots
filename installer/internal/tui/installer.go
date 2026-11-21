@@ -836,6 +836,11 @@ func stepInstallShell(m *Model) error {
 				result.Error)
 		}
 		SendLog(stepID, "Copying Zsh configuration...")
+		if err := preserveExistingConfig(m, stepID, "Zsh (.zshrc)", filepath.Join(homeDir, ".zshrc")); err != nil {
+			return wrapStepError("shell", "Install Zsh",
+				"Failed to back up existing .zshrc",
+				err)
+		}
 		if err := system.CopyFile(filepath.Join(repoDir, "GentlemanZsh/.zshrc"), filepath.Join(homeDir, ".zshrc")); err != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to copy .zshrc configuration",
@@ -846,6 +851,11 @@ func stepInstallShell(m *Model) error {
 		if err := system.PatchZshForWM(filepath.Join(homeDir, ".zshrc"), m.Choices.WindowMgr, m.Choices.InstallNvim); err != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to configure .zshrc for window manager",
+				err)
+		}
+		if err := preserveExistingConfig(m, stepID, "Powerlevel10k (.p10k.zsh)", filepath.Join(homeDir, ".p10k.zsh")); err != nil {
+			return wrapStepError("shell", "Install Zsh",
+				"Failed to back up existing .p10k.zsh",
 				err)
 		}
 		if err := system.CopyFile(filepath.Join(repoDir, "GentlemanZsh/.p10k.zsh"), filepath.Join(homeDir, ".p10k.zsh")); err != nil {

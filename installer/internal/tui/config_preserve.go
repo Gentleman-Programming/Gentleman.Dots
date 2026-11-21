@@ -21,7 +21,7 @@ func preserveExistingConfig(m *Model, stepID, label, path string) error {
 	}
 
 	info, err := os.Stat(path)
-	if err != nil || !info.IsDir() {
+	if err != nil {
 		return nil
 	}
 
@@ -30,8 +30,16 @@ func preserveExistingConfig(m *Model, stepID, label, path string) error {
 	}
 
 	backupPath := fmt.Sprintf("%s.backup-%s", path, time.Now().Format("20060102-150405"))
-	if err := system.CopyDir(path, backupPath); err != nil {
-		return err
+	if info.IsDir() {
+		if err := system.CopyDir(path, backupPath); err != nil {
+			return err
+		}
+	} else if info.Mode().IsRegular() {
+		if err := system.CopyFile(path, backupPath); err != nil {
+			return err
+		}
+	} else {
+		return nil
 	}
 
 	SendLog(stepID, fmt.Sprintf("Existing %s configuration preserved at %s", label, backupPath))

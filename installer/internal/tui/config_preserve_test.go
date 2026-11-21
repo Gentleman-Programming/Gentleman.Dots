@@ -101,3 +101,101 @@ func TestInstallOhMyZshTreatsSymlinkedCheckoutAsPresent(t *testing.T) {
 		t.Fatalf("symlinked checkout was overwritten: got %q", string(data))
 	}
 }
+
+func TestPreserveExistingConfigFileCopiesRegularFile(t *testing.T) {
+	homeDir := t.TempDir()
+	zshrc := filepath.Join(homeDir, ".zshrc")
+	const original = "export MY_CUSTOM_VAR=gentleman\n"
+	if err := os.WriteFile(zshrc, []byte(original), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	m := &Model{}
+	if err := preserveExistingConfig(m, "shell", "Zsh (.zshrc)", zshrc); err != nil {
+		t.Fatalf("preserveExistingConfig() error: %v", err)
+	}
+
+	backups, err := filepath.Glob(zshrc + ".backup-*")
+	if err != nil {
+		t.Fatalf("glob: %v", err)
+	}
+	if len(backups) != 1 {
+		t.Fatalf("backups = %#v, want exactly one", backups)
+	}
+
+	data, err := os.ReadFile(backups[0])
+	if err != nil {
+		t.Fatalf("read backup: %v", err)
+	}
+	if string(data) != original {
+		t.Fatalf("backup content = %q, want %q", string(data), original)
+	}
+}
+
+func TestPreserveExistingConfigFileSkipsWhenGlobalBackupRan(t *testing.T) {
+	homeDir := t.TempDir()
+	zshrc := filepath.Join(homeDir, ".zshrc")
+	if err := os.WriteFile(zshrc, []byte("custom\n"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	m := &Model{BackupDir: filepath.Join(t.TempDir(), "gentleman-backup")}
+	if err := preserveExistingConfig(m, "shell", "Zsh (.zshrc)", zshrc); err != nil {
+		t.Fatalf("preserveExistingConfig() error: %v", err)
+	}
+
+	backups, _ := filepath.Glob(zshrc + ".backup-*")
+	if len(backups) != 0 {
+		t.Fatalf("backups = %#v, want none when global backup ran", backups)
+	}
+}
+
+func TestPreserveExistingConfigFileSkipsUnderDryRun(t *testing.T) {
+	t.Setenv("GENTLEMAN_DRY_RUN", "1")
+
+	homeDir := t.TempDir()
+	zshrc := filepath.Join(homeDir, ".zshrc")
+	if err := os.WriteFile(zshrc, []byte("custom\n"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	m := &Model{}
+	if err := preserveExistingConfig(m, "shell", "Zsh (.zshrc)", zshrc); err != nil {
+		t.Fatalf("preserveExistingConfig() error: %v", err)
+	}
+
+	backups, _ := filepath.Glob(zshrc + ".backup-*")
+	if len(backups) != 0 {
+		t.Fatalf("backups = %#v, want none under dry-run", backups)
+	}
+}
+
+func TestPreserveExistingConfigPowerlevel10kFile(t *testing.T) {
+	homeDir := t.TempDir()
+	p10k := filepath.Join(homeDir, ".p10k.zsh")
+	const customP10k = "# custom powerlevel10k theme settings\n"
+	if err := os.WriteFile(p10k, []byte(customP10k), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	m := &Model{}
+	if err := preserveExistingConfig(m, "shell", "Powerlevel10k (.p10k.zsh)", p10k); err != nil {
+		t.Fatalf("preserveExistingConfig() error: %v", err)
+	}
+
+	backups, err := filepath.Glob(p10k + ".backup-*")
+	if err != nil {
+		t.Fatalf("glob: %v", err)
+	}
+	if len(backups) != 1 {
+		t.Fatalf("backups = %#v, want exactly one", backups)
+	}
+
+	data, err := os.ReadFile(backups[0])
+	if err != nil {
+		t.Fatalf("read backup: %v", err)
+	}
+	if string(data) != customP10k {
+		t.Fatalf("backup content = %q, want %q", string(data), customP10k)
+	}
+}

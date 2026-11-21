@@ -140,3 +140,28 @@ func TestPatchZshForWMNoneRemovesLauncher(t *testing.T) {
 		}
 	}
 }
+
+// User-maintained customizations must be loaded from ~/.zshrc.d/*.zsh in lexical
+// order so they survive installer updates (#206).
+func TestZshTemplateLoadsUserExtensionsDirectory(t *testing.T) {
+	content := readZshTemplate(t)
+
+	requiredSnippets := []string{
+		`"$HOME"/.zshrc.d/*.zsh(N)`,
+		`[[ -r "$config_file" ]] && source "$config_file"`,
+		`unset config_file`,
+	}
+
+	for _, snippet := range requiredSnippets {
+		if !strings.Contains(content, snippet) {
+			t.Errorf("zsh template missing required extension loader snippet: %q", snippet)
+		}
+	}
+
+	// Extensions must load after core integrations and p10k.
+	p10kPos := strings.Index(content, "source ~/.p10k.zsh")
+	extPos := strings.Index(content, `"$HOME"/.zshrc.d/*.zsh(N)`)
+	if p10kPos >= 0 && extPos >= 0 && extPos < p10kPos {
+		t.Errorf("user extension loader (pos %d) must appear after p10k customization (pos %d)", extPos, p10kPos)
+	}
+}
