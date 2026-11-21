@@ -127,7 +127,7 @@ func TestTerminalOptionsPerOS(t *testing.T) {
 		}
 	})
 
-	t.Run("linux should not have Kitty option", func(t *testing.T) {
+	t.Run("linux should have Kitty option", func(t *testing.T) {
 		m := NewModel()
 		m.Screen = ScreenTerminalSelect
 		m.Choices.OS = "linux"
@@ -140,8 +140,8 @@ func TestTerminalOptionsPerOS(t *testing.T) {
 				break
 			}
 		}
-		if hasKitty {
-			t.Error("Linux should not have Kitty option")
+		if !hasKitty {
+			t.Error("Linux should have Kitty option")
 		}
 	})
 }

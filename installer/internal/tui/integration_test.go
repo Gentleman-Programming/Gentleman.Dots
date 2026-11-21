@@ -125,12 +125,17 @@ func TestLinuxFlow(t *testing.T) {
 			t.Fatalf("Expected OS 'linux', got '%s'", m.Choices.OS)
 		}
 
-		// Check terminal options don't include Kitty
+		// Check terminal options include Kitty (#190)
 		options := m.GetCurrentOptions()
+		hasKitty := false
 		for _, opt := range options {
 			if opt == "Kitty" {
-				t.Error("Linux should not have Kitty option")
+				hasKitty = true
+				break
 			}
+		}
+		if !hasKitty {
+			t.Error("Linux should have Kitty option")
 		}
 	})
 }

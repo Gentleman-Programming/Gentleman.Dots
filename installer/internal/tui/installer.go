@@ -442,11 +442,23 @@ func stepInstallTerminal(m *Model) error {
 		SendLog(stepID, "✓ WezTerm configured")
 
 	case "kitty":
-		if !system.CommandExists("kitty") && m.SystemInfo.OS == system.OSMac {
+		if !system.CommandExists("kitty") {
 			SendLog(stepID, "Installing Kitty...")
-			result := system.RunBrewWithLogs("install --cask kitty", nil, func(line string) {
-				SendLog(stepID, line)
-			})
+			var result *system.ExecResult
+			if m.SystemInfo.OS == system.OSMac {
+				result = system.RunBrewWithLogs("install --cask kitty", nil, func(line string) {
+					SendLog(stepID, line)
+				})
+			} else {
+				result = installPlatformPackages(m, stepID, platformPackages{
+					Brew:   "kitty",
+					Arch:   "kitty",
+					Fedora: "kitty",
+					Debian: "kitty",
+				}, func(line string) {
+					SendLog(stepID, line)
+				})
+			}
 			if result.Error != nil {
 				return wrapStepError("terminal", "Install Kitty",
 					"Failed to install Kitty terminal emulator",

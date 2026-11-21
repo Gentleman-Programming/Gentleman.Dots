@@ -606,8 +606,9 @@ func TestEachTerminalSelection(t *testing.T) {
 	}{
 		{"alacritty", 0, "alacritty"},
 		{"wezterm", 1, "wezterm"},
-		{"ghostty", 2, "ghostty"},
-		{"none", 3, "none"},
+		{"kitty", 2, "kitty"},
+		{"ghostty", 3, "ghostty"},
+		{"none", 4, "none"},
 	}
 
 	for _, tc := range terminalsLinux {
