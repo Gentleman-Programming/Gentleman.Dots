@@ -91,6 +91,14 @@
   home.activation.installHerdr = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     echo "🔧 Setting up Herdr..."
 
+    # Prepend Homebrew to PATH before probing for herdr and brew (#207).
+    # Home Manager activation scripts run with a minimal PATH that excludes Homebrew.
+    if [ "$(uname)" = "Darwin" ]; then
+      export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    else
+      export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    fi
+
     if command -v herdr >/dev/null 2>&1; then
       echo "✅ Herdr already installed"
     elif command -v brew >/dev/null 2>&1; then

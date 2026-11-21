@@ -22,20 +22,16 @@
     "$HOME/.opencode/bin"
   ];
 
-  # Install OpenCode binary and GitHub Copilot extension on activation
+  # Install OpenCode binary on activation.
+  # Guarded so a network or GitHub API rate-limit failure never breaks activation (#208).
   home.activation.installOpenCode = lib.hm.dag.entryAfter ["linkGeneration"] ''
     export PATH="${pkgs.unzip}/bin:${pkgs.curl}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.coreutils}/bin:${pkgs.gh}/bin:$PATH"
 
     OPENCODE_BIN="$HOME/.opencode/bin/opencode"
 
     if [ ! -f "$OPENCODE_BIN" ] || ! "$OPENCODE_BIN" --version &>/dev/null; then
-      curl -fsSL https://opencode.ai/install | bash
-    fi
-
-    if gh copilot --help >/dev/null 2>&1; then
-      :
-    elif ! gh extension list | grep -q "github/gh-copilot"; then
-      gh extension install github/gh-copilot
+      echo "🚀 Installing OpenCode CLI..."
+      curl -fsSL https://opencode.ai/install | bash || echo "⚠️  OpenCode installation failed (run 'curl -fsSL https://opencode.ai/install | bash' manually)"
     fi
   '';
 
