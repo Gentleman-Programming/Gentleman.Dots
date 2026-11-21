@@ -668,7 +668,7 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
 		return runNativeWithBrewFallback("dnf install -y "+packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
-		return runSudoWithLogs("apt-get install -y "+packages.Debian, nil, onLog)
+		return installDebianPackages(packages.Debian, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	default:
 		if m.SystemInfo.HasBrew && packages.Brew != "" {
 			return runBrewWithLogs("install "+packages.Brew, nil, onLog)

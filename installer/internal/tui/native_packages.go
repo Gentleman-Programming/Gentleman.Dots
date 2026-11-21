@@ -31,6 +31,13 @@ var pacmanPackageAvailable = func(name string) bool {
 	return system.Run("pacman -Si "+name, nil).Error == nil
 }
 
+// aptPackageAvailable reports whether a package name resolves in the host's
+// configured Debian/Ubuntu repositories. `apt-cache show` exits non-zero when
+// no package of that name is known.
+var aptPackageAvailable = func(name string) bool {
+	return system.Run("apt-cache show "+name, nil).Error == nil
+}
+
 // filterAvailablePackages splits pkgs into the names the host can install and
 // the names it cannot, preserving the original order.
 func filterAvailablePackages(pkgs []string, available func(string) bool) (ok []string, missing []string) {
@@ -44,31 +51,54 @@ func filterAvailablePackages(pkgs []string, available func(string) bool) (ok []s
 	return ok, missing
 }
 
-// installArchPackages installs an Arch package list without letting a name that
-// pacman cannot resolve abort the whole transaction. `pacman -S` is atomic: one
-// unknown name installs nothing at all, not even the valid names beside it.
-func installArchPackages(archPackages, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
-	requested := strings.Fields(archPackages)
+// installAvailablePackages installs only the names the host can actually
+// resolve. A hardcoded distro list rots as soon as one package moves to the
+// AUR, to a PPA, or out of the repositories entirely, and an atomic package
+// transaction then installs nothing at all.
+func installAvailablePackages(packages string, available func(string) bool, nativeCommand func([]string) string, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	requested := strings.Fields(packages)
 	if len(requested) == 0 {
-		return &system.ExecResult{Error: fmt.Errorf("no Arch packages requested")}
+		return &system.ExecResult{Error: fmt.Errorf("no packages requested")}
 	}
 
-	available, missing := filterAvailablePackages(requested, pacmanPackageAvailable)
+	ok, missing := filterAvailablePackages(requested, available)
 	for _, name := range missing {
 		if onLog != nil {
 			onLog(fmt.Sprintf("Warning: %s is not available in the configured repositories; skipping it", name))
 		}
 	}
-	if len(available) == 0 {
-		return &system.ExecResult{Error: fmt.Errorf("none of the requested packages are available: %s", archPackages)}
+	if len(ok) == 0 {
+		return &system.ExecResult{Error: fmt.Errorf("none of the requested packages are available: %s", packages)}
 	}
 
-	result := runSudoWithLogs("pacman -S --needed --noconfirm "+strings.Join(available, " "), nil, onLog)
+	result := runSudoWithLogs(nativeCommand(ok), nil, onLog)
 	if result.Error == nil || !hasBrew || brewPackages == "" {
 		return result
 	}
 
 	return runBrewWithLogs("install "+brewPackages, nil, onLog)
+}
+
+// installArchPackages installs an Arch package list without letting a name that
+// pacman cannot resolve abort the whole transaction.
+func installArchPackages(archPackages, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	return installAvailablePackages(archPackages, pacmanPackageAvailable,
+		func(pkgs []string) string {
+			return "pacman -S --needed --noconfirm " + strings.Join(pkgs, " ")
+		},
+		brewPackages, hasBrew, onLog)
+}
+
+// installDebianPackages installs a Debian/Ubuntu package list without letting a
+// name that apt cannot resolve abort the whole transaction. This is the same
+// defect class as the Arch lists: `starship` is not packaged by Debian or
+// Ubuntu, so every shell profile failed at this step.
+func installDebianPackages(debianPackages, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	return installAvailablePackages(debianPackages, aptPackageAvailable,
+		func(pkgs []string) string {
+			return "apt-get install -y " + strings.Join(pkgs, " ")
+		},
+		brewPackages, hasBrew, onLog)
 }
 
 // installCarapaceBinary installs carapace from the official static release when
