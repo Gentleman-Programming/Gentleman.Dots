@@ -1,3 +1,24 @@
+# ---------------------------------------------------------------------------
+# Window manager autostart.
+#
+# This block MUST stay above the Powerlevel10k instant prompt below. That
+# block redirects stdout to a file while the rest of this file runs, so
+# `[[ -t 1 ]]` is false afterwards and this launcher would never exec.
+# Moving it below silently disables window manager autostart (#210).
+# ---------------------------------------------------------------------------
+WM_VAR="/$TMUX"
+# change with ZELLIJ
+WM_CMD="tmux"
+# change with zellij
+
+function start_if_needed() {
+    if [[ $- == *i* ]] && command -v "$WM_CMD" >/dev/null 2>&1 && [[ -z "${WM_VAR#/}" ]] && [[ -z "$TMUX" ]] && [[ -z "$ZELLIJ" ]] && [[ -z "$HERDR_ENV" ]] && [[ -t 1 ]]; then
+        exec $WM_CMD
+    fi
+}
+
+start_if_needed
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -94,17 +115,6 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
-WM_VAR="/$TMUX"
-# change with ZELLIJ
-WM_CMD="tmux"
-# change with zellij
-
-function start_if_needed() {
-    if [[ $- == *i* ]] && command -v "$WM_CMD" >/dev/null 2>&1 && [[ -z "${WM_VAR#/}" ]] && [[ -z "$TMUX" ]] && [[ -z "$ZELLIJ" ]] && [[ -z "$HERDR_ENV" ]] && [[ -t 1 ]]; then
-        exec $WM_CMD
-    fi
-}
-
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
@@ -126,5 +136,3 @@ eval "$(atuin init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-start_if_needed
