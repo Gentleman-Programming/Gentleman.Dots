@@ -1,9 +1,11 @@
 package system
 
 import (
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -433,6 +435,161 @@ func TestCreateBackup(t *testing.T) {
 		}
 		if !strings.Contains(string(data), "oh-my-zsh") {
 			t.Errorf("Expected zsh backup to contain original content, got %q", string(data))
+		}
+	})
+}
+
+func TestCreateBackupSkipsNonRegularFiles(t *testing.T) {
+	t.Run("should skip a live unix socket, warn via Notify, and still back up regular files", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		herdrDir := filepath.Join(home, ".config", "herdr")
+		if err := os.MkdirAll(herdrDir, 0o755); err != nil {
+			t.Fatalf("Failed to create herdr directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(herdrDir, "config.toml"), []byte("herdr config"), 0o644); err != nil {
+			t.Fatalf("Failed to write regular file: %v", err)
+		}
+
+		socketPath := filepath.Join(herdrDir, "x.sock")
+		listener, err := net.Listen("unix", socketPath)
+		if err != nil {
+			t.Fatalf("Failed to create unix socket: %v", err)
+		}
+		defer listener.Close()
+
+		var notified []string
+		originalNotify := Notify
+		Notify = func(msg string) { notified = append(notified, msg) }
+		defer func() { Notify = originalNotify }()
+
+		backupDir, err := CreateBackup([]string{"herdr: " + herdrDir})
+		if err != nil {
+			t.Fatalf("Expected backup to succeed despite a non-regular file, got error: %v", err)
+		}
+		defer os.RemoveAll(backupDir)
+
+		data, err := os.ReadFile(filepath.Join(backupDir, "herdr", "config.toml"))
+		if err != nil {
+			t.Fatalf("Expected regular file to be backed up: %v", err)
+		}
+		if string(data) != "herdr config" {
+			t.Errorf("Expected backed up content 'herdr config', got %q", string(data))
+		}
+
+		if _, err := os.Stat(filepath.Join(backupDir, "herdr", "x.sock")); !os.IsNotExist(err) {
+			t.Errorf("Expected socket to NOT be copied, stat err: %v", err)
+		}
+
+		found := false
+		for _, msg := range notified {
+			if strings.Contains(msg, socketPath) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Expected a skip warning naming %s, got notifications: %v", socketPath, notified)
+		}
+	})
+
+	t.Run("should skip both a socket and a FIFO with individual warnings", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		herdrDir := filepath.Join(home, ".config", "herdr")
+		if err := os.MkdirAll(herdrDir, 0o755); err != nil {
+			t.Fatalf("Failed to create herdr directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(herdrDir, "config.toml"), []byte("herdr config"), 0o644); err != nil {
+			t.Fatalf("Failed to write regular file: %v", err)
+		}
+
+		socketPath := filepath.Join(herdrDir, "x.sock")
+		listener, err := net.Listen("unix", socketPath)
+		if err != nil {
+			t.Fatalf("Failed to create unix socket: %v", err)
+		}
+		defer listener.Close()
+
+		fifoPath := filepath.Join(herdrDir, "y.fifo")
+		if err := syscall.Mkfifo(fifoPath, 0o600); err != nil {
+			t.Fatalf("Failed to create FIFO: %v", err)
+		}
+
+		var notified []string
+		originalNotify := Notify
+		Notify = func(msg string) { notified = append(notified, msg) }
+		defer func() { Notify = originalNotify }()
+
+		backupDir, err := CreateBackup([]string{"herdr: " + herdrDir})
+		if err != nil {
+			t.Fatalf("Expected backup to succeed despite non-regular files, got error: %v", err)
+		}
+		defer os.RemoveAll(backupDir)
+
+		if _, err := os.Stat(filepath.Join(backupDir, "herdr", "config.toml")); err != nil {
+			t.Fatalf("Expected regular file to be backed up: %v", err)
+		}
+
+		socketWarned, fifoWarned := false, false
+		for _, msg := range notified {
+			if strings.Contains(msg, socketPath) {
+				socketWarned = true
+			}
+			if strings.Contains(msg, fifoPath) {
+				fifoWarned = true
+			}
+		}
+		if !socketWarned {
+			t.Errorf("Expected an individual skip warning naming the socket %s, got: %v", socketPath, notified)
+		}
+		if !fifoWarned {
+			t.Errorf("Expected an individual skip warning naming the FIFO %s, got: %v", fifoPath, notified)
+		}
+	})
+
+	t.Run("nominal all-regular-files backup emits zero skip warnings", func(t *testing.T) {
+		home := t.TempDir()
+		originalHome := os.Getenv("HOME")
+		if err := os.Setenv("HOME", home); err != nil {
+			t.Fatalf("Failed to set HOME: %v", err)
+		}
+		defer os.Setenv("HOME", originalHome)
+
+		herdrDir := filepath.Join(home, ".config", "herdr")
+		if err := os.MkdirAll(filepath.Join(herdrDir, "nested"), 0o755); err != nil {
+			t.Fatalf("Failed to create herdr directory: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(herdrDir, "config.toml"), []byte("herdr config"), 0o644); err != nil {
+			t.Fatalf("Failed to write regular file: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(herdrDir, "nested", "extra.toml"), []byte("extra"), 0o644); err != nil {
+			t.Fatalf("Failed to write nested regular file: %v", err)
+		}
+
+		var notified []string
+		originalNotify := Notify
+		Notify = func(msg string) { notified = append(notified, msg) }
+		defer func() { Notify = originalNotify }()
+
+		backupDir, err := CreateBackup([]string{"herdr: " + herdrDir})
+		if err != nil {
+			t.Fatalf("Unexpected error creating backup: %v", err)
+		}
+		defer os.RemoveAll(backupDir)
+
+		if len(notified) != 0 {
+			t.Errorf("Expected zero skip warnings for an all-regular-files backup, got: %v", notified)
 		}
 	})
 }

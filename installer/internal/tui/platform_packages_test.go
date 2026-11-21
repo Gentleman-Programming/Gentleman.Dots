@@ -114,7 +114,7 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSArch, HasBrew: true}}
 	result := installPlatformPackages(m, "shell", platformPackages{
 		Brew: "fish carapace zoxide atuin starship",
-		Arch: "fish carapace zoxide atuin starship",
+		Arch: "fish zoxide atuin starship",
 	}, nil)
 
 	if result.Error != nil {
@@ -122,7 +122,7 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 	}
 
 	expected := []packageCommandCall{
-		{runner: "sudo", command: "pacman -S --needed --noconfirm fish carapace zoxide atuin starship"},
+		{runner: "sudo", command: "pacman -S --needed --noconfirm fish zoxide atuin starship"},
 		{runner: "brew", command: "install fish carapace zoxide atuin starship"},
 	}
 	if !reflect.DeepEqual(*calls, expected) {
