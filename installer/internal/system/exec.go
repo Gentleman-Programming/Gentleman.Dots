@@ -396,6 +396,14 @@ func EnsureDir(path string) error {
 	return os.MkdirAll(path, 0755)
 }
 
+// PathExists reports whether path exists, following symlinks. A symlinked
+// configuration directory counts as present, which matters for paths the
+// installer must never write into, such as a user's ~/.oh-my-zsh checkout.
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
 // BackupInfo contains information about a backup
 type BackupInfo struct {
 	Path      string

@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/Gentleman-Programming/Gentleman.Dots/installer/internal/system"
@@ -34,5 +35,26 @@ func preserveExistingConfig(m *Model, stepID, label, path string) error {
 	}
 
 	SendLog(stepID, fmt.Sprintf("Existing %s configuration preserved at %s", label, backupPath))
+	return nil
+}
+
+// installOhMyZshIfMissing provides the bundled Oh My Zsh snapshot only when the
+// user has none. An existing ~/.oh-my-zsh is a git checkout that updates
+// itself: writing the vendored snapshot over it marks every differing tracked
+// file as a local modification, and the next `omz update` collides on the
+// autostash pop (#187).
+func installOhMyZshIfMissing(stepID, repoDir, homeDir string) error {
+	destination := filepath.Join(homeDir, ".oh-my-zsh")
+
+	if system.PathExists(destination) {
+		SendLog(stepID, "Oh My Zsh already present at "+destination+"; leaving it untouched")
+		return nil
+	}
+
+	if err := system.CopyDir(filepath.Join(repoDir, "GentlemanZsh", ".oh-my-zsh"), destination); err != nil {
+		return err
+	}
+
+	SendLog(stepID, "Installed bundled Oh My Zsh configuration")
 	return nil
 }
