@@ -131,6 +131,26 @@ zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace _carapace)
 
 eval "$(fzf --zsh)"
+
+# Integrate zsh-autocomplete menu navigation with fzf (#205).
+gentleman-fzf-or-menu() {
+  local trigger=${FZF_COMPLETION_TRIGGER-'**'}
+  if [[ -n $trigger && $LBUFFER == *"$trigger" ]]; then
+    zle fzf-completion
+  else
+    zle menu-select
+  fi
+}
+
+zle -N gentleman-fzf-or-menu
+bindkey '^I' gentleman-fzf-or-menu
+bindkey -M menuselect '^I' menu-complete
+
+if [[ -n "${terminfo[kcbt]}" ]]; then
+  bindkey "${terminfo[kcbt]}" menu-select
+  bindkey -M menuselect "${terminfo[kcbt]}" reverse-menu-complete
+fi
+
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 

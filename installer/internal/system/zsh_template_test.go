@@ -165,3 +165,40 @@ func TestZshTemplateLoadsUserExtensionsDirectory(t *testing.T) {
 		t.Errorf("user extension loader (pos %d) must appear after p10k customization (pos %d)", extPos, p10kPos)
 	}
 }
+
+// Zsh-autocomplete and fzf compete for Tab bindings. The dispatcher widget must
+// delegate explicit trigger (**) completion to fzf and use menu-select for normal
+// tab completion (#205).
+func TestZshTemplateIntegratesAutocompleteWithFzf(t *testing.T) {
+	content := readZshTemplate(t)
+
+	requiredSnippets := []string{
+		"gentleman-fzf-or-menu()",
+		"zle fzf-completion",
+		"zle menu-select",
+		"zle -N gentleman-fzf-or-menu",
+		"bindkey '^I' gentleman-fzf-or-menu",
+		"bindkey -M menuselect '^I' menu-complete",
+		"terminfo[kcbt]",
+		"reverse-menu-complete",
+	}
+
+	for _, snippet := range requiredSnippets {
+		if !strings.Contains(content, snippet) {
+			t.Errorf("zsh template missing required fzf/autocomplete bridge snippet: %q", snippet)
+		}
+	}
+
+	fzfPos := strings.Index(content, `eval "$(fzf --zsh)"`)
+	bridgePos := strings.Index(content, "gentleman-fzf-or-menu()")
+
+	if fzfPos < 0 {
+		t.Fatal("zsh template does not contain eval \"$(fzf --zsh)\"")
+	}
+	if bridgePos < 0 {
+		t.Fatal("zsh template does not contain gentleman-fzf-or-menu()")
+	}
+	if bridgePos < fzfPos {
+		t.Errorf("gentleman-fzf-or-menu (pos %d) must appear after eval \"$(fzf --zsh)\" (pos %d)", bridgePos, fzfPos)
+	}
+}
