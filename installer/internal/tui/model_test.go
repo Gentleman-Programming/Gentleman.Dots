@@ -82,20 +82,25 @@ func TestGetCurrentOptions(t *testing.T) {
 		}
 	})
 
-	t.Run("should return terminal options for linux without kitty", func(t *testing.T) {
+	t.Run("should return terminal options for linux with kitty", func(t *testing.T) {
 		m.Screen = ScreenTerminalSelect
 		m.Choices.OS = "linux"
 		opts := m.GetCurrentOptions()
 
-		// Should have: Alacritty, WezTerm, Ghostty, None, separator, Learn
-		if len(opts) != 6 {
-			t.Errorf("Expected 6 terminal options for linux (including separator and learn), got %d", len(opts))
+		// Should have: Alacritty, WezTerm, Kitty, Ghostty, None, separator, Learn
+		if len(opts) != 7 {
+			t.Errorf("Expected 7 terminal options for linux (including separator and learn), got %d", len(opts))
 		}
-		// Should NOT include Kitty on linux
+		// Should include Kitty on linux
+		hasKitty := false
 		for _, opt := range opts {
 			if opt == "Kitty" {
-				t.Error("Linux should not have Kitty option")
+				hasKitty = true
+				break
 			}
+		}
+		if !hasKitty {
+			t.Error("Linux should have Kitty option")
 		}
 	})
 

@@ -129,3 +129,26 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 		t.Fatalf("calls = %#v, want %#v", *calls, expected)
 	}
 }
+
+func TestInstallPlatformPackagesKittyOnLinux(t *testing.T) {
+	calls := withPackageCommandMocks(t, nil)
+
+	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSArch, HasBrew: false}}
+	result := installPlatformPackages(m, "terminal", platformPackages{
+		Brew:   "kitty",
+		Arch:   "kitty",
+		Fedora: "kitty",
+		Debian: "kitty",
+	}, nil)
+
+	if result.Error != nil {
+		t.Fatalf("expected kitty install to succeed, got error: %v", result.Error)
+	}
+
+	expected := []packageCommandCall{
+		{runner: "sudo", command: "pacman -S --needed --noconfirm kitty"},
+	}
+	if !reflect.DeepEqual(*calls, expected) {
+		t.Fatalf("calls = %#v, want %#v", *calls, expected)
+	}
+}
