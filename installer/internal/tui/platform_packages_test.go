@@ -129,3 +129,100 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 		t.Fatalf("calls = %#v, want %#v", *calls, expected)
 	}
 }
+
+func TestIsDnfNoOp(t *testing.T) {
+	tests := []struct {
+		name   string
+		result *system.ExecResult
+		want   bool
+	}{
+		{
+			name:   "nil result",
+			result: nil,
+			want:   false,
+		},
+		{
+			name: "success exit 0",
+			result: &system.ExecResult{
+				ExitCode: 0,
+				Output:   "Complete!",
+			},
+			want: false,
+		},
+		{
+			name: "exit 1 with stderr Nothing to do (dnf4)",
+			result: &system.ExecResult{
+				ExitCode: 1,
+				Stderr:   "Module or Group 'development-tools' is not available.\nError: Nothing to do.",
+			},
+			want: true,
+		},
+		{
+			name: "exit 1 with stdout/output Nothing to do",
+			result: &system.ExecResult{
+				ExitCode: 1,
+				Output:   "Nothing to do.",
+			},
+			want: true,
+		},
+		{
+			name: "exit 1 real failure",
+			result: &system.ExecResult{
+				ExitCode: 1,
+				Stderr:   "Error: Unable to find a match: invalidpackage",
+			},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isDnfNoOp(tt.result); got != tt.want {
+				t.Errorf("isDnfNoOp() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInstallPlatformPackagesFedoraTreatsDnfNoOpAsSuccess(t *testing.T) {
+	originalSudo := runSudoWithLogs
+	originalBrew := runBrewWithLogs
+
+	sudoCalls := 0
+	brewCalls := 0
+
+	runSudoWithLogs = func(command string, opts *system.ExecOptions, onLog system.LogCallback) *system.ExecResult {
+		sudoCalls++
+		return &system.ExecResult{
+			Command:  command,
+			ExitCode: 1,
+			Error:    errors.New("exit status 1"),
+			Stderr:   "Error: Nothing to do.",
+		}
+	}
+	runBrewWithLogs = func(args string, opts *system.ExecOptions, onLog system.LogCallback) *system.ExecResult {
+		brewCalls++
+		return &system.ExecResult{Command: args}
+	}
+
+	t.Cleanup(func() {
+		runSudoWithLogs = originalSudo
+		runBrewWithLogs = originalBrew
+	})
+
+	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSFedora, HasBrew: true}}
+	result := installPlatformPackages(m, "shell", platformPackages{
+		Brew:   "fish carapace zoxide atuin starship",
+		Fedora: "fish carapace zoxide atuin starship",
+	}, nil)
+
+	if result.Error != nil {
+		t.Fatalf("expected dnf no-op to be treated as success, got error: %v", result.Error)
+	}
+	if sudoCalls != 1 {
+		t.Errorf("sudoCalls = %d, want 1", sudoCalls)
+	}
+	if brewCalls != 0 {
+		t.Errorf("brewCalls = %d, want 0 (should not fall back to brew when dnf says nothing to do)", brewCalls)
+	}
+}

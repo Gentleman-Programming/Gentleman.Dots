@@ -63,7 +63,6 @@ keybind = ctrl+shift+l=resize_split:right,10
 
 # Miscellaneous
 keybind = cmd+k=clear_screen
-keybind = shift+enter=text:\x1b\r
 
 # Open file with nvim (write 'nvim' first, then use this keybinding)
 keybind = alt+s=write_screen_file:paste
