@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Interactive Docker test runner for Gentleman.Dots installer
 # 
 # Usage:
@@ -8,7 +8,13 @@
 #   ./docker-test.sh run debian   # Run tests for specific image
 #   ./docker-test.sh shell alpine # Open shell in image
 
-set -e
+set -eo pipefail
+# pipefail is required: without it a failing test inside a pipeline such as
+# `run_image | tee` was masked by tee's exit status and reported as a pass.
+# POSIX sh has no pipefail, hence the bash shebang above.
+# xpg_echo keeps `echo "$COLOR..."` interpreting backslash escapes the way
+# dash did, so switching interpreters does not silently drop the colours.
+shopt -s xpg_echo
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 INSTALLER_DIR="$(dirname "$SCRIPT_DIR")"
@@ -224,7 +230,9 @@ run_e2e_all() {
             echo "${RED}✗ $img tests failed${NC}"
             FAILED=$((FAILED + 1))
             # Extract failed test names from output
-            failed_tests=$(grep -E "^\[FAIL\]" "$test_output_file" | sed 's/\[FAIL\] //' | tr '\n' '; ' | sed 's/; $//')
+            # `|| true`: under pipefail a run that failed without printing any
+            # [FAIL] line would make grep exit 1 and abort the whole script.
+            failed_tests=$(grep -E "^\[FAIL\]" "$test_output_file" | sed 's/\[FAIL\] //' | tr '\n' '; ' | sed 's/; $//' || true)
             if [ -n "$failed_tests" ]; then
                 FAILED_IMAGES="$FAILED_IMAGES|$img:$failed_tests"
             else
