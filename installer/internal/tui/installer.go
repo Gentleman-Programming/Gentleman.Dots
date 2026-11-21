@@ -664,7 +664,7 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	case m.SystemInfo.IsTermux:
 		return runPkgInstallWithLogs(packages.Termux, nil, onLog)
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
-		return runNativeWithBrewFallback("pacman -S --needed --noconfirm "+packages.Arch, packages.Brew, m.SystemInfo.HasBrew, onLog)
+		return installArchPackages(packages.Arch, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
 		return runNativeWithBrewFallback("dnf install -y "+packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
@@ -779,6 +779,11 @@ func stepInstallShell(m *Model) error {
 		if err := system.CopyFile(filepath.Join(repoDir, "starship.toml"), filepath.Join(homeDir, ".config/starship.toml")); err != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to copy starship configuration",
+				err)
+		}
+		if err := preserveExistingConfig(m, stepID, "Fish", filepath.Join(homeDir, ".config", "fish")); err != nil {
+			return wrapStepError("shell", "Install Fish",
+				"Failed to back up existing Fish configuration",
 				err)
 		}
 		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanFish", "fish"), filepath.Join(homeDir, ".config", "fish")); err != nil {
@@ -942,6 +947,17 @@ func stepInstallShell(m *Model) error {
 			}
 		}
 		SendLog(stepID, "✓ Nushell configured")
+	}
+
+	// carapace is AUR-only on Arch and CachyOS, so the Arch package lists no
+	// longer carry it. Install the pinned static release instead of silently
+	// losing the completion feature the shell configs still reference.
+	if m.SystemInfo.OS == system.OSArch && shell != "none" && shell != "" {
+		if err := installCarapaceBinary(stepID); err != nil {
+			return wrapStepError("shell", "Install carapace",
+				"Failed to install carapace on Arch Linux",
+				err)
+		}
 	}
 
 	return nil

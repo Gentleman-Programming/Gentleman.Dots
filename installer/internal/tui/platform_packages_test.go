@@ -19,6 +19,11 @@ func withPackageCommandMocks(t *testing.T, sudoErr error) *[]packageCommandCall 
 	originalPkg := runPkgInstallWithLogs
 	originalSudo := runSudoWithLogs
 	originalBrew := runBrewWithLogs
+	originalPacman := pacmanPackageAvailable
+
+	// Package resolution must never depend on the host running the tests:
+	// every requested name resolves unless a test overrides this stub.
+	pacmanPackageAvailable = func(string) bool { return true }
 
 	calls := []packageCommandCall{}
 
@@ -39,6 +44,7 @@ func withPackageCommandMocks(t *testing.T, sudoErr error) *[]packageCommandCall 
 		runPkgInstallWithLogs = originalPkg
 		runSudoWithLogs = originalSudo
 		runBrewWithLogs = originalBrew
+		pacmanPackageAvailable = originalPacman
 	})
 
 	return &calls
