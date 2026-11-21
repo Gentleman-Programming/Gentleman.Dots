@@ -242,7 +242,7 @@ func stepInstallDeps(m *Model) error {
 	if m.SystemInfo.OS == system.OSFedora {
 		result := system.RunSudo("dnf check-update || true", nil) // dnf check-update returns 100 if updates available
 		result = system.RunSudo("dnf install -y @development-tools curl file git wget unzip fontconfig", nil)
-		if result.Error != nil {
+		if result.Error != nil && !isDnfNoOp(result) {
 			return wrapStepError("deps", "Install Dependencies",
 				"Failed to install base dependencies on Fedora/RHEL",
 				result.Error)
@@ -632,8 +632,22 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	}
 }
 
+// isDnfNoOp checks whether a dnf command failed solely with "Nothing to do",
+// which is dnf4's standard exit 1 behavior when all requested packages are already satisfied (#219).
+func isDnfNoOp(result *system.ExecResult) bool {
+	if result == nil || result.ExitCode != 1 {
+		return false
+	}
+	return strings.Contains(result.Stderr, "Nothing to do") || strings.Contains(result.Output, "Nothing to do")
+}
+
 func runNativeWithBrewFallback(nativeCommand string, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
 	result := runSudoWithLogs(nativeCommand, nil, onLog)
+	if isDnfNoOp(result) {
+		result.Error = nil
+		result.ExitCode = 0
+		return result
+	}
 	if result.Error == nil || !hasBrew || brewPackages == "" {
 		return result
 	}
