@@ -84,11 +84,11 @@ image_status() {
     fi
 }
 
-# Build the Go binary for Linux
+# Build the Go binary for Linux (static binary so it works on both glibc and Alpine/musl)
 build_binary() {
     echo "${BLUE}→ Building Linux AMD64 binary...${NC}"
     cd "$INSTALLER_DIR"
-    GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o "$SCRIPT_DIR/gentleman-installer-linux-amd64" ./cmd/gentleman-installer
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o "$SCRIPT_DIR/gentleman-installer-linux-amd64" ./cmd/gentleman-installer
     echo "${GREEN}✓ Binary built${NC}"
 }
 
