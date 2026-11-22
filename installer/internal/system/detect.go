@@ -25,6 +25,7 @@ type SystemInfo struct {
 	IsWSL     bool
 	IsARM     bool
 	IsTermux  bool
+	IsOmarchy bool
 	HomeDir   string
 	HasBrew   bool
 	HasPkg    bool // Termux package manager
@@ -66,6 +67,10 @@ func Detect() *SystemInfo {
 		if isArchLinux() {
 			info.OS = OSArch
 			info.OSName = "Arch Linux"
+			if isOmarchy() {
+				info.IsOmarchy = true
+				info.OSName = "Omarchy OS"
+			}
 		} else if isFedora() {
 			info.OS = OSFedora
 			info.OSName = "Fedora/RHEL"
@@ -93,6 +98,20 @@ func checkWSL() bool {
 func isArchLinux() bool {
 	_, err := os.Stat("/etc/arch-release")
 	return err == nil
+}
+
+func isOmarchy() bool {
+	if _, err := os.Stat("/etc/omarchy-release"); err == nil {
+		return true
+	}
+	data, err := os.ReadFile("/etc/os-release")
+	if err == nil {
+		lower := strings.ToLower(string(data))
+		if strings.Contains(lower, "id=omarchy") || strings.Contains(lower, "name=\"omarchy\"") || strings.Contains(lower, "name=omarchy") {
+			return true
+		}
+	}
+	return false
 }
 
 func isDebian() bool {

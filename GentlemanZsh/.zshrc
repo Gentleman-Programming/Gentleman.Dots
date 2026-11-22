@@ -118,11 +118,21 @@ source $ZSH/oh-my-zsh.sh
 
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-source <(carapace _carapace)
+if command -v carapace >/dev/null 2>&1; then
+    source <(carapace _carapace)
+fi
 
-eval "$(fzf --zsh)"
-eval "$(zoxide init zsh)"
-eval "$(atuin init zsh)"
+if command -v fzf >/dev/null 2>&1; then
+    if fzf --zsh >/dev/null 2>&1; then
+        eval "$(fzf --zsh)"
+    else
+        [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+        [[ -r /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+    fi
+fi
+
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

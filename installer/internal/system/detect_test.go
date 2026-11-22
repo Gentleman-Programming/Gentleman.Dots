@@ -230,6 +230,7 @@ func TestDetectTermuxFields(t *testing.T) {
 		_ = info.IsTermux
 		_ = info.HasPkg
 		_ = info.Prefix
+		_ = info.IsOmarchy
 	})
 
 	t.Run("Non-Termux system should have IsTermux=false", func(t *testing.T) {

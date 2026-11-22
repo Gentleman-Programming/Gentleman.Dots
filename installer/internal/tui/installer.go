@@ -741,7 +741,12 @@ func stepInstallShell(m *Model) error {
 		}
 		// Patch config.fish based on WM choice
 		SendLog(stepID, "Configuring shell for window manager...")
-		if err := system.PatchFishForWM(filepath.Join(homeDir, ".config/fish/config.fish"), m.Choices.WindowMgr, m.Choices.InstallNvim); err != nil {
+		effectiveWM := m.Choices.WindowMgr
+		if m.SystemInfo != nil && m.SystemInfo.IsOmarchy && effectiveWM == "herdr" {
+			SendLog(stepID, "Omarchy detected: skipping Herdr autostart (use Super+Ctrl+Return)")
+			effectiveWM = "none"
+		}
+		if err := system.PatchFishForWM(filepath.Join(homeDir, ".config/fish/config.fish"), effectiveWM, m.Choices.InstallNvim); err != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to configure config.fish for window manager",
 				err)
@@ -791,7 +796,12 @@ func stepInstallShell(m *Model) error {
 		}
 		// Patch .zshrc based on WM choice
 		SendLog(stepID, "Configuring shell for window manager...")
-		if err := system.PatchZshForWM(filepath.Join(homeDir, ".zshrc"), m.Choices.WindowMgr, m.Choices.InstallNvim); err != nil {
+		effectiveZshWM := m.Choices.WindowMgr
+		if m.SystemInfo != nil && m.SystemInfo.IsOmarchy && effectiveZshWM == "herdr" {
+			SendLog(stepID, "Omarchy detected: skipping Herdr autostart (use Super+Ctrl+Return)")
+			effectiveZshWM = "none"
+		}
+		if err := system.PatchZshForWM(filepath.Join(homeDir, ".zshrc"), effectiveZshWM, m.Choices.InstallNvim); err != nil {
 			return wrapStepError("shell", "Install Zsh",
 				"Failed to configure .zshrc for window manager",
 				err)
@@ -874,7 +884,12 @@ func stepInstallShell(m *Model) error {
 		}
 		// Patch config.nu based on WM choice
 		SendLog(stepID, "Configuring shell for window manager...")
-		if err := system.PatchNushellForWM(filepath.Join(nuDir, "config.nu"), m.Choices.WindowMgr); err != nil {
+		effectiveNuWM := m.Choices.WindowMgr
+		if m.SystemInfo != nil && m.SystemInfo.IsOmarchy && effectiveNuWM == "herdr" {
+			SendLog(stepID, "Omarchy detected: skipping Herdr autostart (use Super+Ctrl+Return)")
+			effectiveNuWM = "none"
+		}
+		if err := system.PatchNushellForWM(filepath.Join(nuDir, "config.nu"), effectiveNuWM); err != nil {
 			return wrapStepError("shell", "Install Nushell",
 				"Failed to configure config.nu for window manager",
 				err)
