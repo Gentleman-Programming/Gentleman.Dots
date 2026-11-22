@@ -955,7 +955,7 @@ func PatchNushellForWM(configPath string, wm string) error {
 		if strings.HasPrefix(trimmed, "def start_multiplexer") {
 			inMultiplexerBlock = !strings.Contains(trimmed, "}")
 			if wm != "none" {
-				newLines = append(newLines, line)
+				newLines = append(newLines, strings.ReplaceAll(line, "run-external $MULTIPLEXER", "exec $MULTIPLEXER"))
 			}
 			continue
 		}
@@ -965,7 +965,7 @@ func PatchNushellForWM(configPath string, wm string) error {
 					newLines = append(newLines, `  let active_env = ($env | columns)`)
 					newLines = append(newLines, `  if (which $MULTIPLEXER | is-not-empty) and $MULTIPLEXER_ENV_PREFIX not-in $active_env and "TMUX" not-in $active_env and "ZELLIJ" not-in $active_env and "HERDR_ENV" not-in $active_env {`)
 				} else {
-					newLines = append(newLines, line)
+					newLines = append(newLines, strings.ReplaceAll(line, "run-external $MULTIPLEXER", "exec $MULTIPLEXER"))
 				}
 			}
 			if trimmed == "}" {

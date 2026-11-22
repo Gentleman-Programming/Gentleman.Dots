@@ -276,7 +276,7 @@ $env.config = {
         # 633;E - Explicitly set the command line with an optional nonce
         # 633;P;Cwd=<path> - Mark the current working directory and communicate it to the terminal
         # and also helps with the run recent menu in vscode
-        osc633: true
+        osc633: false
         # reset_application_mode is escape \x1b[?1l and was added to help ssh work better
         reset_application_mode: true
     }
@@ -928,7 +928,7 @@ let MULTIPLEXER_ENV_PREFIX = "TMUX"
 def start_multiplexer [] {
   let active_env = ($env | columns)
   if (which $MULTIPLEXER | is-not-empty) and $MULTIPLEXER_ENV_PREFIX not-in $active_env and "TMUX" not-in $active_env and "ZELLIJ" not-in $active_env and "HERDR_ENV" not-in $active_env {
-    run-external $MULTIPLEXER
+    exec $MULTIPLEXER
   }
 }
 

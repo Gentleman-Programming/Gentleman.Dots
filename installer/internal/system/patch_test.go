@@ -332,44 +332,52 @@ start_multiplexer
 				"def start_multiplexer",
 				"start_multiplexer",
 				"run-external",
+				"exec $MULTIPLEXER",
 			},
 		},
 		{
-			name: "WM zellij should replace tmux with zellij",
+			name: "WM zellij should replace tmux with zellij and use exec",
 			wm:   "zellij",
 			wantContain: []string{
 				"let MULTIPLEXER = \"zellij\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"ZELLIJ\"",
+				"exec $MULTIPLEXER",
 				"start_multiplexer",
 			},
 			wantNotContain: []string{
 				"let MULTIPLEXER = \"tmux\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"TMUX\"",
+				"run-external $MULTIPLEXER",
 			},
 		},
 		{
-			name: "WM herdr should replace tmux with herdr",
+			name: "WM herdr should replace tmux with herdr and use exec",
 			wm:   "herdr",
 			wantContain: []string{
 				"let MULTIPLEXER = \"herdr\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"HERDR_ENV\"",
 				"which $MULTIPLEXER",
+				"exec $MULTIPLEXER",
 				"start_multiplexer",
 			},
 			wantNotContain: []string{
 				"let MULTIPLEXER = \"tmux\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"TMUX\"",
+				"run-external $MULTIPLEXER",
 			},
 		},
 		{
-			name: "WM tmux should keep original",
+			name: "WM tmux should keep original and use exec",
 			wm:   "tmux",
 			wantContain: []string{
 				"let MULTIPLEXER = \"tmux\"",
 				"let MULTIPLEXER_ENV_PREFIX = \"TMUX\"",
+				"exec $MULTIPLEXER",
 				"start_multiplexer",
 			},
-			wantNotContain: []string{},
+			wantNotContain: []string{
+				"run-external $MULTIPLEXER",
+			},
 		},
 	}
 

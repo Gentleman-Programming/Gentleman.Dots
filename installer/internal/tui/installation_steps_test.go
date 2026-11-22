@@ -330,7 +330,7 @@ end
 
 // TestStepInstallShellNushell tests nushell installation step
 func TestStepInstallShellNushell(t *testing.T) {
-	t.Run("nushell step patches config based on WM choice - none", func(t *testing.T) {
+	t.Run("nushell step patches config based on WM choice - none with exec", func(t *testing.T) {
 		tmpDir := t.TempDir()
 
 		nu := `let MULTIPLEXER = "tmux" 
@@ -338,7 +338,7 @@ let MULTIPLEXER_ENV_PREFIX = "TMUX"
 
 def start_multiplexer [] {
   if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
-    run-external $MULTIPLEXER
+    exec $MULTIPLEXER
   }
 }
 
@@ -361,13 +361,23 @@ start_multiplexer`
 		if contains(contentStr, "start_multiplexer") {
 			t.Error("start_multiplexer should be removed when WM=none")
 		}
+		if contains(contentStr, "exec $MULTIPLEXER") {
+			t.Error("exec $MULTIPLEXER should be removed when WM=none")
+		}
 	})
 
-	t.Run("nushell step patches config based on WM choice - zellij", func(t *testing.T) {
+	t.Run("nushell step patches config based on WM choice - zellij with exec", func(t *testing.T) {
 		tmpDir := t.TempDir()
 
 		nu := `let MULTIPLEXER = "tmux" 
 let MULTIPLEXER_ENV_PREFIX = "TMUX"
+
+def start_multiplexer [] {
+  if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {
+    exec $MULTIPLEXER
+  }
+}
+
 start_multiplexer`
 
 		nuPath := filepath.Join(tmpDir, "config.nu")
@@ -386,6 +396,9 @@ start_multiplexer`
 		}
 		if !contains(contentStr, `"ZELLIJ"`) {
 			t.Error("Should contain ZELLIJ")
+		}
+		if !contains(contentStr, "exec $MULTIPLEXER") {
+			t.Error("Should preserve exec $MULTIPLEXER")
 		}
 	})
 }
