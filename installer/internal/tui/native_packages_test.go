@@ -40,6 +40,20 @@ func setAptUnavailable(t *testing.T, names ...string) {
 	t.Cleanup(func() { aptPackageAvailable = original })
 }
 
+// setDnfUnavailable makes the named packages unresolvable for Fedora.
+func setDnfUnavailable(t *testing.T, names ...string) {
+	t.Helper()
+
+	blocked := make(map[string]bool, len(names))
+	for _, name := range names {
+		blocked[name] = true
+	}
+
+	original := dnfPackageAvailable
+	dnfPackageAvailable = func(name string) bool { return !blocked[name] }
+	t.Cleanup(func() { dnfPackageAvailable = original })
+}
+
 func TestFilterAvailablePackagesKeepsOrder(t *testing.T) {
 	ok, missing := filterAvailablePackages(
 		[]string{"zsh", "carapace", "zoxide"},
@@ -279,5 +293,72 @@ func TestInstallDebianPackagesFailsWhenNothingIsAvailable(t *testing.T) {
 	}
 	if len(*calls) != 0 {
 		t.Fatalf("expected no package manager invocation, got %#v", *calls)
+	}
+}
+
+func TestInstallFedoraPackagesSkipsUnavailableCarapace(t *testing.T) {
+	calls := withPackageCommandMocks(t, nil)
+	setDnfUnavailable(t, "carapace")
+
+	var warnings []string
+	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSFedora}}
+	result := installPlatformPackages(m, "shell", platformPackages{
+		Brew:   "fish carapace zoxide atuin starship",
+		Fedora: "fish carapace zoxide atuin starship",
+	}, func(line string) { warnings = append(warnings, line) })
+
+	if result.Error != nil {
+		t.Fatalf("expected install to succeed without carapace, got: %v", result.Error)
+	}
+
+	expected := []packageCommandCall{
+		{runner: "sudo", command: "dnf install -y fish zoxide atuin starship"},
+	}
+	if !reflect.DeepEqual(*calls, expected) {
+		t.Fatalf("calls = %#v, want %#v", *calls, expected)
+	}
+
+	if len(warnings) != 1 || !strings.Contains(warnings[0], "carapace") {
+		t.Fatalf("warnings = %#v, want one warning naming carapace", warnings)
+	}
+}
+
+func TestInstallFedoraPackagesFailsWhenNothingIsAvailable(t *testing.T) {
+	calls := withPackageCommandMocks(t, nil)
+	setDnfUnavailable(t, "fish", "zoxide")
+
+	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSFedora}}
+	result := installPlatformPackages(m, "shell", platformPackages{
+		Fedora: "fish zoxide",
+	}, nil)
+
+	if result.Error == nil {
+		t.Fatal("expected an error when no requested package is available")
+	}
+	if len(*calls) != 0 {
+		t.Fatalf("expected no package manager invocation, got %#v", *calls)
+	}
+}
+
+func TestInstallFedoraPackagesFallsBackToBrewAfterFiltering(t *testing.T) {
+	calls := withPackageCommandMocks(t, errors.New("dnf failed"))
+	setDnfUnavailable(t, "carapace")
+
+	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSFedora, HasBrew: true}}
+	result := installPlatformPackages(m, "shell", platformPackages{
+		Brew:   "fish carapace zoxide",
+		Fedora: "fish carapace zoxide",
+	}, nil)
+
+	if result.Error != nil {
+		t.Fatalf("expected brew fallback to succeed, got: %v", result.Error)
+	}
+
+	expected := []packageCommandCall{
+		{runner: "sudo", command: "dnf install -y fish zoxide"},
+		{runner: "brew", command: "install fish carapace zoxide"},
+	}
+	if !reflect.DeepEqual(*calls, expected) {
+		t.Fatalf("calls = %#v, want %#v", *calls, expected)
 	}
 }

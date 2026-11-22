@@ -38,6 +38,13 @@ var aptPackageAvailable = func(name string) bool {
 	return system.Run("apt-cache show "+name, nil).Error == nil
 }
 
+// dnfPackageAvailable reports whether a package name resolves in the host's
+// configured Fedora repositories. `dnf info` exits non-zero when no package
+// of that name is known.
+var dnfPackageAvailable = func(name string) bool {
+	return system.Run("dnf info "+name, nil).Error == nil
+}
+
 // filterAvailablePackages splits pkgs into the names the host can install and
 // the names it cannot, preserving the original order.
 func filterAvailablePackages(pkgs []string, available func(string) bool) (ok []string, missing []string) {
@@ -97,6 +104,16 @@ func installDebianPackages(debianPackages, brewPackages string, hasBrew bool, on
 	return installAvailablePackages(debianPackages, aptPackageAvailable,
 		func(pkgs []string) string {
 			return "apt-get install -y " + strings.Join(pkgs, " ")
+		},
+		brewPackages, hasBrew, onLog)
+}
+
+// installFedoraPackages installs a Fedora package list without letting a name
+// that dnf cannot resolve (such as carapace) abort the whole transaction.
+func installFedoraPackages(fedoraPackages, brewPackages string, hasBrew bool, onLog func(string)) *system.ExecResult {
+	return installAvailablePackages(fedoraPackages, dnfPackageAvailable,
+		func(pkgs []string) string {
+			return "dnf install -y " + strings.Join(pkgs, " ")
 		},
 		brewPackages, hasBrew, onLog)
 }

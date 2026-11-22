@@ -202,3 +202,45 @@ func TestZshTemplateIntegratesAutocompleteWithFzf(t *testing.T) {
 		t.Errorf("gentleman-fzf-or-menu (pos %d) must appear after eval \"$(fzf --zsh)\" (pos %d)", bridgePos, fzfPos)
 	}
 }
+
+// Oh My Zsh runs compinit, which overwrites zsh-autocomplete 26.08.04's hooks
+// and causes 4 blank rows above the completion menu (#199). Therefore
+// oh-my-zsh.sh must be sourced before zsh-autocomplete, and
+// zsh-syntax-highlighting must be sourced after zsh-autocomplete and
+// zsh-autosuggestions with Zsh 5.9 widget guards.
+func TestZshTemplateLoadsOhMyZshBeforeAutocompleteAndSyntaxHighlightingLast(t *testing.T) {
+	content := readZshTemplate(t)
+
+	omzPos := strings.Index(content, "source $ZSH/oh-my-zsh.sh")
+	if omzPos < 0 {
+		t.Fatal("zsh template does not source $ZSH/oh-my-zsh.sh")
+	}
+
+	autocompletePos := strings.Index(content, "zsh-autocomplete.plugin.zsh")
+	if autocompletePos < 0 {
+		t.Fatal("zsh template does not reference zsh-autocomplete.plugin.zsh")
+	}
+	if omzPos > autocompletePos {
+		t.Errorf("source $ZSH/oh-my-zsh.sh (pos %d) must appear before zsh-autocomplete.plugin.zsh (pos %d)", omzPos, autocompletePos)
+	}
+
+	syntaxPos := strings.Index(content, "zsh-syntax-highlighting.zsh")
+	if syntaxPos < 0 {
+		t.Fatal("zsh template does not reference zsh-syntax-highlighting.zsh")
+	}
+	if autocompletePos > syntaxPos {
+		t.Errorf("zsh-autocomplete.plugin.zsh (pos %d) must appear before zsh-syntax-highlighting.zsh (pos %d)", autocompletePos, syntaxPos)
+	}
+
+	for _, guard := range []string{
+		"(( ${+widgets[recent-paths]} )) || zle -N recent-paths true",
+		"(( ${+widgets[menu-search]} )) || zle -N menu-search true",
+	} {
+		guardPos := strings.Index(content, guard)
+		if guardPos < 0 {
+			t.Errorf("zsh template missing Zsh 5.9 widget guard: %q", guard)
+		} else if guardPos > syntaxPos {
+			t.Errorf("widget guard %q (pos %d) must appear before zsh-syntax-highlighting.zsh (pos %d)", guard, guardPos, syntaxPos)
+		}
+	}
+}

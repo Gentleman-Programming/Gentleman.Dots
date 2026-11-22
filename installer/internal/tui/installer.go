@@ -524,8 +524,10 @@ func stepInstallTerminal(m *Model) error {
 					SendLog(stepID, line)
 				})
 			} else if m.SystemInfo.OS == system.OSFedora {
-				// Fedora: enable COPR and install
-				system.RunSudo("dnf copr enable -y pgdev/ghostty", nil)
+				// Fedora: enable maintained COPR first, fall back to pgdev/ghostty if it fails
+				if coprRes := system.RunSudo("dnf copr enable -y scottames/ghostty", nil); coprRes.Error != nil {
+					system.RunSudo("dnf copr enable -y pgdev/ghostty", nil)
+				}
 				result = system.RunSudoWithLogs("dnf install -y ghostty", nil, func(line string) {
 					SendLog(stepID, line)
 				})
@@ -666,7 +668,7 @@ func installPlatformPackages(m *Model, stepID string, packages platformPackages,
 	case m.SystemInfo.OS == system.OSArch && packages.Arch != "":
 		return installArchPackages(packages.Arch, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case m.SystemInfo.OS == system.OSFedora && packages.Fedora != "":
-		return runNativeWithBrewFallback("dnf install -y "+packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
+		return installFedoraPackages(packages.Fedora, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	case (m.SystemInfo.OS == system.OSDebian || m.SystemInfo.OS == system.OSLinux) && !m.SystemInfo.HasBrew && packages.Debian != "":
 		return installDebianPackages(packages.Debian, packages.Brew, m.SystemInfo.HasBrew, onLog)
 	default:
@@ -959,13 +961,13 @@ func stepInstallShell(m *Model) error {
 		SendLog(stepID, "✓ Nushell configured")
 	}
 
-	// carapace is AUR-only on Arch and CachyOS, so the Arch package lists no
-	// longer carry it. Install the pinned static release instead of silently
-	// losing the completion feature the shell configs still reference.
-	if m.SystemInfo.OS == system.OSArch && shell != "none" && shell != "" {
+	// carapace is not in vanilla Arch/CachyOS/Fedora repos, so install the
+	// pinned static release when missing instead of silently losing the
+	// completion feature the shell configs still reference.
+	if (m.SystemInfo.OS == system.OSArch || m.SystemInfo.OS == system.OSFedora) && shell != "none" && shell != "" {
 		if err := installCarapaceBinary(stepID); err != nil {
 			return wrapStepError("shell", "Install carapace",
-				"Failed to install carapace on Arch Linux",
+				"Failed to install carapace",
 				err)
 		}
 	}

@@ -79,12 +79,23 @@ if [[ $IS_TERMUX -eq 0 ]]; then
     fi
 fi
 
+#plugins (must load before zsh-autocomplete so compinit does not overwrite its hooks, #199)
+plugins=(
+  command-not-found
+)
+
+source $ZSH/oh-my-zsh.sh
+
 # Zsh plugins - different paths for Termux vs Homebrew
 if [[ $IS_TERMUX -eq 1 ]]; then
     # Termux - plugins installed via pkg
     [[ -f "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && source "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-    [[ -f "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     [[ -f "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [[ $ZSH_VERSION == 5.9* ]]; then
+        (( ${+widgets[recent-paths]} )) || zle -N recent-paths true
+        (( ${+widgets[menu-search]} )) || zle -N menu-search true
+    fi
+    [[ -f "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     # Powerlevel10k on Termux - may need manual install
     [[ -f "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && source "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 else
@@ -95,17 +106,25 @@ else
     if [[ -n "$BREW_BIN" && -d "$(dirname $BREW_BIN)/share" ]]; then
         BREW_SHARE="$(dirname $BREW_BIN)/share"
         source_if_exists "$BREW_SHARE/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-        source_if_exists "$BREW_SHARE/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
         source_if_exists "$BREW_SHARE/zsh-autosuggestions/zsh-autosuggestions.zsh"
-        source_if_exists "$BREW_SHARE/powerlevel10k/powerlevel10k.zsh-theme"
     fi
 
     # Native Linux package layouts (Arch/Fedora/Debian vary by package).
     source_if_exists "/usr/share/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-    source_if_exists "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    source_if_exists "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     source_if_exists "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
     source_if_exists "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+    if [[ $ZSH_VERSION == 5.9* ]]; then
+        (( ${+widgets[recent-paths]} )) || zle -N recent-paths true
+        (( ${+widgets[menu-search]} )) || zle -N menu-search true
+    fi
+
+    if [[ -n "$BREW_SHARE" ]]; then
+        source_if_exists "$BREW_SHARE/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        source_if_exists "$BREW_SHARE/powerlevel10k/powerlevel10k.zsh-theme"
+    fi
+    source_if_exists "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    source_if_exists "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     source_if_exists "/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme"
     source_if_exists "/usr/share/powerlevel10k/powerlevel10k.zsh-theme"
 fi
@@ -118,13 +137,6 @@ export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
-
-#plugins
-plugins=(
-  command-not-found
-)
-
-source $ZSH/oh-my-zsh.sh
 
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
