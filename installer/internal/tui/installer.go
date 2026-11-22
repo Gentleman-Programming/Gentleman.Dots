@@ -734,6 +734,14 @@ func stepInstallShell(m *Model) error {
 				"Failed to copy starship configuration",
 				err)
 		}
+		// Copy Starship profiles and Atuin themes for fish-theme selector (#218)
+		starshipDir := filepath.Join(homeDir, ".config", "starship")
+		system.EnsureDir(starshipDir)
+		system.CopyDir(filepath.Join(repoDir, "starship"), starshipDir)
+		atuinDir := filepath.Join(homeDir, ".config", "atuin", "themes")
+		system.EnsureDir(atuinDir)
+		system.CopyDir(filepath.Join(repoDir, "atuin", "themes"), atuinDir)
+
 		if err := system.CopyDir(filepath.Join(repoDir, "GentlemanFish", "fish"), filepath.Join(homeDir, ".config", "fish")); err != nil {
 			return wrapStepError("shell", "Install Fish",
 				"Failed to copy Fish configuration",
@@ -1082,16 +1090,30 @@ func stepInstallWM(m *Model) error {
 				"Failed to create Herdr config directory",
 				err)
 		}
-		if err := system.CopyFile(filepath.Join(repoDir, "herdr", "config.toml"), filepath.Join(herdrDir, "config.toml")); err != nil {
+		if err := system.EnsureDir(filepath.Join(herdrDir, "profiles")); err != nil {
 			return wrapStepError("wm", "Install Herdr",
-				"Failed to copy Herdr configuration",
+				"Failed to create Herdr profiles directory",
 				err)
+		}
+		system.CopyFile(filepath.Join(repoDir, "herdr", "config-base.toml"), filepath.Join(herdrDir, "config-base.toml"))
+		system.CopyDir(filepath.Join(repoDir, "herdr", "profiles"), filepath.Join(herdrDir, "profiles"))
+		if _, err := os.Stat(filepath.Join(herdrDir, "config.toml")); os.IsNotExist(err) {
+			if err := system.CopyFile(filepath.Join(repoDir, "herdr", "config.toml"), filepath.Join(herdrDir, "config.toml")); err != nil {
+				return wrapStepError("wm", "Install Herdr",
+					"Failed to copy Herdr configuration",
+					err)
+			}
 		}
 		if err := os.Chmod(filepath.Join(herdrDir, "config.toml"), 0644); err != nil {
 			return wrapStepError("wm", "Install Herdr",
 				"Failed to make Herdr configuration writable",
 				err)
 		}
+		// Install herdr-theme selector into ~/.local/bin/herdr-theme (#218)
+		localBin := filepath.Join(homeDir, ".local", "bin")
+		system.EnsureDir(localBin)
+		system.CopyFile(filepath.Join(repoDir, "herdr", "herdr-theme"), filepath.Join(localBin, "herdr-theme"))
+		os.Chmod(filepath.Join(localBin, "herdr-theme"), 0755)
 		SendLog(stepID, "✓ Herdr configured")
 	}
 

@@ -11,8 +11,8 @@ Regular files retain their default color and permission-sensitive categories
 remain distinguishable.
 
 After installing the updated Fish configuration, open a new shell to load it.
-This legacy configuration does not include the `gentleman-cute` profile or the
-`fish-theme` selector provided by the Nix checkout.
+Use `fish-theme <gentleman|gentleman-cute>` to switch between the neutral Gentleman palette
+and the graphite-rose Gentleman-Cute profile across Fish, Starship, and Atuin.
 
 Run the isolated configuration regression check with:
 

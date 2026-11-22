@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -u
+
+usage() {
+  printf 'Usage: herdr-theme <gentleman|gentleman-cute>\n' >&2
+}
+
+if [ "$#" -ne 1 ]; then
+  usage
+  exit 2
+fi
+
+theme="$1"
+case "$theme" in
+  gentleman|gentleman-cute) ;;
+  *)
+    printf 'Unknown theme: %s\n' "$theme" >&2
+    usage
+    exit 2
+    ;;
+esac
+
+config_dir="$HOME/.config/herdr"
+config_path="$config_dir/config.toml"
+base="$config_dir/config-base.toml"
+profile="$config_dir/profiles/$theme.toml"
+
+if [ ! -r "$base" ] || [ ! -r "$profile" ]; then
+  printf 'Herdr theme sources are unavailable. Re-run installer.\n' >&2
+  exit 1
+fi
+
+mkdir -p "$config_dir"
+if ! candidate="$(mktemp "$config_dir/.config.toml.XXXXXX")"; then
+  printf 'Unable to create a Herdr theme candidate.\n' >&2
+  exit 1
+fi
+trap 'rm -f "$candidate"' EXIT HUP INT TERM
+
+if ! cat "$base" "$profile" > "$candidate"; then
+  printf 'Unable to assemble Herdr theme candidate.\n' >&2
+  exit 1
+fi
+
+if ! chmod u+w "$candidate"; then
+  printf 'Unable to make the Herdr theme candidate writable.\n' >&2
+  exit 1
+fi
+
+if ! mv -f "$candidate" "$config_path"; then
+  printf 'Unable to activate the Herdr theme candidate.\n' >&2
+  exit 1
+fi
+trap - EXIT HUP INT TERM
+
+printf 'Herdr theme selected: %s\n' "$theme"
+
+if ! command -v herdr >/dev/null 2>&1; then
+  printf 'Herdr is not installed; the selection applies once it is.\n' >&2
+  exit 0
+fi
+
+if ! herdr server reload-config; then
+  printf 'Warning: Herdr could not reload its server; the selection remains active for the next start.\n' >&2
+fi
