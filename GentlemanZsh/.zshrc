@@ -1,3 +1,24 @@
+# ---------------------------------------------------------------------------
+# Window manager autostart.
+#
+# This block MUST stay above the Powerlevel10k instant prompt below. That
+# block redirects stdout to a file while the rest of this file runs, so
+# `[[ -t 1 ]]` is false afterwards and this launcher would never exec.
+# Moving it below silently disables window manager autostart (#210).
+# ---------------------------------------------------------------------------
+WM_VAR="/$TMUX"
+# change with ZELLIJ
+WM_CMD="tmux"
+# change with zellij
+
+function start_if_needed() {
+    if [[ $- == *i* ]] && command -v "$WM_CMD" >/dev/null 2>&1 && [[ -z "${WM_VAR#/}" ]] && [[ -z "$TMUX" ]] && [[ -z "$ZELLIJ" ]] && [[ -z "$HERDR_ENV" ]] && [[ -t 1 ]]; then
+        exec $WM_CMD
+    fi
+}
+
+start_if_needed
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -58,12 +79,23 @@ if [[ $IS_TERMUX -eq 0 ]]; then
     fi
 fi
 
+#plugins (must load before zsh-autocomplete so compinit does not overwrite its hooks, #199)
+plugins=(
+  command-not-found
+)
+
+source $ZSH/oh-my-zsh.sh
+
 # Zsh plugins - different paths for Termux vs Homebrew
 if [[ $IS_TERMUX -eq 1 ]]; then
     # Termux - plugins installed via pkg
     [[ -f "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && source "$PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-    [[ -f "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     [[ -f "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [[ $ZSH_VERSION == 5.9* ]]; then
+        (( ${+widgets[recent-paths]} )) || zle -N recent-paths true
+        (( ${+widgets[menu-search]} )) || zle -N menu-search true
+    fi
+    [[ -f "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     # Powerlevel10k on Termux - may need manual install
     [[ -f "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && source "$PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 else
@@ -74,17 +106,25 @@ else
     if [[ -n "$BREW_BIN" && -d "$(dirname $BREW_BIN)/share" ]]; then
         BREW_SHARE="$(dirname $BREW_BIN)/share"
         source_if_exists "$BREW_SHARE/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-        source_if_exists "$BREW_SHARE/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
         source_if_exists "$BREW_SHARE/zsh-autosuggestions/zsh-autosuggestions.zsh"
-        source_if_exists "$BREW_SHARE/powerlevel10k/powerlevel10k.zsh-theme"
     fi
 
     # Native Linux package layouts (Arch/Fedora/Debian vary by package).
     source_if_exists "/usr/share/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-    source_if_exists "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    source_if_exists "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     source_if_exists "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
     source_if_exists "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+    if [[ $ZSH_VERSION == 5.9* ]]; then
+        (( ${+widgets[recent-paths]} )) || zle -N recent-paths true
+        (( ${+widgets[menu-search]} )) || zle -N menu-search true
+    fi
+
+    if [[ -n "$BREW_SHARE" ]]; then
+        source_if_exists "$BREW_SHARE/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        source_if_exists "$BREW_SHARE/powerlevel10k/powerlevel10k.zsh-theme"
+    fi
+    source_if_exists "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    source_if_exists "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     source_if_exists "/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme"
     source_if_exists "/usr/share/powerlevel10k/powerlevel10k.zsh-theme"
 fi
@@ -94,37 +134,44 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exlude .git"
 
-WM_VAR="/$TMUX"
-# change with ZELLIJ
-WM_CMD="tmux"
-# change with zellij
-
-function start_if_needed() {
-    if [[ $- == *i* ]] && command -v "$WM_CMD" >/dev/null 2>&1 && [[ -z "${WM_VAR#/}" ]] && [[ -z "$TMUX" ]] && [[ -z "$ZELLIJ" ]] && [[ -z "$HERDR_ENV" ]] && [[ -t 1 ]]; then
-        exec $WM_CMD
-    fi
-}
-
 # alias
 alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
 alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
-
-#plugins
-plugins=(
-  command-not-found
-)
-
-source $ZSH/oh-my-zsh.sh
 
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace _carapace)
 
 eval "$(fzf --zsh)"
+
+# Integrate zsh-autocomplete menu navigation with fzf (#205).
+gentleman-fzf-or-menu() {
+  local trigger=${FZF_COMPLETION_TRIGGER-'**'}
+  if [[ -n $trigger && $LBUFFER == *"$trigger" ]]; then
+    zle fzf-completion
+  else
+    zle menu-select
+  fi
+}
+
+zle -N gentleman-fzf-or-menu
+bindkey '^I' gentleman-fzf-or-menu
+bindkey -M menuselect '^I' menu-complete
+
+if [[ -n "${terminfo[kcbt]}" ]]; then
+  bindkey "${terminfo[kcbt]}" menu-select
+  bindkey -M menuselect "${terminfo[kcbt]}" reverse-menu-complete
+fi
+
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-start_if_needed
+# Load user-maintained Zsh extensions in lexical order (#206).
+for config_file in "$HOME"/.zshrc.d/*.zsh(N); do
+  [[ -r "$config_file" ]] && source "$config_file"
+done
+unset config_file
+

@@ -19,6 +19,15 @@ func withPackageCommandMocks(t *testing.T, sudoErr error) *[]packageCommandCall 
 	originalPkg := runPkgInstallWithLogs
 	originalSudo := runSudoWithLogs
 	originalBrew := runBrewWithLogs
+	originalPacman := pacmanPackageAvailable
+	originalApt := aptPackageAvailable
+	originalDnf := dnfPackageAvailable
+
+	// Package resolution must never depend on the host running the tests:
+	// every requested name resolves unless a test overrides this stub.
+	pacmanPackageAvailable = func(string) bool { return true }
+	aptPackageAvailable = func(string) bool { return true }
+	dnfPackageAvailable = func(string) bool { return true }
 
 	calls := []packageCommandCall{}
 
@@ -39,6 +48,9 @@ func withPackageCommandMocks(t *testing.T, sudoErr error) *[]packageCommandCall 
 		runPkgInstallWithLogs = originalPkg
 		runSudoWithLogs = originalSudo
 		runBrewWithLogs = originalBrew
+		pacmanPackageAvailable = originalPacman
+		aptPackageAvailable = originalApt
+		dnfPackageAvailable = originalDnf
 	})
 
 	return &calls
@@ -114,7 +126,7 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 	m := &Model{SystemInfo: &system.SystemInfo{OS: system.OSArch, HasBrew: true}}
 	result := installPlatformPackages(m, "shell", platformPackages{
 		Brew: "fish carapace zoxide atuin starship",
-		Arch: "fish carapace zoxide atuin starship",
+		Arch: "fish zoxide atuin starship",
 	}, nil)
 
 	if result.Error != nil {
@@ -122,7 +134,7 @@ func TestInstallPlatformPackagesArchFallsBackToBrewWhenNativeFails(t *testing.T)
 	}
 
 	expected := []packageCommandCall{
-		{runner: "sudo", command: "pacman -S --needed --noconfirm fish carapace zoxide atuin starship"},
+		{runner: "sudo", command: "pacman -S --needed --noconfirm fish zoxide atuin starship"},
 		{runner: "brew", command: "install fish carapace zoxide atuin starship"},
 	}
 	if !reflect.DeepEqual(*calls, expected) {

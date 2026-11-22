@@ -1542,6 +1542,45 @@ func TestInstallCompleteMessage(t *testing.T) {
 	}
 }
 
+// TestInstallStartWiresNotifyAndAggregatesSkippedPaths verifies that starting
+// an installation wires system.Notify so that skip warnings emitted anywhere
+// during the run (e.g. from system.CopyDir skipping a non-regular file) are
+// aggregated and surfaced in the final ScreenComplete summary.
+func TestInstallStartWiresNotifyAndAggregatesSkippedPaths(t *testing.T) {
+	originalNotify := system.Notify
+	defer func() { system.Notify = originalNotify }()
+
+	m := NewModel()
+	m.Steps = []InstallStep{}
+	m.CurrentStep = 0
+
+	// Starting the install should wire system.Notify and clear any
+	// previously accumulated skip warnings.
+	result, _ := m.Update(installStartMsg{})
+	newModel := result.(Model)
+
+	// Simulate a skip warning emitted by system.CopyDir during a step.
+	system.Notify("⚠ skipped non-regular file: /home/user/.config/herdr/herdr-client.sock")
+
+	result, _ = newModel.Update(installCompleteMsg{totalTime: 1.0})
+	finalModel := result.(Model)
+
+	if finalModel.Screen != ScreenComplete {
+		t.Fatalf("Expected ScreenComplete, got %v", finalModel.Screen)
+	}
+	if len(finalModel.SkippedPaths) != 1 {
+		t.Fatalf("Expected 1 skipped path aggregated, got %d: %v", len(finalModel.SkippedPaths), finalModel.SkippedPaths)
+	}
+	if !strings.Contains(finalModel.SkippedPaths[0], "herdr-client.sock") {
+		t.Errorf("Expected aggregated skip warning to name the socket path, got %q", finalModel.SkippedPaths[0])
+	}
+
+	view := finalModel.View()
+	if !strings.Contains(view, "herdr-client.sock") {
+		t.Errorf("Expected the completion summary to list the skipped path, got:\n%s", view)
+	}
+}
+
 // =============================================================================
 // INIT TESTS
 // =============================================================================

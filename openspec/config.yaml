@@ -1,0 +1,67 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: Go 1.25.1 (toolchain go1.27.0), Bubbletea/Lipgloss TUI.
+  Architecture: installer/ module; cmd/gentleman-installer entrypoint,
+  internal/tui (screens), internal/system (OS detection/exec).
+  Testing: go test ./... (installer dir); teatest for TUI; golden snapshots.
+  Style: standard Go formatting (gofmt); no linter config detected.
+
+strict_tdd: true
+
+testing:
+  test_command: "go test ./..."
+  test_command_cwd: "installer"
+  framework: "Go standard testing + charmbracelet/x/exp/teatest (Bubbletea)"
+  unit: true
+  integration: true
+  integration_tool: "teatest (TUI), internal/system tests"
+  e2e: true
+  e2e_tool: "Docker-based E2E (installer/e2e/docker-test.sh), multi-platform matrix (ubuntu/debian/fedora/alpine/termux) in CI"
+  coverage_available: true
+  coverage_command: "go test ./... -cover"
+  linter: null
+  linter_command: null
+  type_checker: null
+  formatter: "gofmt"
+  formatter_command: "gofmt -l ."
+  known_baseline_failures:
+    - test: TestWelcomeScreenGolden
+      package: internal/tui
+      reason: "Golden snapshot recorded on macOS asserts 'Detected: macOS'; on Linux (CachyOS/Arch) it reads 'Detected: Arch Linux'. Pre-existing on clean main, unrelated to feature changes."
+    - test: TestMainMenuGolden
+      package: internal/tui
+      reason: "Same macOS-recorded golden snapshot mismatch as TestWelcomeScreenGolden."
+    - test: TestOSSelectGolden
+      package: internal/tui
+      reason: "Same macOS-recorded golden snapshot mismatch as TestWelcomeScreenGolden."
+  ci_note: "CI (.github/workflows/e2e-testing.yml) runs 'go test ./... -skip Golden' on Linux runners and only runs full golden suite on macos-latest, confirming Golden tests are macOS-specific by design."
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Note cross-platform impact (macOS, Linux, Termux) when touching installer/system/TUI code
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Follow Model-Update-View (Bubbletea) patterns for TUI changes; see skills/gentleman-bubbletea
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    guidelines:
+      - Follow existing code patterns (see skills/gentleman-installer, skills/gentleman-system, skills/gentleman-bubbletea)
+      - Run from installer/ working directory for all go commands
+    tdd: true
+    test_command: "go test ./..."
+  verify:
+    test_command: "go test ./... -skip Golden"
+    build_command: "go build ./cmd/gentleman-installer"
+    coverage_threshold: 0
+    notes: "Use '-skip Golden' on Linux to avoid known macOS-recorded golden snapshot mismatches (TestWelcomeScreenGolden, TestMainMenuGolden, TestOSSelectGolden). Full golden suite only expected to pass on macOS."
+  archive:
+    - Warn before merging destructive deltas

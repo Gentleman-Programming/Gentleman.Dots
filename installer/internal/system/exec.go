@@ -151,6 +151,16 @@ func Run(command string, opts *ExecOptions) *ExecResult {
 		opts = &ExecOptions{}
 	}
 
+	// Central dry-run gate (upstream #190): print the planned operation
+	// and return a synthetic success. This sits before the Termux
+	// direct-exec branch so a dry run never reaches parseCommand, and it
+	// covers every Run*/Run*WithLogs wrapper by delegation (they pass
+	// the fully composed command, which is exactly the plan to print).
+	if IsDryRun() {
+		report(nil, "[dry-run] would run: "+command)
+		return dryRunResult(command)
+	}
+
 	start := time.Now()
 	result := &ExecResult{
 		Command: command,
@@ -284,12 +294,20 @@ func RunPkgInstall(packages string, opts *ExecOptions, logFunc func(string)) *Ex
 
 // CopyFile copies a file from src to dst
 func CopyFile(src, dst string) error {
+	// Dry run: print the planned copy, write nothing.
+	if IsDryRun() {
+		report(nil, "[dry-run] would copy: "+src+" -> "+dst)
+		return nil
+	}
 	info, err := os.Stat(src)
 	if err != nil {
 		return err
 	}
 	if info.IsDir() {
 		return fmt.Errorf("copy file %s: source is a directory", src)
+	}
+	if !info.Mode().IsRegular() {
+		return fmt.Errorf("copy file %s: source is not a regular file (socket, FIFO, or device)", src)
 	}
 
 	input, err := os.ReadFile(src)
@@ -321,10 +339,16 @@ func CopyDir(src, dst string) error {
 	if !rootInfo.IsDir() {
 		return fmt.Errorf("copy dir %s: source is not a directory", src)
 	}
-	if err := os.MkdirAll(dst, rootInfo.Mode()); err != nil {
-		return err
+	if !IsDryRun() {
+		if err := os.MkdirAll(dst, rootInfo.Mode()); err != nil {
+			return err
+		}
 	}
 
+	// In a dry run the tree is still walked (the source is read-only
+	// input, so walking it is safe) so the printed plan enumerates the
+	// real files that would be copied; only the destination writes are
+	// skipped.
 	return filepath.Walk(walkRoot, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -343,7 +367,23 @@ func CopyDir(src, dst string) error {
 		dstPath := filepath.Join(dst, relPath)
 
 		if resolvedInfo.IsDir() {
+			if IsDryRun() {
+				return nil
+			}
 			return os.MkdirAll(dstPath, resolvedInfo.Mode())
+		}
+
+		// Non-regular files (Unix sockets, FIFOs, character/block devices) cannot
+		// be read as byte streams and are runtime artifacts, not configuration.
+		// Skip them with a visible warning instead of aborting the whole backup.
+		if !resolvedInfo.Mode().IsRegular() {
+			report(nil, "⚠ skipped non-regular file: "+path)
+			return nil
+		}
+
+		if IsDryRun() {
+			report(nil, "[dry-run] would copy: "+path+" -> "+dstPath)
+			return nil
 		}
 
 		// Copy file
@@ -354,6 +394,14 @@ func CopyDir(src, dst string) error {
 // EnsureDir creates a directory if it doesn't exist
 func EnsureDir(path string) error {
 	return os.MkdirAll(path, 0755)
+}
+
+// PathExists reports whether path exists, following symlinks. A symlinked
+// configuration directory counts as present, which matters for paths the
+// installer must never write into, such as a user's ~/.oh-my-zsh checkout.
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 // BackupInfo contains information about a backup
@@ -441,11 +489,16 @@ func ListBackups() []BackupInfo {
 // CreateBackup creates a backup of existing configs
 func CreateBackup(configs []string) (string, error) {
 	backupDir := GetBackupDir()
-	if err := EnsureDir(backupDir); err != nil {
+	// Dry run: create nothing, including the deferred RemoveAll (there is
+	// nothing to clean up). GetBackupDir() is still computed and returned
+	// so callers (installer.go sets m.BackupDir from it) read a real,
+	// non-empty path even though no directory exists on disk.
+	cleanupOnFailure := true
+	if IsDryRun() {
+		cleanupOnFailure = false
+	} else if err := EnsureDir(backupDir); err != nil {
 		return "", fmt.Errorf("failed to create backup directory: %w", err)
 	}
-
-	cleanupOnFailure := true
 	defer func() {
 		if cleanupOnFailure {
 			_ = os.RemoveAll(backupDir)
@@ -474,6 +527,11 @@ func CreateBackup(configs []string) (string, error) {
 
 		// Determine destination path
 		dstPath := backupDir + "/" + key
+
+		if IsDryRun() {
+			report(nil, "[dry-run] would copy: "+srcPath+" -> "+dstPath)
+			continue
+		}
 
 		if info.IsDir() {
 			// Copy directory
@@ -545,6 +603,14 @@ type LogCallback func(line string)
 func RunWithLogs(command string, opts *ExecOptions, onLog LogCallback) *ExecResult {
 	if opts == nil {
 		opts = &ExecOptions{}
+	}
+
+	// Central dry-run gate (upstream #190). The plan is routed to this
+	// call's own log callback (so it lands in the TUI step log), falling
+	// back to Notify when the caller passed none.
+	if IsDryRun() {
+		report(onLog, "[dry-run] would run: "+command)
+		return dryRunResult(command)
 	}
 
 	start := time.Now()
@@ -889,7 +955,7 @@ func PatchNushellForWM(configPath string, wm string) error {
 		if strings.HasPrefix(trimmed, "def start_multiplexer") {
 			inMultiplexerBlock = !strings.Contains(trimmed, "}")
 			if wm != "none" {
-				newLines = append(newLines, line)
+				newLines = append(newLines, strings.ReplaceAll(line, "run-external $MULTIPLEXER", "exec $MULTIPLEXER"))
 			}
 			continue
 		}
@@ -899,7 +965,7 @@ func PatchNushellForWM(configPath string, wm string) error {
 					newLines = append(newLines, `  let active_env = ($env | columns)`)
 					newLines = append(newLines, `  if (which $MULTIPLEXER | is-not-empty) and $MULTIPLEXER_ENV_PREFIX not-in $active_env and "TMUX" not-in $active_env and "ZELLIJ" not-in $active_env and "HERDR_ENV" not-in $active_env {`)
 				} else {
-					newLines = append(newLines, line)
+					newLines = append(newLines, strings.ReplaceAll(line, "run-external $MULTIPLEXER", "exec $MULTIPLEXER"))
 				}
 			}
 			if trimmed == "}" {
